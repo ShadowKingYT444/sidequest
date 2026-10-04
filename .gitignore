@@ -1,0 +1,29 @@
+# Local development state and secrets
+.sidequest/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+# Unity generated files
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Bb]uild/
+[Bb]uilds/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+*.csproj
+*.sln
+*.user
+# Browser and reference caches
+node_modules/
+playwright-report/
+test-results/
+docs/design/cache/
+.DS_Store

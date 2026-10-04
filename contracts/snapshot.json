@@ -1,0 +1,128 @@
+{
+  "v": 1,
+  "revision": 12,
+  "mode": "fixture",
+  "jobs": [
+    {
+      "id": "job-signup",
+      "title": "Repair club signup link",
+      "source": {
+        "kind": "lookout",
+        "uri": "fixture://club",
+        "text": "Signup journey failed"
+      },
+      "state": "needs_approval",
+      "checks": [
+        {
+          "id": "signup-journey",
+          "state": "pass",
+          "evidence_artifact_id": "evidence-1"
+        }
+      ],
+      "allowed_actions": [
+        "read_repo",
+        "propose_patch",
+        "run_checks"
+      ],
+      "budget_usd": 2.0,
+      "spent_usd": null,
+      "worker_id": "worker-1",
+      "artifact_ids": [
+        "patch-1",
+        "evidence-1"
+      ],
+      "events": [],
+      "blocked_reason": null,
+      "workflow_version": 1
+    }
+  ],
+  "workers": [
+    {
+      "id": "worker-1",
+      "role": "builder",
+      "state": "idle",
+      "job_id": null
+    },
+    {
+      "id": "worker-2",
+      "role": "verifier",
+      "state": "idle",
+      "job_id": null
+    }
+  ],
+  "workshops": [
+    {
+      "id": "signup-maintenance",
+      "name": "Signup Maintenance",
+      "version": 1,
+      "state": "draft",
+      "supported_case_ids": [
+        "wrong-path",
+        "missing-href"
+      ],
+      "validation_artifact_ids": [],
+      "last_job_id": "job-signup"
+    }
+  ],
+  "approvals": [
+    {
+      "id": "approve-1",
+      "job_id": "job-signup",
+      "artifact_id": "patch-1",
+      "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "action": "local_deliver",
+      "destination": "fixture://accepted",
+      "state": "pending"
+    }
+  ],
+  "layout": {
+    "version": 1,
+    "nodes": [
+      {
+        "id": "board",
+        "kind": "board",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "id": "build",
+        "kind": "workstation",
+        "x": 5,
+        "y": 4
+      },
+      {
+        "id": "verify",
+        "kind": "test_lab",
+        "x": 9,
+        "y": 4
+      },
+      {
+        "id": "approve",
+        "kind": "approval",
+        "x": 12,
+        "y": 4
+      }
+    ],
+    "edges": [
+      {
+        "from": "board",
+        "to": "build"
+      },
+      {
+        "from": "build",
+        "to": "verify"
+      },
+      {
+        "from": "verify",
+        "to": "approve"
+      }
+    ]
+  },
+  "budget": {
+    "limit_usd": 5,
+    "reserved_usd": 0,
+    "spent_usd": null,
+    "uncertain": true
+  },
+  "stopped": false
+}

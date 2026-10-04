@@ -1,0 +1,26 @@
+[
+  {
+    "id": "good-company-factory",
+    "title": "Good Company \u2014 production floor",
+    "page": "https://store.steampowered.com/app/911430/Good_Company/",
+    "image": "https://cdn.akamai.steamstatic.com/steam/apps/911430/ss_753dc561927ec0fba4280553598ce6f73be16fca.1920x1080.jpg",
+    "borrow": "Readable machinery, warm rooms, lanes between work areas.",
+    "avoid": "Do not copy branding, exact assets, dense late-game layout or UI."
+  },
+  {
+    "id": "good-company-placement",
+    "title": "Good Company \u2014 placement mode",
+    "page": "https://store.steampowered.com/app/911430/Good_Company/",
+    "image": "https://cdn.akamai.steamstatic.com/steam/apps/911430/ss_4d52f4632bb03a5d1a9a243ed419845dd6b6a365.1920x1080.jpg",
+    "borrow": "Clear selected-object footprint and grid feedback.",
+    "avoid": "Do not make placement collisions block actual job execution."
+  },
+  {
+    "id": "little-big-workshop",
+    "title": "Little Big Workshop \u2014 tabletop scale",
+    "page": "https://store.steampowered.com/app/574720/Little_Big_Workshop/",
+    "image": "https://d2x8kymwjom7h7.cloudfront.net/live/application_no/119001/application_no/119001/images/LittleBigWorkshop_00004.jpg",
+    "borrow": "Toy-like scale, distinct station shapes, shared material family.",
+    "avoid": "No restaurant props, copyrighted character or texture extraction."
+  }
+]
