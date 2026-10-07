@@ -1,0 +1,9 @@
+# Sidequest's requested worker configuration. Account support is checked by dev/luna.py.
+# This file grants no extra filesystem, network, account, or publishing permission.
+model = "gpt-6-luna"
+model_reasoning_effort = "max"
+model_reasoning_summary = "concise"
+
+[features]
+goals = true
+multi_agent = false

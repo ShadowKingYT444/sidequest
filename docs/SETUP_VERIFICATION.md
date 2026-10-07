@@ -1,18 +1,22 @@
-# Launch-kit verification — October 4, 2026
+# Specification and launch-tool verification
 
-This record covers development tooling only. No Sidequest product feature, real Codex model run, Unity scene, or live GitHub delivery was tested here.
+## Original launch kit
 
-Environment: Python 3.13.5, Git 2.47.3, Linux container. The checked-in CI workflow targets Python 3.11; its remote result must be checked separately.
+The original 69bf066 baseline had 15 offline controller tests and a successful GitHub Actions run. Those tests validate the worktree/goal-controller behavior under local test doubles, not a working Sidequest game or a live Codex integration.
 
-Executed:
+## October 7 specification revision
+
+Added fixed architecture and in-computer artifact/diff interfaces, existing-asset protection, local monitoring/QA decisions, source audit, revised goal packets, lower default budgets and a Luna/max preflight launcher. The original loop lifecycle is retained; the launcher explicitly pins model/effort on every app-server invocation and validates effective config plus account-advertised support. The preference is also recorded in .codex/config.toml for manual app use.
+
+New tests cover account/model/effort failure, visual modality requirements, catalog pagination/cursor errors, absence of inference in the preflight, injected command restoration, goal/read-list consistency, budget/config agreement, feature coverage and labeled artifact fixtures. They are offline tests; they do not make paid model calls.
+
+Required verification commands, run by the existing GitHub workflow after publication:
 
 ```bash
 python3 -m unittest discover -s dev -p 'test_*.py' -v
 python3 dev/check.py --setup
 ```
 
-Result: **15 tests passed**. They exercise local Git worktree preparation, same-base branches, refusal to overwrite existing setup, out-of-lane edits, rename and symlink escapes, exact-SHA verdicts, missing/duplicate checks, locks, bounded failed-review retries, blocked-review recovery, four-lane assembly and preservation of main. JSON-lines transport tests launch a fake local server and verify fresh thread IDs and blocked/budget-limited stops. These prove controller behavior under the test doubles, not compatibility with a particular installed Codex build.
+Consult the Actions result for the exact published commit. This document does not predeclare that an unrun CI job passed. Markdown code-fence and link checks are structural only; they do not prove Mermaid renderer compatibility or product behavior.
 
-The static check verifies disjoint ownership, goal/check IDs, internal documentation links, Python parsing, SVG XML and fixture labeling. The two original SVG design boards were rendered locally and inspected. They are diagrams, not Unity screenshots. External game images are linked with provenance; the local reference downloader could not be tested against the image hosts in this network-restricted environment.
-
-Remaining validation: run the installed Codex app-server against one goal, provide Unity editor/build-module access for C, configure a bounded coding provider for B, install D's browser dependencies, and execute I1 on the merged product. Missing tools or unobserved results must stay BLOCKED.
+Not executed in this preparation environment: research subagents, real development agents, installed Codex model inference, Unity editor/build, the owner's actual asset project, selected-source Linux capture, local vision inference or live GitHub delivery. Each remains explicit acceptance evidence or an environment preflight step. No assets were regenerated and no product feature is marked implemented.

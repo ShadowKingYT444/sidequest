@@ -1,45 +1,37 @@
-# Lane A — Runtime and policy
+# A — runtime, state and artifact service
 
-Own only: `services/runtime/`, `journals/A.md`, `evidence/A/`. Read AGENTS.md and contracts/PROTOCOL.md. Three goals; finish and validate one before the next. Shared files are read-only.
+Own services/runtime/, journals/A.md and evidence/A/. No Unity, tool-adapter, checker or shared-contract edits. Stack is fixed; use FastAPI/Uvicorn/Pydantic 2/stdlib SQLite, not another framework. Create the component files named in ARCHITECTURE.md. Unit tests use unittest (IsolatedAsyncioTestCase when needed) and HTTPX ASGITransport for HTTP; dependencies are lane-local and pinned once.
 
-## A1: Build durable job and policy state
+## A1 — persistent project/job/task state
 
-/goal Complete A1 from docs/goals/A-runtime.md. Meet all A1 checks. Keep journals/A.md. Do not start the next goal.
+/goal Complete A1 only. Read AGENTS.md, ARCHITECTURE.md sections 1–4, [STORAGE.md](../../contracts/STORAGE.md), and the object/command definitions in contracts/PROTOCOL.md and contracts/EXTENSIONS.md.
 
-Create SQLite job, event, approval, workshop and reservation storage with migrations and unit tests. No HTTP or other lane imports required.
+Implement config.py, models.py, store.py, policy.py and initial SQL migrations from STORAGE.md's table and transaction contract. Register approved project roots/revisions; persist jobs/tasks/attempts, events, candidate identity, approvals, command outcomes and budget reservations. Use UUIDs, integer micro-dollar accounting and null for unknown usage. SQLite has one serialized writer; claim/reserve/intent are transactional. Invalid scopes, cycles, stale revision and action-policy failures have typed errors. Implement the specified columns/indexes in the migration, not a second architecture proposal.
 
-Enforce state transitions, exact-artifact approvals, budget reservation, concurrency and global stop. Tests include duplicate request and invalid transition.
+- **A1-1**: Storage tests cover initial migration, reload, source/task metadata and immutable candidate linkage.
+- **A1-2**: Policy tests reject stale approval, differing-body duplicate command, denied action, missing project and exhausted reservation.
+- **A1-3**: Concurrent claim/reservation tests cannot oversubscribe configured worker/budget limits; unknown usage stays unknown.
 
-Acceptance evidence:
+Run: python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v. Save concise output/evidence and handoff; do not start A2.
 
-- **A1-1** — Run storage tests on an empty database and after restart; histories and revisions persist.
-- **A1-2** — Negative tests reject changed artifact approval, denied action, exhausted budget and duplicate-body mismatch.
-- **A1-3** — Concurrent reservations cannot oversubscribe configured capacity; journal lists commands and limitations.
+## A2 — scheduler and complete computer API
 
-## A2: Expose the contract and schedule isolated adapters
+/goal Complete A2 only. Read A1's code, ARCHITECTURE.md sections 4–5, contracts/EXTENSIONS.md, and COMPUTER_UI.md endpoint/paging requirements.
 
-/goal Complete A2 from docs/goals/A-runtime.md. Meet all A2 checks. Keep journals/A.md. Do not start the next goal.
+Implement api.py, scheduler.py, adapters.py and artifacts.py. Expose base and extension endpoints exactly, including project selection, task state, artifact manifest/text/diff/content and paginated runs. Implement fixed task pipeline, scope-aware ready queue, dependency order, cancellations and versioned layout. Tail validated bounded progress records. Use fake B/D subprocesses for this lane. Deterministically plan simple jobs; no implicit AI manager. Text/media reads are authenticated and path-safe, with no model calls.
 
-Implement HTTP endpoints and JSON-lines subprocess dispatcher from the frozen contract. Use fake B/D processes for independent tests.
+- **A2-1**: HTTP tests exercise computer endpoints, paging, unauthorized scope, malformed cursor, binary content, traversal and hostile log text; fixtures match the shared example.
+- **A2-2**: Scheduler tests show disjoint tasks overlap, dependent/overlapping tasks wait, malformed/timeout/duplicate adapter results fail safely, and cancelled work cannot schedule successors.
+- **A2-3**: Interaction/idle tests count zero model dispatches for snapshots/file/diff viewing. Delivery is never triggered by a progress event or UI animation.
 
-Use bearer authentication, path-safe artifact serving, command IDs, dependency order, bounded retries and explicit cancellation. Document local configuration and --help.
+Run the complete runtime suite. Document main.py --help and service startup/config. Do not start A3 before independent review.
 
-Acceptance evidence:
+## A3 — recovery, approval, watchers and workshop activation
 
-- **A2-1** — HTTP tests cover snapshot, typed job, run, inspect evidence, approve and pause with exact shapes.
-- **A2-2** — Fake-adapter tests cover malformed JSON, wrong ID, timeout, cancellation, digest mismatch and dependency ordering.
-- **A2-3** — Unauthorized HTTP, path traversal and duplicate external-write requests cannot dispatch actions.
+/goal Complete A3 only. Read ARCHITECTURE.md sections 6–7, EXECUTION.md sections 4–6 and the corresponding extension commands.
 
-## A3: Make recovery and workshop activation reliable
+Persist approval identity and confirmed/ambiguous delivery state. Reconcile interrupted attempts rather than repeat external actions. Add workshop propose/test/activate/match/pause through D's protocol, watcher cursor de-duplication/coalescing and capability reporting. Verify required checks before activation/delivery. Resume always rechecks state, budget and permissions. A fake adapter can test all branches without importing B/D code.
 
-/goal Complete A3 from docs/goals/A-runtime.md. Meet all A3 checks. Keep journals/A.md. Do not start the next goal.
-
-Connect D operations through the contract, not imports. Persist package version, validation and activation state. Use fake D for lane tests.
-
-Reconcile interrupted work on service restart. Do not repeat ambiguous external writes. Closing the presentation client must not affect service ownership.
-
-Acceptance evidence:
-
-- **A3-1** — Crash/restart tests preserve approved artifacts and stop ambiguous delivery; no duplicate write.
-- **A3-2** — Workshop proposal, test, activation, match and pause are exercised with fake responses; untested version cannot activate.
-- **A3-3** — Run all runtime tests and document exact start/config commands and actual dependency versions.
+- **A3-1**: Kill/restart tests retain state, block unknown deliveries and reject source/candidate changes; no duplicate write or automatic new paid attempt.
+- **A3-2**: Workshop and watcher tests cover activation gates, new versions, duplicate event across restart, screen capability unavailable and system stop/resume.
+- **A3-3**: Full runtime suite passes with real HTTP and fake subprocesses; every fake is labeled and startup/health/capabilities are documented.

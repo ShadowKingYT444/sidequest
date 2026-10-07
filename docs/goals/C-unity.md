@@ -1,45 +1,37 @@
-# Lane C — Unity client and art
+# C — existing office and functional computers
 
-Own only: `unity/`, `journals/C.md`, `evidence/C/`. Read AGENTS.md and contracts/PROTOCOL.md. Three goals; finish and validate one before the next. Shared files are read-only.
+Own unity/, journals/C.md and evidence/C/. You are the only Unity writer. Assets are complete: no replacement art, furniture, workers, shaders or room. Read the current goal's sources only. The old robot-factory diagrams are historical and must not direct asset creation.
 
-## C1: Create the actual Unity project and visual foundation
+## C1 — bind the existing project
 
-/goal Complete C1 from docs/goals/C-unity.md. Meet all C1 checks. Keep journals/C.md. Do not start the next goal.
+/goal Complete C1 only. Read AGENTS.md, ASSET_BINDING.md, ART_DIRECTION.md and COMPUTER_UI.md implementation section.
 
-Inspect installed editor. Create a Unity 6 desktop project with URP, record exact editor/package lock and use Force Text. All .meta files belong here. Do not hand-invent an installed version.
+Open the owner's actual project, record editor/lock/render/input state and protect its art manifest. Create OfficeBindings and wrapper components for supplied desk screens, worker stations, board, review/workshop areas and camera poses. Validate stable IDs and serialized references. Create the specified Client/Presentation/Editor assembly boundary and explicit OfficeBootstrap; do not introduce a new architecture or regenerate assets. Implement camera focus/return and a minimal native world-space monitor surface using supplied bounds.
 
-Read ART_DIRECTION and view both local SVG boards and external game screenshots. Create one orthographic miniature workshop scene with all six distinct building silhouettes and a small worker crew. No stock SaaS dashboard.
+- **C1-1**: Actual editor opens/compiles; binding test detects missing/duplicate/null anchors; record exact installed version and module availability.
+- **C1-2**: Capture supplied office at both target sizes with main monitor focus/return; art hashes remain unchanged except permitted scene wiring/wrappers.
+- **C1-3**: Metadata and dependency lock are correct; no Library/Temp/build output committed; no replacement assets or conflicting EventSystem/input module.
 
-Acceptance evidence:
+Missing assets/editor is BLOCKED, not a request to invent a room. Use UNITY_EDITOR and named Unity test methods; record actual commands/results before review.
 
-- **C1-1** — Open and compile in the recorded editor, zero new Console errors; report actual version and test command.
-- **C1-2** — Capture actual scene at 1920x1080 and 1280x720; compare composition and silhouettes against references, not a mockup.
-- **C1-3** — All assets include .meta; no generated Library files, unlicensed shipped textures or unexplained package additions.
+## C2 — real artifact and swarm controls inside computers
 
-## C2: Implement all first-build interactions against fixtures
+/goal Complete C2 only. Read COMPUTER_UI.md in full, contracts/EXTENSIONS.md and the base snapshot/commands. Build against a lane-owned fixture server, not another lane's unfinished code.
 
-/goal Complete C2 from docs/goals/C-unity.md. Meet all C2 checks. Keep journals/C.md. Do not start the next goal.
+Implement RuntimeClient/SnapshotStore/WorkerPresenter and the named computer views. Main computer is project-wide; worker computers are correctly scoped. Implement Work, Files, Diff, Runs, Preview, Checks; selected job assignment/pause/resume/cancel, exact approval, workshop activation/pause and watcher capability/settings. Same view model for world-space and enlarged views. Native text/diff/image viewing is mandatory. Pool rows, bound pages/images, sanitize text, suppress stale requests and label fixture/unverified data. Never spawn a browser to substitute for the core viewer.
 
-Build snapshot polling, commands, world selection, mission board, inspection panel, approvals, workshop activation/pause, layout connections and compact task-list fallback.
+- **C2-1**: Interaction tests cover project/worker selection and all viewer tabs using added/edited/renamed/deleted/binary fixture files; focus/Expand/Escape preserve state.
+- **C2-2**: Tests cover long text, paging, literal TMP markup/ANSI, invalid image, stale responses, 403/409/disconnect and blocked approval. No fake success timers.
+- **C2-3**: Actual PlayMode capture shows job controls, artifacts, test evidence, workshop and watcher state inside the monitor; fixture badge visible and Stop available.
 
-Use dev/mock_runtime.py or a lane-owned richer fixture server. Make fixture mode unmistakable. UI state comes from snapshots, not local success timers. Add accessible text/icons and keyboard controls.
+Keep fixture server and tests inside unity/ so there is no ownership overlap. Code and UI must use the frozen endpoint shapes.
 
-Acceptance evidence:
+## C3 — desktop build and usability proof
 
-- **C2-1** — PlayMode tests exercise create, assign, inspect, pause, approve and workshop actions against fixture responses.
-- **C2-2** — HTTP failures, stale revision and failed checks visibly block progress; animation cannot bypass state.
-- **C2-3** — Record an actual interaction clip/screenshots with fixture badge, small-screen legibility and reduced-motion mode.
+/goal Complete C3 only. Read ART_DIRECTION.md's visual gate, COMPUTER_UI.md acceptance section and FEATURE_MATRIX.md UI/COST assertions.
 
-## C3: Package and validate the complete presentation
+Implement Linux build entry Sidequest.Editor.BuildLinux.Perform and document the precise editor invocation. Run native EditMode/PlayMode suites, build and launch the desktop app against the fixture service. Test reduced motion, keyboard focus, reconnect, client restart and monitor readability. Do not wait for backend source or claim a fixture proves the full product. Close the builder editor before independent candidate validation.
 
-/goal Complete C3 from docs/goals/C-unity.md. Meet all C3 checks. Keep journals/C.md. Do not start the next goal.
-
-Polish lighting, materials, job motion and readable states using the design rubric. Provide startup config for real runtime without requiring its code to exist in this branch.
-
-Produce a Linux desktop build, test it with the fixture service, and provide evidence and instructions. Close builder editor before the fresh validator opens its candidate checkout.
-
-Acceptance evidence:
-
-- **C3-1** — Fresh validator builds/launches the desktop target and exercises the fixture workflow; missing editor/display is BLOCKED.
-- **C3-2** — Capture own screenshots at both sizes and review all design rubric items, including no overlaps, labels and silhouettes.
-- **C3-3** — Test disconnect/reconnect, unknown state, client close/reopen and stop control; outputs remain explicitly fixture mode.
+- **C3-1**: Fresh validator builds/launches actual desktop target and uses the main computer with fixture service; missing license/display/module is BLOCKED.
+- **C3-2**: Real 1920x1080 and 1280x720 captures show diff, image, checks and blocked state with readable unclipped UI and preserved completed assets.
+- **C3-3**: Input/reconnect/close-reopen/reduced-motion tests pass; idle/viewing makes no model call and backend state is never inferred from animation.

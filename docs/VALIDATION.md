@@ -1,35 +1,25 @@
-# Fresh validation contract
+# Candidate validation
 
-A builder's native goal can complete while the product requirement remains false. Treat that event as a request for review, not a release gate.
+A completed native goal requests review. It does not prove the feature works. The controller freezes the candidate SHA and starts a new validator in a detached worktree. Read AGENTS.md, the active goal and its Read list, then inspect/run the named checks. Do not load the entire builder conversation or research archive. Journal claims are leads, not evidence.
 
-The controller commits only allowed paths. The validator works in a detached worktree at that exact SHA. It has no builder chat history. Its prompt identifies the goal, required checks, frozen specification, and candidate. It may inspect the committed journal as claims to verify; it must not use journal prose as proof.
-
-Run the acceptance commands again, inspect artifacts, and try at least one relevant negative case. For C, open actual rendered screenshots and exercise the built interface or the editor at the validation path. For I1, use real subprocesses rather than the mock HTTP server. Verify that mock mode is visibly identified and no success derives only from a scripted event playback.
-
-Write `.sidequest/verdict.json`:
+Required report at .sidequest/verdict.json:
 
 ```json
 {
-  "verdict": "PASS",
-  "candidate": "exact 40-character commit SHA",
   "goal": "A1",
-  "checks": [
-    {"id": "A1-1", "result": "PASS", "evidence": "exact command and result, plus artifact path"}
-  ],
+  "candidate": "exact candidate commit SHA",
+  "verdict": "PASS",
+  "checks": [{"id":"A1-1","result":"PASS","evidence":"Executed command, exit result, artifact path"}],
   "findings": []
 }
 ```
 
-Every required check ID must occur exactly once. Values are PASS, FAIL, or BLOCKED. PASS requires all check results to be PASS, a matching candidate, no findings, and no tracked or unignored source changes by the reviewer. A report without an executed check is invalid. A file path alone is not execution evidence; state the command and result.
+Include every required check ID exactly once. Result/verdict values are PASS, FAIL or BLOCKED. PASS requires all checks pass, no unresolved findings, exact goal/SHA and no tracked or unignored reviewer source changes. Actual report must contain all three checks for a component goal; the example shows one only to illustrate shape.
 
-FAIL means a requirement was tested and failed. BLOCKED means a necessary check could not be performed. Missing credentials, Unity editor access, actual screenshots, or a browser never become PASS. Stop for credentials or environment repair; do not silently substitute a fake service.
+Run cheap deterministic checks first. Reviewer reruns relevant tests and at least one negative case rather than relying on builder screenshots/log prose. UI review requires actual rendered Unity evidence at both specified resolutions and interaction with the computer. A screenshot of a drawing cannot pass it. Native file/diff/image viewing is required; a link that opens GitHub alone fails.
 
-Reviewers may run tests that create ignored caches, build outputs, and `.sidequest/` evidence. They must not change tracked tests or code. Add exploratory tests under `.sidequest/` when necessary. The controller copies the verdict out before proceeding. A new candidate requires new validation. It cannot reuse an older PASS, even for a small edit.
+A missing asset, local model, credential, display, Unity license or observed result means BLOCKED. Report exactly what is unavailable. Do not mark it passed because source code looks plausible. Test doubles validate the component contract only; I1 must use real services, real coding-provider output and a built Unity client. A local demo repository is allowed and must be labeled as a fixture target.
 
-Component PASS does not mean the whole application is accepted. I1 verifies the complete product and the exact merged commit. There is no automatic push to main in the development loop.
+Reviewers do not repair production code or edit tests. Generated logs, experimental check scripts and outputs go under .sidequest/ or existing ignored build directories. No credentials/private desktop captures in evidence. Record versions, commands, exit results, candidate identity and screenshot resolutions. Never publish private chain-of-thought.
 
-## Evidence policy
-
-Record commit, tool versions, commands, exit results, and paths. For visual evidence include resolution, scene name, camera pose, selected job, and mock/live mode. Capture only the fixture application, never unrelated desktop windows. Report frame timing as a measured sample with hardware, not a universal performance claim.
-
-Model-based review is fallible. Host checks enforce structure, ownership, report completeness, and commit identity; they cannot prove a screenshot is attractive or a reviewer interpreted every test correctly. Owner review and the executable final scenario remain important.
+Model review remains fallible; report shape checks do not prove correctness. Deterministic tests and final integrated execution are separate gates. The controller stops after the configured attempts. An operator must resolve a BLOCKED environment before re-running; do not spend tokens repeatedly asking models to overcome unavailable tools.

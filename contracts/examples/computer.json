@@ -1,0 +1,29 @@
+{
+  "fixture_only": true,
+  "contract_revision": "1.1",
+  "note": "Shape example, not registered artifact bytes or an approval capability.",
+  "manifest_response": {
+    "v": 1,
+    "artifact_id": "manifest-fixture",
+    "candidate_id": "candidate-fixture",
+    "files": [
+      {"file_id":"f1","path":"site/index.html","old_path":null,"status":"modified","media_type":"text/html","size_bytes":140,"sha256":"0000000000000000000000000000000000000000000000000000000000000000","added_lines":1,"deleted_lines":1,"binary":false},
+      {"file_id":"f2","path":"docs/join.md","old_path":"docs/signup.md","status":"renamed","media_type":"text/markdown","size_bytes":30,"sha256":"0000000000000000000000000000000000000000000000000000000000000000","added_lines":0,"deleted_lines":0,"binary":false},
+      {"file_id":"f3","path":"obsolete.txt","old_path":null,"status":"deleted","media_type":"text/plain","size_bytes":0,"sha256":null,"added_lines":0,"deleted_lines":4,"binary":false},
+      {"file_id":"f4","path":"logo.png","old_path":null,"status":"added","media_type":"image/png","size_bytes":128,"sha256":"0000000000000000000000000000000000000000000000000000000000000000","added_lines":null,"deleted_lines":null,"binary":true}
+    ],
+    "next_cursor": null
+  },
+  "diff_response": {
+    "v":1,"artifact_id":"diff-fixture","candidate_id":"candidate-fixture","base_revision":"fixture-base","candidate_revision":"fixture-candidate",
+    "rows":[
+      {"kind":"file_header","old_line":null,"new_line":null,"text":"site/index.html"},
+      {"kind":"hunk_header","old_line":null,"new_line":null,"text":"@@ -1 +1 @@"},
+      {"kind":"remove","old_line":1,"new_line":null,"text":"<a href=\"/missing\">Join</a>"},
+      {"kind":"add","old_line":null,"new_line":1,"text":"<a href=\"/signup\">Join</a>"}
+    ],"next_cursor":null
+  },
+  "log_response": {
+    "v":1,"run_id":"run-fixture","items":[{"seq":1,"at":"2026-10-07T12:00:00Z","type":"output","message":"Literal text test: <color=red>not markup</color>","artifact_id":null,"task_id":"task-fixture"}],"next_after_seq":1,"has_more":false
+  }
+}

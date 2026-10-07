@@ -1,79 +1,73 @@
-# Sidequest contract v1 — frozen for the four lanes
+# Shared protocol — wire v1, contract revision 1.1
 
-These are requirements and fixtures, not an implemented API. Do not change this contract inside a lane. Report an ambiguity in its journal; request a coordinator revision before changing a shared shape. Additive fields must not be required by a consumer. Reject unsupported `v` values.
+Frozen implementation interface. Read [EXTENSIONS.md](EXTENSIONS.md) for projects, task plans, paginated files/diffs, run events, capture and exact candidate approval. That document is required for the first complete release, not an optional wishlist. [snapshot.json](snapshot.json) remains an explicitly labeled legacy fixture. It cannot authorize live delivery.
 
-## Ownership and deployment
+## Processes and transport
 
-A runs `services/runtime/main.py` with Python 3.11+, owns SQLite and the loopback HTTP service, and starts B/D as subprocesses. B implements `services/tools/main.py`. D implements `services/workshops/main.py`. Each service owns its own dependency file and tests. C owns the complete Unity project. No service imports another lane's implementation. All three service entry points accept `--help`; B/D additionally support the JSON-lines mode below.
+A runs services/runtime/main.py, owns SQLite and loopback HTTP, and dispatches B at services/tools/main.py and D at services/workshops/main.py. Use configured argv arrays with each service's environment, shell disabled. No cross-lane Python imports. C uses only HTTP. All three entry points provide --help. B/D accept one JSON-line request on stdin, return one JSON-line response on stdout, log to stderr and exit. Maximum input/final output is 4 MiB. Progress uses the assigned file described in EXTENSIONS.md. A enforces deadlines and cancels process groups.
 
-Use one isolated Python environment per service. Runtime config supplies an explicit argv array for each adapter, including that environment's Python interpreter. Never use `shell=True`. Workspaces, artifact roots, allowed repositories, provider settings, and credentials are configured locally, not embedded in a Unity build. Linux desktop is the initial acceptance target. C records the actual installed Unity 6 version and package lock before building; a version number in prose is not an installed editor.
+HTTP binds 127.0.0.1:4317 by default. Require Authorization: Bearer <local-session-token> except /health. Credentials remain outside committed Unity assets, job text, artifacts and logs. Disable CORS by default. The first release is a single-user local app, not a multi-tenant service.
 
-## HTTP: Unity ↔ runtime
+GET /health → {v:1,service:"sidequest-runtime",mode:"live"|"fixture"}.
+GET /v1/snapshot → {v,revision,mode,jobs,workers,workshops,approvals,layout,budget,stopped}, with additive projects field.
+GET /v1/jobs/{id} → {v,job}.
+GET /v1/artifacts/{id} → {v,artifact,preview_text}; only authorized registered artifacts, no arbitrary read path.
+POST /v1/commands → durable queued command response, not job completion.
 
-Bind `127.0.0.1`, default port 4317. Require `Authorization: Bearer <local-session-token>` except `/health`; token lives in user settings, not committed assets. Reject external bind by default. Disable CORS unless an explicit local origin is configured. No credentials in responses.
+## Commands
 
-- `GET /health` → `{ "v":1, "service":"sidequest-runtime", "mode":"live" }`. Development mock says `mode:"fixture"`.
-- `GET /v1/snapshot` → the object in `snapshot.json`. Integer `revision` increases on every state change. Poll twice per second initially. Avoid another event-stream dependency for v1.
-- `GET /v1/jobs/{id}` → `{ "v":1, "job": Job }`.
-- `POST /v1/commands` → Command below. Return HTTP 202 with `{ "v":1, "command_id":"...", "accepted":true, "revision":12 }` only after durable acceptance. It means queued, not completed.
-- `GET /v1/artifacts/{id}` → `{ "v":1, "artifact":Artifact, "preview_text":"..." }`. Only serve known allowlisted artifacts. No caller-supplied filesystem paths. Large/binary files use an explicit allowlisted download endpoint added by A without altering the existing shape.
+Request: {v:1,command_id:"uuid",type:"job.create",expected_revision:12,payload:{...}}. Response HTTP 202: {v:1,command_id,accepted:true,revision}. A checks version and schema, then transactionally enforces idempotency and policy. Same ID/same canonical body returns the recorded outcome; same ID/different body is rejected. For a new mutation, an outdated revision returns VERSION_CONFLICT. expected_revision may be null only for job.create and system.stop. The client must explicitly re-review after a stale approval; no automatic retry with a new revision.
 
-Errors use `{ "v":1, "error":{ "code":"POLICY_DENIED", "message":"...", "retryable":false } }`. Codes: `INVALID_INPUT`, `NOT_FOUND`, `VERSION_CONFLICT`, `POLICY_DENIED`, `BUDGET_LIMIT`, `DEPENDENCY_FAILED`, `UNAVAILABLE`, `INTERNAL`. Use 400/404/409/403/429/424/503/500 respectively. Error messages must not expose tokens or full environment variables.
+| Command | Required payload |
+|---|---|
+| job.create | title,source:{kind,uri,text},checks:[id],budget_usd,allowed_actions:[string]; project_id and optional bounded plan in extensions |
+| job.run, job.pause, job.cancel | job_id |
+| job.assign | job_id,worker_id; reject mid-write reassignment |
+| approval.decide | approval_id,approve:boolean,artifact_sha256,action,destination; v1.1 candidate identity required in extensions |
+| workshop.propose | job_id |
+| workshop.test | workshop_id,version,case_ids:[string] |
+| workshop.activate | workshop_id,version; tested digest and human authorization required |
+| workshop.pause | workshop_id |
+| layout.save | nodes:[{id,kind,x,y}],edges:[{from,to}]; versioned acyclic workflow only |
+| system.stop | empty payload; stop new dispatch, request cancellation, not rollback |
 
-Command: `{ "v":1, "command_id":"uuid", "type":"job.create", "expected_revision":10, "payload":{} }`. Retries with the same ID and same body return the recorded outcome; same ID with a different body is rejected. Check `expected_revision` before new mutations; null is allowed only for `job.create` and `system.stop`. Unknown commands are rejected.
+Resume, project and watcher commands are defined in extensions. Reject unknown commands; do not interpret them as natural-language instructions. Permissions are stable strings: read_repo, propose_patch, run_checks, local_deliver, github_pr. Each consequential action needs both project policy and a current exact approval. Model calls also require configured provider/budget consent.
 
-| Type | Required payload | Meaning |
-|---|---|---|
-| `job.create` | `title`, `source:{kind,uri,text}`, `checks:[id]`, `budget_usd`, `allowed_actions:[string]` | Create a job; source kind is `typed`, `issue`, or `lookout`. |
-| `job.run` | `job_id` | Start within policy; not permission to publish. |
-| `job.pause`, `job.cancel` | `job_id` | Prevent new dispatch, request in-flight cancellation. |
-| `job.assign` | `job_id`, `worker_id` | Assign queued work; reject mid-write reassignment. |
-| `approval.decide` | `approval_id`, `approve:bool`, `artifact_sha256`, `action`, `destination` | Approve only the exact tested artifact and action. |
-| `workshop.propose` | `job_id` | Draft a package from an accepted job. |
-| `workshop.test` | `workshop_id`, `version`, `case_ids:[string]` | Run trusted scope and negative cases. |
-| `workshop.activate` | `workshop_id`, `version` | Requires passing activation evidence and human authorization. |
-| `workshop.pause` | `workshop_id` | Stop new matching jobs. |
-| `layout.save` | `nodes:[{id,kind,x,y}]`, `edges:[{from,to}]` | Save a versioned acyclic workflow; never change an active run's version. |
-| `system.stop` | none | Global dispatch stop, not rollback. |
+Errors: {v:1,error:{code,message,retryable}}. INVALID_INPUT=400, NOT_FOUND=404, VERSION_CONFLICT=409, POLICY_DENIED=403, BUDGET_LIMIT=429, DEPENDENCY_FAILED=424, UNAVAILABLE=503, INTERNAL=500. Messages are short, actionable and redacted. A timeout cannot be represented as success.
 
-## Domain objects
+## Base objects
 
-Snapshot fields: `v`, `revision`, `mode`, `jobs`, `workers`, `workshops`, `approvals`, `layout`, `budget`, `stopped`. Arrays may be empty. IDs are opaque strings. Costs are nonnegative decimal USD; store internally as integer micro-dollars, never binary floats for accounting. Unknown cost is null, not zero. UTC timestamps use ISO 8601. UI must handle unknown future display states safely as unavailable, not completed.
+IDs are opaque strings; timestamps UTC ISO8601. Integer snapshot revision increases on state mutations, not on reads. Persist money as integer micro-dollars; JSON USD decimals are presentation values. Unknown measured usage is null, not zero. Old history is paginated instead of appended without limit to every snapshot.
 
-**Job** fields: `id,title,source,state,checks,allowed_actions,budget_usd,spent_usd,worker_id,artifact_ids,events,blocked_reason,workflow_version`. State: `queued`, `running`, `verifying`, `needs_approval`, `accepted`, `blocked`, `failed`, `paused`, `cancelled`. `events` contain `{id,at,type,message,artifact_id}`. `checks` contain `{id,state,evidence_artifact_id}` with state `pending`, `pass`, `fail`, `blocked`.
+Job: id,title,source,state,checks,allowed_actions,budget_usd,spent_usd,worker_id,artifact_ids,events,blocked_reason,workflow_version. source.kind is typed,issue or lookout. state is queued,running,verifying,needs_approval,accepted,blocked,failed,paused or cancelled. checks:[{id,state,evidence_artifact_id}] where state is pending,pass,fail or blocked. events:[{id,at,type,message,artifact_id}]. C handles unknown display values as unavailable, never accepted.
 
-**Worker**: `{id,role,state,job_id}`. Roles `builder`, `researcher`, `verifier`; states `idle`, `working`, `blocked`, `paused`. Real capacity, not fake concurrency animations.
+Worker: {id,role,state,job_id}; role builder,researcher or verifier; state idle,working,blocked or paused. Roles are tool/policy capabilities, not simulated intelligence. An avatar does not determine actual capacity.
 
-**Artifact**: `{id,kind,sha256,job_id,source_revision,relative_path}`. Kinds `patch`, `log`, `test_report`, `screenshot`, `workshop`. A checks path containment, symlink escapes and digest before serving. An artifact ID never grants tool execution.
+Artifact: {id,kind,sha256,job_id,source_revision,relative_path}. Base kind patch,log,test_report,screenshot or workshop; extensions add file/diff metadata. Verify regular-file containment and digest before registering or reading. relative_path is metadata, not authorization.
 
-**Approval**: `{id,job_id,artifact_id,artifact_sha256,action,destination,state}`. States `pending`, `approved`, `denied`, `stale`. A binds approval to the verified source revision too. Changing the patch, target revision, action or destination invalidates approval.
+Approval: {id,job_id,artifact_id,artifact_sha256,action,destination,state}; state pending,approved,denied or stale. Changes to source revision, candidate, action or destination invalidate it. A owns approval records; a worker-created JSON file cannot grant permission.
 
-**Workshop**: `{id,name,version,state,supported_case_ids,validation_artifact_ids,last_job_id}`. States `draft`, `testing`, `ready`, `active`, `paused`, `blocked`. D additionally owns the package format; it must contain trigger, support boundary, executable steps, immutable check IDs, permissions, limits and escalation policy. A stores its digest/version and activation record.
+Workshop: {id,name,version,state,supported_case_ids,validation_artifact_ids,last_job_id}; state draft,testing,ready,active,paused or blocked. D owns its recipe contents, A owns activation and policy. An updated version must pass new testing.
 
-`layout` contains `version,nodes,edges`. Node kinds: `lookout`, `board`, `workstation`, `test_lab`, `approval`, `workshop`. Positions are integer grid coordinates in [0,15]. `budget`: `{limit_usd,reserved_usd,spent_usd,uncertain}`. Reservations and actual costs are reconciled, not billed twice. Unknown in-flight cost must be visible.
+layout:{version,nodes,edges}; node kind lookout,board,workstation,test_lab,approval or workshop; x/y integers0..15 are logical workflow coordinates, not required physical furniture. Office placement is separate presentation state. budget:{limit_usd,reserved_usd,spent_usd,uncertain}. Reservations are reconciled, not billed twice.
 
-## JSON-lines: runtime ↔ adapters
+## Adapter envelope
 
-One process per request initially: write one UTF-8 JSON object plus newline to stdin; process writes one response plus newline to stdout, diagnostic logs to stderr, then exits. Maximum request/response 4 MiB. Runtime enforces a timeout and kills the process group on cancellation. No implicit retry of external writes. Config supplies local request and artifact roots; workers cannot choose a host path.
+Request: {v:1,request_id,op,job_id,workspace,payload,context?}. workspace and all context paths are host-assigned and allowlisted. Response: {v:1,request_id,ok:true,data:{...},artifacts:[],usage:{cost_usd:null,uncertain:true}}. Failure uses ok:false,data:{},artifacts:[], plus error:{code,message,retryable}. Each returned Artifact has a verified digest. Nonzero exit, malformed/extra final output, wrong ID/version or wrong digest is failure. No implicit retry of an external write.
 
-Request: `{ "v":1, "request_id":"...", "op":"repo.inspect", "job_id":"...", "workspace":"/approved/path", "payload":{} }`.
-Response: `{ "v":1, "request_id":"...", "ok":true, "data":{}, "artifacts":[], "usage":{"cost_usd":null,"uncertain":true} }`. On failure `ok:false`, `data:{}`, plus `error:{code,message,retryable}`. `artifacts` use the Artifact shape; adapters populate digests. A independently checks them. Nonzero exit, missing/malformed/extra output, mismatched ID/version or wrong digest is failure, not success.
+| B operation | Payload → data |
+|---|---|
+| repo.inspect | {repo_path,revision} → {revision,clean,files:[string]} |
+| repo.prepare | {repo_path,revision} → {workspace,revision} |
+| agent.execute | {objective,check_ids,limits:{max_seconds,max_cost_usd}} → {status:"candidate"|"blocked",summary,patch_artifact_id}; bounded token/model settings from trusted config |
+| repo.deliver | {patch_artifact_id,artifact_sha256,source_revision,destination,approval} → {status,delivery_id}; privileged host channel and action_id in extensions |
+| lookout.poll | {source_id,cursor} → {cursor,events:[{id,source_uri,condition,text}]} |
 
-### B operations
+| D operation | Payload → data |
+|---|---|
+| check.run | {check_ids,source_revision} → {passed,results:[{id,state,evidence_artifact_id}]} |
+| workshop.propose | {accepted_job,artifact_ids} → {workshop,package_artifact_id} |
+| workshop.test | {package_artifact_id,case_ids} → {passed,results,validation_artifact_ids} |
+| workshop.match | {package_artifact_id,event} → {supported,reason,objective,check_ids}; proposal only, never execution permission |
 
-- `repo.inspect`: payload `{repo_path,revision}` → data `{revision,clean,files:[string]}`. Local allowlist only.
-- `repo.prepare`: `{repo_path,revision}` → `{workspace,revision}`. Isolated checkout; reject dirty source and unsafe paths.
-- `agent.execute`: `{objective,check_ids,limits:{max_seconds,max_cost_usd}}` → `{status:"candidate"|"blocked",summary,patch_artifact_id}`. Uses an explicitly configured coding provider; fake provider is visibly fixture-only. Never edit trusted checks.
-- `repo.deliver`: `{patch_artifact_id,artifact_sha256,source_revision,destination,approval:{id,action,artifact_sha256,destination}}` → `{status,delivery_id}`. First release implements local test-destination delivery and optional approved GitHub PR creation. A validates approval; B rechecks digest/revision and allowlisted destination. No automatic merge.
-- `lookout.poll`: `{source_id,cursor}` → `{cursor,events:[{id,source_uri,condition,text}]}`. Narrow file/build events only; stable IDs, duplicates removed by A. Screen AI is deferred.
-
-### D operations
-
-- `check.run`: `{check_ids,source_revision}` → `{passed,results:[{id,state,evidence_artifact_id}]}`. Trusted checker lives outside writable candidate and mounts/reads it with controlled access. Runs the fixture signup browser journey; no candidate-controlled npm script can replace the mandatory verifier.
-- `workshop.propose`: `{accepted_job,artifact_ids}` → `{workshop,package_artifact_id}`. Proposal cannot self-activate.
-- `workshop.test`: `{package_artifact_id,case_ids}` → `{passed,results,validation_artifact_ids}`. Tests at least two additional supported failures, original regression, and unsupported input.
-- `workshop.match`: `{package_artifact_id,event}` → `{supported,reason,objective,check_ids}`. Unknown cases abstain; output is a new job proposal, not permission to execute.
-
-## Independent development fixtures
-
-`snapshot.json` is a recorded, labeled example for C and serialization tests, not a runtime. B and D test their JSON-lines entry points with local fixture requests. A uses fake subprocesses implementing the response envelope. D owns the runnable demo fixture and test rig. Do not copy implementation across lanes. Final I1 substitutes the real services and Unity build; unit tests alone cannot pass it.
+All input artifact IDs are resolved by host-staged context.artifact_inputs, not arbitrary filesystem search. B provides artifacts.freeze and preview.capture in extensions. Trusted D checks remain outside writable candidate roots. A independently verifies all returned artifact bytes and enforces project scope.

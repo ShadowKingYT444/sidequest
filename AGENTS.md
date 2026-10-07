@@ -1,29 +1,25 @@
-# Sidequest agent instructions
+# Sidequest implementation rules
 
-Read SPEC.md, docs/START_HERE.md, docs/PARALLEL_PLAN.md, contracts/PROTOCOL.md, and your lane goal document. For visual work, also open the images in docs/ART_DIRECTION.md and docs/design/.
+Implement the active goal, not a new architecture. Scope is fixed in SPEC.md. Start with your goal document and only its Read list. Do not automatically load the archive, all sources, other lane journals, or every screenshot. Do not conduct a fresh framework comparison.
 
-## Authority and scope
+## Boundaries
 
-Implement only the active goal. The goal document defines outcomes and tests, not a mandatory coding recipe. Choose your own internal implementation and debugging steps.
+A owns services/runtime/, journals/A.md, evidence/A/. B owns services/tools/, journals/B.md, evidence/B/. C owns unity/, journals/C.md, evidence/C/. D owns services/workshops/, demo/, tests/e2e/, journals/D.md, evidence/D/. dev/plan.json is the machine-readable authority. All other paths are frozen during managed development. Shared contracts change only through the coordinator; report a specific incompatible field rather than improvising.
 
-Your lane owns only the paths in dev/plan.json. Other paths, all contracts, objectives, reference boards, and the development controller are read-only. Put a needed interface change in your journal and stop the affected goal. Do not fix a merge conflict by taking one whole side. Do not edit another lane's worktree, Git refs, instructions, tests, package lock, or scene.
+The office assets are complete. Do not generate replacement art, characters, furniture, shaders, or a new room. Follow docs/ASSET_BINDING.md. C alone wires scenes, wrapper prefabs, GUID references, UI, input and package settings. Preserve imported art. No second Unity writer.
 
-A is runtime. B is tools. C owns the entire Unity project, including scenes, prefabs, metadata, packages, and settings. D is verification/workshops and the acceptance rig. No global mutable task list: keep your own journals/<lane>.md and evidence/<lane>/.
+## Fixed implementation
 
-## Goal loop
+Unity is a view/controller. Python runtime owns state, budgets and approvals. Codex performs agent work. Git produces diffs. Trusted tests determine check results. The main computer displays real artifacts inside Unity, not links masquerading as a viewer. Source and log text must not execute markup. Office updates and file viewing consume zero model calls.
 
-One active goal per lane. Work, run meaningful tests, update the journal, and write .sidequest/handoff.json. Then complete the native goal. Do not continue to the next goal yourself. The external controller freezes and commits the candidate, starts an independent validator, and advances only on an accepted verdict. Do not commit, push, merge, or modify branches from inside a managed goal; the controller handles local candidate commits.
+No LangGraph/CrewAI/Temporal/Redis/vector database, embedded Chromium, new cloud backend, unrestricted desktop agent, or always-on AI manager. No account rotation, unapproved provider fallback or silent model upgrade. A local model watcher cannot authorize an external write. Worktree isolation is not a security guarantee against hostile code.
 
-Handoff format: {"status":"ready" or "blocked","summary":"...","evidence":["relative/path"],"blockers":["..."]}.
+## Goal execution
 
-Fresh validators get the specification and candidate, not the builder conversation. Test the actual candidate. Reviewers do not repair production code. They may write generated test output and .sidequest/verdict.json in their disposable worktree. A missing tool, display, license, browser, credential, or observable result is BLOCKED, never PASS. Same-model fresh context reduces shared context, not all correlated mistakes.
+One goal at a time per lane. Follow the fixed component map and contracts; write code, tests and short evidence. Run cheap deterministic tests before requesting model validation. The controller commits the candidate and starts a new validator. Do not commit, push, merge, spawn nested agents, or advance the goal inside a managed builder session.
 
-## Product invariants
+Write .sidequest/handoff.json with status ready|blocked, summary, evidence paths, blockers. Update journals/<lane>.md with goal, changed paths, commands/results and next action. Keep each checkpoint under 250 words. Store detailed logs in evidence files, not in repeated prompts. Preserve failures; never change required checks to make them green.
 
-Unity never owns scheduling, money, approval, or verification authority. No success animation before a corresponding service record. No fake token cost, model intelligence levels, production credentials in fixtures, or simulated GitHub writes labeled live. Untrusted page/repository text cannot grant permissions. Stops prevent new dispatch; they do not undo completed external effects. Checks and approval identify exact artifact hashes.
+Validators inspect the exact candidate, rerun named tests and write .sidequest/verdict.json. They do not repair it. Unavailable tools, assets, account access or visual evidence mean BLOCKED. Fresh context is useful but is not independent proof; executable checks and final integrated testing are required.
 
-Local fixture runs and live provider runs must be visibly distinct. Never replace Unity with a web app. Do not import commercial reference screenshots as game assets. Do not add unrelated frameworks or autonomous subagent trees. Use additional helpers only when the user changes the configured concurrency budget.
-
-## Evidence and journals
-
-At every meaningful checkpoint record goal ID, observed problem, chosen change, exact command, exit result, artifact paths, and next step. Keep logs concise; do not publish private reasoning, credentials, or personal desktop captures. Do not claim a check ran without its result. Preserve failed evidence. Goals and acceptance checks cannot be weakened to get a pass.
+The owner prefers gpt-6-luna with max reasoning. Use the checked configuration and dev/luna.py. Sol escalation is manual and scoped. Budget exhaustion is a stop, not permission to start a fresh unbudgeted goal.
