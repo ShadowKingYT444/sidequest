@@ -7,6 +7,7 @@ export interface ProviderTilesProps extends ProviderReadinessInput {
   onChange: (provider: ProviderId) => void;
   disabled?: boolean;
   label?: string;
+  connectedOnly?:boolean;
 }
 
 function ProviderMark({ provider }: { provider: ProviderChoice }) {
@@ -17,14 +18,14 @@ function ProviderMark({ provider }: { provider: ProviderChoice }) {
 }
 
 /** Six known providers; no executable is presented as a connected session. */
-export default function ProviderTiles({ value, onChange, disabled = false, label = 'Agent providers', ...readiness }: ProviderTilesProps) {
+export default function ProviderTiles({ value, onChange, disabled = false, label = 'Agent providers', connectedOnly=false, ...readiness }: ProviderTilesProps) {
   return <div className="provider-tiles" role="group" aria-label={label}>
-    {PROVIDERS.map(provider => {
+    {PROVIDERS.filter(provider=>!connectedOnly||providerReadiness(provider.id,readiness).available).map(provider => {
       const state = providerReadiness(provider.id, readiness);
-      return <button type="button" key={provider.id} className="provider-tile" aria-label={provider.name + ' — ' + state.label}
+      return <button type="button" key={provider.id} className="provider-tile" aria-label={connectedOnly?provider.name:provider.name + ' — ' + state.label}
         aria-pressed={state.available && value === provider.id} disabled={disabled || !state.available} data-provider={provider.id} data-readiness={state.status}
         onClick={() => { if (!disabled && state.available) onChange(provider.id); }}>
-        <ProviderMark provider={provider} /><span className="provider-tile-copy"><strong>{provider.name}</strong><small>{state.label}</small></span>
+        <ProviderMark provider={provider} /><span className="provider-tile-copy"><strong>{provider.name}</strong>{!connectedOnly&&<small>{state.label}</small>}</span>
       </button>;
     })}
   </div>;

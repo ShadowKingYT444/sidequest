@@ -7,6 +7,7 @@ import './StationLauncher.css';
 
 export interface StationLauncherProps {
   stationLabel: string;
+  workspace?:boolean;
   memory?: LauncherMemory;
   onUncertaintyChange?: (uncertain:boolean) => void;
   projectId?: string;
@@ -17,7 +18,7 @@ export interface StationLauncherProps {
 }
 
 interface Setup { snapshot: RuntimeSnapshot; capabilities: RuntimeCapabilities; providers: ProviderDiscovery }
-export interface LauncherMemory { inFlight:boolean; submissionUncertain:boolean; pendingTask:Omit<QueuedTask,'job'>|null; queued:QueuedTask|null; launchAccepted:boolean }
+export interface LauncherMemory { inFlight:boolean; submissionUncertain:boolean; pendingTask:Omit<QueuedTask,'job'>|null; queued:QueuedTask|null; launchAccepted:boolean; selectedProvider?:string; draft?:{provider:string;projectId:string;prompt:string;writePrefix:string;budget:string} }
 interface QueuedTask { assignment: StationAssignment; job: RuntimeJob; writePrefix: string; budget: string }
 const jobStates=new Set(['queued','running','verifying','needs_approval','accepted','blocked','failed','paused','cancelled']);
 const validJobText=(job:RuntimeJob)=>typeof job.title==='string'&&job.title.trim().length>0&&job.title.length<=200&&typeof job.state==='string'&&jobStates.has(job.state);
@@ -72,7 +73,7 @@ async function verifiedJob(id: string, projectId: string, budget: string): Promi
 }
 
 /** A desk queues one scoped task. Every grant and launch is a separate user action. */
-export default function StationLauncher({ stationLabel, memory, onUncertaintyChange, projectId: initialProjectId, onClose, onSettings, onQueued, onLaunched }: StationLauncherProps) {
+export default function StationLauncher({ stationLabel, workspace=false, memory, onUncertaintyChange, projectId: initialProjectId, onClose, onSettings, onQueued, onLaunched }: StationLauncherProps) {
   const id = useId();
   const retained=useRef<LauncherMemory>(memory??{inFlight:false,submissionUncertain:false,pendingTask:null,queued:null,launchAccepted:false}).current;
   const dialog = useRef<HTMLElement>(null);
@@ -80,11 +81,12 @@ export default function StationLauncher({ stationLabel, memory, onUncertaintyCha
   const locked = useRef(false);
   const close = useRef(onClose); close.current = onClose;
   const [setup, setSetup] = useState<Setup | null>(null);
-  const [provider, setProvider] = useState('');
-  const [projectId, setProjectId] = useState(initialProjectId ?? '');
-  const [prompt, setPrompt] = useState('');
-  const [writePrefix, setWritePrefix] = useState('');
-  const [budget, setBudget] = useState('');
+  const [provider, setProvider] = useState(retained.draft?.provider??retained.selectedProvider??'');
+  const [projectId, setProjectId] = useState(initialProjectId ?? retained.draft?.projectId ?? '');
+  const [prompt, setPrompt] = useState(retained.draft?.prompt??'');
+  const [writePrefix, setWritePrefix] = useState(retained.draft?.writePrefix??'');
+  const [budget, setBudget] = useState(retained.draft?.budget??'');
+  useEffect(()=>{retained.draft={provider,projectId,prompt,writePrefix,budget};},[retained,provider,projectId,prompt,writePrefix,budget]);
   const [queued, setQueued] = useState<QueuedTask | null>(retained.queued);
   const [pendingTask, setPendingTask] = useState<Omit<QueuedTask, 'job'> | null>(retained.pendingTask);
   const [submissionUncertain, setSubmissionUncertain] = useState(retained.submissionUncertain);
@@ -117,6 +119,7 @@ export default function StationLauncher({ stationLabel, memory, onUncertaintyCha
   }, [readSetup]);
 
   useEffect(() => {
+    if(workspace)return;
     dialog.current?.focus();
     const keyboard = (event: KeyboardEvent) => {
       if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close.current(); }
@@ -131,7 +134,7 @@ export default function StationLauncher({ stationLabel, memory, onUncertaintyCha
     };
     document.addEventListener('keydown', keyboard, true);
     return () => { document.removeEventListener('keydown', keyboard, true); };
-  }, []);
+  }, [workspace]);
 
   const act = async (action: () => Promise<void>) => {
     if (locked.current) return;
@@ -238,16 +241,15 @@ export default function StationLauncher({ stationLabel, memory, onUncertaintyCha
     });
   };
 
-  return <div className="station-launcher-backdrop" onPointerDown={event => { if (event.target === event.currentTarget) onClose(); }}>
-    <section className="station-launcher" ref={dialog} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={`${id}-title`} aria-describedby={`${id}-status`} aria-busy={busy}>
-      <header className="station-launcher-header"><div><h2 id={`${id}-title`}>{launchAccepted ? 'Launch accepted' : queued ? queued.job.state === 'queued' ? 'Task queued' : 'Task status' : 'New task'}</h2><span>{stationLabel}</span></div><button type="button" className="station-launcher-close" aria-label="Close task launcher" onClick={onClose}>×</button></header>
+  const content=<section className={`station-launcher${workspace?' is-workspace':''}`} ref={dialog} tabIndex={-1} role={workspace?'region':'dialog'} aria-modal={workspace?undefined:true} aria-label={workspace?'Task setup':undefined} aria-labelledby={workspace?undefined:`${id}-title`} aria-describedby={`${id}-status`} aria-busy={busy}>
+      <header className="station-launcher-header"><div><h2 id={`${id}-title`}>{workspace?'Task setup':launchAccepted ? 'Launch accepted' : queued ? queued.job.state === 'queued' ? 'Task queued' : 'Task status' : 'New task'}</h2><span>{stationLabel}</span></div><button type="button" className="station-launcher-close" aria-label="Close task launcher" onClick={onClose}>×</button></header>
       <div className="station-launcher-content">
         <div className="station-launcher-status"><p id={`${id}-status`} role="status">{message}</p></div>
         {error && <p className="station-launcher-error" role="alert">{error}</p>}
         {submissionUncertain && <p className="station-launcher-error" role="alert">Submission was not confirmed. Review Jobs before submitting again.</p>}
         {pendingTask && !queued && <p role="status" className="station-launcher-note">Task accepted. Refresh to verify its current state.</p>}
         {queued ? <div className="station-launcher-queued"><h3>{queued.job.title}</h3><p><span>{queued.job.state.replaceAll('_', ' ')}</span> · ${queued.budget} limit</p><div><span>Write scope</span><code>{queued.writePrefix}</code></div><div><span>Task ID</span><code>{queued.assignment.jobId}</code></div><p className="station-launcher-note">{launchAccepted ? 'Launch accepted. Follow its real status in Jobs.' : 'Queued only. Launch is a separate action.'}</p></div> : <form id={`${id}-form`} onSubmit={submit}>
-          <ProviderTiles {...readiness} value={provider} onChange={setProvider} disabled={busy || !!pendingTask || submissionUncertain} />
+          {workspace&&!providerStates.some(item=>item.readiness.available)?<p className="station-launcher-note">No connected provider</p>:<ProviderTiles {...readiness} value={provider} onChange={setProvider} connectedOnly={workspace} disabled={busy || !!pendingTask || submissionUncertain} />}
           <details className="station-launcher-options station-launcher-setup"><summary>Provider availability</summary><dl>{providerStates.map(item => <div key={item.id}><dt>{item.name}</dt><dd>{item.readiness.reason}{item.readiness.installed && <small>Executable found · discovery does not verify a connection.</small>}</dd></div>)}</dl><button type="button" disabled={busy} onClick={() => { onClose(); onSettings(); }}>Agent settings</button></details>
           <div className="station-launcher-pickers"><label htmlFor={`${id}-project`}>Repository<select id={`${id}-project`} value={projectId} onChange={event => setProjectId(event.target.value)} disabled={busy || !!pendingTask || submissionUncertain}>{!projectId && <option value="">No registered repository</option>}{setup?.snapshot.projects.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label></div>
           <label htmlFor={`${id}-prompt`}>Prompt<textarea id={`${id}-prompt`} placeholder="What should this agent work on?" rows={2} maxLength={2000} value={prompt} onChange={event => setPrompt(event.target.value)} disabled={busy || !!pendingTask || submissionUncertain} required /></label>
@@ -257,6 +259,6 @@ export default function StationLauncher({ stationLabel, memory, onUncertaintyCha
         </form>}
       </div>
       <footer className="station-launcher-footer"><button type="button" disabled={busy} onClick={refresh}>Refresh setup</button>{queued ? <button type="button" className="station-launcher-primary" disabled={busy || !ready || !basePolicy || !canPropose || launchAccepted || queued.job.state !== 'queued'} onClick={launch}>{launchAccepted ? 'Launch accepted' : 'Launch task'}</button> : <button type="submit" form={`${id}-form`} className="station-launcher-primary" disabled={busy || !ready || !basePolicy || !canPropose || !!fieldError || !!pendingTask || submissionUncertain}>Submit task</button>}</footer>
-    </section>
-  </div>;
+    </section>;
+  return workspace?content:<div className="station-launcher-backdrop" onPointerDown={event=>{if(event.target===event.currentTarget)onClose();}}>{content}</div>;
 }

@@ -217,7 +217,7 @@ function ContextCardProjection({card,bindings}:{card?:OfficeSceneProps['contextu
     let watched:HTMLElement|null=null;
     const resize=new ResizeObserver(()=>position());
     const position=()=>{
-      const node=host.matches('.object-modal')?host:host.querySelector<HTMLElement>('.station-launcher');
+      const node=host.matches('.object-modal')?host:host.querySelector<HTMLElement>('.provider-picker,.station-launcher');
       if(!node)return;
       if(watched!==node){resize.disconnect();resize.observe(node);watched=node;}
       const station=bindings.stations.find(item=>item.id===card.stationId);

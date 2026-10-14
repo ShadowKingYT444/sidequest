@@ -1,0 +1,50 @@
+{
+  "at": "2026-10-14T15:47:10.357550+00:00",
+  "operation": "Save three screenshots to Library in requested order",
+  "status": "blocked before preparation",
+  "reason": "Library upload failed: hosted apps tools/list request failed: network",
+  "library_mutations": 0,
+  "uncertain_outcome": false,
+  "files": [
+    {
+      "filename": "provider-selector.png",
+      "sha256": "9f07cef2e8521bf90cb838d6165e40d0719b33ea7fd84f90f8bf399c7d53d582",
+      "fixture": false,
+      "status": "not saved",
+      "library_file_id": null
+    },
+    {
+      "filename": "monitor-pov.png",
+      "sha256": "f9d7473a7713178367d23ce910ec2e7254aeff3154a8ce3eb3fb41eab85d0606",
+      "fixture": false,
+      "status": "not saved",
+      "library_file_id": null
+    },
+    {
+      "filename": "notifications-badges-fixture.png",
+      "sha256": "e07ec9f458ef59aa3ec940f58276a338598fbb109c7fc3537a7dd2c6cfc1d184",
+      "fixture": true,
+      "status": "not saved",
+      "library_file_id": null
+    }
+  ],
+  "fallback": "Actual screenshot PNGs remain committed on feature branch and linked in PR; no direct-upload bypass, credentials or account configuration changes.",
+  "library_read_access": "Connected Library search succeeded through app tools; VM upload transport remains unavailable.",
+  "files_at_latest_revision": [
+    {
+      "filename": "provider-selector.png",
+      "sha256": "9aa9d29cb8f50973c43d40967b247d36f839e58a40102ccbe73d2a8cfe10dde6",
+      "fixture": false
+    },
+    {
+      "filename": "monitor-pov.png",
+      "sha256": "f9d7473a7713178367d23ce910ec2e7254aeff3154a8ce3eb3fb41eab85d0606",
+      "fixture": false
+    },
+    {
+      "filename": "notifications-badges-fixture.png",
+      "sha256": "7ffab76d0a422bbc7f7e27b578fa16997a8c0d2f2006d0143106544fcaf4ac59",
+      "fixture": true
+    }
+  ]
+}

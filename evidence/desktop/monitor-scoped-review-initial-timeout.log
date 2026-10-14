@@ -1,0 +1,41 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/monitor-ui.spec.ts tests/browser/visual-office.spec.ts --grep fixture|1440px --retries=0
+
+
+Running 2 tests using 1 worker
+
+(node:205999) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/monitor-ui.spec.ts:77:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure (36.1s)
+  ✘  2 tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 1440px (1.6m)
+
+
+  1) tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 1440px ─────
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('combobox', { name: 'Office navigation' })
+
+
+      76 |   const launcherAxe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();expect(launcherAxe.violations.map(v=>({id:v.id,impact:v.impact}))).toEqual([]);
+      77 |   await page.screenshot({path:path.join(evidence,`monitor-task-setup${width===1440?'':'-390'}.png`)});await page.keyboard.press('Escape');await expect(launcher).toHaveCount(0);
+    > 78 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');
+         |                                                               ^
+      79 |   const session=page.getByRole('dialog',{name:'Agent session'});await expect(session).toContainText('No live session attached');
+      80 |   await page.screenshot({path:path.join(evidence,`agent-session${width===1440?'':'-390'}.png`)});
+      81 |   await page.keyboard.press('Escape');await expect(session).toHaveCount(0);
+        at /workspace/sidequest/desktop/tests/browser/visual-office.spec.ts:78:63
+
+    Error Context: test-results/visual-office-provider-settings-and-preserved-work-at-1440px/error-context.md
+
+  1 failed
+    tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 1440px ──────
+  1 passed (2.2m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

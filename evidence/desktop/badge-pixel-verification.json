@@ -1,0 +1,27 @@
+{
+  "fixture": true,
+  "image": "notifications-badges-fixture.png",
+  "sha256": "7ffab76d0a422bbc7f7e27b578fa16997a8c0d2f2006d0143106544fcaf4ac59",
+  "region": "Office pixels outside notification tray",
+  "colored_badge_components": {
+    "completion": [
+      {
+        "pixels": 202,
+        "center": [
+          616.1039603960396,
+          287.41089108910893
+        ]
+      }
+    ],
+    "attention": [
+      {
+        "pixels": 321,
+        "center": [
+          742.4517133956386,
+          322.1588785046729
+        ]
+      }
+    ]
+  },
+  "human_review": "Green check and red exclamation visibly above primary figures after bounds-based placement."
+}

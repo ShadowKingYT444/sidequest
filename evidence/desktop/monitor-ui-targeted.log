@@ -1,63 +1,15 @@
 
 > sidequest-desktop@0.1.0 test:browser
-> playwright test tests/browser/monitor-ui.spec.ts --retries=0
+> playwright test tests/browser/monitor-ui.spec.ts --grep local monitor drafts --retries=0
 
 
-Running 2 tests using 1 worker
+Running 1 test using 1 worker
 
-(node:199448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:205552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
-  ✘  1 tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll (1.7m)
-(node:202735) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
-  ✘  2 tests/browser/monitor-ui.spec.ts:55:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure (39.9s)
+  ✓  1 tests/browser/monitor-ui.spec.ts:38:1 › local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages (2.5m)
 
-
-  1) tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll 
-
-    Error: Timeout 15000ms exceeded while waiting on the predicate
-
-      21 |   await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});
-      22 |   const canvas=page.locator('.office-canvas canvas'),box=(await canvas.boundingBox())!;const initial=await pose(page);
-    > 23 |   await page.mouse.move(box.x+box.width*.9,box.y+box.height*.12);await page.mouse.wheel(0,-120);await expect.poll(async()=>JSON.stringify(await pose(page))).not.toBe(JSON.stringify(initial));
-         |                                                                                                                                                                  ^
-      24 |   const office=await pose(page);
-      25 |   const bindings=await (await request.get('/office/bindings.json')).json(),station=bindings.stations.find((s:{id:string})=>s.id==='parent_019');
-      26 |   const camera=new PerspectiveCamera(35,box.width/box.height,.05,1000);camera.position.fromArray(office.position);camera.lookAt(new Vector3().fromArray(office.target));camera.updateMatrixWorld();
-        at /workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:23:162
-
-    Error Context: test-results/monitor-ui-monitor-POV-ret-fa7cb-paste-drop-files-and-scroll/error-context.md
-
-  2) tests/browser/monitor-ui.spec.ts:55:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure 
-
-    Error: expect(locator).toContainText(expected) failed
-
-    Locator: locator('.app-footer')
-    Expected substring: "Test fixture"
-    Received string:    "Navigate…Tasks boardComputer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 2426 staged · sessions uncheckedLocal Git · read-only"
-    Timeout: 15000ms
-
-    Call log:
-      - Expect "toContainText" locator('.app-footer') with timeout 15000ms
-      - waiting for locator('.app-footer')
-        - locator resolved to <footer class="app-footer" data-staged-actors="26" data-actor-status="ready">…</footer>
-        - unexpected value "Navigate…Tasks boardComputer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 2426 staged · sessions uncheckedLocal Git · read-only"
-
-
-      59 |   const fixture={...actual,mode:'fixture',jobs:jobs.map((job:any,i:number)=>({...job,state:i===0?'completed':'failed',title:`Test fixture · ${i===0?'Completed task':'Attention task'}`,blocked_reason:i===0?null:'Test fixture failure, no execution performed',tasks:job.tasks.map((task:any)=>({...task,state:i===0?'completed':'failed'})),checks:job.checks.map((check:any)=>({...check,state:i===0?'pass':'fail'}))})),office_sessions:owners};
-      60 |   const mutations:string[]=[];page.on('request',r=>{if(/__sidequest\/runtime\/(submitCoding|runCoding|enableCoding|assignSession|clearSession)$/.test(r.url()))mutations.push(r.url());});
-    > 61 |   await page.route('**/__sidequest/runtime/snapshot',route=>route.fulfill({json:fixture}));await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await expect(page.locator('.app-footer')).toContainText('Test fixture');
-         |                                                                                                                                                                                                                                                                  ^
-      62 |   const canvas=page.locator('.office-canvas canvas');await expect.poll(async()=>JSON.parse(await canvas.getAttribute('data-agent-badges')??'[]').length).toBe(2);
-      63 |   const badges=JSON.parse((await canvas.getAttribute('data-agent-badges'))!);expect(badges).toEqual(expect.arrayContaining([{sceneId:'worker_parent_019',stationId:'parent_019',kind:'completed',jobId:jobs[0].id},{sceneId:'worker_parent_020',stationId:'parent_020',kind:'attention',jobId:jobs[1].id}]));expect(badges.some((b:{sceneId:string})=>b.sceneId==='child_019_01')).toBe(false);
-      64 |   await page.getByRole('button',{name:/^Notifications/}).click();const tray=page.getByRole('region',{name:'Notifications',exact:true});await expect(tray.locator('[data-notification-kind=completed]')).toHaveCount(1);await expect(tray.locator('[data-notification-kind=attention]')).toHaveCount(1);await expect(tray).toContainText('Test fixture');
-        at /workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:61:258
-
-    Error Context: test-results/monitor-ui-explicit-read-o-e0c44-ne-badge-per-primary-figure/error-context.md
-
-  2 failed
-    tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll 
-    tests/browser/monitor-ui.spec.ts:55:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure 
+  1 passed (2.5m)
 npm notice
 npm notice New major version of npm available! 11.9.0 -> 12.2.0
 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0

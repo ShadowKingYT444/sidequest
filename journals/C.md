@@ -65,3 +65,12 @@ The captured read-only textboxes are also part of Monaco's normal accessibility 
 **Full suite passed: 12/12, exit 0, retries disabled, 9.9 minutes**, on published repair `f6b8a1921e3000de82268b1878a090fd900b0560`. All 94 code/configuration hashes match before/after. The new regression reproduces two editor mounts on unrepaired code and verifies one after repair, saved scroll and fresh Git reading on explicit Refresh. The original viewer assertions and timeouts remain unchanged; its previously failing Escape/reopen flow passes in the full suite. Read-only/accessibility behavior is unchanged. Typecheck/build and 30 desktop tests pass.
 
 Cause and scoped fix are established; the earlier textbox snapshot was insufficient evidence of fallback, because normal Monaco exposes those accessibility textboxes. Prior full-run failures, the red regression and diagnostic trace remain preserved. Current terminal record/log: `repaired-12-run.json` and `repaired-12-browser.log`; cause/fix record: `monaco-reopen-repair.json`. No model calls, native attempts, backend/asset changes or new product features. Native host/USD gates and interactive orchestration remain incomplete.
+
+
+### Compact monitor revision checkpoint
+
+Desk selection now shows connected/ready provider logo/name choices only, or one Connect provider action. Task setup is in the selected monitor and retains existing scope, consent, submission/launch and uncertainty guards. Monitor trace and local composer preserve complete ownership identity, draft, shared async attachment queue and desired scroll across Escape/expansion/outages. Only the selected Files view mounts Monaco. Original GLB/Blender sources and backend files are unchanged.
+
+Primary-only status sprites are recomputed after static pose/skeleton sampling, above body/cap bounds. Fresh fixture capture visibly shows both a green check and red attention sign; pixel analysis confirms both outside the notification tray. Current local inspections display Checking.
+
+Validation: 50 desktop, 48 runtime, 42 tools tests; typecheck/build pass. Focused local preservation, notification fixture and 1440/390px picker/task checks pass. Full 17-test suite is next on frozen committed source. Prior timeouts preserved; camera/local/provider coverage split without weakening assertions. Library upload blocked before preparation by VM hosted-app transport network failure; Library search itself works. No native/model calls, auth changes, new spending, merge or deployment.

@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-14T16:17:10.862290+00:00",
+  "status": "scoped reviews fixed; full browser verification pending",
+  "desk_picker": "Only connected/ready logo/name choices, or one Connect provider action. No task fields.",
+  "task_setup": "Existing guarded text-only task form moved to monitor workspace.",
+  "badges": "One per primary figure, after sampled posed/cap bounds max.y +0.33m. Fresh visible completion/attention fixture signs verified.",
+  "tests": {
+    "desktop": 50,
+    "runtime": 48,
+    "tools": 42,
+    "typecheck": "pass",
+    "build": "pass",
+    "focused_local_preservation": "pass",
+    "focused_notification_fixture": "pass",
+    "focused_picker_task_1440_390": "2 pass"
+  },
+  "full_browser": "17 tests next, retries 0",
+  "Library": "Failed before preparation; screenshot PNGs committed.",
+  "dispatch": "Session messages and attachment transport unavailable; coding gates fail closed on current host. No native/model attempts."
+}

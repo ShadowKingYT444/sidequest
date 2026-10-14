@@ -1,7 +1,7 @@
 import { Component, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { AnimationMixer, Bone, Group, Matrix4, Mesh, MeshStandardMaterial, Skeleton, SkinnedMesh, TextureLoader, Vector3, type AnimationClip, type Material, type Object3D } from "three";
+import { AnimationMixer, Bone, Box3, Group, Matrix4, Mesh, MeshStandardMaterial, Skeleton, SkinnedMesh, TextureLoader, Vector3, type AnimationClip, type Material, type Object3D } from "three";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import type { GLTF, GLTFLoader, GLTFParser } from "three-stdlib";
 import { validateOfficeResourceUrl } from "./office-bindings";
@@ -322,14 +322,18 @@ function ActorPrimitive({ instance, headRestInverse, onLoaded, human, fit, ident
   human: Pick<GLTF, "scene" | "animations">; fit?: Pick<GLTF, "scene">; identity?: Pick<GLTF, "scene">;
 }) {
   const assembly = useMemo(() => assembleOriginalActor(instance, human, headRestInverse, fit, identity), [instance, human, headRestInverse, fit, identity]);
-  const badgePosition=useMemo(()=>{const point=new Vector3();assembly.object.getObjectByName('head')!.getWorldPosition(point);point.y+=.4;return point.toArray() as [number,number,number];},[assembly]);
+  const [badgePosition,setBadgePosition]=useState<[number,number,number]|null>(null);
   const invalidate = useThree(state => state.invalidate);
   useLayoutEffect(() => {
     // React's development remount also resamples after cleanup restored bind poses.
-    assembly.sample(); invalidate(); onLoaded(instance.sceneId);
+    assembly.sample();assembly.object.updateMatrixWorld(true);
+    assembly.object.traverse(node=>{if(node instanceof SkinnedMesh)node.skeleton.update();});
+    const point=new Vector3();assembly.object.getObjectByName('head')!.getWorldPosition(point);
+    point.y=new Box3().setFromObject(assembly.object,true).max.y+.33;
+    setBadgePosition(point.toArray() as [number,number,number]);invalidate(); onLoaded(instance.sceneId);
     return assembly.dispose;
   }, [assembly, instance.sceneId, onLoaded, invalidate]);
-  return <><primitive object={assembly.object} dispose={null} />{badge&&<AgentBadge kind={badge.kind} label={`${badge.fixture?'Test fixture · ':''}${badge.label}: ${badge.title} · recorded status at ${instance.stationId}`} position={badgePosition} onClick={()=>onNotification?.(badge)}/>}</>;
+  return <><primitive object={assembly.object} dispose={null} />{badge&&badgePosition&&<AgentBadge kind={badge.kind} label={`${badge.fixture?'Test fixture · ':''}${badge.label}: ${badge.title} · recorded status at ${instance.stationId}`} position={badgePosition} onClick={()=>onNotification?.(badge)}/>}</>;
 }
 
 function CappedActor(props: StaticActorProps & { human: Pick<GLTF, "scene" | "animations"> }) {

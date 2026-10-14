@@ -1,0 +1,34 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/monitor-ui.spec.ts --grep monitor POV --retries=0
+
+
+Running 1 test using 1 worker
+
+(node:205234) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll (3.1m)
+
+
+  1) tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll 
+
+    Error: Test timeout of 180000ms exceeded
+
+      46 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await expect(input).toHaveValue('Keep this draft. Plain\n<script>literal</script>');await expect(composer.getByRole('img',{name:'Preview of clipboard.png'})).toBeVisible();await expect.poll(async()=>Number(await output.getAttribute('data-scroll-top'))).toBeGreaterThan(0);
+      47 |   await mark('reopen-retained');await page.getByRole('button',{name:'Files',exact:true}).click();await expect(page.getByTestId('diff-editor')).toHaveCount(1);await page.getByRole('button',{name:'Trace',exact:true}).click();await expect(page.getByTestId('diff-editor')).toHaveCount(0);await expect(input).toHaveValue('Keep this draft. Plain\n<script>literal</script>');
+    > 48 |   await page.getByRole('button',{name:'Expand',exact:true}).click();await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await expect.poll(async()=>Number(await output.getAttribute('data-scroll-top'))).toBeGreaterThan(0);
+         |                                                                                                                                                                                                                                                                                         ^
+      49 |   await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await page.keyboard.press('Escape');await expect.poll(async()=>{const actual=await pose(page);return Math.max(...office.position.map((n:number,i:number)=>Math.abs(n-actual.position[i])));}).toBeLessThan(.01);await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');
+      50 |   await mark('tabs-expand-and-escape-retained');await composer.getByRole('button',{name:'Remove notes.txt'}).click();await expect(composer.getByRole('button',{name:'Remove notes.txt'})).toHaveCount(0);
+      51 |   await page.evaluate(()=>{const original=Blob.prototype.arrayBuffer;let release!:()=>void;const gate=new Promise<void>(resolve=>release=resolve);(window as unknown as {releaseDraftRead:()=>void}).releaseDraftRead=release;Blob.prototype.arrayBuffer=function(){return this.size===16?gate.then(()=>original.call(this)):original.call(this);};});
+        at /workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:48:281
+
+    Error Context: test-results/monitor-ui-monitor-POV-ret-fa7cb-paste-drop-files-and-scroll/error-context.md
+
+  1 failed
+    tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll 
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
