@@ -46,6 +46,9 @@ function localReads(): Plugin {
 }
 export default defineConfig({
   base: './', plugins: [react(), localReads()],
+  // Monaco 0.57 vendors DOMPurify 3.4.15. Replace the actual imported module,
+  // as well as its npm dependency, so the shipped editor uses the patched code.
+  resolve:{alias:[{find:/^\.\/dompurify\/dompurify\.js$/,replacement:path.resolve(desktopRoot,'node_modules/dompurify/dist/purify.es.mjs')}]},
   server: { host: '127.0.0.1', port: 5173, strictPort: true, fs: { strict: true, allow: [desktopRoot] }, headers: { 'X-Content-Type-Options': 'nosniff' } },
   build: { target: 'es2022' },
 });

@@ -2,7 +2,7 @@
 
 Electron hosts React/TypeScript. React Three Fiber/Drei binds the supplied office GLB, and a selected computer opens one lazy read-only Monaco diff editor. Expand moves that selection into a flat reading panel; Escape returns to the office and retains the selected file, cursor/selection and editor scroll state. Non-selected monitors use small previews. The office renders on demand and stops rendering while hidden; decorative animation is not started.
 
-**Current verified state:** the browser can inspect real committed Git changes, expand, scroll, return and reopen. The persistent runtime foundation and trusted frozen-candidate checks passed fresh reviews. The authenticated runtime API and explicit local-inspection job board are being integrated; their live job-to-result acceptance is still pending. Coding-agent state is unavailable. The fixed inspection profile permits Git reads and deterministic checks with zero model calls, zero provider spending and no source delivery. The repository originally contained specifications and development tooling only; these services implement the specified boundaries.
+**Current verified state:** the browser can inspect real committed Git changes, expand, scroll, return and reopen. The persistent runtime, authenticated artifact API, independent Git clones and trusted frozen-candidate checks are implemented. The jobs board has completed a genuine UI/HTTP/Git/check inspection and displayed its immutable files and check report. That fixed profile makes zero model calls, spends zero provider dollars and performs no source delivery. The Codex app-server adapter and persisted task/session lifecycle are implemented and tested with a fake transport; native coding execution remains blocked. The repository originally contained specifications and development tooling only; these services implement the specified boundaries.
 
 **Unverified:** the actual office assets are located in the owner's Drive archive but have not transferred into this VM. Its proxy returns 403 for authenticated transfer URLs. No real office render, texture/material match, animation playback or monitor alignment has passed. Native Electron startup is blocked by the VM's unusable Linux sandbox helper/user namespace support. The browser screenshots are actual browser captures of Git data, not office mockups or desktop runtime proof.
 
@@ -76,7 +76,22 @@ stations: [{ id, label, workerId?, anchor: [x,y,z], rotation: [x,y,z],
 board?: { anchor, rotation, size }
 ```
 
-IDs must be stable and unique; camera/anchor vectors finite; screen sizes positive. Bind roles to existing monitor surfaces; do not add desks or rebuild the room. Until runtime worker artifacts exist, all computers expose the host-configured repository and show that agent services are unavailable. A worker label alone must never imply a live assignment. Rebuild after installing assets for Electron, then verify actual object selection, focus-camera movement, in-world diff readability and the expanded view. The board/jobs interaction, worker-specific run resolution and full artifact tabs are remaining work.
+IDs must be stable and unique; camera/anchor vectors finite; screen sizes positive. Bind roles to existing monitor surfaces; do not add desks or rebuild the room. Computers currently expose the host-configured committed repository and state that agent execution is unavailable. A worker label alone must never imply a live assignment. The bound board opens the existing jobs panel. Rebuild after installing assets for Electron, then verify actual object selection, focus-camera movement, in-world diff readability, board targeting and the expanded view. Worker-specific run resolution and additional artifact tabs remain future work.
+
+## Run the local jobs board
+
+Install the Python runtime/check locks and start the host as described in [RUN_EVALS.md](../docs/RUN_EVALS.md#integrated-job-acceptance). Use a clean, trusted source repository and dedicated state directories outside Git. In another terminal:
+
+```sh
+cd desktop
+SIDEQUEST_REPO=/absolute/path/to/clean/repository SIDEQUEST_BASE=HEAD~1 \
+SIDEQUEST_RUNTIME_URL=http://127.0.0.1:4317 \
+SIDEQUEST_API_TOKEN_FILE=/absolute/path/to/private-config/session.token npm run dev
+```
+
+For Electron, pass the same host variables to `npm start` after building. The private app-session token stays in the host process; the renderer receives no token or arbitrary path access. Open **Jobs**, register the configured repository, submit an inspection, review the queued job, and explicitly click **Run inspection**. The panel reads status, immutable files, diff rows, reports and recent events. Artifact/file/text/diff pages have explicit navigation. JSON reports are formatted and all source/log text stays literal. Escape closes the board and preserves the selected artifact. Polling stops while the panel or window is hidden.
+
+The deterministic inspection clones the registered commit unchanged, so its candidate diff is empty. The computer viewer separately compares the configured committed base and HEAD. Completed checks make inspection results ready, while the backend keeps `verifying` with source delivery disabled. This is a genuine local job pipeline, not a coding-agent demonstration.
 
 ## Verification
 
@@ -103,4 +118,6 @@ The renderer is sandboxed with context isolation and Node integration disabled. 
 
 Git uses argv with `shell: false`, disabled external diff/textconv/hooks/fsmonitor, scrubbed inherited Git environment variables, pinned immutable blob IDs, output/time/file/concurrency limits, and generic errors. Filename and common credential-material filters are heuristic, not a full secret scanner. Configure a trusted repository that has been checked for secrets; unknown secret formats may still be present in ordinary source files. Likely sensitive content is withheld with an explicit reason rather than mislabeled as binary.
 
-Next steps are: transfer and inspect the actual art, bind and visually verify its monitors/camera/materials; run native Electron on a sandbox-capable host; implement the specified Python runtime/artifact API and validated Git/Codex adapters; resolve stations to real worker/run artifacts; then implement jobs, files, logs, screenshots, checks and exact approval flows. Preserve the current read-only boundary until those host services and policies are tested. No merge or deployment is requested.
+Codex host setup, readiness refresh and persisted task lifecycle are described in [services/runtime/README.md](../services/runtime/README.md). Status refresh reads cached state and launches no model process or turn. The installed CLI reports an existing ChatGPT login, but its native app-server fails before initialization because protected runtime state is read-only; no catalog/model/effort or account response has been verified. Its protocol also lacks a verified enforceable USD ceiling, so production coding execution is blocked before thread/turn creation. Synthetic lifecycle tests are explicitly fixture evidence.
+
+Next steps are: obtain the actual art through an authorized working transfer route, inspect original/copy hashes and visually bind monitors/camera/materials; run Electron on a sandbox-capable host; resolve native Codex runtime-state and enforceable budget readiness before seeking authorization for a tiny real turn; then resolve desks to actual runs and add screenshots/workshops/capture and exact delivery approval flows. No merge or deployment is requested.

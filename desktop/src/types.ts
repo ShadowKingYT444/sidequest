@@ -9,9 +9,9 @@ export interface GitDiff {
   binary: boolean; unavailableReason?: string; baseRevision: string; candidateRevision: string; readOnly: true;
 }
 export interface RuntimeProject {id:string;name:string;base_revision:string;status:string}
-export interface RuntimeJob {id:string;project_id?:string;title:string;state:string;execution_profile?:'local_git_inspection'|null;blocked_reason?:string|null;artifact_ids:string[];checks:{id:string;state:string;evidence_artifact_id?:string|null}[];events:{id:string;at:string;type:string;message:string}[];budget_usd:number;spent_usd:number|null;worker_id:string|null}
+export interface RuntimeJob {id:string;project_id?:string;title:string;state:string;execution_profile?:'local_git_inspection'|'codex_session'|null;blocked_reason?:string|null;artifact_ids:string[];checks:{id:string;state:string;evidence_artifact_id?:string|null}[];events:{id:string;at:string;type:string;message:string}[];tasks?:{id:string;state:string}[];budget_usd:number;spent_usd:number|null;worker_id:string|null}
 export interface RuntimeSnapshot {v:1;revision:number;mode:string;projects:RuntimeProject[];jobs:RuntimeJob[];stopped:boolean}
-export interface RuntimeCapabilities {v:1;features:{local_git_inspection?:boolean;computer_artifacts:boolean};worker_model:{id:string;effort:string;verified:boolean};reasons:string[]}
+export interface RuntimeCapabilities {v:1;features:{local_git_inspection?:boolean;computer_artifacts:boolean;coding?:boolean};worker_model:{id:string;effort:string;verified:boolean};reasons:string[];codex?:{state:string;usd_cost_enforced:boolean;reason?:string|null}}
 export interface RuntimeArtifact {id:string;kind:string;job_id:string;sha256:string;display_name?:string;size_bytes?:number;candidate_id?:string|null;source_revision:string;immutable?:boolean}
 export interface RuntimeFile {file_id:string;path:string;status:string;binary:boolean;size_bytes:number;sha256:string|null;media_type:string}
 export interface FilePage {v:1;artifact_id:string;candidate_id:string;files:RuntimeFile[];next_cursor:string|null}

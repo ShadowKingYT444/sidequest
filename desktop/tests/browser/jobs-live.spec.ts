@@ -27,6 +27,7 @@ test('genuine local inspection job produces immutable files and a check report',
   await board.getByRole('button',{name:'Run inspection',exact:true}).click();
   await expect(board.locator('.job-state')).toHaveText('verifying',{timeout:20_000});
   await expect(board.locator('.job-checks')).toContainText('pass',{timeout:90_000});
+  await expect(board).toContainText('Inspection results ready.');
   await expect(board.locator('.artifact-files>button').first()).toBeVisible();
   await expect(board.locator('.artifact-text')).not.toContainText('Loading file text…');
   await expect(board.locator('.artifact-files>button').first()).toBeVisible();
@@ -36,8 +37,23 @@ test('genuine local inspection job produces immutable files and a check report',
   await page.screenshot({path:path.resolve('../evidence/desktop/job-diff.png')});
   await board.locator('#job-artifact').selectOption({label:await board.locator('#job-artifact option').filter({hasText:'test_report'}).first().textContent()??''});
   await expect(board.locator('.artifact-text')).toContainText('candidate.frozen_identity');
-  await expect(board.locator('.artifact-text')).toContainText('"inference_calls": 0');
+  await expect.poll(async()=>JSON.parse(await board.locator('.artifact-text').textContent()??'{}').inference_calls).toBe(0);
+  const report=JSON.parse(await board.locator('.artifact-text').textContent()??'{}');
   await page.screenshot({path:path.resolve('../evidence/desktop/job-check-report.png')});
+  await board.locator('.coding-readiness summary').click();
+  await expect(board.locator('.coding-readiness')).toContainText('Coding tasks remain blocked.');
+  const refreshStart=calls.length;
+  await board.getByRole('button',{name:'Refresh status',exact:true}).click();
+  await expect.poll(()=>calls.slice(refreshStart).filter(call=>call.method==='capabilities').length).toBeGreaterThan(0);
+  expect(calls.slice(refreshStart).every(call=>['snapshot','capabilities','artifacts','artifact','files','text','diff'].includes(call.method))).toBe(true);
+  await page.screenshot({path:path.resolve('../evidence/desktop/job-readiness.png')});
+  await board.locator('.coding-readiness summary').click();
+  for(const width of [960,390]){
+    await page.setViewportSize({width,height:780});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+    await page.screenshot({path:path.resolve(`../evidence/desktop/job-${width}.png`)});
+  }
+  await page.setViewportSize({width:1440,height:900});
   const accessibility=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
   await writeFile(path.resolve('../evidence/desktop/job-accessibility.json'),JSON.stringify(accessibility.violations,null,2));
   expect(accessibility.violations.map(item=>({id:item.id,impact:item.impact}))).toEqual([]);
@@ -47,6 +63,6 @@ test('genuine local inspection job produces immutable files and a check report',
   await page.getByRole('button',{name:'Jobs',exact:true}).click();
   await expect(board.locator('#job-artifact')).toHaveValue(selectedArtifact);
   const response=await request.get('/__sidequest/snapshot');const git=await response.json();
-  await writeFile(path.resolve('../evidence/desktop/job-browser.json'),JSON.stringify({title,source:{base:git.baseRevision,candidate:git.candidateRevision},browser_requests:calls,model_calls:0,scope:'Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run',page_errors:errors},null,2));
+  await writeFile(path.resolve('../evidence/desktop/job-browser.json'),JSON.stringify({title,source:{base:git.baseRevision,candidate:git.candidateRevision},frozen_check_report:report,browser_requests:calls,model_calls:report.inference_calls,scope:'Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run',page_errors:errors},null,2));
   expect(errors).toEqual([]);
 });

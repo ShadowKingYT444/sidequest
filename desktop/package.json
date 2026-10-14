@@ -16,6 +16,7 @@
     "inspect:office": "node scripts/inspect-assets.mjs public/office/office.glb"
   },
   "dependencies": {
+    "dompurify": "3.4.17",
     "@react-three/drei": "10.7.9",
     "@react-three/fiber": "9.8.1",
     "monaco-editor": "0.57.0",
@@ -23,6 +24,7 @@
     "react-dom": "19.3.0",
     "three": "0.186.1"
   },
+  "overrides": {"dompurify":"3.4.17"},
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.64.0",
