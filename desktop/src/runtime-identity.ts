@@ -15,8 +15,14 @@ export function requireDiffPage(page:DiffPage,diff:RuntimeArtifact,manifest:Runt
 }
 
 const id=(value:unknown):value is string=>typeof value==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/.test(value);
-export function requireOfficeSessions(snapshot:RuntimeSnapshot):OfficeSession[]{
-  if(snapshot.v!==1||!Number.isSafeInteger(snapshot.revision)||snapshot.revision<0||!Array.isArray(snapshot.jobs)||snapshot.jobs.length>20||snapshot.jobs.some(job=>!job||!id(job.id)||typeof job.title!=='string'||job.title.length>200))throw new Error('Runtime session state is unavailable.');
+function requireJobRows(value:unknown,maximum:number):void{
+  if(!Array.isArray(value)||value.length>maximum||value.some(job=>!job||typeof job!=='object'||Array.isArray(job)||!id(job.id)||typeof job.title!=='string'||job.title.length>200)||new Set(value.map(job=>job.id)).size!==value.length)throw new Error('Runtime session state is unavailable.');
+}
+export function requireOfficeSessions(snapshot:RuntimeSnapshot & {office_jobs?:unknown;office_jobs_truncated?:unknown}):OfficeSession[]{
+  if(snapshot.v!==1||!Number.isSafeInteger(snapshot.revision)||snapshot.revision<0)throw new Error('Runtime session state is unavailable.');
+  requireJobRows(snapshot.jobs,20);
+  if(snapshot.office_jobs!==undefined)requireJobRows(snapshot.office_jobs,124);
+  if(snapshot.office_jobs_truncated!==undefined&&(typeof snapshot.office_jobs_truncated!=='boolean'||snapshot.office_jobs===undefined))throw new Error('Office job coverage is unavailable.');
   const rows=snapshot.office_sessions??[];
   if(!Array.isArray(rows)||rows.length>24)throw new Error('Office session state is invalid.');
   const stations=new Set(),runs=new Set(),workers=new Set();

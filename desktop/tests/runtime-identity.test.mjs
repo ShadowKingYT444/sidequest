@@ -12,6 +12,25 @@ test('office session identities reject duplicate station, run and worker ownersh
   for(const patch of [{station_id:'parent_020'},{run_id:'run-2'},{worker_id:'worker-2'}])assert.throws(()=>requireOfficeSessions({...snapshot,office_sessions:[row,{...row,...patch}]}));
 });
 
+test('office session validation bounds supplemental jobs independently from twenty recent jobs',()=>{
+  const recent=Array.from({length:20},(_,index)=>({id:`recent-${index}`,title:'Recent task'}));
+  const supplemental=Array.from({length:124},(_,index)=>({id:`older-${index}`,title:'Older office task'}));
+  const snapshot={v:1,revision:3,jobs:recent,office_jobs:supplemental,office_jobs_truncated:true,office_sessions:[]};
+  assert.deepEqual(requireOfficeSessions(snapshot),[]);
+  assert.throws(()=>requireOfficeSessions({...snapshot,jobs:[...recent,{id:'recent-20',title:'Extra recent task'}]}));
+  for(const office_jobs of [null,{},[null],[[]],[{id:'../outside',title:'Task'}],[{id:'older-1',title:'x'.repeat(201)}],
+    [supplemental[0],supplemental[0]],[...supplemental,{id:'older-124',title:'Extra supplemental task'}]]) {
+    assert.throws(()=>requireOfficeSessions({...snapshot,office_jobs}));
+  }
+});
+
+test('supplemental overflow metadata is explicit boolean state and never accepts unknown coverage as verified',()=>{
+  const snapshot={v:1,revision:3,jobs:[],office_jobs:[],office_sessions:[]};
+  for(const office_jobs_truncated of [true,false,undefined])assert.deepEqual(requireOfficeSessions({...snapshot,office_jobs_truncated}),[]);
+  for(const office_jobs_truncated of [null,0,1,'false',{},[]])assert.throws(()=>requireOfficeSessions({...snapshot,office_jobs_truncated}));
+  assert.throws(()=>requireOfficeSessions({v:1,revision:3,jobs:[],office_jobs_truncated:true,office_sessions:[]}));
+});
+
 test('frozen display requires explicit immutability, digest and selected job ownership',()=>{
   assert.doesNotThrow(()=>requireFrozenArtifact(artifact,'job-1'));
   for(const patch of [{immutable:false},{immutable:undefined},{job_id:'other'},{sha256:'not-a-hash'}])assert.throws(()=>requireFrozenArtifact({...artifact,...patch},'job-1'));
