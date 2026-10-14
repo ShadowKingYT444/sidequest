@@ -1,0 +1,73 @@
+{
+  "test": "read API rejects outside origins and mutations",
+  "status": "passed",
+  "elapsedMs": 31,
+  "navigations": [],
+  "network": [],
+  "errors": [],
+  "browser": {
+    "entries": [
+      {
+        "name": "about:blank",
+        "entryType": "navigation",
+        "startTime": 0,
+        "duration": 61.90000000037253,
+        "navigationId": 519,
+        "initiatorType": "navigation",
+        "deliveryType": "cache",
+        "nextHopProtocol": "",
+        "renderBlockingStatus": "non-blocking",
+        "contentType": "",
+        "contentEncoding": "",
+        "workerStart": 0,
+        "workerRouterEvaluationStart": 0,
+        "workerCacheLookupStart": 0,
+        "workerMatchedSourceType": "",
+        "workerFinalSourceType": "",
+        "redirectStart": 0,
+        "redirectEnd": 0,
+        "fetchStart": 0,
+        "domainLookupStart": 0,
+        "domainLookupEnd": 0,
+        "connectStart": 0,
+        "secureConnectionStart": 0,
+        "connectEnd": 0,
+        "requestStart": 0,
+        "responseStart": 0,
+        "firstInterimResponseStart": 0,
+        "finalResponseHeadersStart": 0,
+        "responseEnd": 60.59999999962747,
+        "transferSize": 0,
+        "encodedBodySize": 0,
+        "decodedBodySize": 0,
+        "responseStatus": 0,
+        "serverTiming": [],
+        "unloadEventStart": 0,
+        "unloadEventEnd": 0,
+        "domInteractive": 60.69999999925494,
+        "domContentLoadedEventStart": 60.69999999925494,
+        "domContentLoadedEventEnd": 60.69999999925494,
+        "domComplete": 61.90000000037253,
+        "loadEventStart": 61.90000000037253,
+        "loadEventEnd": 61.90000000037253,
+        "type": "navigate",
+        "redirectCount": 0,
+        "activationStart": 0,
+        "criticalCHRestart": 0,
+        "notRestoredReasons": null,
+        "confidence": {
+          "randomizedTriggerRate": 0.4994798,
+          "value": "high"
+        }
+      },
+      {
+        "name": "visible",
+        "entryType": "visibility-state",
+        "startTime": 0,
+        "duration": 0,
+        "navigationId": 519
+      }
+    ],
+    "editors": 0
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "scope": "Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation",
+  "owner": {
+    "station_id": "parent_019",
+    "job_id": "efeb6bbe-f2f4-4bc4-a23d-8e10445972bd",
+    "run_id": "d9a2c45f-922c-4ebe-b656-b3b8485f9e25",
+    "worker_id": "b5e03d86-8742-4b3b-8a4e-297e5ae445de",
+    "project_id": "a76216b5-a1e5-4487-89e6-4093d8a30ac9",
+    "assigned_at": "2026-10-14T21:45:30.625Z"
+  },
+  "reload_restored": true,
+  "board_links_same_session": true,
+  "open_results_same_job": true,
+  "wrong_worker_rejected": true,
+  "fixtures": [
+    "Read-only runInfo response with explicitly fixture-wrong-worker; no persisted state changed"
+  ],
+  "explicit_detach": true,
+  "coding_requests": [],
+  "axe_violations": []
+}

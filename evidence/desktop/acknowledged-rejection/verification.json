@@ -1,0 +1,60 @@
+{
+  "status": "passed_protocol_and_browser_native_live_blocked",
+  "starting_head": "f4634ffbb0c087992b2ae1027cc561e7d1c3aaed",
+  "tested_source_commit": "af4420cf1993ab6a0ede1fcb180b8a2ce2ebb25f",
+  "verified_at": "2026-10-14T21:56:14.409534+00:00",
+  "root_cause": "Successful queue acknowledgement previously cleared the renderer pending identity and sent File data before a possible pre-dispatch rejection.",
+  "regression": "successful 202-equivalent receipt -> rejected run_id:null -> reload; original sent text/File identities/bytes and newer draft retained; no duplicate send",
+  "browser": {
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "elapsed_minutes": 11.3,
+    "source_file_count": 318,
+    "source_unchanged": true,
+    "log_sha256": "29730bd0130e9f724c78e2c39343c48d919ba10c7ce63df16a228094966f02fa",
+    "protocol_fake_composer_tests": 5
+  },
+  "checks": {
+    "desktop_passed": 82,
+    "store_regressions_passed": 19,
+    "runtime_passed": 65,
+    "typecheck_build": "passed",
+    "provider_source_unchanged": true,
+    "previous_provider_passed": 56,
+    "provider_rerun": false
+  },
+  "preservation": {
+    "protected_assets": 126,
+    "asset_hashes_unchanged": true,
+    "prior_failed_and_passed_logs_unchanged": true,
+    "red_and_intermediate_failures_preserved": true,
+    "post_suite_source_changes": [
+      "desktop/README.md",
+      "journals/C.md"
+    ],
+    "only_documentation_after_suite": true
+  },
+  "attempts": {
+    "native_electron_startup": 0,
+    "codex_initialize": 0,
+    "live_model_turns": 0,
+    "paid_spending": 0,
+    "new_authentication": 0,
+    "credential_copy": 0,
+    "security_changes": 0,
+    "force_push": 0,
+    "merge": 0,
+    "deployment": 0
+  },
+  "blockers": [
+    "Preserved native Electron sandbox/display failure",
+    "Preserved Codex protected-state EROFS",
+    "Unverified enforceable USD ceiling and hard subscription reserve authority"
+  ],
+  "pending_independent_repair": [],
+  "remaining_validation": [
+    "Native/live acceptance on supported host with verified execution authority"
+  ]
+}
