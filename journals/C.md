@@ -112,3 +112,11 @@ Implemented trace composer transport and IndexedDB drafts in isolated `repair/de
 Production coding/consent/catalog/USD and known remaining-budget guards remain. Provider follow-ups require current completed coding run and verifying/accepted job; unsupported/oversized attachments remain local. Original art and approved compact monitor composition are unchanged.
 
 65 desktop tests, TypeScript/production build and 3 protocol-fake browser tests pass (retries 0, 9.7s). Real Chromium proves IndexedDB/File reload, preview recreation, actual keyboard cursor selection and single-send reconciliation with next-draft retention at desktop/narrow widths. Red/green regressions and fixture failures are preserved in `evidence/desktop/transport/`. No native startup or live model/paid turn occurred; host/auth/quota acceptance remains unverified. Next: coordinator integration and frozen full-suite validation.
+
+## Rejected-before-start receipt checkpoint
+
+Focused TDD follow-up from `2717752`: a saved accepted command whose exact message status is rejected before claim now retains draft text/files and concurrent next thought. Rejected state survives reload; explicit Review retained draft releases it for a new user-reviewed intent. No automatic new UUID or resend occurs. Command/message identity, state/run-ID shape and contradictory later status fail closed. Existing successful receipt behavior is retained.
+
+Red evidence reproduced two unsafe clears. All 12 store regressions and 68 desktop tests pass; TypeScript/build passes. Four explicitly protocol-fake browser tests passed, retries 0, 16.6s, using separate port 5175 while the integrator's full office suite remained frozen. New screenshots are archived separately; earlier captures/logs and all 126 protected asset hashes remain intact. Evidence: `evidence/desktop/transport/rejected-receipt-verification.json` and adjacent red/green/browser logs.
+
+No root workspace writes, native probes, provider/model calls, paid spending or authentication/security changes. Next: integrator cherry-pick and backend rejection-state integration checks.

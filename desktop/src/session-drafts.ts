@@ -4,14 +4,14 @@ import type {CommandReply} from './types.ts';
 const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const ID=/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/;
 export interface StagedAttachment {id:string;run_id:string;name:string;media_type:string;size_bytes:number;sha256:string}
-export interface CommandStatus {v:1;found:boolean;command?:CommandReply}
+export interface CommandStatus {v:1;found:boolean;command?:CommandReply;message?:{id:string;state:'queued'|'dispatching'|'completed'|'uncertain'|'rejected';run_id:string|null}}
 export interface SessionTransport {
  snapshot():Promise<{revision:number}>;
  stageAttachment(run:string,key:string,name:string,mime:string,base64:string):Promise<{v:1;attachment:StagedAttachment}>;
  sessionMessage(run:string,commandId:string,prompt:string,attachmentIds:string,revision:number):Promise<CommandReply>;
  commandStatus(commandId:string):Promise<CommandStatus>;
 }
-export interface PendingMessage {commandId:string;runId:string;text:string;localIds:string[];attachmentIds:string[];expectedRevision?:number;state:'staging'|'sending'|'uncertain'|'not_found'|'rejected'}
+export interface PendingMessage {commandId:string;runId:string;text:string;localIds:string[];attachmentIds:string[];expectedRevision?:number;rejectedBeforeStart?:boolean;state:'staging'|'sending'|'uncertain'|'not_found'|'rejected'}
 interface StoredAttachment {id:string;blob:Blob;name:string;lastModified:number;size:number;mimeType:string;kind:'image'|'file';fingerprint:string;stagedId?:string;stagedRunId?:string}
 interface StoredDraft {v:1;text:string;attachments:StoredAttachment[];pending?:PendingMessage;selection?:[number,number]}
 export interface DraftStorage {read(key:string):Promise<unknown>;write(key:string,value:StoredDraft):Promise<void>}
@@ -39,7 +39,7 @@ export function createIndexedDraftStorage(factory:IDBFactory=globalThis.indexedD
 }
 
 function pendingValid(value:PendingMessage):boolean {
- return !!value&&UUID.test(value.commandId)&&ID.test(value.runId)&&typeof value.text==='string'&&value.text.trim().length>0&&value.text.length<=2000&&!/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value.text)&&Array.isArray(value.localIds)&&value.localIds.length<=10&&value.localIds.every(id=>typeof id==='string'&&UUID.test(id))&&new Set(value.localIds).size===value.localIds.length&&Array.isArray(value.attachmentIds)&&value.attachmentIds.length<=10&&value.attachmentIds.every(id=>typeof id==='string'&&ID.test(id))&&new Set(value.attachmentIds).size===value.attachmentIds.length&&['staging','sending','uncertain','not_found','rejected'].includes(value.state)&&(value.state==='staging'&&value.expectedRevision===undefined||Number.isSafeInteger(value.expectedRevision)&&value.expectedRevision!>=0);
+ return !!value&&UUID.test(value.commandId)&&ID.test(value.runId)&&typeof value.text==='string'&&value.text.trim().length>0&&value.text.length<=2000&&!/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value.text)&&Array.isArray(value.localIds)&&value.localIds.length<=10&&value.localIds.every(id=>typeof id==='string'&&UUID.test(id))&&new Set(value.localIds).size===value.localIds.length&&Array.isArray(value.attachmentIds)&&value.attachmentIds.length<=10&&value.attachmentIds.every(id=>typeof id==='string'&&ID.test(id))&&new Set(value.attachmentIds).size===value.attachmentIds.length&&(value.rejectedBeforeStart===undefined||value.rejectedBeforeStart===true&&value.state==='rejected')&&['staging','sending','uncertain','not_found','rejected'].includes(value.state)&&(value.state==='staging'&&value.expectedRevision===undefined||Number.isSafeInteger(value.expectedRevision)&&value.expectedRevision!>=0);
 }
 const persisted=(state:DraftState):StoredDraft=>({v:1,text:state.draft.text,attachments:state.draft.attachments.map(item=>({id:item.id,blob:item.file,name:item.name,lastModified:item.file.lastModified,size:item.size,mimeType:item.mimeType,kind:item.kind,fingerprint:item.fingerprint,...(item.stagedId?{stagedId:item.stagedId,stagedRunId:item.stagedRunId}:{})})),...(state.pending?{pending:{...state.pending,localIds:[...state.pending.localIds],attachmentIds:[...state.pending.attachmentIds]}}:{}),...(state.selection?{selection:state.selection}:{})});
 
@@ -67,7 +67,7 @@ export class SessionDraftStore {
    const draft={text:value.text,attachments};if(localDraftIssue(draft)||new Set(attachments.map(item=>item.id)).size!==attachments.length)throw Error('Invalid stored draft.');
    let pending=value.pending;if(pending?.state==='sending')pending={...pending,state:'uncertain'};
    const selection=Array.isArray(value.selection)&&value.selection.length===2&&value.selection.every(n=>Number.isSafeInteger(n)&&n>=0&&n<=draft.text.length)?value.selection:undefined;
-   this.update({draft,loading:false,pending,selection,status:pending?'Send pending · check status':'Local draft saved'});
+   this.update({draft,loading:false,pending,selection,status:pending?.rejectedBeforeStart?'Message did not start · review retained draft':pending?'Send pending · check status':'Local draft saved'});
   }catch{this.restorationFailed=true;this.persistenceFailed=true;this.update({loading:false,error:'Could not restore the local draft. Sending is blocked to protect a possibly pending message.',status:'Local storage unavailable'});}
  }
  change(draft:LocalDraft){if(this.state.loading)return;this.update({draft});if(this.restorationFailed)return;void this.save().catch(()=>{});}
@@ -80,8 +80,11 @@ export class SessionDraftStore {
   return result.then(()=>{if(this.queue===result){const recovered=this.persistenceFailed;this.persistenceFailed=false;this.update({saving:false,...(recovered?{error:''}:{}),status:this.state.pending?this.state.status:'Local draft saved'});}},()=>{this.persistenceFailed=true;this.update({saving:false,error:'Could not save the local draft. Check device storage before sending.',status:'Local save failed'});throw Error('Local draft storage failed.');});
  }
  flush=()=>this.queue;
- private accepted(reply:CommandReply,pending:PendingMessage){
+ private validateReceipt(reply:CommandReply,pending:PendingMessage){
   if(reply.v!==1||reply.accepted!==true||reply.command_id!==pending.commandId||!Number.isSafeInteger(reply.revision)||reply.revision<0)throw Error('The message receipt did not match this send.');
+ }
+ private accepted(reply:CommandReply,pending:PendingMessage){
+  this.validateReceipt(reply,pending);
   const removed=this.state.draft.attachments.filter(item=>pending.localIds.includes(item.id));revokeLocalDraft({text:'',attachments:removed},this.urls);
   this.update({draft:{text:this.state.draft.text===pending.text?'':this.state.draft.text,attachments:this.state.draft.attachments.filter(item=>!pending.localIds.includes(item.id))},pending:undefined,status:'Message accepted',error:''});
  }
@@ -130,7 +133,17 @@ export class SessionDraftStore {
   try{
    const reply=await transport.commandStatus(pending.commandId);
    if(reply.v!==1||typeof reply.found!=='boolean')throw Error('Message receipt is unavailable.');
-   if(reply.found){if(!reply.command)throw Error('Message receipt is incomplete.');this.accepted(reply.command,pending);await this.save();this.update({status:'Message accepted'});}
+   if(reply.message!==undefined){
+    const message=reply.message;
+    if(!reply.found||!message||message.id!==pending.commandId||!['queued','dispatching','completed','uncertain','rejected'].includes(message.state)||!(message.run_id===null||typeof message.run_id==='string'&&ID.test(message.run_id))||['queued','rejected'].includes(message.state)&&message.run_id!==null||['dispatching','completed'].includes(message.state)&&message.run_id===null)throw Error('The message status or identity could not be verified.');
+   }
+   if(pending.rejectedBeforeStart&&reply.message?.state!=='rejected')throw Error('The previously rejected message status could not be verified.');
+   if(reply.found){
+    if(!reply.command)throw Error('Message receipt is incomplete.');this.validateReceipt(reply.command,pending);
+    if(reply.message?.state==='rejected'){
+     this.update({pending:{...pending,state:'rejected',rejectedBeforeStart:true},status:'Message did not start · review retained draft',error:''});await this.save();
+    }else{this.accepted(reply.command,pending);await this.save();this.update({status:'Message accepted'});}
+   }
    else{this.update({pending:{...pending,state:pending.state==='staging'?'staging':pending.state==='rejected'?'rejected':'not_found'},status:'No message receipt yet · retry uses the same identity',error:''});await this.save();}
   }catch(reason){this.update({status:'Send pending · check status',error:reason instanceof Error?reason.message:'Message receipt is unavailable.'});}
   finally{this.busy=false;}

@@ -17,3 +17,13 @@ Validation:
 - `verification.json`: touched source hashes and unchanged tracked public-asset hashes. No protected asset path changed.
 
 Captures are `captures/durable-composer.png`, `captures/pending-composer.png` and `captures/reconciled-composer-mobile.png`. They show the actual composer with protocol-fake data, not a native/live result. Full integrated office/browser regression validation belongs to the integrator after backend and notification changes land.
+
+## Accepted receipt rejected before start
+
+A command receipt acknowledges queue acceptance. If the matching message status is `rejected`, the provider did not start: reconciliation retains text, attachments and any concurrent next thought, persists a rejected pending state, and exposes the existing explicit Review retained draft action. It never creates another UUID or resends automatically. The message ID must match the command UUID; invalid states/run IDs and contradictory later metadata fail closed. The unchanged successful receipt path remains covered.
+
+`red-rejected-receipt.log` reproduces both unsafe clearing failures; `green-rejected-receipt.log` passes 12 store regressions. `unit-suite-rejected-receipt-final.log` passes 68 desktop tests; `build-rejected-receipt-final.log` passes TypeScript/build. The four protocol-fake browser tests passed with retries 0 in 16.6s on separate port 5175 (`browser-rejected-before-start-isolated.log`), including reload, file/next-thought retention, explicit review and exactly one stage/send/status sequence. The initial port-5173 collision stopped before tests and is retained; no root sources or native/live workflows were touched. Captures from this checkpoint are in `rejected-receipt-captures/`; the prior checkpoint captures remain unchanged.
+
+Reproduce the isolated checks from `desktop/`: `SIDEQUEST_TRANSPORT_EVIDENCE_RUN=rejected-receipt-captures CHROMIUM_PATH=/usr/bin/chromium CI=1 npm run test:browser -- --config ../evidence/desktop/transport/playwright-isolated.config.mts --grep 'protocol fake:' --retries=0`.
+
+The committed isolated configuration is `.mts` so its `import.meta` remains an ES module outside the desktop package. The initial `.ts` reproduction failed at config loading (log retained); `browser-rejected-before-start-reproducible-mts.log` verifies the exact committed config and new rejected-state test, 1/1 pass, retries 0, 4.2s. No product test assertion or timeout was changed to resolve the config issue.

@@ -31,7 +31,7 @@ export interface RuntimeBridge {
   assignSession(station:string,job:string,run:string,revision:number):Promise<CommandReply>;clearSession(station:string,revision:number):Promise<CommandReply>;
   stageAttachment(run:string,key:string,name:string,mime:string,base64:string):Promise<{v:1;attachment:{id:string;run_id:string;name:string;media_type:string;size_bytes:number;sha256:string}}>;
   sessionMessage(run:string,id:string,prompt:string,attachments:string,revision:number):Promise<CommandReply>;
-  commandStatus(id:string):Promise<{v:1;found:boolean;command?:CommandReply}>;
+  commandStatus(id:string):Promise<{v:1;found:boolean;command?:CommandReply;message?:{id:string;state:'queued'|'dispatching'|'completed'|'uncertain'|'rejected';run_id:string|null}}>;
   artifact(id:string):Promise<{v:1;artifact:RuntimeArtifact;preview_text:string|null}>;
   artifacts(id:string,cursor?:string):Promise<{v:1;items:RuntimeArtifact[];next_cursor:string|null}>;files(id:string,cursor?:string):Promise<FilePage>;
   text(artifact:string,file:string,startLine?:number):Promise<TextPage>;diff(artifact:string,file:string,cursor?:string):Promise<DiffPage>;
