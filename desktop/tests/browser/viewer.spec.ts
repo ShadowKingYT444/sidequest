@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from './timing';
+import type {Page} from '@playwright/test';
 import path from 'node:path';
 import { writeFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';

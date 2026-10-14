@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './timing';
 import path from 'node:path';
 import {writeFile} from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';

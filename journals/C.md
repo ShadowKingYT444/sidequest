@@ -74,3 +74,16 @@ Desk selection now shows connected/ready provider logo/name choices only, or one
 Primary-only status sprites are recomputed after static pose/skeleton sampling, above body/cap bounds. Fresh fixture capture visibly shows both a green check and red attention sign; pixel analysis confirms both outside the notification tray. Current local inspections display Checking.
 
 Validation: 50 desktop, 48 runtime, 42 tools tests; typecheck/build pass. Focused local preservation, notification fixture and 1440/390px picker/task checks pass. Full 17-test suite is next on frozen committed source. Prior timeouts preserved; camera/local/provider coverage split without weakening assertions. Library upload blocked before preparation by VM hosted-app transport network failure; Library search itself works. No native/model calls, auth changes, new spending, merge or deployment.
+
+
+### PR #1 TDD repair candidate — October 14
+
+Goal: repair the existing monitor startup/return failures without changing the approved UX or protected assets. Latest starting PR head verified as `5f02817`.
+
+Red evidence: static shadows redraw across monitor navigation (10→12 passes); a local draft redraws the unchanged room (10→11 frames); opening an HTML figure card also redraws it. Real Git reads succeed. Timing traces show long rendering stalls delaying lazy Monaco and consuming the whole session-test budget; asset fetch/decode/assembly has no reproduced resource error. The hidden inner-header Expand locator is corrected to the visible monitor header, retaining all behavior assertions.
+
+Repair: cache static shadows with resource/context invalidation; stabilize scene callbacks and world identity; apply HTML card control locks without invalidating world pixels. Camera animation/poses, editor lifetime, drafts/attachments and original art are preserved.
+
+Final focused tests: 4/4 pass, including session reload (75.9s under unchanged 120s) and interrupted physical camera return. Earlier shadow/draft regressions and editor startup checks also pass. 50 desktop, 48 runtime, 42 tools tests pass; build/typecheck, production audit (zero advisories) and 24 asset bindings pass. The initial tools cancellation fixture failure under concurrent browser load remains preserved; it passes when run alone without code/assertion changes.
+
+Evidence: `evidence/desktop/repair-20261014/`. Next: one frozen 20-test suite, retries zero, then publish the existing branch. Native dispatch/session sending/live orchestration limits remain.

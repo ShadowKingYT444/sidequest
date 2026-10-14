@@ -32,6 +32,7 @@ export type EditorViews = Map<string, monaco.editor.IDiffEditorViewState>;
 export default function DiffEditor({ diff, views }: { diff: GitDiff; views: EditorViews }) {
   const container = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
+    performance.mark('sidequest:editor-mount');
     const host = container.current!;
     const cached = views.get(diff.id);
     const editor = monaco.editor.createDiffEditor(host, {

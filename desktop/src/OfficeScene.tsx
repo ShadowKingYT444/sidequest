@@ -1,5 +1,6 @@
 import React, {
   Component,
+  memo,
   Suspense,
   useEffect,
   useLayoutEffect,
@@ -42,6 +43,7 @@ interface OfficeModelProps {
 
 function OfficeModel({ url, onSelectWorkstation }: OfficeModelProps) {
   const gltf = useGLTF(url, false, false, configureOfficeAssetLoader);
+  const {gl,invalidate}=useThree();
   const light=useRef<DirectionalLight>(null);
   const bounds=useMemo(()=>new Box3().setFromObject(gltf.scene),[gltf.scene]);
   const center=bounds.getCenter(new ThreeVector3());
@@ -58,7 +60,8 @@ function OfficeModel({ url, onSelectWorkstation }: OfficeModelProps) {
   useEffect(()=>{
     gltf.scene.traverse(object=>{if(object instanceof Mesh){const materials=Array.isArray(object.material)?object.material:[object.material];object.castShadow=!materials.some(material=>material.name==='Architectural clear glass');object.receiveShadow=true;}});
     if(light.current){light.current.target.position.set(0,1,-2);light.current.target.updateMatrixWorld();}
-  },[gltf.scene,bounds]);
+    gl.shadowMap.needsUpdate=true;invalidate();
+  },[gltf.scene,bounds,gl,invalidate]);
   // Keep the imported scene intact: bindings add interaction surfaces around it.
   return <><primitive object={gltf.scene} dispose={null}/>{onSelectWorkstation&&pickBounds.map(pick=><mesh key={pick.id} matrixAutoUpdate={false} matrix={pick.object.matrixWorld.clone()} userData={{workstationPicker:pick.id}} onClick={event=>{
     const specific=event.intersections.some(hit=>{let node:Object3D|null=hit.object;while(node){if(node.userData.monitorStation||node.userData.actorReferenceStation)return true;node=node.parent;}return false;});
@@ -320,6 +323,48 @@ export function CameraRig({
 }
 
 /** Render the supplied office model and bind station interaction to mapped monitors. */
+function ContextControls({controlsRef,enabled,world}:{controlsRef:React.RefObject<OrbitControlsImpl|null>;enabled:boolean;world:ReactNode}) {
+  const gl=useThree(state=>state.gl);
+  useLayoutEffect(()=>{
+    // Lock interaction without invalidating the static scene. Reapply after
+    // a world commit so the controls primitive cannot override a card's lock.
+    if(controlsRef.current)controlsRef.current.enabled=enabled;
+    gl.domElement.dataset.officeControlsEnabled=String(enabled);
+  },[controlsRef,enabled,world,gl]);
+  return null;
+}
+
+function StaticShadows() {
+  const {gl,invalidate}=useThree();
+  useLayoutEffect(()=>{
+    const previous=gl.shadowMap.autoUpdate;
+    // Original room, lights and sampled actors are static. Camera/UI updates
+    // must not redraw their six-million-vertex shadow map every frame.
+    gl.shadowMap.autoUpdate=false;
+    const refresh=()=>{gl.shadowMap.needsUpdate=true;invalidate();};
+    refresh();gl.domElement.addEventListener('webglcontextrestored',refresh);
+    return()=>{gl.shadowMap.autoUpdate=previous;gl.domElement.removeEventListener('webglcontextrestored',refresh);};
+  },[gl,invalidate]);
+  return null;
+}
+
+function SceneMetrics() {
+  const {gl}=useThree();
+  useLayoutEffect(()=>{
+    if (!import.meta.env.DEV) return;
+    const render=gl.render, shadowRender=gl.shadowMap.render;
+    gl.render=function(...args){const start=performance.now();try{return render.apply(this,args);}finally{performance.measure('sidequest:render',{start,end:performance.now()});}};
+    gl.shadowMap.render=function(...args){
+      const update=this.enabled&&(this.autoUpdate||this.needsUpdate),start=performance.now();
+      try{return shadowRender.apply(this,args);}finally{
+        if(update){gl.domElement.dataset.shadowPasses=String(Number(gl.domElement.dataset.shadowPasses??0)+1);performance.measure('sidequest:shadow-render',{start,end:performance.now()});}
+      }
+    };
+    return()=>{gl.render=render;gl.shadowMap.render=shadowRender;};
+  },[gl]);
+  return null;
+}
+
 export function OfficeScene({
   bindings,
   selectedStationId,
@@ -340,14 +385,11 @@ export function OfficeScene({
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const viewBindings=useMemo(()=>({...bindings,overview:{target:[1,-.3,-3.8] as Vector3,position:[11.5,8.5,12] as Vector3}}),[bindings]);
 
-  return (
-    <Canvas className="office-canvas"
-      frameloop={active ? "demand" : "never"}
-      dpr={[1, 1.5]}
-      camera={{ position: viewBindings.overview.position, fov: 35, near: 0.05, far: 1000 }}
-      gl={{ antialias: true, alpha: false, toneMapping:ACESFilmicToneMapping, toneMappingExposure:1.2 }}
-      shadows="percentage"
-    >
+  // HTML cards and control locks do not alter any world pixels. Keep this
+  // subtree stable until geometry, camera, visibility or recorded badges change.
+  const world=useMemo(()=><>
+      <StaticShadows/>
+      <SceneMetrics/>
       <color attach="background" args={["#d8e1e7"]} />
       <ambientLight intensity={0.25} />
       <hemisphereLight args={['#cfe3fa','#8a6342',1.25]}/>
@@ -369,7 +411,7 @@ export function OfficeScene({
       <OrbitControls
         ref={controlsRef}
         makeDefault
-        enabled={active && !selectedStationId && !contextualCard && !boardSelected}
+        enabled={false}
         enableDamping={false}
         minDistance={0.25}
         maxDistance={100}
@@ -382,9 +424,22 @@ export function OfficeScene({
         controlsRef={controlsRef}
       />
       <MonitorProjection station={bindings.stations.find(item=>item.id===selectedStationId)} element={workElement} active={active}/>
+    </>,[bindings,viewBindings,selectedStationId,boardSelected,workElement,reducedMotion,active,onError,onActorState,stationBadges,onNotification,onSelectStation,onSelectBoard,onSelectWorkstation,onSelectActor]);
+
+  return (
+    <Canvas className="office-canvas"
+      frameloop={active ? "demand" : "never"}
+      dpr={[1, 1.5]}
+      camera={{ position: viewBindings.overview.position, fov: 35, near: 0.05, far: 1000 }}
+      gl={{ antialias: true, alpha: false, toneMapping:ACESFilmicToneMapping, toneMappingExposure:1.2 }}
+      shadows="percentage"
+    >
+      {world}
+      <ContextControls controlsRef={controlsRef} enabled={active && !selectedStationId && !contextualCard && !boardSelected} world={world}/>
       <ContextCardProjection card={contextualCard} bindings={bindings}/>
     </Canvas>
   );
 }
 
-export default OfficeScene;
+// Local editor/draft state must not invalidate the independent demand-rendered scene.
+export default memo(OfficeScene);

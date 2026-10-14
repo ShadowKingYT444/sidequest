@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './timing';
 import path from 'node:path';
 import {writeFile} from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
@@ -120,7 +120,7 @@ test('real jobs clear stale notices, recover reads and preserve assigned compute
   const selectedFile=await result.locator('.artifact-files button[aria-pressed="true"]').getAttribute('title');
   await result.locator('.artifact-text').evaluate(node=>{node.scrollTop=180;node.dispatchEvent(new Event('scroll',{bubbles:true}));});
   await expect.poll(()=>result.locator('.artifact-text').evaluate(node=>node.scrollTop)).toBeGreaterThan(100);
-  await result.getByRole('button',{name:'Expand',exact:true}).click();
+  await page.locator('.monitor-header').getByRole('button',{name:'Expand',exact:true}).click();
   await expect(page.getByRole('dialog',{name:'Computer job viewer'})).toBeVisible();
   await expect(result.locator('.artifact-files button[aria-pressed="true"]')).toHaveAttribute('title',selectedFile!);
   await page.getByRole('button',{name:'Settings',exact:true}).click();
@@ -138,6 +138,7 @@ test('real jobs clear stale notices, recover reads and preserve assigned compute
 });
 
 test('recorded session ownership persists at a figure and renders real contextual events',async({page,request})=>{
+ const sessionTestStarted=Date.now();
  test.setTimeout(120_000);test.skip(process.env.SIDEQUEST_TEST_INSPECTION!=='1','Requires actual deterministic inspection records; no model calls.');
  const origin={Origin:'http://127.0.0.1:5173'};
  const read=async()=>{const response=await request.post('/__sidequest/runtime/snapshot',{data:[],headers:origin});expect(response.ok()).toBe(true);return response.json();};
@@ -161,6 +162,7 @@ test('recorded session ownership persists at a figure and renders real contextua
  await session.getByRole('button',{name:'Open results',exact:true}).click();const results=page.getByRole('region',{name:'Computer job results'});await expect(results).toBeVisible();await expect(results.locator('.job-summary')).toContainText(job.title);await page.keyboard.press('Escape');
  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
  const saved=await read();const owner=saved.office_sessions.find((owner:{station_id:string})=>owner.station_id==='parent_019');expect(owner).toMatchObject({job_id:job.id,run_id:runId,worker_id:run.worker_id,project_id:job.project_id});
+ await writeFile(path.resolve(`../evidence/desktop/repair-20261014/session-before-reload-${process.env.SIDEQUEST_EVIDENCE_RUN??'timings'}.json`),JSON.stringify({elapsedMs:Date.now()-sessionTestStarted,entries:await page.evaluate(()=>performance.getEntries().filter(e=>e.name.startsWith('sidequest:')).map(e=>e.toJSON()))},null,2));
  await page.reload();await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
  await page.setViewportSize({width:390,height:780});await session.getByRole('button',{name:'Open monitor',exact:true}).click();await expect(trace.locator('.monitor-events>li').first()).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);const axe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();await writeFile(path.resolve('../evidence/desktop/session-accessibility.json'),JSON.stringify(axe.violations,null,2));expect(axe.violations.map(v=>v.id)).toEqual([]);

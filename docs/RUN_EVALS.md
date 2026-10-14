@@ -77,10 +77,14 @@ Expected on a supported host: a native window opens and the smoke check exits ze
 
 This opt-in evaluation submits and runs a genuine **deterministic local Git inspection** through the UI, authenticated runtime and Git/check adapters. It creates local project/job records and result artifacts. It never starts a coding model or delivers source changes.
 
+The current Sidequest tree includes over 200 MiB of protected art and evidence and exceeds the inspection adapter’s unchanged Git output cap. Use the small committed evaluation revision below, or another trusted project within the existing caps. This changes only the inspected project; the renderer/runtime under test still run the repaired checkout.
+
 Use a clean clone as the approved source: browser captures write evidence into the Sidequest checkout, which must not make the inspected repository dirty. Choose an unused destination, or substitute another trusted clean repository:
 
 ```sh
 git clone --no-local /absolute/path/to/sidequest /tmp/sidequest-eval-source
+# Use the same small, genuine committed project as the prior acceptance run.
+git -C /tmp/sidequest-eval-source switch --detach 8a9fb11c3b01a404c4dd305b71458377082697c1
 ```
 
 In terminal 1, from the Sidequest checkout root, start the host with dedicated directories outside Git. Codex is explicitly disabled:
@@ -106,7 +110,7 @@ npm run test:browser -- tests/browser/jobs-live.spec.ts
 
 Expected: three tests pass. It explicitly registers the configured repository, submits an inspection, clicks Run, reads real frozen files and the identity-check report, verifies zero inference calls in that report, checks cached readiness refresh, reflows at 960/390px, and returns with Escape while preserving artifact selection. A second test checks repeated submissions, clearing stale notices, controlled read disconnection/recovery, read-only result assignment and 180px scroll restoration through Expand, Settings, Escape and reopening. Its extra submitted inspection remains queued and makes no model call. The tests write `evidence/desktop/job-*.png`, `job-browser.json` and `job-accessibility.json`. The inspection clones the registered revision unchanged, so its candidate diff is empty; the separate viewer suite proves a nonempty committed Git diff. The backend retains `verifying` because delivery/acceptance is disabled; the UI separately reports ready results after completed tasks and passed checks.
 
-To run the complete extended **17-test suite**, use the same terminal 1 host and terminal 2 environment above, removing the final file filter:
+To run the complete extended **20-test suite**, use the same terminal 1 host and terminal 2 environment above, removing the final file filter:
 
 ```sh
 SIDEQUEST_REPO=/tmp/sidequest-eval-source SIDEQUEST_BASE=69bf066 \
@@ -122,6 +126,6 @@ Codex lifecycle tests use a fake app-server process only. Native startup in this
 
 The third integrated test assigns an actual recorded run to Computer 19, verifies stored worker/project/run identity, opens real events and usage, reads the same job results, restores ownership after reload, follows the board task link, rejects a test-only wrong-worker response and explicitly detaches. It records session-browser.json and real recorded-session screenshots. It issues no coding submission, permission grant or model request.
 
-The seventh viewer test verifies that Escape/reopen creates one selected Monaco editor, preserves scroll and still performs a fresh Git read on explicit Refresh. Its red trace reproduces two mounts before the scoped repair; all original viewer assertions and timeouts remain unchanged. The full suite now contains 17 tests (seven viewer, four settings/provider, three inspection/session and three monitor/notification tests); without inspection opt-in, eleven run and six skip. Use `--retries=0` to preserve a single full-run terminal result.
+The seventh viewer test verifies that Escape/reopen creates one selected Monaco editor, preserves scroll and still performs a fresh Git read on explicit Refresh. Its red trace reproduces two mounts before the scoped repair; all original viewer assertions and timeouts remain unchanged. The full suite now contains 20 tests (seven viewer, four settings/provider, three inspection/session, three monitor/notification and three rendering regressions); without inspection opt-in, fourteen run and six skip. The rendering regressions protect static shadow caching, local draft edits and HTML figure cards without changing original timeouts or behavior assertions. Use `--retries=0` to preserve a single full-run terminal result.
 
 The monitor tests reuse existing deterministic inspection records, assign display ownership explicitly, click the actual measured Computer 19 monitor, verify both fitted screen dimensions and the prior office camera after normal/interrupted Escape transitions, exercise local plain-text/image paste, picker/drop, type/size errors, removal, draft/scroll retention and Files/Trace switching. They assert no coding dispatch or uploads. A separate read-only notification fixture is labeled throughout and verifies distinct completion/attention icons and exactly one badge per primary workstation figure, including the station with a decorative child. Fixture statuses never persist to the runtime. Real screenshot paths: `monitor-pov-local-draft.png`, `monitor-local-draft-390.png`, `notifications-badges-fixture.png` and `provider-selector.png`.
