@@ -1,0 +1,56 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "B1",
+  "status": "ready_for_review",
+  "changed_paths": [
+    "services/tools/__init__.py",
+    "services/tools/config.py",
+    "services/tools/protocol.py",
+    "services/tools/git_ops.py",
+    "services/tools/artifact_capture.py",
+    "services/tools/main.py",
+    "services/tools/tests/test_git_artifacts.py",
+    "services/tools/tests/test_protocol.py",
+    "journals/B.md",
+    "evidence/B/B1.json"
+  ],
+  "adapter": {
+    "entrypoint": "python3 -m services.tools.main",
+    "operations": ["repo.inspect", "repo.prepare", "artifacts.freeze", "repo.deliver"],
+    "required_environment": [
+      "SIDEQUEST_ALLOWED_REPO_ROOTS",
+      "SIDEQUEST_STAGING_ROOTS",
+      "SIDEQUEST_ARTIFACT_ROOTS",
+      "SIDEQUEST_DELIVERY_ROOTS",
+      "SIDEQUEST_DELIVERY_APPROVAL_ROOT",
+      "SIDEQUEST_DELIVERY_STATE_ROOT"
+    ],
+    "freeze_outputs": ["candidate", "file_manifest", "diff", "patch", "snapshot_root"],
+    "manifest": "{v:1,candidate,files:[...]}; candidate file rows include Git mode 100644 or 100755, unchanged files and deleted entries"
+  },
+  "validation": {
+    "compile": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+    "help": "python3 -m services.tools.main --help",
+    "tests": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+    "tests_passed": 15,
+    "tests_failed": 0,
+    "fixture_only": true
+  },
+  "checks": [
+    "Independent local clone uses --no-hardlinks; source refs and files remain unchanged.",
+    "NUL-separated Git data captures add, edit, delete, rename, binary and executable-mode changes.",
+    "Tree digest uses canonical UTF-8 JSON with sorted paths and sorted object keys.",
+    "Symlink, alternate object store, traversal, out-of-scope, oversize and credential-like inputs are rejected.",
+    "Git environment redirection, filters, hooks, textconv and external diff fixtures do not execute.",
+    "Delivery requires a separately hash-checked approval file under the configured approval root; repeated IDs reconcile and uncertain state blocks."
+  ],
+  "limits": [
+    "Credential detection is heuristic; encoded and unrecognized secret formats may not match.",
+    "This local adapter is not an OS/container isolation boundary against code running as the same user.",
+    "Immutable artifacts still require the host to verify and copy staged bytes by digest.",
+    "Local delivery was exercised only on disposable temporary Git fixtures; no real target was written.",
+    "No provider/model call, B2 work, GitHub operation or real repository delivery was run."
+  ],
+  "next_action": "Coordinator freeze and independent B1 review before B2."
+}
