@@ -1,0 +1,5 @@
+# Recovered integrated transport checkpoint
+
+Execution recovered at 20:54 UTC after the disconnect notification. All transport repairs are committed on the existing branch. Integrated desktop unit tests: 75 passed; runtime: 65 passed; unchanged provider tools: 56 passed (see `evidence/A/session-transport/tools-final.log`). TypeScript/production build passed. First frozen integrated browser suite: 22 passed, 1 failed, retries 0; preserved under `../transport-integrated/`. Its sole failure exposed a fresh-database setup dependency, corrected by explicit zero-budget inspection setup without assertion/timeout weakening. The new rejected-before-start browser regression brings the final suite to 24 tests. Final focused setup and frozen full-browser verification are pending this checkpoint.
+
+No live/paid turn, auth grant, credential copy, native startup retry, sandbox/security change, merge or deployment. Source/art and failed logs remain preserved. Native/live acceptance remains blocked by sandbox/display, protected Codex state and unavailable enforceable USD/reserve authority.

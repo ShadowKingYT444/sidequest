@@ -1,0 +1,5 @@
+# Preserved first integrated transport browser run
+
+Frozen code `80598b42a35876f78d6111063e012019bc2e95e0`: 22 passed, 1 failed, retries disabled, 12.3 minutes. All 317 tracked non-evidence file hashes remained unchanged. The failed notification fixture required two recorded local inspections but a fresh runtime database contained one. The subsequent test setup explicitly seeds missing identities through deterministic zero-budget inspection, retaining the two distinct badge, ownership, notification, accessibility and no-UI-mutation assertions. No timeout or retry increase. The later final suite also includes the fourth rejected-before-start composer regression.
+
+`full-run.json`, `full-browser.log`, `full-test-results/`, `full-captures/`, `full-timings/` and `session-before-reload.json` preserve this run unchanged. Runtime data directory was `/tmp/sidequest-eval-data-3`; browser inspections used the small pinned local evaluation repository. Three composer protocol tests used explicit fakes. No model call/native probe/auth/security change occurred.
