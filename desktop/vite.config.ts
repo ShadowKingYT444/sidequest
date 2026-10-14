@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 const require = createRequire(import.meta.url);
 const { createGitReader } = require('./electron/git-reader.cjs');
-const { createRuntimeClient, dispatchRuntime } = require('./electron/runtime-client.cjs');
+const { createRuntimeClient, dispatchRuntime, runtimeInputLimit } = require('./electron/runtime-client.cjs');
 const {discoverProviders}=require('./electron/provider-discovery.cjs');
 const desktopRoot = path.dirname(new URL(import.meta.url).pathname);
 function localReads(): Plugin {
@@ -26,10 +26,10 @@ function localReads(): Plugin {
         if (runtimeMethod) {
           if (request.method !== 'POST' || origin !== 'http://127.0.0.1:5173' || request.headers['content-type'] !== 'application/json') { response.statusCode=403;response.end(JSON.stringify({error:'Local JSON request required.'}));return; }
           try {
-            let body='';for await (const chunk of request) {body+=chunk.toString('utf8');if(Buffer.byteLength(body)>4096)throw new Error('Input limit exceeded.');}
+            let body='';for await (const chunk of request) {body+=chunk.toString('utf8');if(Buffer.byteLength(body)>runtimeInputLimit(runtimeMethod))throw new Error('Input limit exceeded.');}
             const data=await dispatchRuntime(runtime,runtimeMethod,JSON.parse(body));
             response.end(JSON.stringify(data));
-          } catch {response.statusCode=503;response.end(JSON.stringify({error:'Local runtime request failed. Refresh state and review the host configuration.'}));}
+          } catch(reason) {const failure=reason as {code?:string;status?:number};response.statusCode=Number.isInteger(failure.status)&&failure.status!>=400&&failure.status!<=599?failure.status!:503;response.end(JSON.stringify({v:1,error:{code:typeof failure.code==='string'&&/^[A-Z_]+$/.test(failure.code)?failure.code:'UNAVAILABLE',message:'Local runtime request failed. Refresh state and review the host configuration.'}}));}
           return;
         }
         if (request.method !== 'GET') { response.statusCode = 405; response.end(JSON.stringify({ error: 'Read-only endpoint.' })); return; }

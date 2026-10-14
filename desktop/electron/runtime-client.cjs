@@ -2,6 +2,9 @@
 const { randomUUID } = require('node:crypto');
 const path = require('node:path');
 const fs = require('node:fs');
+const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+const STAGE_INPUT_LIMIT = 14 * 1024 * 1024;
+function commandId(value){if(typeof value!=='string'||!UUID.test(value))throw new Error('Invalid command identity.');return value;}
 const ID = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/;
 function opaque(value) {
   if (typeof value !== 'string' || !ID.test(value) || value === '.' || value === '..') throw new Error('Invalid object identifier.');
@@ -45,6 +48,7 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
   async function codingReady() {
     const capabilities=await request('/v1/capabilities');
     if(capabilities.features?.coding!==true||capabilities.features?.codex_session!==true||capabilities.worker_model?.verified!==true||capabilities.codex?.usd_cost_enforced!==true)throw new Error('Coding execution requires fresh host readiness, consent and an enforced USD ceiling.');
+    return capabilities;
   }
   return Object.freeze({
     snapshot:()=>request('/v1/snapshot'), capabilities:()=>request('/v1/capabilities'),
@@ -58,6 +62,27 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
       return command('office.assign_session',{station_id:stationId,job_id:jobId,run_id:runId},expectedRevision);
     },
     clearSession:(stationId,expectedRevision)=>command('office.clear_session',{station_id:station(stationId)},expectedRevision),
+    commandStatus:id=>request(`/v1/commands/${commandId(id)}`),
+    stageAttachment:(runId,attachmentKey,name,mediaType,dataBase64)=>{
+      opaque(runId);commandId(attachmentKey);
+      const textExtensions=new Set('txt md markdown csv tsv json jsonl yaml yml toml xml log ts tsx js jsx mjs cjs py rb rs go java c h cpp hpp cs css scss sql vue svelte swift kt diff patch'.split(' '));
+      const textTypes=new Set('text/plain text/markdown text/csv text/tab-separated-values text/yaml text/x-yaml text/x-python text/javascript text/css text/xml application/json application/x-ndjson application/yaml application/x-yaml application/toml application/javascript application/typescript application/xml'.split(' '));
+      if(typeof name!=='string'||!name||name.length>240||/[\u0000-\u001f\u007f/\\]/.test(name)||typeof mediaType!=='string'||mediaType.length>100)throw new Error('Invalid attachment metadata.');
+      const ext=name.split('.').at(-1).toLowerCase(),images={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp'};
+      const type=mediaType.toLowerCase();
+      if(!((images[ext]&&(!type||type===images[ext]))||(!name.includes('.')&&Object.values(images).includes(type))||(ext==='pdf'&&(!type||type==='application/pdf'))||(textExtensions.has(ext)&&(!type||textTypes.has(type)))))throw new Error('Unsupported attachment type.');
+      if(typeof dataBase64!=='string'||dataBase64.length>Math.ceil(10*1024*1024/3)*4||! /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(dataBase64))throw new Error('Invalid attachment bytes.');
+      const bytes=Buffer.from(dataBase64,'base64');if(bytes.length>10*1024*1024||bytes.toString('base64')!==dataBase64)throw new Error('Invalid attachment bytes.');
+      return request('/v1/session-attachments',{run_id:runId,attachment_key:attachmentKey,name,media_type:mediaType,data_base64:dataBase64});
+    },
+    sessionMessage:async(runId,id,prompt,attachmentIds,expectedRevision)=>{
+      opaque(runId);commandId(id);revision(expectedRevision);
+      if(typeof prompt!=='string'||!prompt.trim()||prompt.length>2000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(prompt)||typeof attachmentIds!=='string'||attachmentIds.length>2000)throw new Error('Invalid session message.');
+      let ids;try{ids=JSON.parse(attachmentIds);}catch{throw new Error('Invalid attachment identities.');}
+      if(!Array.isArray(ids)||ids.length>10||new Set(ids).size!==ids.length)throw new Error('Invalid attachment identities.');for(const item of ids)opaque(item);
+      const capabilities=await codingReady();if(capabilities.features?.session_messages!==true)throw new Error('Session message transport is unavailable.');
+      return request('/v1/commands',{v:1,command_id:id,type:'session.message',expected_revision:expectedRevision,payload:{run_id:runId,prompt,attachment_ids:ids}});
+    },
     artifact:id=>request(`/v1/artifacts/${opaque(id)}`),
     artifacts:(id,cursor='')=>{
       if(typeof cursor!=='string'||cursor.length>2048)throw new Error('Invalid artifact cursor.');
@@ -112,11 +137,22 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
     stop:expectedRevision=>command('system.stop',{},expectedRevision),
   });
 }
-const METHOD_ARITY = Object.freeze({snapshot:[0,0],capabilities:[0,0],job:[1,1],runInfo:[1,1],runEvents:[1,2],assignSession:[4,4],clearSession:[2,2],artifact:[1,1],artifacts:[1,2],files:[1,2],text:[2,3],diff:[2,3],register:[1,1],submitInspection:[3,3],run:[2,2],stop:[1,1],refreshReadiness:[1,1],enableCoding:[2,2],submitCoding:[6,6],runCoding:[2,2]});
+const METHOD_ARITY = Object.freeze({snapshot:[0,0],capabilities:[0,0],job:[1,1],runInfo:[1,1],runEvents:[1,2],assignSession:[4,4],clearSession:[2,2],artifact:[1,1],artifacts:[1,2],files:[1,2],text:[2,3],diff:[2,3],register:[1,1],submitInspection:[3,3],run:[2,2],stop:[1,1],refreshReadiness:[1,1],enableCoding:[2,2],submitCoding:[6,6],runCoding:[2,2],stageAttachment:[5,5],sessionMessage:[5,5],commandStatus:[1,1]});
 async function dispatchRuntime(client,method,args) {
   const arity = typeof method === 'string' && Object.hasOwn(METHOD_ARITY,method) && METHOD_ARITY[method];
   if (!arity || !Array.isArray(args) || args.length < arity[0] || args.length > arity[1] || args.some(value => !['string','number'].includes(typeof value))) throw new Error('Invalid local runtime request.');
-  if (JSON.stringify(args).length > 4096) throw new Error('Local runtime request exceeds the input limit.');
+  if (Buffer.byteLength(JSON.stringify(args),'utf8') > runtimeInputLimit(method)) throw new Error('Local runtime request exceeds the input limit.');
   return client[method](...args);
 }
-module.exports = {createRuntimeClient,dispatchRuntime,METHOD_ARITY};
+function runtimeInputLimit(method){return method==='stageAttachment'?STAGE_INPUT_LIMIT:4096;}
+// Electron invoke serializes thrown Error objects without custom code/status fields.
+// Session methods therefore return a narrow sanitized fault envelope for preload to unwrap.
+async function dispatchRuntimeReply(client,method,args){
+  try{return await dispatchRuntime(client,method,args);}catch(reason){
+    if(!['stageAttachment','sessionMessage','commandStatus'].includes(method))throw reason;
+    const code=typeof reason?.code==='string'&&/^[A-Z_]+$/.test(reason.code)?reason.code:'UNAVAILABLE';
+    const status=Number.isInteger(reason?.status)&&reason.status>=400&&reason.status<=599?reason.status:503;
+    return {v:1,error:{code,status,message:`Local runtime request failed (${status}, ${code}).`}};
+  }
+}
+module.exports = {createRuntimeClient,dispatchRuntime,dispatchRuntimeReply,METHOD_ARITY,runtimeInputLimit};

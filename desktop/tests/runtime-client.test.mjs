@@ -94,3 +94,23 @@ test('office session commands validate station and recorded run ownership withou
  await client.clearSession('parent_019',2);assert.equal(requests.at(-1).body.type,'office.clear_session');
  assert.equal(requests.some(r=>r.body?.type==='job.run'||r.url==='/v1/capabilities'),false);
 });
+
+test('protocol fixture: session transport keeps idempotency identity, validates opaque attachments and retains production USD guard',async t=>{
+ const requests=[];let usd=false;
+ const server=http.createServer(async(req,res)=>{let body='';for await(const chunk of req)body+=chunk;requests.push({url:req.url,body:body?JSON.parse(body):null});res.setHeader('Content-Type','application/json');res.end(JSON.stringify(req.url==='/v1/capabilities'?{features:{coding:true,codex_session:true,session_messages:true,session_attachments:true},worker_model:{verified:true},codex:{usd_cost_enforced:usd}}:{v:1,accepted:true}));});
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));t.after(()=>server.close());
+ const client=createRuntimeClient({url:`http://127.0.0.1:${server.address().port}`,token:'fixture-token'}),id='12345678-1234-1234-1234-123456789012';
+ await assert.rejects(client.sessionMessage('run-1',id,'Follow up','[]',2),/USD ceiling/);assert.equal(requests.some(item=>item.body),false);
+ const before=requests.length;
+ for(const [method,args] of [['stageAttachment',['run-1',id,'../notes.txt','text/plain','YWJj']],['stageAttachment',['run-1',id,'notes.txt','text/html','YWJj']],['stageAttachment',['run-1',id,'notes.txt','text/plain','not-base64']],['sessionMessage',['run-1',id,'Prompt','["../host"]',2]],['sessionMessage',['run-1','not-uuid','Prompt','[]',2]],['commandStatus',['not-uuid']]])await assert.rejects(dispatchRuntime(client,method,args));
+ assert.equal(requests.length,before,'invalid IPC inputs never reach the runtime');
+ await dispatchRuntime(client,'stageAttachment',['run-1',id,'notes.txt','text/plain','YWJj']);assert.equal(requests.at(-1).url,'/v1/session-attachments');assert.deepEqual(requests.at(-1).body,{run_id:'run-1',attachment_key:id,name:'notes.txt',media_type:'text/plain',data_base64:'YWJj'});
+ usd=true;await client.sessionMessage('run-1',id,'Follow up','["attachment-1"]',2);assert.deepEqual(requests.at(-1).body,{v:1,command_id:id,type:'session.message',expected_revision:2,payload:{run_id:'run-1',prompt:'Follow up',attachment_ids:['attachment-1']}});
+ await client.commandStatus(id);assert.equal(requests.at(-1).url,`/v1/commands/${id}`);
+ await assert.rejects(dispatchRuntime(client,'snapshot',['a'.repeat(4097)]));
+});
+
+test('protocol fixture: native IPC fault envelope never exposes provider messages, paths or credentials',async()=>{
+ const {dispatchRuntimeReply}=require('../electron/runtime-client.cjs');const client={sessionMessage:async()=>{throw Object.assign(Error('Do not expose /private/host or secret-token'),{code:'POLICY_DENIED',status:403});}};
+ const reply=await dispatchRuntimeReply(client,'sessionMessage',['run-1','12345678-1234-1234-1234-123456789012','Prompt','[]',2]);assert.deepEqual(reply,{v:1,error:{code:'POLICY_DENIED',status:403,message:'Local runtime request failed (403, POLICY_DENIED).'}});assert.doesNotMatch(JSON.stringify(reply),/private|secret/);
+});

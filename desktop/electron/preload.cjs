@@ -2,6 +2,14 @@
 
 const { contextBridge, ipcRenderer } = require('electron');
 
+const sessionRuntime=(method,args)=>ipcRenderer.invoke('sidequest:runtime',method,args).then(value=>{
+  if(value?.v===1&&value.error){
+    const code=typeof value.error.code==='string'&&/^[A-Z_]+$/.test(value.error.code)?value.error.code:'UNAVAILABLE';
+    const status=Number.isInteger(value.error.status)&&value.error.status>=400&&value.error.status<=599?value.error.status:503;
+    throw Object.assign(new Error(`Local runtime request failed (${status}, ${code}).`),{code,status});
+  }
+  return value;
+});
 const FILE_ID_PATTERN = /^f_[a-f0-9]{32}$/;
 const runtime = Object.freeze({
   snapshot: () => ipcRenderer.invoke('sidequest:runtime', 'snapshot', []),
@@ -10,6 +18,9 @@ const runtime = Object.freeze({
   runEvents: (id, afterSeq=0) => ipcRenderer.invoke('sidequest:runtime', 'runEvents', [id, afterSeq]),
   assignSession:(station,job,run,revision)=>ipcRenderer.invoke('sidequest:runtime','assignSession',[station,job,run,revision]),
   clearSession:(station,revision)=>ipcRenderer.invoke('sidequest:runtime','clearSession',[station,revision]),
+  stageAttachment:(run,key,name,mime,base64)=>sessionRuntime('stageAttachment',[run,key,name,mime,base64]),
+  sessionMessage:(run,id,prompt,attachments,revision)=>sessionRuntime('sessionMessage',[run,id,prompt,attachments,revision]),
+  commandStatus:id=>sessionRuntime('commandStatus',[id]),
   job: id => ipcRenderer.invoke('sidequest:runtime', 'job', [id]),
   artifact: id => ipcRenderer.invoke('sidequest:runtime', 'artifact', [id]),
   artifacts: (id, cursor = '') => ipcRenderer.invoke('sidequest:runtime', 'artifacts', [id, cursor]),

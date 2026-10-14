@@ -3,7 +3,7 @@
 const { app, BrowserWindow, ipcMain, protocol, session } = require('electron');
 const path = require('node:path');
 const { createGitReader } = require('./git-reader.cjs');
-const { createRuntimeClient, dispatchRuntime } = require('./runtime-client.cjs');
+const { createRuntimeClient, dispatchRuntimeReply } = require('./runtime-client.cjs');
 const {discoverProviders}=require('./provider-discovery.cjs');
 const { createStaticAssetHandler } = require('./static-server.cjs');
 const {
@@ -79,7 +79,7 @@ function registerIpc() {
   ipcMain.handle('sidequest:runtime', async (event, method, args, ...extra) => {
     assertTrustedSender(event);
     if (extra.length || !runtimeClient) throw new Error('Local runtime is not configured.');
-    return dispatchRuntime(runtimeClient, method, args);
+    return dispatchRuntimeReply(runtimeClient, method, args);
   });
   ipcMain.handle('sidequest:snapshot', async (event, ...args) => {
     assertTrustedSender(event);

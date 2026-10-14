@@ -1,0 +1,11 @@
+✔ protocol fixture: sending requires terminal coding identity, known remaining budget and every production readiness guard (1.361356ms)
+✔ provider attachment bounds preserve local unsupported/large files rather than sending them (1.757502ms)
+✔ protocol fixture: queued jobs and older task attempts cannot advertise send readiness (0.20439ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 129.75677

@@ -1,4 +1,4 @@
-/** Renderer-only drafts. File bytes and object URLs never cross the runtime bridge. */
+/** Local draft validation and previews. Sending explicitly stages supported file bytes through a separate transport. */
 export const LOCAL_DRAFT_LIMITS = Object.freeze({ text: 2000, files: 10, fileBytes: 10 * 1024 * 1024, totalBytes: 25 * 1024 * 1024 });
 
 export interface LocalAttachment {
@@ -10,6 +10,8 @@ export interface LocalAttachment {
   kind: 'image' | 'file';
   fingerprint: string;
   previewURL?: string;
+  stagedId?: string;
+  stagedRunId?: string;
 }
 export interface LocalDraft { text: string; attachments: LocalAttachment[] }
 export interface DraftIssue { code: 'type' | 'size' | 'total' | 'count' | 'duplicate' | 'read' | 'text'; message: string; fileName?: string }

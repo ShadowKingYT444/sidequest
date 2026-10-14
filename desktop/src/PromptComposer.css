@@ -30,3 +30,8 @@
 .prompt-composer.is-dragging{outline:2px solid var(--composer-focus);outline-offset:-2px}
 .prompt-drop-hint{position:absolute;inset:0;display:grid;place-items:center;border:1px solid var(--composer-focus);background:#161c25f2;color:var(--composer-text);font-size:13px;pointer-events:none}
 @media(max-width:600px){.prompt-composer{padding:8px}.prompt-compose-row{gap:4px}.prompt-compose-row textarea{font-size:16px;line-height:22px;min-height:36px}.prompt-composer .prompt-compose-row button{min-width:36px;min-height:36px}.prompt-attachments li{max-width:100%}.prompt-attachment-copy{max-width:calc(100vw - 142px)}.prompt-compose-meta details{max-width:calc(100% - 65px)}}
+
+.prompt-transport-status{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:0 12px 8px;background:var(--surface,#111);color:#a3a3a3;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+.prompt-transport-status button{min-height:28px;padding:3px 6px;border:1px solid rgb(255 255 255 / 12%);border-radius:4px;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.prompt-transport-status button:disabled{opacity:.45;cursor:default}
+.prompt-transport-status button:focus-visible{outline:2px solid #8ab4ff;outline-offset:2px}

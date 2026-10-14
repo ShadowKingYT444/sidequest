@@ -33,7 +33,7 @@ test('preload exposes fixed read and validated local-runtime capabilities withou
   assert.equal(exposed.name, 'sidequest');
   assert.deepEqual(Object.keys(exposed.api), ['runtime', 'providers', 'snapshot', 'diff']);
   assert.equal(Object.isFrozen(exposed.api.runtime), true);
-  assert.deepEqual(Object.keys(exposed.api.runtime), ['snapshot','capabilities','runInfo','runEvents','assignSession','clearSession','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop','refreshReadiness','enableCoding','submitCoding','runCoding']);
+  assert.deepEqual(Object.keys(exposed.api.runtime), ['snapshot','capabilities','runInfo','runEvents','assignSession','clearSession','stageAttachment','sessionMessage','commandStatus','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop','refreshReadiness','enableCoding','submitCoding','runCoding']);
   assert.equal(Object.isFrozen(exposed.api), true);
   assert.deepEqual(await exposed.api.snapshot(), { ok: true });
   assert.deepEqual(calls, [['sidequest:snapshot']]);
@@ -171,4 +171,9 @@ test('provider discovery uses fixed executable metadata and never infers authent
   assert.equal((await module.exports.discoverProviders()).providers.find(provider=>provider.id==='codex').installed,false,'PATH search is capped at 64 directories');
   const configuredExecutable=path.join(temporaryRoot,'configured-codex');writeFileSync(configuredExecutable,'metadata-only explicit host locator',{mode:0o755});fakeEnvironment.SIDEQUEST_CODEX_EXECUTABLE=configuredExecutable;
   const configured=(await module.exports.discoverProviders()).providers.find(provider=>provider.id==='codex');assert.equal(configured.binaryPath,configuredExecutable);assert.equal(configured.discoverySource,'host-setting');assert.equal(configured.authentication,'unknown');assert.equal(configured.reachability,'unknown');
+});
+
+test('protocol fixture: preload retains sanitized definite send rejection code across Electron IPC',async()=>{
+ let api;vm.runInNewContext(preloadSource,{require:()=>({contextBridge:{exposeInMainWorld:(_name,value)=>{api=value;}},ipcRenderer:{invoke:async()=>({v:1,error:{code:'VERSION_CONFLICT',status:409,message:'Local runtime request failed.'}})}}),Promise,Error,Object});
+ await assert.rejects(api.runtime.sessionMessage('run-1','12345678-1234-1234-1234-123456789012','Prompt','[]',2),{code:'VERSION_CONFLICT',status:409});
 });

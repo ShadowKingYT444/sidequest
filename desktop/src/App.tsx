@@ -9,7 +9,8 @@ import {requireOfficeSessions} from './runtime-identity';
 import './MonitorSession.css';
 import NotificationTray from './NotificationTray';
 import {deriveNotifications, notificationsByStation, type OfficeNotification} from './notifications';
-import {createLocalDraft, createDraftOperations, type DraftOperations, type LocalDraft} from './local-drafts';
+import {createDraftOperations, type DraftOperations} from './local-drafts';
+import {SessionDraftStore} from './session-drafts';
 import type {MonitorMemory} from './MonitorSession';
 const MonitorSession=lazy(()=>import('./MonitorSession'));
 const OfficeScene = lazy(() => import('./OfficeScene'));
@@ -81,10 +82,9 @@ export default function App() {
   const updateSessionCount=useCallback((count:number)=>{setSessionCount(count);setOfficeRevision(value=>value+1);},[]);
   const [monitorTab,setMonitorTab]=useState<'trace'|'files'|'task'>('trace');
   const monitorTabs=useRef(new Map<string,'trace'|'files'|'task'>());
-  const drafts=useRef(new Map<string,LocalDraft>());
+  const drafts=useRef(new Map<string,SessionDraftStore>());
   const draftOperations=useRef(new Map<string,DraftOperations>());
   const traceMemories=useRef(new Map<string,MonitorMemory>());
-  const [,setDraftRevision]=useState(0);
   const computerPicker=useRef<HTMLSelectElement>(null);
   const sessionPanel=useRef<HTMLDivElement>(null);
   const [providers,setProviders]=useState<ProviderDiscovery|null>(null);
@@ -190,13 +190,15 @@ export default function App() {
   );
   const selectedOwner=officeSnapshot?.office_sessions?.find(owner=>owner.station_id===selectedStation);
   const sessionKey=JSON.stringify([selectedStation,selectedOwner?.job_id??'',selectedOwner?.project_id??'',selectedOwner?.run_id??'unassigned',selectedOwner?.worker_id??'']);
-  let draft=drafts.current.get(sessionKey);if(!draft){draft=createLocalDraft();drafts.current.set(sessionKey,draft);}
+  // Follow-up runs retain the same job conversation; the pending send itself remains tied to its exact run.
+  const draftKey=JSON.stringify([selectedStation,selectedOwner?.job_id??'',selectedOwner?.project_id??'']);
+  let draftStore=drafts.current.get(draftKey);if(!draftStore){draftStore=new SessionDraftStore(draftKey);drafts.current.set(draftKey,draftStore);}
   let operations=draftOperations.current.get(sessionKey);if(!operations){operations=createDraftOperations();draftOperations.current.set(sessionKey,operations);}
   let traceMemory=traceMemories.current.get(sessionKey);if(!traceMemory){traceMemory={afterSeq:0,previous:[],scrollTop:0};traceMemories.current.set(sessionKey,traceMemory);}
   const chooseMonitorTab=(tab:'trace'|'files'|'task')=>{setMonitorTab(tab);if(selectedStation)monitorTabs.current.set(selectedStation,tab);};
   const work=<div className="monitor-shell" role={mode==='expanded'&&monitorTab==='trace'?'dialog':undefined} aria-modal={mode==='expanded'&&monitorTab==='trace'?true:undefined} aria-label={monitorTab==='trace'?'Computer session viewer':monitorTab==='task'?'Computer task workspace':undefined} data-monitor-tab={monitorTab}>
     <header className="monitor-header"><span className="monitor-name">{stationLabel}</span><nav className="monitor-tabs" aria-label="Computer view"><button aria-pressed={monitorTab==='trace'} onClick={()=>chooseMonitorTab('trace')}>Trace</button><button aria-pressed={monitorTab==='files'} onClick={()=>chooseMonitorTab('files')}>Files</button><button aria-pressed={monitorTab==='task'} onClick={()=>chooseMonitorTab('task')}>Task setup</button></nav><div className="monitor-actions">{mode!=='expanded'&&<button onClick={()=>setMode('expanded')}>Expand</button>}<button onClick={close} aria-label="Return to office">Office <kbd>Esc</kbd></button></div></header>
-    <div className="monitor-content">{monitorTab==='files'?fileWork:monitorTab==='task'&&selectedStation?<Suspense fallback={<p className="message">Opening task setup…</p>}><StationLauncher workspace key={selectedStation} memory={getLauncherMemory(selectedStation)} stationLabel={stationLabel} projectId={stationJobs[selectedStation]?.projectId} onClose={close} onSettings={()=>setSettingsOpen(true)} onUncertaintyChange={uncertain=>{try{const key='sidequest:uncertain-submit:'+selectedStation;if(uncertain)sessionStorage.setItem(key,'1');else sessionStorage.removeItem(key);}catch{}}} onQueued={assignment=>{setStationJobs(previous=>{const next={...previous,[selectedStation]:assignment};try{localStorage.setItem('sidequest:result-displays',JSON.stringify(next));}catch{}return next;});}} onLaunched={assignment=>assignResult(selectedStation,assignment)}/></Suspense>:<Suspense fallback={<p className="message" role="status">Opening session…</p>}><MonitorSession key={sessionKey} owner={selectedOwner} known={!!officeSnapshot&&!officeError} fixture={officeSnapshot?.mode==='fixture'} active={active&&!officeError&&!jobsOpen&&!settingsOpen&&!launcherStation&&!actorStation} draft={draft} getDraft={()=>drafts.current.get(sessionKey)??createLocalDraft()} operations={operations} memory={traceMemory} onDraft={next=>{drafts.current.set(sessionKey,next);setDraftRevision(value=>value+1);}} onProvider={()=>selectedStation&&openWorkstation(selectedStation)} onAttach={()=>selectedStation&&openActor(selectedStation)}/></Suspense>}</div>
+    <div className="monitor-content">{monitorTab==='files'?fileWork:monitorTab==='task'&&selectedStation?<Suspense fallback={<p className="message">Opening task setup…</p>}><StationLauncher workspace key={selectedStation} memory={getLauncherMemory(selectedStation)} stationLabel={stationLabel} projectId={stationJobs[selectedStation]?.projectId} onClose={close} onSettings={()=>setSettingsOpen(true)} onUncertaintyChange={uncertain=>{try{const key='sidequest:uncertain-submit:'+selectedStation;if(uncertain)sessionStorage.setItem(key,'1');else sessionStorage.removeItem(key);}catch{}}} onQueued={assignment=>{setStationJobs(previous=>{const next={...previous,[selectedStation]:assignment};try{localStorage.setItem('sidequest:result-displays',JSON.stringify(next));}catch{}return next;});}} onLaunched={assignment=>assignResult(selectedStation,assignment)}/></Suspense>:<Suspense fallback={<p className="message" role="status">Opening session…</p>}><MonitorSession key={sessionKey} owner={selectedOwner} known={!!officeSnapshot&&!officeError} fixture={officeSnapshot?.mode==='fixture'} active={active&&!officeError&&!jobsOpen&&!settingsOpen&&!launcherStation&&!actorStation} store={draftStore} onAccepted={()=>setOfficeRevision(value=>value+1)} operations={operations} memory={traceMemory} onProvider={()=>selectedStation&&openWorkstation(selectedStation)} onAttach={()=>selectedStation&&openActor(selectedStation)}/></Suspense>}</div>
   </div>;
   const officeReady = !!bindings && !assetFailure;
   const displayStations=bindings?.stations??[{id:'repository',label:'Repository viewer'}];

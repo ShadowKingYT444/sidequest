@@ -1,0 +1,82 @@
+
+> sidequest-desktop@0.1.0 test
+> node --test tests/*.test.mjs
+
+✔ inspects GLB manifest metadata and transformed bounds (3.435465ms)
+✔ rejects a GLB that references a remote buffer or image (0.949259ms)
+✔ allows external resources only from files inside the supplied office folder (200.804386ms)
+✔ rejects malformed GLB headers and byte lengths (18.140967ms)
+✔ bindings preserve stable monitor IDs and reject duplicate or invalid geometry (2.131243ms)
+✔ embedded image blobs work while model resource URLs stay local (0.691675ms)
+✔ snapshot exposes bounded changed-file metadata and filters credentials, config, logs, symlinks, and unsafe names (145.205333ms)
+✔ diff reads only pinned commits, handles additions/deletions/renames/binary, and is read-only (169.777145ms)
+✔ rejects malformed identifiers and identifiers outside the captured manifest (192.724618ms)
+✔ pins a caller-selected base and rejects a non-commit or non-repository root (191.315642ms)
+✔ ignores inherited Git repository and config redirects (119.757319ms)
+✔ does not execute repository-configured external diff commands (174.621439ms)
+✔ installs only the runtime GLB and its referenced local resource with provenance (148.58088ms)
+✔ the parts route concatenates the exact eight names without changing source parts (125.061821ms)
+✔ rejects traversal, links, remote resources, and a mismatched archive hash before writing outputs (901.848101ms)
+✔ production CLI does not accept a test hash override (167.740388ms)
+✔ plain paste is inert, normalizes controls and retains text around a bounded selection (2.284155ms)
+✔ allowlist rejects executable/SVG/HTML, MIME confusion and unsafe names; text/code/PDF stay inert (11.520572ms)
+✔ count, per-file and total byte bounds preserve the existing valid local draft (39.37109ms)
+✔ deduplication is stable across picker/paste metadata and rejected additions do not allocate URLs (1.068554ms)
+✔ raster previews require matching magic bytes; only local image URLs are created and revoked explicitly (0.88122ms)
+✔ clipboard images without suffixes get verified raster previews without accepting disguised extensions (0.50718ms)
+✔ clipboard/drop extraction reads only plain text and File objects, ignores HTML/paths/directories and deduplicates (0.480231ms)
+✔ draft helpers and composer contain no upload, bridge or dispatch path (36.121528ms)
+✔ completed jobs require every task completed and a nonempty passing check set; checking never means completed (2.041342ms)
+✔ only validated persisted job/run/project/worker ownership receives a station badge (0.829983ms)
+✔ failed, blocked, approval and warning events are attention with stable identities (1.084911ms)
+✔ one task notification supplies badges to each distinct validated recorded session (6.596945ms)
+✔ released worker ownership requires the exact retained task attempt and rejects every known conflict (1.556267ms)
+✔ task and failed-check attention outrank a completed result, without duplicated warning alerts (0.226287ms)
+✔ fixture labels are explicit, unassigned notifications never invent station ownership (0.140357ms)
+✔ malformed, overbound, duplicate and cross-identity records fail before projection (0.520108ms)
+✔ six installed executables do not imply six connected adapters (1.831261ms)
+✔ Codex requires each verified execution, model, USD and repository gate (1.685754ms)
+✔ missing, malformed, duplicate and stale local metadata fail closed (0.296218ms)
+✔ the current restricted host exposes an installed Codex as unavailable (0.206934ms)
+✔ host runtime client uses fixed paths and secret authentication, and gates safe execution (93.799915ms)
+✔ runtime origin and session file reject redirects, remote hosts, links and loose permissions (13.148938ms)
+✔ runtime response bound limits untrusted artifact output (4.860629ms)
+✔ coding methods require verified capability and USD enforcement before mutations (21.705294ms)
+✔ office session commands validate station and recorded run ownership without launching work (13.95167ms)
+✔ protocol fixture: session transport keeps idempotency identity, validates opaque attachments and retains production USD guard (13.073122ms)
+✔ protocol fixture: native IPC fault envelope never exposes provider messages, paths or credentials (0.617803ms)
+✔ office session identities reject duplicate station, run and worker ownership (2.194389ms)
+✔ frozen display requires explicit immutability, digest and selected job ownership (0.406164ms)
+✔ file, text and diff pages are bound to the selected frozen artifact and file (0.973954ms)
+✔ preload exposes fixed read and validated local-runtime capabilities without shell or credentials (3.579246ms)
+✔ Electron security helpers trust only the app origin or configured loopback dev origin (0.351578ms)
+✔ IPC sender validation requires the current main frame and opaque file IDs (0.191093ms)
+✔ BrowserWindow and main process keep Node access disabled and deny navigation, windows, downloads, and capture (0.351305ms)
+✔ app protocol serves dist assets and root office URLs from copied public assets safely (103.125611ms)
+✔ provider discovery uses fixed executable metadata and never infers authentication (110.58461ms)
+✔ protocol fixture: preload retains sanitized definite send rejection code across Electron IPC (1.221734ms)
+✔ protocol fixture: reload preserves File bytes, local identities and recreated image previews without storing URLs (39.845987ms)
+✔ protocol fixture: lost send reply stays locked across reload, reconciles original command ID and never sends twice (12.467171ms)
+✔ protocol fixture: drafts edited during send are retained and only submitted attachment identities clear after acceptance (1.200237ms)
+✔ protocol fixture: staging/readiness failure retains draft and ID; explicit retry after not-found reuses same send identity (6.784016ms)
+✔ protocol fixture: storage failure blocks sends before staging or message network mutation (0.5901ms)
+✔ protocol fixture: malformed stored pending or mismatched receipts cannot clear a draft (0.482899ms)
+✔ protocol fixture: retry replays the exact saved revision even after staging and later runtime revision changes (5.979933ms)
+✔ protocol fixture: a definite revision rejection retains draft and requires explicit review before a new send identity (0.747882ms)
+✔ protocol fixture: a corrupt pending record is never overwritten by edits or allowed to create another send (0.306702ms)
+✔ protocol fixture: sending requires terminal coding identity, known remaining budget and every production readiness guard (1.013881ms)
+✔ provider attachment bounds preserve local unsupported/large files rather than sending them (0.455459ms)
+✔ protocol fixture: queued jobs and older task attempts cannot advertise send readiness (0.224568ms)
+ℹ tests 65
+ℹ suites 0
+ℹ pass 65
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1815.50505
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

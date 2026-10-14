@@ -1,0 +1,18 @@
+✔ protocol fixture: reload preserves File bytes, local identities and recreated image previews without storing URLs (8.971351ms)
+✔ protocol fixture: lost send reply stays locked across reload, reconciles original command ID and never sends twice (1.610047ms)
+✔ protocol fixture: drafts edited during send are retained and only submitted attachment identities clear after acceptance (1.039049ms)
+✔ protocol fixture: staging/readiness failure retains draft and ID; explicit retry after not-found reuses same send identity (0.658652ms)
+✔ protocol fixture: storage failure blocks sends before staging or message network mutation (0.542194ms)
+✔ protocol fixture: malformed stored pending or mismatched receipts cannot clear a draft (0.47557ms)
+✔ protocol fixture: retry replays the exact saved revision even after staging and later runtime revision changes (0.641338ms)
+✔ protocol fixture: a definite revision rejection retains draft and requires explicit review before a new send identity (0.783723ms)
+✔ protocol fixture: sending requires terminal coding identity, known remaining budget and every production readiness guard (0.95026ms)
+✔ provider attachment bounds preserve local unsupported/large files rather than sending them (0.476865ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 128.890894

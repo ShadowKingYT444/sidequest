@@ -1,0 +1,12 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --grep protocol fake: --retries=0
+
+[WebServer] (node:43986) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+(node:44018) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+···
+  3 passed (6.3s)

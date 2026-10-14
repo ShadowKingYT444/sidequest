@@ -1,16 +1,17 @@
 import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {bridge} from './bridge';
 import {requireEvents, requireRun} from './RunActivity';
-import PromptComposer from './PromptComposer';
-import type {DraftOperations,LocalDraft} from './local-drafts';
+import SessionComposer from './SessionComposer';
+import type {SessionDraftStore} from './session-drafts';
+import type {DraftOperations} from './local-drafts';
 import type {OfficeSession, RunEventPage, RuntimeJob, RuntimeRun} from './types';
 import './MonitorSession.css';
 
 interface RecordedRead {job:RuntimeJob;run:RuntimeRun;page:RunEventPage}
 export interface MonitorMemory {afterSeq:number;previous:number[];scrollTop:number;read?:RecordedRead;error?:string}
-interface Props {owner?:OfficeSession;known:boolean;fixture:boolean;active:boolean;draft:LocalDraft;onDraft:(draft:LocalDraft)=>void;getDraft:()=>LocalDraft;operations:DraftOperations;memory:MonitorMemory;onProvider:()=>void;onAttach:()=>void}
+interface Props {owner?:OfficeSession;known:boolean;fixture:boolean;active:boolean;store:SessionDraftStore;onAccepted:()=>void;operations:DraftOperations;memory:MonitorMemory;onProvider:()=>void;onAttach:()=>void}
 const identity=(value:unknown):value is string=>typeof value==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/.test(value);
-export default function MonitorSession({owner,known,fixture,active,draft,onDraft,getDraft,operations,memory,onProvider,onAttach}:Props){
+export default function MonitorSession({owner,known,fixture,active,store,onAccepted,operations,memory,onProvider,onAttach}:Props){
   const [read,setRead]=useState(memory.read),[error,setError]=useState(memory.error??''),[loading,setLoading]=useState(false),[refresh,setRefresh]=useState(0);
   const [afterSeq,setAfterSeq]=useState(memory.afterSeq);
   const body=useRef<HTMLDivElement>(null),generation=useRef(0),restored=useRef(false);
@@ -56,6 +57,6 @@ export default function MonitorSession({owner,known,fixture,active,draft,onDraft
         {read&&(memory.previous.length>0||read.page.has_more)&&<div className="monitor-page"><button disabled={!memory.previous.length||loading} onClick={()=>page(memory.previous.pop()??0)}>Previous events</button><button disabled={!read.page.has_more||loading} onClick={()=>{memory.previous.push(afterSeq);page(read.page.next_after_seq);}}>More events</button></div>}
       </>}
     </div>
-    <PromptComposer draft={draft} onChange={onDraft} getCurrentDraft={getDraft} operations={operations} canSubmit={false} label="Message this session" disabledReason="Sending is unavailable. The current runtime has no session message or attachment transport, and this host has not passed the native dispatch gates."/>
+    <SessionComposer store={store} operations={operations} job={read?.job} run={read?.run} known={known} active={active} onAccepted={()=>{setRefresh(value=>value+1);onAccepted();}}/>
   </section>;
 }

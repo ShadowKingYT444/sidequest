@@ -15,13 +15,13 @@ export interface RunEvent {seq:number;at:string;type:string;message:string;artif
 export interface RunEventPage {v:1;run_id:string;items:RunEvent[];next_after_seq:number;has_more:boolean}
 export interface OfficeSession {station_id:string;job_id:string;run_id:string;worker_id:string;project_id:string;assigned_at:string}
 export interface RuntimeSnapshot {v:1;revision:number;mode:string;projects:RuntimeProject[];jobs:RuntimeJob[];stopped:boolean;office_sessions?:OfficeSession[];budget?:{limit_usd:number;reserved_usd:number;spent_usd:number|null;uncertain:boolean}}
-export interface RuntimeCapabilities {v:1;features:{local_git_inspection?:boolean;computer_artifacts:boolean;coding?:boolean;codex_session?:boolean};worker_model:{id:string;effort:string;verified:boolean};reasons:string[];codex?:{state:string;host_enabled?:boolean;catalog_verified?:boolean;usd_cost_enforced:boolean;reason?:string|null;subscription_quota?:{ordinary_usage_allowed:boolean|null;purchased_credits_available:boolean|null}}}
+export interface RuntimeCapabilities {v:1;features:{local_git_inspection?:boolean;computer_artifacts:boolean;coding?:boolean;codex_session?:boolean;session_messages?:boolean;session_attachments?:boolean};worker_model:{id:string;effort:string;verified:boolean};reasons:string[];codex?:{state:string;host_enabled?:boolean;catalog_verified?:boolean;usd_cost_enforced:boolean;reason?:string|null;subscription_quota?:{ordinary_usage_allowed:boolean|null;purchased_credits_available:boolean|null}}}
 export interface RuntimeArtifact {id:string;kind:string;job_id:string;sha256:string;display_name?:string;size_bytes?:number;candidate_id?:string|null;source_revision:string;immutable?:boolean}
 export interface RuntimeFile {file_id:string;path:string;status:string;binary:boolean;size_bytes:number;sha256:string|null;media_type:string}
 export interface FilePage {v:1;artifact_id:string;candidate_id:string;files:RuntimeFile[];next_cursor:string|null}
 export interface DiffPage {v:1;artifact_id:string;candidate_id:string;base_revision:string;candidate_revision:string;rows:{kind:string;old_line:number|null;new_line:number|null;text:string;clipped?:boolean}[];next_cursor:string|null}
 export interface TextPage {v:1;artifact_id:string;file_id:string;sha256:string;immutable:boolean;lines:{number:number;text:string;clipped?:boolean}[];next_line:number|null}
-export interface CommandReply {v:1;accepted:boolean;command_id:string;revision:number;result?:{job_id?:string;project_id?:string}}
+export interface CommandReply {v:1;accepted:boolean;command_id:string;revision:number;result?:{job_id?:string;project_id?:string;run_id?:string}}
 export interface StationAssignment {jobId:string;projectId:string}
 export interface ProviderDiscovery {v:1;observedAt:string;providers:{id:string;name:string;installed:boolean;binaryPath:string|null;version:string|null;homePath:string|null;runtime:'local';discoverySource?:'path'|'known-install'|'host-setting'|null;authentication?:'unknown';reachability?:'unknown'}[]}
 export interface JobView {artifactId:string;fileId:string;tab:'text'|'diff';startLine:number;scrollTop:number;artifactCursors?:string[];artifactPage?:number;fileCursors?:string[];filePage?:number;diffCursors?:string[];diffPage?:number}
@@ -29,6 +29,9 @@ export interface RuntimeBridge {
   snapshot():Promise<RuntimeSnapshot>;capabilities():Promise<RuntimeCapabilities>;job(id:string):Promise<{v:1;job:RuntimeJob}>;
   runInfo(id:string):Promise<{v:1;run:RuntimeRun}>;runEvents(id:string,afterSeq?:number):Promise<RunEventPage>;
   assignSession(station:string,job:string,run:string,revision:number):Promise<CommandReply>;clearSession(station:string,revision:number):Promise<CommandReply>;
+  stageAttachment(run:string,key:string,name:string,mime:string,base64:string):Promise<{v:1;attachment:{id:string;run_id:string;name:string;media_type:string;size_bytes:number;sha256:string}}>;
+  sessionMessage(run:string,id:string,prompt:string,attachments:string,revision:number):Promise<CommandReply>;
+  commandStatus(id:string):Promise<{v:1;found:boolean;command?:CommandReply}>;
   artifact(id:string):Promise<{v:1;artifact:RuntimeArtifact;preview_text:string|null}>;
   artifacts(id:string,cursor?:string):Promise<{v:1;items:RuntimeArtifact[];next_cursor:string|null}>;files(id:string,cursor?:string):Promise<FilePage>;
   text(artifact:string,file:string,startLine?:number):Promise<TextPage>;diff(artifact:string,file:string,cursor?:string):Promise<DiffPage>;

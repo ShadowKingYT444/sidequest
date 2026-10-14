@@ -29,7 +29,7 @@ try {
   const page=context.pages()[0] ?? await context.waitForEvent('page');
   await page.waitForLoadState('domcontentloaded');
   const boundary=await page.evaluate(async()=>({bridgeKeys:Object.keys(window.sidequest ?? {}).sort(),runtimeKeys:Object.keys(window.sidequest?.runtime ?? {}).sort(),nodeAccess:typeof window.require,snapshot:await window.sidequest?.snapshot()}));
-  const expectedRuntimeKeys=['snapshot','capabilities','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop','refreshReadiness','runEvents','runInfo','enableCoding','submitCoding','runCoding','assignSession','clearSession'].sort();
+  const expectedRuntimeKeys=['snapshot','capabilities','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop','refreshReadiness','runEvents','runInfo','enableCoding','submitCoding','runCoding','assignSession','clearSession','stageAttachment','sessionMessage','commandStatus'].sort();
   if(boundary.nodeAccess!=='undefined'||boundary.bridgeKeys.join(',')!=='diff,providers,runtime,snapshot'||boundary.runtimeKeys.join(',')!==expectedRuntimeKeys.join(',')||boundary.snapshot?.mode!=='local-git')throw new Error('Desktop boundary smoke check failed.');
   await page.screenshot({path:path.join(evidence,'electron-window.png')});
   await writeFile(path.join(evidence,'electron-smoke.json'),JSON.stringify({status:'passed',startedAt,bridgeKeys:boundary.bridgeKeys,runtimeKeys:boundary.runtimeKeys,nodeAccess:false,mode:boundary.snapshot.mode,args},null,2)+'\n');

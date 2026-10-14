@@ -6,13 +6,16 @@ async function read<T>(url: string): Promise<T> {
 }
 async function runtimeRequest<T>(method:string,args:(string|number)[]=[]):Promise<T> {
   const response=await fetch(`/__sidequest/runtime/${method}`,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(args)});
-  if(!response.ok)throw new Error('The local runtime request failed. Refresh state and review the host configuration.');
+  if(!response.ok){let code='UNAVAILABLE';try{const data=await response.json();if(typeof data.error?.code==='string'&&/^[A-Z_]+$/.test(data.error.code))code=data.error.code;}catch{}throw Object.assign(new Error(`Local runtime request failed (${response.status}, ${code}).`),{code,status:response.status});}
   return response.json() as Promise<T>;
 }
 const runtime:RuntimeBridge={
   snapshot:()=>runtimeRequest('snapshot'),capabilities:()=>runtimeRequest('capabilities'),job:id=>runtimeRequest('job',[id]),artifacts:(id,cursor='')=>runtimeRequest('artifacts',[id,cursor]),
   runInfo:id=>runtimeRequest('runInfo',[id]),runEvents:(id,afterSeq=0)=>runtimeRequest('runEvents',[id,afterSeq]),
   assignSession:(station,job,run,revision)=>runtimeRequest('assignSession',[station,job,run,revision]),clearSession:(station,revision)=>runtimeRequest('clearSession',[station,revision]),
+  stageAttachment:(run,key,name,mime,base64)=>runtimeRequest('stageAttachment',[run,key,name,mime,base64]),
+  sessionMessage:(run,id,prompt,attachments,revision)=>runtimeRequest('sessionMessage',[run,id,prompt,attachments,revision]),
+  commandStatus:id=>runtimeRequest('commandStatus',[id]),
   artifact:id=>runtimeRequest('artifact',[id]),
   files:(id,cursor='')=>runtimeRequest('files',[id,cursor]),text:(artifact,file,startLine=1)=>runtimeRequest('text',[artifact,file,startLine]),diff:(artifact,file,cursor='')=>runtimeRequest('diff',[artifact,file,cursor]),
   register:revision=>runtimeRequest('register',[revision]),submitInspection:(project,title,revision)=>runtimeRequest('submitInspection',[project,title,revision]),run:(job,revision)=>runtimeRequest('run',[job,revision]),stop:revision=>runtimeRequest('stop',[revision]),

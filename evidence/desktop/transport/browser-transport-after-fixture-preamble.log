@@ -1,0 +1,101 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --grep protocol fake: --retries=0
+
+[WebServer] (node:40018) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+(node:40266) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Composer fixture page error: The requested module '/node_modules/.vite/deps/react-dom_client.js' does not provide an export named 'createRoot'
+F(node:42695) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Composer fixture page error: The requested module '/node_modules/.vite/deps/react-dom_client.js' does not provide an export named 'createRoot'
+F(node:43234) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Composer fixture page error: The requested module '/node_modules/.vite/deps/react-dom_client.js' does not provide an export named 'createRoot'
+F
+
+  1) tests/browser/transport.spec.ts:36:1 › protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload 
+
+    Error: expect(locator).toBeEditable() failed
+
+    Locator: getByRole('textbox', { name: 'Message this session' })
+    Expected: editable
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEditable" getByRole('textbox', { name: 'Message this session' }) with timeout 15000ms
+      - waiting for getByRole('textbox', { name: 'Message this session' })
+
+
+      31 |  createRoot(document.getElementById('fixture-root')).render(React.createElement(SessionComposer,{store,operations:createDraftOperations(),job,run,known:true,active:true,onAccepted:()=>{window.fixtureAccepted=true;}}));
+      32 |  </script></body></html>`}));
+    > 33 |  await page.goto('/transport-fixture');await expect(page.getByRole('textbox',{name:'Message this session'})).toBeEditable();
+         |                                                                                                              ^
+      34 | }
+      35 |
+      36 | test('protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload',async({page})=>{
+        at composerFixture (/tmp/sidequest-desktop-transport/desktop/tests/browser/transport.spec.ts:33:110)
+        at /tmp/sidequest-desktop-transport/desktop/tests/browser/transport.spec.ts:37:2
+
+    Error Context: test-results/transport-protocol-fake-re-6ecb5-cal-image-preview-on-reload/error-context.md
+
+  2) tests/browser/transport.spec.ts:50:1 › protocol fake: lost reply survives reload and reconciles exactly one send, keeping a subsequent draft 
+
+    Error: expect(locator).toBeEditable() failed
+
+    Locator: getByRole('textbox', { name: 'Message this session' })
+    Expected: editable
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEditable" getByRole('textbox', { name: 'Message this session' }) with timeout 15000ms
+      - waiting for getByRole('textbox', { name: 'Message this session' })
+
+
+      31 |  createRoot(document.getElementById('fixture-root')).render(React.createElement(SessionComposer,{store,operations:createDraftOperations(),job,run,known:true,active:true,onAccepted:()=>{window.fixtureAccepted=true;}}));
+      32 |  </script></body></html>`}));
+    > 33 |  await page.goto('/transport-fixture');await expect(page.getByRole('textbox',{name:'Message this session'})).toBeEditable();
+         |                                                                                                              ^
+      34 | }
+      35 |
+      36 | test('protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload',async({page})=>{
+        at composerFixture (/tmp/sidequest-desktop-transport/desktop/tests/browser/transport.spec.ts:33:110)
+        at /tmp/sidequest-desktop-transport/desktop/tests/browser/transport.spec.ts:51:2
+
+    Error Context: test-results/transport-protocol-fake-lo-e1747--keeping-a-subsequent-draft/error-context.md
+
+  3) tests/browser/transport.spec.ts:62:1 › protocol fake: unknown spending authority keeps send disabled while durable local draft remains usable 
+
+    Error: expect(locator).toBeEditable() failed
+
+    Locator: getByRole('textbox', { name: 'Message this session' })
+    Expected: editable
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEditable" getByRole('textbox', { name: 'Message this session' }) with timeout 15000ms
+      - waiting for getByRole('textbox', { name: 'Message this session' })
+
+
+      31 |  const run={id:'run-1',state:'completed',ended_at:'2026-10-14T00:00:00Z',usage:{uncertain:false,cost_usd:0.01}};
+      32 |  createRoot(document.getElementById('fixture-root')).render(React.createElement(SessionComposer,{store,operations:createDraftOperations(),job,run,known:true,active:true,onAccepted:()=>{window.fixtureAccepted=true;}}));
+    > 33 |  </script></body></html>`}));
+         |                              ^
+      34 |  await page.goto('/transport-fixture');await expect(page.getByRole('textbox',{name:'Message this session'})).toBeEditable();
+      35 | }
+      36 |
+        at composerFixture (/tmp/sidequest-desktop-transport/desktop/tests/browser/transport.spec.ts:33:110)
+        at /tmp/sidequest-desktop-transport/desktop/tests/browser/transport.spec.ts:63:2
+
+    Error Context: test-results/transport-protocol-fake-un-eb487--local-draft-remains-usable/error-context.md
+
+  3 failed
+    tests/browser/transport.spec.ts:36:1 › protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload 
+    tests/browser/transport.spec.ts:50:1 › protocol fake: lost reply survives reload and reconciles exactly one send, keeping a subsequent draft 
+    tests/browser/transport.spec.ts:62:1 › protocol fake: unknown spending authority keeps send disabled while durable local draft remains usable 
