@@ -172,7 +172,7 @@ class JobCreate(StrictModel):
     title: str = Field(min_length=1, max_length=MAX_TITLE_LENGTH)
     source: Source
     checks: list[str] = Field(default_factory=list, max_length=64)
-    budget_usd: Decimal = Field(gt=Decimal("0"), max_digits=18, decimal_places=6)
+    budget_usd: Decimal = Field(ge=Decimal("0"), max_digits=18, decimal_places=6)
     allowed_actions: list[str] = Field(default_factory=list)
     project_id: str
     plan: TaskPlan | None = None
@@ -215,6 +215,12 @@ class JobCreate(StrictModel):
             return Decimal(str(value))
         except (InvalidOperation, ValueError):
             raise ValueError("budget must be a decimal") from None
+
+    @model_validator(mode="after")
+    def zero_budget_is_only_for_local_inspection(self) -> "JobCreate":
+        if self.budget_usd == 0 and not is_local_git_inspection(self):
+            raise ValueError("zero budget is allowed only for deterministic local Git inspection")
+        return self
 
 
 class CandidateIdentity(StrictModel):
@@ -267,13 +273,23 @@ class CommandRequest(StrictModel):
     payload: dict[str, Any]
 
 
-def budget_to_micro(value: Decimal | str | int | float) -> int:
+def is_local_git_inspection(job: JobCreate) -> bool:
+    return (
+        job.budget_usd == 0
+        and job.source.kind == "typed"
+        and set(job.allowed_actions) == {"read_repo", "run_checks"}
+        and job.checks == ["candidate.frozen_identity"]
+        and job.plan is None
+    )
+
+
+def budget_to_micro(value: Decimal | str | int | float, *, allow_zero: bool = False) -> int:
     """Convert USD into integer micro-dollars without binary rounding."""
     try:
         decimal = Decimal(str(value))
     except (InvalidOperation, ValueError):
         raise ValueError("budget must be a decimal") from None
-    if not decimal.is_finite() or decimal <= 0 or decimal.as_tuple().exponent < -6:
+    if not decimal.is_finite() or decimal < 0 or (decimal == 0 and not allow_zero) or decimal.as_tuple().exponent < -6:
         raise ValueError("budget must be positive with at most six decimal places")
     micro = decimal * 1_000_000
     if micro != micro.to_integral_value() or micro > MAX_BUDGET_MICRO:

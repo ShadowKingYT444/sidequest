@@ -25,6 +25,7 @@ from .models import (
     budget_to_micro,
     canonical_json,
     canonical_sha256,
+    is_local_git_inspection,
 )
 from .policy import ErrorCode, PolicyEngine, RuntimeFault
 
@@ -32,6 +33,7 @@ from .policy import ErrorCode, PolicyEngine, RuntimeFault
 _MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 _MAX_EVENT_LENGTH = 4096
 _GIT_OBJECT_ID_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
+_OPAQUE_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:_-]{0,199}$")
 
 
 def utc_now() -> str:
@@ -43,6 +45,12 @@ def _require_uuid(value: str, label: str) -> str:
         return str(UUID(str(value)))
     except (ValueError, TypeError, AttributeError):
         raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{label} must be a UUID") from None
+
+
+def _require_opaque_id(value: str, label: str) -> str:
+    if not isinstance(value, str) or not _OPAQUE_ID_RE.fullmatch(value):
+        raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{label} must be a bounded opaque identifier")
+    return value
 
 
 def _json_load(value: str) -> Any:
@@ -402,13 +410,14 @@ class RuntimeStore:
         if job.plan is not None and len(job.plan.tasks) > self.config.max_tasks_per_plan:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "task plan exceeds the configured task limit")
         project_id = _require_uuid(job.project_id, "project_id")
+        local_inspection = is_local_git_inspection(job)
         job_id = str(uuid4())
         now = utc_now()
         source_json = canonical_json(job.source.model_dump(mode="python"))
         checks_json = canonical_json(job.checks)
         actions_json = canonical_json(job.allowed_actions)
         try:
-            budget_micro = budget_to_micro(job.budget_usd)
+            budget_micro = budget_to_micro(job.budget_usd, allow_zero=local_inspection)
         except ValueError as error:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, str(error)) from None
         outcome = job.outcome if job.outcome is not None else job.source.text
@@ -460,7 +469,7 @@ class RuntimeStore:
                     now,
                 ),
             )
-            task_kind = "research" if job.source.kind == "lookout" else "build"
+            task_kind = "verify" if local_inspection else ("research" if job.source.kind == "lookout" else "build")
             for task_id, spec, dependencies, sort_order in task_rows:
                 connection.execute(
                     "INSERT INTO tasks(id, job_id, kind, objective, depends_on_json, write_paths_json, check_ids_json, "
@@ -521,18 +530,24 @@ class RuntimeStore:
         immutable: bool = True,
         artifact_id: str | UUID | None = None,
     ) -> str:
-        artifact_id = _require_uuid(str(artifact_id or uuid4()), "artifact_id")
+        artifact_id = _require_opaque_id(str(artifact_id or uuid4()), "artifact_id")
         job_id = _require_uuid(job_id, "job_id")
         if run_id is not None:
             run_id = _require_uuid(run_id, "run_id")
         if not isinstance(sha256, str) or len(sha256) != 64 or any(char not in "0123456789abcdef" for char in sha256):
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "artifact digest must be lowercase SHA-256 hex")
         if (
-            not kind
+            not isinstance(kind, str)
+            or not isinstance(media_type, str)
+            or not isinstance(display_name, str)
+            or not kind
             or not media_type
             or not display_name
+            or not isinstance(size_bytes, int)
+            or isinstance(size_bytes, bool)
             or size_bytes < 0
-            or len(display_name) > 255
+            or not isinstance(immutable, bool)
+            or len(display_name) > 4096
             or len(media_type) > 255
             or len(kind) > 80
         ):
@@ -578,10 +593,10 @@ class RuntimeStore:
     def create_candidate(self, candidate: CandidateCreate) -> str:
         if not isinstance(candidate, CandidateCreate):
             candidate = CandidateCreate.model_validate(candidate)
-        candidate_id = _require_uuid(candidate.candidate_id, "candidate_id")
+        candidate_id = _require_opaque_id(candidate.candidate_id, "candidate_id")
         job_id = _require_uuid(candidate.job_id, "job_id")
         run_id = _require_uuid(candidate.run_id, "run_id")
-        manifest_id = _require_uuid(candidate.manifest_artifact_id, "manifest_artifact_id")
+        manifest_id = _require_opaque_id(candidate.manifest_artifact_id, "manifest_artifact_id")
         if candidate.source_revision != candidate.base_revision:
             raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "candidate source revision does not match its base revision")
         with self.transaction() as connection:
@@ -785,6 +800,7 @@ class RuntimeStore:
         reservation_micro: int,
         *,
         max_parallel: int | None = None,
+        job_id: str | None = None,
     ) -> dict[str, Any] | None:
         """Atomically claim one dependency-ready task and reserve its budget."""
         worker_id = _require_uuid(worker_id, "worker_id")
@@ -794,6 +810,8 @@ class RuntimeStore:
             not isinstance(max_parallel, int) or isinstance(max_parallel, bool) or not 1 <= max_parallel <= 4
         ):
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "worker capacity must be between 1 and 4")
+        if job_id is not None:
+            job_id = _require_uuid(job_id, "job_id")
         capacity = self.config.max_parallel if max_parallel is None else min(self.config.max_parallel, max_parallel)
         with self.transaction() as connection:
             worker = connection.execute("SELECT state, role, configuration_json FROM workers WHERE id = ?", (worker_id,)).fetchone()
@@ -810,13 +828,16 @@ class RuntimeStore:
             if active >= capacity:
                 return None
 
-            ready_rows = connection.execute(
+            ready_sql = (
                 "SELECT t.*, j.project_id, j.budget_micro, j.spent_micro, j.state AS job_state, "
                 "p.base_revision, p.status AS project_status "
                 "FROM tasks t JOIN jobs j ON j.id = t.job_id JOIN projects p ON p.id = j.project_id "
                 "WHERE t.state = 'queued' AND j.state IN ('queued', 'running') "
-                "ORDER BY j.created_at, t.sort_order, t.id"
-            ).fetchall()
+            )
+            if job_id is not None:
+                ready_sql += "AND j.id = ? "
+            ready_sql += "ORDER BY j.created_at, t.sort_order, t.id"
+            ready_rows = connection.execute(ready_sql, (job_id,) if job_id is not None else ()).fetchall()
             has_ready = False
             budget_blocked = False
             for task in ready_rows:
@@ -878,8 +899,9 @@ class RuntimeStore:
                 connection.execute(
                     "INSERT INTO attempts(id, task_id, number, state, base_revision, provider_thread_id, provider_turn_id, "
                     "model, effort, started_at, ended_at, input_tokens, cached_input_tokens, output_tokens, total_tokens, "
-                    "cost_micro, usage_uncertain) VALUES (?, ?, ?, 'running', ?, NULL, NULL, NULL, NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, 1)",
-                    (attempt_id, task["id"], attempt_number, task["base_revision"], now),
+                    "cost_micro, usage_uncertain, worker_id) "
+                    "VALUES (?, ?, ?, 'running', ?, NULL, NULL, NULL, NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, 1, ?)",
+                    (attempt_id, task["id"], attempt_number, task["base_revision"], now, worker_id),
                 )
                 connection.execute(
                     "INSERT INTO budget_reservations(id, attempt_id, reserved_micro, settled_micro, state, created_at) "
@@ -1001,6 +1023,345 @@ class RuntimeStore:
                 raise RuntimeFault(ErrorCode.NOT_FOUND, "job was not found")
             return dict(row)
 
+    def list_projects(self) -> list[dict[str, Any]]:
+        with self.read_connection() as connection:
+            rows = connection.execute(
+                "SELECT id, name, base_revision, status, policy_json, created_at FROM projects ORDER BY name, id"
+            ).fetchall()
+            return [
+                {
+                    **dict(row),
+                    "policy": _json_load(row["policy_json"]),
+                }
+                for row in rows
+            ]
+
+    def list_jobs(self, project_id: str | None = None, *, limit: int = 100) -> list[dict[str, Any]]:
+        if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 500:
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "job list limit must be between 1 and 500")
+        with self.read_connection() as connection:
+            if project_id is None:
+                rows = connection.execute(
+                    "SELECT id, project_id, title, source_json, outcome, state, checks_json, allowed_actions_json, "
+                    "budget_micro, spent_micro, workflow_version, candidate_id, blocked_reason, created_at, updated_at "
+                    "FROM jobs ORDER BY created_at DESC, id DESC LIMIT ?",
+                    (limit,),
+                ).fetchall()
+            else:
+                project_id = _require_uuid(project_id, "project_id")
+                rows = connection.execute(
+                    "SELECT id, project_id, title, source_json, outcome, state, checks_json, allowed_actions_json, "
+                    "budget_micro, spent_micro, workflow_version, candidate_id, blocked_reason, created_at, updated_at "
+                    "FROM jobs WHERE project_id = ? ORDER BY created_at DESC, id DESC LIMIT ?",
+                    (project_id, limit),
+                ).fetchall()
+            return [
+                {
+                    **dict(row),
+                    "source": _json_load(row["source_json"]),
+                    "checks": _json_load(row["checks_json"]),
+                    "allowed_actions": _json_load(row["allowed_actions_json"]),
+                }
+                for row in rows
+            ]
+
+    def list_workers(self) -> list[dict[str, Any]]:
+        with self.read_connection() as connection:
+            rows = connection.execute(
+                "SELECT w.*, t.job_id AS current_job_id FROM workers w "
+                "LEFT JOIN tasks t ON t.id = w.current_task_id ORDER BY w.role, w.id"
+            ).fetchall()
+            output = []
+            for row in rows:
+                item = dict(row)
+                item["configuration"] = _json_load(item.pop("configuration_json"))
+                if item.get("current_job_id") is None:
+                    item["current_job_id"] = item["configuration"].get("assigned_job_id")
+                output.append(item)
+            return output
+
+    def list_approvals(self) -> list[dict[str, Any]]:
+        with self.read_connection() as connection:
+            rows = connection.execute(
+                "SELECT id, job_id, candidate_id, source_revision, tree_sha256, patch_sha256, action, destination, state, decision_at "
+                "FROM approvals ORDER BY rowid DESC LIMIT 100"
+            ).fetchall()
+            return [dict(row) for row in rows]
+
+    def list_job_artifacts(self, job_id: str, *, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
+        job_id = _require_uuid(job_id, "job_id")
+        if not 1 <= limit <= 101 or offset < 0:
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "artifact page bounds are invalid")
+        with self.read_connection() as connection:
+            return [
+                dict(row)
+                for row in connection.execute(
+                    "SELECT * FROM artifacts WHERE job_id = ? "
+                    "ORDER BY CASE kind WHEN 'file_manifest' THEN 0 WHEN 'diff' THEN 1 WHEN 'patch' THEN 2 "
+                    "WHEN 'test_report' THEN 3 WHEN 'log' THEN 4 ELSE 5 END, created_at, id LIMIT ? OFFSET ?",
+                    (job_id, limit, offset),
+                ).fetchall()
+            ]
+
+    def list_candidate_artifacts(
+        self,
+        candidate_id: str,
+        *,
+        display_names: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
+        candidate_id = _require_opaque_id(candidate_id, "candidate_id")
+        if display_names is not None and (
+            not isinstance(display_names, list)
+            or len(display_names) > 100
+            or any(not isinstance(item, str) or len(item) > 4096 for item in display_names)
+        ):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "candidate artifact path filter is invalid")
+        with self.read_connection() as connection:
+            if not connection.execute("SELECT 1 FROM candidates WHERE id = ?", (candidate_id,)).fetchone():
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "candidate was not found")
+            if display_names is not None:
+                if not display_names:
+                    return []
+                placeholders = ",".join("?" for _ in display_names)
+                rows = connection.execute(
+                    f"SELECT * FROM artifacts WHERE candidate_id = ? AND kind = 'source_file' "
+                    f"AND display_name IN ({placeholders}) ORDER BY display_name, id",
+                    (candidate_id, *display_names),
+                ).fetchall()
+                return [dict(row) for row in rows]
+            return [
+                dict(row)
+                for row in connection.execute(
+                    "SELECT * FROM artifacts WHERE candidate_id = ? ORDER BY created_at, id",
+                    (candidate_id,),
+                ).fetchall()
+            ]
+
+    def list_job_runs(self, job_id: str) -> list[dict[str, Any]]:
+        job_id = _require_uuid(job_id, "job_id")
+        with self.read_connection() as connection:
+            rows = connection.execute(
+                "SELECT a.*, t.job_id, t.id AS task_id FROM attempts a "
+                "JOIN tasks t ON t.id = a.task_id WHERE t.job_id = ? "
+                "ORDER BY a.started_at, a.id",
+                (job_id,),
+            ).fetchall()
+            return [dict(row) for row in rows]
+
+    def get_run(self, run_id: str) -> dict[str, Any]:
+        run_id = _require_uuid(run_id, "run_id")
+        with self.read_connection() as connection:
+            row = connection.execute(
+                "SELECT a.*, t.job_id, t.id AS task_id FROM attempts a "
+                "JOIN tasks t ON t.id = a.task_id WHERE a.id = ?",
+                (run_id,),
+            ).fetchone()
+            if not row:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "run was not found")
+            return dict(row)
+
+    def list_run_events(self, run_id: str, *, after_seq: int = 0, limit: int = 200) -> list[dict[str, Any]]:
+        run_id = _require_uuid(run_id, "run_id")
+        if (
+            not isinstance(after_seq, int) or isinstance(after_seq, bool) or after_seq < 0
+            or not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 200
+        ):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "run event page bounds are invalid")
+        with self.read_connection() as connection:
+            rows = connection.execute(
+                "SELECT run_seq AS seq, at, type, message, artifact_id, job_id FROM events "
+                "WHERE run_id = ? AND run_seq > ? ORDER BY run_seq LIMIT ?",
+                (run_id, after_seq, limit + 1),
+            ).fetchall()
+            return [dict(row) for row in rows]
+
+    def append_run_event(
+        self,
+        job_id: str,
+        run_id: str,
+        event_type: str,
+        message: str,
+        artifact_id: str | None = None,
+    ) -> int:
+        job_id = _require_uuid(job_id, "job_id")
+        run_id = _require_uuid(run_id, "run_id")
+        with self.transaction() as connection:
+            seq = self._insert_event(connection, job_id, run_id, None, event_type, message, artifact_id)
+            self._bump_revision(connection)
+            return seq
+
+    def finalize_job(self, job_id: str, state: str, outcome: str, *, blocked_reason: str | None = None) -> None:
+        job_id = _require_uuid(job_id, "job_id")
+        if state not in {"verifying", "failed", "blocked", "cancelled"}:
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "final job state is invalid")
+        if len(outcome) > 16000 or (blocked_reason is not None and len(blocked_reason) > 4096):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "job outcome exceeds the configured limit")
+        with self.transaction() as connection:
+            row = connection.execute("SELECT id FROM jobs WHERE id = ?", (job_id,)).fetchone()
+            if not row:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "job was not found")
+            connection.execute(
+                "UPDATE jobs SET state = ?, outcome = ?, blocked_reason = ?, updated_at = ? WHERE id = ?",
+                (state, outcome, blocked_reason, utc_now(), job_id),
+            )
+            self._insert_event(connection, job_id, None, None, "status", outcome[:_MAX_EVENT_LENGTH], None)
+            self._bump_revision(connection)
+
+    def set_job_command(
+        self,
+        command_id: str | UUID,
+        expected_revision: int,
+        command_type: str,
+        job_id: str,
+    ) -> dict[str, Any]:
+        if command_type not in {"job.run", "job.pause", "job.cancel"}:
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "job command is unsupported")
+        job_id = _require_uuid(job_id, "job_id")
+        payload = {"job_id": job_id}
+
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            row = connection.execute(
+                "SELECT state, source_json, checks_json, allowed_actions_json, budget_micro FROM jobs WHERE id = ?",
+                (job_id,),
+            ).fetchone()
+            if not row:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "job was not found")
+            state = row["state"]
+            if command_type == "job.run":
+                create_data = {
+                    "source": _json_load(row["source_json"]),
+                    "checks": _json_load(row["checks_json"]),
+                    "allowed_actions": _json_load(row["allowed_actions_json"]),
+                    "budget_micro": row["budget_micro"],
+                }
+                safe_run = (
+                    create_data["source"].get("kind") == "typed"
+                    and set(create_data["allowed_actions"]) == {"read_repo", "run_checks"}
+                    and create_data["checks"] == ["candidate.frozen_identity"]
+                    and create_data["budget_micro"] == 0
+                )
+                if not safe_run:
+                    raise RuntimeFault(ErrorCode.POLICY_DENIED, "no verified coding worker is configured")
+                if state not in {"queued", "paused"}:
+                    raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "job is not ready to run")
+                connection.execute(
+                    "UPDATE jobs SET state = 'running', blocked_reason = NULL, updated_at = ? WHERE id = ?",
+                    (utc_now(), job_id),
+                )
+                connection.execute(
+                    "UPDATE tasks SET state = 'queued' WHERE job_id = ? AND state IN ('paused', 'cancelled')",
+                    (job_id,),
+                )
+                self._insert_event(connection, job_id, None, None, "status", "Read-only inspection queued.", None)
+                return {"job_id": job_id, "state": "running"}
+            if command_type == "job.pause":
+                if state not in {"queued", "running"}:
+                    raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "job cannot be paused in its current state")
+                connection.execute(
+                    "UPDATE jobs SET state = 'paused', updated_at = ? WHERE id = ?", (utc_now(), job_id)
+                )
+                connection.execute("UPDATE tasks SET state = 'paused' WHERE job_id = ? AND state = 'queued'", (job_id,))
+                self._insert_event(connection, job_id, None, None, "status", "Job paused.", None)
+                return {"job_id": job_id, "state": "paused"}
+            if state in {"accepted", "cancelled"}:
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "job cannot be cancelled in its current state")
+            connection.execute(
+                "UPDATE jobs SET state = 'cancelled', updated_at = ? WHERE id = ?", (utc_now(), job_id)
+            )
+            connection.execute(
+                "UPDATE tasks SET state = 'cancelled' WHERE job_id = ? AND state IN ('queued', 'paused')", (job_id,)
+            )
+            self._insert_event(connection, job_id, None, None, "status", "Job cancellation requested.", None)
+            return {"job_id": job_id, "state": "cancelled"}
+
+        return self.execute_command(command_id, command_type, payload, expected_revision, write)
+
+    def select_project(self, command_id: str | UUID, expected_revision: int, project_id: str) -> dict[str, Any]:
+        project_id = _require_uuid(project_id, "project_id")
+
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            row = connection.execute("SELECT id FROM projects WHERE id = ? AND status = 'active'", (project_id,)).fetchone()
+            if not row:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "active project was not found")
+            connection.execute(
+                "INSERT INTO settings(key, value_json) VALUES ('selected_project_id', ?) "
+                "ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json",
+                (canonical_json(project_id),),
+            )
+            return {"project_id": project_id}
+
+        return self.execute_command(command_id, "project.select", {"project_id": project_id}, expected_revision, write)
+
+    def assign_worker(
+        self,
+        command_id: str | UUID,
+        expected_revision: int,
+        job_id: str,
+        worker_id: str,
+    ) -> dict[str, Any]:
+        job_id = _require_uuid(job_id, "job_id")
+        worker_id = _require_uuid(worker_id, "worker_id")
+        payload = {"job_id": job_id, "worker_id": worker_id}
+
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            if not connection.execute("SELECT 1 FROM jobs WHERE id = ?", (job_id,)).fetchone():
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "job was not found")
+            worker = connection.execute(
+                "SELECT state, role, configuration_json FROM workers WHERE id = ?", (worker_id,)
+            ).fetchone()
+            if not worker:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "worker was not found")
+            if worker["state"] != "idle":
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "a working worker cannot be reassigned")
+            worker_configuration = _json_load(worker["configuration_json"])
+            if worker["role"] != "verifier" or worker_configuration.get("trusted_deterministic_internal") is not True:
+                raise RuntimeFault(ErrorCode.POLICY_DENIED, "only a trusted deterministic verifier is available in this runtime profile")
+            if connection.execute("SELECT 1 FROM tasks WHERE job_id = ? AND state = 'running'", (job_id,)).fetchone():
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "a running job cannot be reassigned")
+            worker_configuration["assigned_job_id"] = job_id
+            connection.execute(
+                "UPDATE workers SET configuration_json = ? WHERE id = ?",
+                (canonical_json(worker_configuration), worker_id),
+            )
+            return {"job_id": job_id, "worker_id": worker_id}
+
+        return self.execute_command(command_id, "job.assign", payload, expected_revision, write)
+
+    def system_stop(self, command_id: str | UUID, expected_revision: int | None, stopped: bool) -> dict[str, Any]:
+        command_type = "system.stop" if stopped else "system.resume"
+
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            connection.execute(
+                "INSERT INTO settings(key, value_json) VALUES ('stopped', ?) "
+                "ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json",
+                (canonical_json(stopped),),
+            )
+            if stopped:
+                connection.execute("UPDATE tasks SET state = 'paused' WHERE state = 'queued'")
+                connection.execute("UPDATE jobs SET state = 'paused', updated_at = ? WHERE state IN ('queued', 'running')", (utc_now(),))
+            return {"stopped": stopped}
+
+        return self.execute_command(command_id, command_type, {}, expected_revision, write)
+
+    def save_layout(self, command_id: str | UUID, expected_revision: int, layout: dict[str, Any]) -> dict[str, Any]:
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            current = connection.execute("SELECT value_json FROM settings WHERE key = 'layout'").fetchone()
+            version = (_json_load(current[0])["version"] if current else 0) + 1
+            stored = {"version": version, "nodes": layout["nodes"], "edges": layout["edges"]}
+            connection.execute(
+                "INSERT INTO settings(key, value_json) VALUES ('layout', ?) "
+                "ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json",
+                (canonical_json(stored),),
+            )
+            return stored
+
+        return self.execute_command(command_id, "layout.save", layout, expected_revision, write)
+
+    def get_setting(self, key: str, default: Any = None) -> Any:
+        with self.read_connection() as connection:
+            row = connection.execute("SELECT value_json FROM settings WHERE key = ?", (key,)).fetchone()
+            return _json_load(row[0]) if row else default
+
     def get_project(self, project_id: str) -> dict[str, Any]:
         project_id = _require_uuid(project_id, "project_id")
         with self.read_connection() as connection:
@@ -1051,12 +1412,39 @@ class RuntimeStore:
             return dict(row)
 
     def get_candidate(self, candidate_id: str) -> dict[str, Any]:
-        candidate_id = _require_uuid(candidate_id, "candidate_id")
+        candidate_id = _require_opaque_id(candidate_id, "candidate_id")
         with self.read_connection() as connection:
             row = connection.execute("SELECT * FROM candidates WHERE id = ?", (candidate_id,)).fetchone()
             if not row:
                 raise RuntimeFault(ErrorCode.NOT_FOUND, "candidate was not found")
             return dict(row)
+
+    def get_artifact(self, artifact_id: str) -> dict[str, Any]:
+        artifact_id = _require_opaque_id(artifact_id, "artifact_id")
+        with self.read_connection() as connection:
+            row = connection.execute("SELECT * FROM artifacts WHERE id = ?", (artifact_id,)).fetchone()
+            if not row:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "artifact was not found")
+            return dict(row)
+
+    def attach_artifacts_to_candidate(self, candidate_id: str, artifact_ids: list[str]) -> None:
+        candidate_id = _require_opaque_id(candidate_id, "candidate_id")
+        ids = [_require_opaque_id(item, "artifact_id") for item in artifact_ids]
+        with self.transaction() as connection:
+            if not connection.execute("SELECT 1 FROM candidates WHERE id = ?", (candidate_id,)).fetchone():
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "candidate was not found")
+            for artifact_id in ids:
+                row = connection.execute(
+                    "SELECT candidate_id FROM artifacts WHERE id = ?", (artifact_id,)
+                ).fetchone()
+                if not row:
+                    raise RuntimeFault(ErrorCode.NOT_FOUND, "artifact was not found")
+                if row["candidate_id"] not in (None, candidate_id):
+                    raise RuntimeFault(ErrorCode.POLICY_DENIED, "artifact already belongs to another candidate")
+                connection.execute(
+                    "UPDATE artifacts SET candidate_id = ? WHERE id = ?", (candidate_id, artifact_id)
+                )
+            self._bump_revision(connection)
 
     def _insert_event(
         self,

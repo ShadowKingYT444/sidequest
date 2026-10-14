@@ -75,12 +75,12 @@ class StorageTests(unittest.TestCase):
         self.assertEqual(task["check_ids"], ["unit-tests"])
         self.assertEqual(task["write_paths"], ["src"])
         with self.store.read_connection() as connection:
-            migration = connection.execute("SELECT version FROM schema_migrations").fetchone()[0]
+            migration = connection.execute("SELECT version FROM schema_migrations ORDER BY version DESC").fetchone()[0]
             candidate = connection.execute("SELECT * FROM candidates WHERE id = ?", (candidate_id,)).fetchone()
             artifact = connection.execute("SELECT candidate_id FROM artifacts WHERE id = ?", (artifact_id,)).fetchone()
             self.assertEqual(connection.execute("PRAGMA foreign_keys").fetchone()[0], 1)
             self.assertEqual(connection.execute("PRAGMA journal_mode").fetchone()[0].lower(), "wal")
-        self.assertEqual(migration, 1)
+        self.assertEqual(migration, 2)
         self.assertEqual(candidate["tree_sha256"], "b" * 64)
         self.assertEqual(artifact["candidate_id"], candidate_id)
         with self.assertRaises(sqlite3.IntegrityError):
