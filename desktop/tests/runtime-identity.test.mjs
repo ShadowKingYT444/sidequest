@@ -1,9 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {requireFrozenArtifact,requireFilePage,requireTextPage,requireDiffPage} from '../src/runtime-identity.ts';
+import {requireFrozenArtifact,requireFilePage,requireTextPage,requireDiffPage,requireOfficeSessions} from '../src/runtime-identity.ts';
 const hash='a'.repeat(64);
 const artifact={id:'manifest-1',job_id:'job-1',kind:'file_manifest',candidate_id:'candidate-1',sha256:hash,immutable:true};
 const file={file_id:'file-1',sha256:hash};
+test('office session identities reject duplicate station, run and worker ownership',()=>{
+  const row={station_id:'parent_019',job_id:'job-1',run_id:'run-1',worker_id:'worker-1',project_id:'project-1',assigned_at:'2026-10-14T09:00:00Z'};
+  const snapshot={v:1,revision:3,jobs:[],office_sessions:[row]};
+  assert.deepEqual(requireOfficeSessions(snapshot),[row]);
+  for(const patch of [{station_id:'parent_099'},{run_id:'../secret'},{worker_id:null},{assigned_at:'yesterday'}])assert.throws(()=>requireOfficeSessions({...snapshot,office_sessions:[{...row,...patch}]}));
+  for(const patch of [{station_id:'parent_020'},{run_id:'run-2'},{worker_id:'worker-2'}])assert.throws(()=>requireOfficeSessions({...snapshot,office_sessions:[row,{...row,...patch}]}));
+});
 
 test('frozen display requires explicit immutability, digest and selected job ownership',()=>{
   assert.doesNotThrow(()=>requireFrozenArtifact(artifact,'job-1'));

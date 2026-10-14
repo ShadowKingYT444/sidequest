@@ -8,6 +8,8 @@ const runtime = Object.freeze({
   capabilities: () => ipcRenderer.invoke('sidequest:runtime', 'capabilities', []),
   runInfo: id => ipcRenderer.invoke('sidequest:runtime', 'runInfo', [id]),
   runEvents: (id, afterSeq=0) => ipcRenderer.invoke('sidequest:runtime', 'runEvents', [id, afterSeq]),
+  assignSession:(station,job,run,revision)=>ipcRenderer.invoke('sidequest:runtime','assignSession',[station,job,run,revision]),
+  clearSession:(station,revision)=>ipcRenderer.invoke('sidequest:runtime','clearSession',[station,revision]),
   job: id => ipcRenderer.invoke('sidequest:runtime', 'job', [id]),
   artifact: id => ipcRenderer.invoke('sidequest:runtime', 'artifact', [id]),
   artifacts: (id, cursor = '') => ipcRenderer.invoke('sidequest:runtime', 'artifacts', [id, cursor]),

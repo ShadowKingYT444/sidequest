@@ -1,0 +1,387 @@
+{
+  "status": "verified_original_office_browser_and_genuine_local_inspection; native_electron_and_native_codex_blocked",
+  "recorded_at": "2026-10-14T09:12:21.810379+00:00",
+  "feature_branch": "feat/electron-office-diff",
+  "tested_source_base_commit": "7ff1e085c1169b93ce85ba5533b6316c9113f957",
+  "tested_source_identity": "Base commit plus final current-source hashes below; browser capture verifies the same UI hashes. Source clone for inspected Git is intentionally separate.",
+  "source_file_hashes": {
+    "desktop/electron/git-reader.cjs": "d562534168ddd5b3238f4940192ef6184d357b3eb6a0979349c6091b94ce11be",
+    "desktop/electron/main.cjs": "6bb5c771f6b24378749d112c845da2b8b90277706301653170e6ce51560db3bc",
+    "desktop/electron/preload.cjs": "2727a7855941267465f6110a428229118bc512846cfa70dcfc36a634c1651c2b",
+    "desktop/electron/provider-discovery.cjs": "2cfc6cf5ef1b3f2d98e334b23aade2201fe0fca715cc90f4d6b3c305f3f5fda6",
+    "desktop/electron/runtime-client.cjs": "383adabfbf6b9146afcb9f8151d873de6542443ea616a20cb48d53c8db4eca52",
+    "desktop/electron/security.cjs": "2175ce358f3d993b7123022e1511453e7d39d51898b1dd10dfd83ccc19199333",
+    "desktop/electron/static-server.cjs": "d2b0f617c95c14c1cc84186c9b37247dac1e628f668ce784578fde7a933f31c2",
+    "desktop/index.html": "20e7737a15855670012d698caf8b1b8e4eafbf25ffc6a7fa96316633f116e757",
+    "desktop/package-lock.json": "986951ff2f44c6ff841c9cb146c026b52f75d3b00876b47e9c44cb5e6d039035",
+    "desktop/package.json": "a95071873c5df5d0ae0b5e09dd629051ef63d0562512ef1461524973c05bf6aa",
+    "desktop/playwright.config.ts": "eed8d1f804b0179510f9715dde33cf67a4b22331231a5a03e9432622890052ae",
+    "desktop/scripts/electron-smoke.mjs": "fbaea3e80942eac61ba2b5d06b728676c048ca36f84e35694abdf7f225cf838e",
+    "desktop/scripts/inspect-assets.mjs": "131f47c03f8dcd1b629ea7a84fee4ab3d06b4e32406c394b36354f22757cc051",
+    "desktop/scripts/install-office.py": "26564e5d3c783b04354f2f2884f6f5a7da4e4fffea5e107095a1b463db263c3f",
+    "desktop/src/App.tsx": "bd74f925891dde0ae3aa5f2c49dca289db9e76a0d0ee81858efe4bccab0be876",
+    "desktop/src/DiffEditor.tsx": "7c559df44ebaf06bed74a42f7fe79392812b6093f4522603edea8534a321795e",
+    "desktop/src/JobsBoard.tsx": "6b2e6d97d6d7e88f59a299fd3c9f26cb78eee05d838e02810ef190f9eca122c0",
+    "desktop/src/OfficeScene.tsx": "7d86d8d536d0ad3ea01e88a2e0a85976f8e1664ae9233fb8c701d80d231edc47",
+    "desktop/src/OriginalActors.tsx": "a553de3aed39a311149528d0485c415a84de0cb2a1230d5a3f875992e3eb89e7",
+    "desktop/src/ProviderSettings.css": "42826ca1a3ce04ab1a7909e2d9f8a1eb12d50aa707ee8139d9455a24d4694165",
+    "desktop/src/ProviderSettings.tsx": "7923ab4b5e01b7064b040c37bfda4acbb8007e954adbec39a025aaffe90438d9",
+    "desktop/src/RunActivity.css": "d02a0bf40a6c4f35f7123b69fab93999ae9b065ee62050962b1ba53a18c54bed",
+    "desktop/src/RunActivity.tsx": "5878122a94e2e97c6449f15e814e3bf2ecff587cfde030a2035662fad6449cbf",
+    "desktop/src/StationLauncher.css": "fd67c1615f52dfe8092373a5f66cf1b88f9344bf934752a3dac6cf0832440c3d",
+    "desktop/src/StationLauncher.tsx": "1999a2564c9bc53e8abe9c811637328055294b1dcffb19cd40f7e017a32f53a2",
+    "desktop/src/UsageTank.css": "be4d3cd308ddeaeef1eed98fa0543ee8d456c72ece8424459497c261278bfc42",
+    "desktop/src/UsageTank.tsx": "1e9260501298a27b3d5d2cc54fc0b095232dda531f748f90b3bf467473c346ce",
+    "desktop/src/bridge.ts": "871fc32414488c6a5fe24dcbf93cecce83e96e84c2243cf47d036211c1e51c3f",
+    "desktop/src/main.tsx": "7254a29d506487188f48b2a7f33912401fe8510fcdc3306f0efad67ff25df159",
+    "desktop/src/office-bindings.ts": "24d4a2cfa599fd029bb05a1dc5bf65f25f42e7d01b6b019baf8ec4c18401d129",
+    "desktop/src/runtime-identity.ts": "71bc8679acdd009eed9be31e15283b1915429ea4444936b71308da26f5a68f4b",
+    "desktop/src/style.css": "55bd3f4ffdabdeaaee1e1219db901710aa4d05c8079a9d978752d59e10b66739",
+    "desktop/src/types.ts": "9cbb5e9753d1767417bbd50e3a60c65eed44e1e3e7fc706f50af5ff934f90cff",
+    "desktop/tests/assets.test.mjs": "18dc4e55302163b88c50d86a14909a5e7cfc024ceb6e951833b0a43b0826c6df",
+    "desktop/tests/bindings.test.mjs": "e45fed67722babe6dec1f26766f7ab5d9315bd22365c721429f16f6a58a99364",
+    "desktop/tests/browser/jobs-live.spec.ts": "56c8cf263c010a74c69a4e9147c57a697e0e35ba764963aaf9a4789ef49d9c73",
+    "desktop/tests/browser/viewer.spec.ts": "8e1f8047a6616bc19af850065797f195b84076d51bbb3f0014c76c44e7f6f3a8",
+    "desktop/tests/browser/visual-office.spec.ts": "8aed976e7a68db525f8cbf9f67f18509b95dd6f9b9a1f4298d2b08bd1a54438f",
+    "desktop/tests/git.test.mjs": "280aa079b5a405ef76e485932df0db82b089fcb8e787534b5978579e4d386aef",
+    "desktop/tests/install-office.test.mjs": "e40a6db3dae496117147db24e3244e5ba33b797381f62f7bd08308d164dd6d61",
+    "desktop/tests/runtime-client.test.mjs": "fd0c6b464a384813b0560f474dbbde32b6caa98fd954ff2c6b520e4a890bfc8d",
+    "desktop/tests/runtime-identity.test.mjs": "3f89ab110e60d5e7a78089ab367bfa03498b6b24501c09e68e1fa81ffcd6c546",
+    "desktop/tests/security.test.mjs": "c43e0f872622e9d10a771a3a937cc746be18b54eb13989da9a6b68edd8c5a69e",
+    "desktop/tsconfig.json": "28156a29ff6049161af131da1b38fef18abaa2185b49a438bc7186bcb5c83c97",
+    "desktop/vite.config.ts": "6f4d88742596c0d140bb849c6edad4ef476bb6e260c24f25164942690c1b7e8e",
+    "services/runtime/__init__.py": "efada6e3d1241182b2db15f50661ddaccba17981e9619dcdcd62f424fb61233a",
+    "services/runtime/adapters.py": "bc2b52e4fd6918f879ed46037ec6e14a3f468eea3840fbaf9ca041d81e790332",
+    "services/runtime/api.py": "5dd092dbfc7f707da32fecd0c29b10f1e746ca0abc3bb009af0842391c660f83",
+    "services/runtime/artifacts.py": "1001e4b998d84f024de3069ca041386fa893b97dfc93a4e850d1f9e826a26eb6",
+    "services/runtime/config.py": "a0bb0d7e87ae1ec1f67e75026e8b0f71d25ea1cbf390b52d3fc605026689eb71",
+    "services/runtime/main.py": "958eca9a047f169af0dccd36d22fffc9021a6ce3d107573395d54ebbe54befbf",
+    "services/runtime/migrations/001_initial.sql": "a34a06ee42690b085e63fd38863ec47da16bebcc6463a244cc8c16b4748d8c10",
+    "services/runtime/migrations/002_attempt_worker.sql": "b3bf6d8bdaebaec311c3244681f76d428b34ddaf8b70867689c85bef21dae9d7",
+    "services/runtime/migrations/003_codex_lifecycle.sql": "7dc7889735aab1d7fba10acbd802f4c004cec56d17c0bd1d0c547058c24afc91",
+    "services/runtime/models.py": "8e090d7576ff2ad7ad32b7f0933fc6906f09bd51c836116d587a168cfaeaa26b",
+    "services/runtime/policy.py": "aa2297b218869aa374dbf2785bdc220b4bc22bd5878db2c50c537c54db837091",
+    "services/runtime/requirements.lock": "67c989ea434e1896abfee143146330016562d5e54e478cfb9685a87b34497480",
+    "services/runtime/scheduler.py": "14ac822e7b5992f73f6a16f76fc2c0bce0a6f974903b4a5911ec9cf8a2a449d1",
+    "services/runtime/store.py": "4a7bfb7a363083b058af2bc31a08637014bc304faddbd4ef12a54fb65a50aca2",
+    "services/runtime/tests/test_adapters.py": "bc7dd140b0e5bab6099ff070fa135c086637aff24f767c09f666ba87595ec3cc",
+    "services/runtime/tests/test_api.py": "f13d1bb707519afa86f81c3655ba2855b307dfba9a29678b85cc499564605a4f",
+    "services/runtime/tests/test_codex_lifecycle.py": "8dc306c35e0bdb02525a46f48c862bdfe018cf3a7854163f04078c04ee8a5e4b",
+    "services/runtime/tests/test_concurrency.py": "54d3760913d00b05d88c6477978b971c58394e862667a8f12b25223703b7b035",
+    "services/runtime/tests/test_main.py": "4ee2d159ea0b130f3e552240fe232156a5ec4c3bbc54c297baaf31e5730eb21d",
+    "services/runtime/tests/test_policy.py": "6c6bb498f2045183f7f4cd0b5e00ff33f5f1d9ddbff44090eef37c267ae89753",
+    "services/runtime/tests/test_scheduler_pipeline.py": "bd9bbeebd2b6523f6e3832e57d9f1030d25bcc282b49e04df70a9dac47d37944",
+    "services/runtime/tests/test_storage.py": "b4ba9c8b8fadc58a8868d439398b5b817adaf1d8cdc29f7161424d8e2b66fa43",
+    "services/runtime/tests/test_support.py": "16f09f6b665ac15b0a371362dda842e0a7308735d7e72ff6332b8c6f4d7d91de",
+    "services/tools/__init__.py": "da466be63e5409139e59e7c306d434514bdaa5306be0e5b00a8d4e5a3148e421",
+    "services/tools/artifact_capture.py": "8dacad35fcc3b70e6a2bce6cd0ef9dbf83de41e9cc6c99e5dca36d3a2d628322",
+    "services/tools/codex_bridge.py": "327fe12c537e4c06428a458f660c7dc6adf7acf1307218d3e9dd60e9f184136f",
+    "services/tools/config.py": "5fc161812851ee2a8f83c1f493a1c00d8183943f018ff389dd5cccba30c9c162",
+    "services/tools/git_ops.py": "f57920a192164a86d8b7ad234ce25173f86bdf674cb085ed3e4dd4d4d34910d8",
+    "services/tools/main.py": "42a21eddd558cee8dd0b2b524cf5dd3bb07516d8c65f01afe64a1ed40ce5b6ac",
+    "services/tools/protocol.py": "277ff93f02ab39b1279ccb399d8ef191507b217faa008c693f367333ba5726ec",
+    "services/tools/tests/test_codex_bridge.py": "aa8583f299c8c899d12c92b73321cfd43f1cd8a21886dec201835533c9b8a60e",
+    "services/tools/tests/test_git_artifacts.py": "b5c0f27a33e9cfc9224d60224148a8a20ad7aaa86c150e95c3ee19a652e01820",
+    "services/tools/tests/test_protocol.py": "1312a8acf834155d31d16f079d34f0f59ca7abddea49685bfc605245ab49caaa",
+    "services/workshops/__init__.py": "0d9c462f863a8c749cc435ad1681206a0c6da946a3dbd4488493394a8f2bc907",
+    "services/workshops/browser_checks.py": "871096f376a3cabe5c3e1d494aab884dd828e31078deb51ad8fda3ff49ff9b82",
+    "services/workshops/checks.py": "6b9929ad7ac49dc007a0b19e4742b81848149c8406ba703628d45671437afab2",
+    "services/workshops/config.py": "6ad63c49e1307e5ac0c8bb1bc9efdc72d206ccd76a2f19dd3c739c3c88c613b0",
+    "services/workshops/identity.py": "974b90ad7cc103af5554a1bf3ce9b2708b87a3f1eeeba02d87696cf12a84f38a",
+    "services/workshops/main.py": "ffbdb6b8003c3d227374efcc34cc093e34a924b1a8801f820a07ffefde1414b7",
+    "services/workshops/reports.py": "5f5fa83873d5c337a3c876536725d44b753465a3af95db8f41f21cc8d346f76a",
+    "services/workshops/requirements.lock": "10d64cb01c1fe24d039e0095dc4ba5f85723981c577a02e118fe4cb40b79ce27",
+    "services/workshops/tests/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "services/workshops/tests/helpers.py": "0cda2abb8ba0b1bd53e294b0c792a0c307ed44e710c236f56f992d21fd86e307",
+    "services/workshops/tests/test_identity.py": "521572a26bd71637019a2b74c7129ef5c308bf7643378f09c2ff2219ee130960",
+    "services/workshops/tests/test_protocol_browser.py": "d784405fdd2ed0c301b26caf905c6dd00dbf7e6e011765eb2082b26813ed995b",
+    "services/workshops/trust.lock.json": "d04860cbc7fd56e447a0af9c8093c555d15400b6ec11dbf15e95e5358733ab37",
+    "services/workshops/trusted_checks.json": "bbac3ebdccf1094fe7ee7cfba97fe409504a53943f2ed4723c20b774fc6c0d07"
+  },
+  "source_files_sha256": "4eafaebbec6ddec37986f2afef513152cf3359238cc170fb2b876ca9a52b0ed4",
+  "source_hash_algorithm": "SHA256 of UTF-8 compact JSON source_file_hashes sorted by path (sort_keys=True,separators=(comma,colon))",
+  "git_evidence": {
+    "base": "69bf06696a93c9f58eee2d088e84404d4f6563d6",
+    "candidate": "8a9fb11c3b01a404c4dd305b71458377082697c1"
+  },
+  "registered_project": {
+    "id": "2a79639a-8823-49cf-ba6a-da0b8108c6ed",
+    "name": "sidequest",
+    "base_revision": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+    "status": "active",
+    "policy": {
+      "allowed_actions": [
+        "read_repo",
+        "run_checks"
+      ]
+    }
+  },
+  "genuine_local_job": {
+    "id": "c22a50d8-531b-4bae-a741-62eaa69855a0",
+    "run_ids": [
+      "848d6ab2-035b-401b-be1f-8456c43134e0"
+    ],
+    "candidate_id": "cand_435614ff2baf4ff29c49f75fc07342c2",
+    "tree_sha256": "5b6e550a3da5f44fc8b66b9393012fad38abdd4fb6a8e997aa7cba513fb9d2ff",
+    "frozen_candidate_source_revision": "f7a9ebe0585956fdc557742a46b81f5a157be3d2",
+    "state": "verifying",
+    "check_states": [
+      "pass"
+    ],
+    "spent_usd": 0,
+    "inference_calls": 0,
+    "worker_id": null,
+    "record": "evidence/desktop/job-browser.json",
+    "kind": "Explicit deterministic local Git inspection/check; no coding model, real-agent claim or source delivery"
+  },
+  "tests": {
+    "runtime": 42,
+    "tools": 42,
+    "desktop_component_security_asset": 28,
+    "full_browser": 10,
+    "browser_breakdown": {
+      "viewer": 6,
+      "t3_settings_blocked_launcher_session": 2,
+      "genuine_local_inspection": 2
+    },
+    "full_browser_minutes": 7.3,
+    "historical_unchanged_trusted_checks": 13,
+    "historical_unchanged_development_tools": 31,
+    "logs": [
+      "evidence/desktop/final-runtime-tests.log",
+      "evidence/desktop/final-tools-tests.log",
+      "evidence/desktop/final-desktop-tests.log",
+      "evidence/desktop/final-browser.log"
+    ]
+  },
+  "browser": {
+    "chromium": "151.0.7922.173",
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        1440,
+        900
+      ],
+      [
+        960,
+        780
+      ],
+      [
+        390,
+        780
+      ]
+    ],
+    "automated_wcag_a_aa_violations": 0,
+    "page_exceptions": 0,
+    "original_office_successful_asset_responses": 109,
+    "original_office_console_errors": 0,
+    "original_office_request_failures": 0,
+    "current_source_capture": "evidence/desktop/original-office/browser-validation.json",
+    "physical_scene_objects": {
+      "stations": [
+        {
+          "label": "Computer 01",
+          "projectedMonitorBox": {
+            "x": 93.71764373779297,
+            "y": 164.62738037109375,
+            "width": 1252.5647048950195,
+            "height": 674.0060424804688
+          }
+        },
+        {
+          "label": "Computer 03",
+          "projectedMonitorBox": {
+            "x": 93.71764373779297,
+            "y": 164.62738037109375,
+            "width": 1252.5647048950195,
+            "height": 674.0060424804688
+          }
+        },
+        {
+          "label": "Computer 19",
+          "projectedMonitorBox": {
+            "x": 93.71764373779297,
+            "y": 164.62738037109375,
+            "width": 1252.5647048950195,
+            "height": 674.0060424804688
+          }
+        },
+        {
+          "label": "Computer 24",
+          "projectedMonitorBox": {
+            "x": 93.71764373779297,
+            "y": 164.62738037109375,
+            "width": 1252.5647048950195,
+            "height": 674.0060424804688
+          }
+        }
+      ],
+      "physicalMonitorClick": {
+        "stationId": "parent_017",
+        "screenOffset": [
+          0.3,
+          0.1
+        ]
+      },
+      "physicalActorClick": true,
+      "physicalWorkstationClick": {
+        "clicked": true,
+        "stationId": "parent_018"
+      },
+      "boardHitOpenedTaskDetail": true,
+      "errors": [],
+      "cleanConsolePassed": true
+    },
+    "result_scroll_regression": {
+      "desired_scroll_px": 180,
+      "actions": [
+        "Expand",
+        "Settings",
+        "Escape",
+        "Reopen selected result"
+      ],
+      "passed": true,
+      "evidence": "evidence/desktop/scroll-restoration-body-ready-pass.txt"
+    },
+    "real_screenshots": {
+      "evidence/desktop/agent-session-390.png": "aa640fbede790bbf2afadec1c97b0073004d76701fcac9f0ad074f4788343b74",
+      "evidence/desktop/agent-session.png": "3931f45c46a6cab08cf97428c379459d328defcb1fb1040259d455a9fc60365d",
+      "evidence/desktop/assigned-result.png": "0bea798b4898cb3315a898ffc327327f2452fffbb8461d0c1854f86af84f95cd",
+      "evidence/desktop/expanded-diff.png": "3a1a7dfe796b5e1f86fb3a2a35ad2c01c4bfbe1a92876aaa75ab3b893a1971f7",
+      "evidence/desktop/git-diff.png": "4baffd178e5ff093cbbf305154853b3bdb61ec092749a4dd0f9ad4af7fbfa4cd",
+      "evidence/desktop/job-390.png": "f64de8e9e0f68d94daa20e758ab3aa88bc6481cf7cf049ff6c8435c2f4e1edb9",
+      "evidence/desktop/job-960.png": "3d33f00b07c6d7cb9094ed162d7dc3f0e20d7c8b122dea23fe05cfe1b522d12c",
+      "evidence/desktop/job-check-report.png": "cf1d5c27c309ab720690a437d60a0da360d1b04ef41a78398301fefd8404585b",
+      "evidence/desktop/job-diff.png": "a3a67d4a59f5dcc963fc113cefb97b482e7824564c64bf0107faac420fb32d17",
+      "evidence/desktop/job-queued.png": "ee6c8ec9fe123b6cc7176577d20149af9039b151a5a2b40bc95eb473146fc5e1",
+      "evidence/desktop/job-readiness.png": "8c2d6054416c08eae4d6138b65d34e264cd16885c0ddd638192818a55492c08f",
+      "evidence/desktop/job-result.png": "cee68b4d6949a4d3da65041a57f3630943099e82a9880e4b6d2b64a0c3fe4b5d",
+      "evidence/desktop/office-desk-debug.png": "a1462dfd550f384f71890766e1892cc16bfda65d1116e128bdee3e482b67b431",
+      "evidence/desktop/office-desk.png": "3765b3de92ee8ef986ab58068f2bfd96139c50357451bad4761ebce783b0207c",
+      "evidence/desktop/office-expanded.png": "50aea66c4e8c346d314faaa97fd94f223c696416e5df819faff5e2dc23042544",
+      "evidence/desktop/office-temporary.png": "7575bbc03f1be767b647713f9bf9e8bb36983f61bec3faae71f0e02413f52261",
+      "evidence/desktop/original-office-pending.png": "7865b4c4fe9ad1943df909e8a16aa4d68d02ab57b8cde7fdd95eb49a6b5d28e8",
+      "evidence/desktop/provider-settings-390.png": "b39858ecf0307f43e736476609c748066cdb97a390f17465cdee06cc233b010e",
+      "evidence/desktop/provider-settings-analytics-390.png": "083a1091569595100a17cebbc202dea428c5a6fbfdd296c7065b40ad6c15f0e9",
+      "evidence/desktop/provider-settings-analytics.png": "291bddda83b0177955a88d9a21a87fb18b36e823b407364fcd2a1570990f4eab",
+      "evidence/desktop/provider-settings-limits-390.png": "c2c64538b2d3c0e3b846eca8170e8120da36b157eff07f9ff191075770f0bef2",
+      "evidence/desktop/provider-settings-limits.png": "dd20486e30a1bd5538f9e37b6daa5775e01fe4b3f944ee0da9726f52d05dd8fa",
+      "evidence/desktop/provider-settings.png": "31b2c441294ca781cb3f71e6d6eae65293ef6de9fbe56f1c1fcc961ff8e3bb1b",
+      "evidence/desktop/run-activity-actual.png": "331844e24b96fe240931863e46f104145ba1627692c56678f72013faa5d0acda",
+      "evidence/desktop/setup-desktop.png": "ea95c4195774560da8b25f290b34e2963c38f66a92c73b262d918b23e516d0ed",
+      "evidence/desktop/viewer-390.png": "1f73c0441ad1297a4bcca1dc60c24745579766508f58bb0f82e96347ed04f09c",
+      "evidence/desktop/viewer-960.png": "e8c4ea294022597c977759709601816129d7e80e6cd6771b68437d3d456d6b90",
+      "evidence/desktop/workstation-launcher-390.png": "e925f99819c5bbf425cc8748e4fa4f6fe2c69493eb8ce5d140031ff90ded1e65",
+      "evidence/desktop/workstation-launcher.png": "d68b13d74c7253b70469eb46a986540f7b0c512d4a30d7cb1a089aba7795a8bc",
+      "evidence/desktop/original-office/original-actor-context-card.png": "e52b6a5e6a0c63fb5e011500252048b6a7354f514cf63d256f08d957be091d32",
+      "evidence/desktop/original-office/original-board-task-detail.png": "4c6161245000159b2ea85f7ab3af3246280980b4254d9a5fd1ee2126fe2fc5e7",
+      "evidence/desktop/original-office/original-office-expanded.png": "4214219bac23adaa960368da640eb01a2079d4f435d8c4a81703c12ff32de691",
+      "evidence/desktop/original-office/original-office-monitor.png": "e49cc20db01c717b0f138873755238efc09ba0d242064165cee15019ff0e97ef",
+      "evidence/desktop/original-office/original-office-overview.png": "0243e8305df71a1499b0a0e44221b14e1bd16319e33ed42a3b8e1547ca0a704b",
+      "evidence/desktop/original-office/original-workstation-context-card.png": "f2d0ec859da39dfda0867ed8b7a03808104e1c117bb31e227f9601007aee3ee4"
+    }
+  },
+  "original_assets": {
+    "archive_sha256": "f7159fbda50771486d65e1a5bd2a42d265120a422d88a686471a9bbb6fb60a95",
+    "archive_bytes": 535951540,
+    "runtime_glb_bytes": 54670564,
+    "image_externalization": "90 original payloads relocated byte-identically; no recompression or replacement geometry",
+    "measured_monitors": 24,
+    "max_monitor_surface_error_m": 1.5359333226589626e-06,
+    "original_human_glbs": 7,
+    "retained_original_clips": 28,
+    "staged_figures": 26,
+    "fitted_caps": 20,
+    "runtime_connected": false,
+    "original_blender_archive_preserved": "Outside Git in the separate approved asset environment",
+    "provenance": "desktop/public/office/provenance.json",
+    "validation": "evidence/desktop/original-office/lossless-resource-verification.json"
+  },
+  "reference_review": {
+    "parent_reviewed_actual_pixels": true,
+    "direction_received_utc": "2026-10-14 07:53",
+    "camera": [
+      11.5,
+      8.5,
+      12
+    ],
+    "target": [
+      1,
+      -0.3,
+      -3.8
+    ],
+    "fov": 40,
+    "aces_exposure": 1.2,
+    "original_glass_meshes_excluded_from_opaque_shadows": 6,
+    "pixel_exact_match_claimed": false
+  },
+  "t3_settings": {
+    "official_source_commit": "d765d03cb7f980794c409c38e6ea5e25d89fde33",
+    "provenance": "evidence/desktop/t3-source.json",
+    "notice": "desktop/THIRD_PARTY_NOTICES.md",
+    "cli_detection": "Bounded executable metadata only; no config/auth/session reads or subprocess/model calls",
+    "launcher_supported_provider": "Actually installed Codex only",
+    "authentication": "unknown",
+    "reachability": "unknown",
+    "coding_execution": "unavailable on this host; disabled submit checked with valid draft fields; no grant/coding requests",
+    "pending_submission_retention": "Shared station memory plus coarse sessionStorage uncertainty marker; no stored prompt or credentials",
+    "successful_and_uncertain_native_submission_paths": "Unverified live paths; retained guards/source review are not native acceptance"
+  },
+  "typecheck": "passed",
+  "production_build": "passed; evidence/desktop/final-build.log",
+  "production_bundle_sanitizer": {
+    "built_editor": "desktop/dist/assets/DiffEditor-BdQyfGlH.js",
+    "sha256": "77923aaa8faacdf857c28963926b165cbd8d99a80a4d2dbbefde11c0b30e77cb",
+    "dompurify_version": "3.4.17",
+    "old_vendored_version_absent": true,
+    "scope": "Actual final production editor bundle, not dependency metadata alone",
+    "npm_audit": "evidence/desktop/security-audit.json"
+  },
+  "npm_audit_all_advisories": 0,
+  "native_electron": {
+    "status": "blocked; attempted action failed before native UI",
+    "action": "Direct launch of desktop/node_modules/electron/dist/electron with sandbox preserved",
+    "version": "44.7.1",
+    "reason": "SIGTRAP: chrome-sandbox is not root-owned mode 4755; user-namespace alternative unavailable",
+    "sandbox_disabled": false,
+    "evidence": "evidence/desktop/electron-smoke.json",
+    "retry": "No retry without materially new supported sandbox setup"
+  },
+  "native_codex": {
+    "status": "blocked; attempted app-server initialization failed before initialize",
+    "action": "Installed Codex 0.159-alpha.3 app-server initialize",
+    "reason": "EROFS in protected CODEX_HOME runtime state (tmp/arg0 and installation-id); no native account/catalog response or model turn",
+    "usd_ceiling": "No enforceable native USD ceiling verified; production execution denied before thread/turn/startup",
+    "fake_lifecycle_tests": "Explicit transport fixtures; not live agent proof"
+  },
+  "linux_capture": "Denied by default; explicit permission flow deferred",
+  "remaining_scope": [
+    "Native Electron acceptance on a sandbox-capable desktop",
+    "Supported native Codex runtime-state and enforceable-budget readiness",
+    "Actual worker-to-figure/session ownership and native conversation",
+    "Live task-to-original-sticky-card ownership",
+    "Usage telemetry, workshops, selected-screen capture and delivery approval"
+  ],
+  "library_screenshots": {
+    "office": "evidence/desktop/original-office/screenshot-library.json",
+    "settings": "evidence/desktop/settings-screenshot-library.json",
+    "context_and_diff": "evidence/desktop/original-office/context-screenshot-library.json"
+  },
+  "preserved_failures": [
+    "evidence/desktop/browser-first-original-attempt/",
+    "evidence/desktop/original-office/physical-monitor-occlusion-first-attempt.txt",
+    "evidence/desktop/original-office/browser-actor-first-attempt.log",
+    "evidence/desktop/prior-verification.json"
+  ],
+  "no_paid_api_or_provider_demo": true,
+  "no_auth_reconfiguration": true,
+  "no_canceled_evals_restarted": true,
+  "no_unity_installation": true,
+  "no_merge_or_deployment": true,
+  "run_instructions": "docs/RUN_EVALS.md",
+  "published_source_commit": "c175a8a79bc04489abdf4415011c8a163da029b8",
+  "publication_note": "All 92 tested code/configuration file hashes match this published implementation commit. Subsequent evidence-only commits may change the branch head without changing these tested files."
+}

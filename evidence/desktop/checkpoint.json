@@ -1,25 +1,16 @@
 {
-  "at": "2026-10-14T09:14:49.035815+00:00",
-  "status": "Final original-office browser slice verified and published; native Electron/Codex remain blocked",
-  "published_source_commit": "c175a8a79bc04489abdf4415011c8a163da029b8",
+  "at": "2026-10-14T09:46:53.956842+00:00",
+  "status": "Recorded session integration implemented; final extended 11-test regression running; native gates blocked",
   "branch": "feat/electron-office-diff",
-  "pr": "https://github.com/ShadowKingYT444/sidequest/pull/1",
+  "tested_source_base_commit": "7e867a22f5653f93f912c718b5678d8f06b23d87",
+  "source_files_sha256": "28f2c003e56ccc895ece350c3a684f71620179e07179504c859255d167b362ad",
   "verified": {
-    "browser": 10,
-    "desktop_unit": 28,
-    "runtime_unit": 42,
-    "tools_unit": 42,
+    "desktop": 30,
+    "runtime": 48,
     "typecheck_build": "pass",
-    "npm_audit_advisories": 0,
-    "current_source_capture": "26 staged actors, 109 successful assets, zero page/console/request errors",
-    "physical_object_clicks": "monitor, actor, workstation and board pass",
-    "scroll_restoration": "180px after Expand, Settings, Escape and reopening"
+    "focused_recorded_session_browser": "pass; extended final regression running"
   },
-  "source_files_sha256": "4eafaebbec6ddec37986f2afef513152cf3359238cc170fb2b876ca9a52b0ed4",
-  "native_electron": "blocked: preserved sandbox startup fails SIGTRAP",
-  "native_codex": "blocked: protected runtime-state EROFS before initialize; enforceable USD readiness unavailable",
-  "ui_model_calls": 0,
-  "coding_demo_runs": 0,
-  "merge_or_deploy": false,
-  "prior_recovery_checkpoint": "evidence/desktop/prior-recovery-checkpoint.json"
+  "native_gates": "unchanged blocked; supported-path investigation found no available remedy",
+  "coding_runs": 0,
+  "model_calls": 0
 }

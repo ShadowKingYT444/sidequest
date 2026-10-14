@@ -80,7 +80,7 @@ class StorageTests(unittest.TestCase):
             artifact = connection.execute("SELECT candidate_id FROM artifacts WHERE id = ?", (artifact_id,)).fetchone()
             self.assertEqual(connection.execute("PRAGMA foreign_keys").fetchone()[0], 1)
             self.assertEqual(connection.execute("PRAGMA journal_mode").fetchone()[0].lower(), "wal")
-        self.assertEqual(migration, 3)
+        self.assertEqual(migration, 4)
         self.assertEqual(candidate["tree_sha256"], "b" * 64)
         self.assertEqual(artifact["candidate_id"], candidate_id)
         with self.assertRaises(sqlite3.IntegrityError):
@@ -126,6 +126,90 @@ class StorageTests(unittest.TestCase):
         with self.assertRaises(RuntimeFault) as caught:
             self.store.claim_ready_task(worker, 50)
         self.assertEqual(caught.exception.code, ErrorCode.BUDGET_LIMIT)
+
+    def _recorded_run(self, worker_id: str | None = None) -> tuple[str, str, str]:
+        response = self.store.create_job(str(uuid4()), None, make_job(self.project_id))
+        job_id = response["result"]["job_id"]
+        worker_id = worker_id or self.store.create_worker("builder")
+        claim = self.store.claim_ready_task(worker_id, 1, job_id=job_id)
+        assert claim is not None
+        self.store.settle_attempt(claim["attempt_id"], cost_micro=0, uncertain=False, state="completed")
+        return job_id, claim["attempt_id"], worker_id
+
+    def test_office_session_persists_actual_identity_idempotently_and_clears_explicitly(self) -> None:
+        job_id, run_id, worker_id = self._recorded_run()
+        command_id, revision = str(uuid4()), self.store.revision
+        result = self.store.assign_office_session(command_id, revision, "parent_024", job_id, run_id)
+        session = result["result"]["office_session"]
+        self.assertEqual(session["worker_id"], worker_id)
+        self.assertEqual(session["project_id"], self.project_id)
+        self.assertEqual(self.store.assign_office_session(command_id, revision, "parent_024", job_id, run_id), result)
+        self.store.close()
+        self.store = RuntimeStore(self.config)
+        self.assertEqual(self.store.list_office_sessions(), [session])
+        with self.assertRaises(sqlite3.IntegrityError):
+            with self.store.transaction() as connection:
+                connection.execute("UPDATE office_sessions SET station_id = 'parent_023'")
+        stale_revision = self.store.revision - 1
+        with self.assertRaises(RuntimeFault) as caught:
+            self.store.clear_office_session(str(uuid4()), stale_revision, "parent_024")
+        self.assertEqual(caught.exception.code, ErrorCode.VERSION_CONFLICT)
+        cleared = self.store.clear_office_session(str(uuid4()), self.store.revision, "parent_024")
+        self.assertTrue(cleared["result"]["cleared"])
+        self.assertEqual(self.store.list_office_sessions(), [])
+        self.store.assign_office_session(str(uuid4()), self.store.revision, "parent_001", job_id, run_id)
+        self.assertEqual(self.store.list_office_sessions()[0]["station_id"], "parent_001")
+
+    def test_office_session_rejects_invalid_cross_job_missing_worker_and_stale_identity(self) -> None:
+        job_id, run_id, _ = self._recorded_run()
+        for station in ("parent_000", "parent_025", "parent_01", "parent_001\n", None):
+            with self.subTest(station=station), self.assertRaises(RuntimeFault) as caught:
+                self.store.assign_office_session(str(uuid4()), self.store.revision, station, job_id, run_id)
+            self.assertEqual(caught.exception.code, ErrorCode.INVALID_INPUT)
+        for requested_job, requested_run, code in (
+            (str(uuid4()), run_id, ErrorCode.INVALID_INPUT),
+            (job_id, str(uuid4()), ErrorCode.NOT_FOUND),
+        ):
+            with self.assertRaises(RuntimeFault) as caught:
+                self.store.assign_office_session(str(uuid4()), self.store.revision, "parent_001", requested_job, requested_run)
+            self.assertEqual(caught.exception.code, code)
+        with self.assertRaises(RuntimeFault) as caught:
+            self.store.assign_office_session(str(uuid4()), self.store.revision - 1, "parent_001", job_id, run_id)
+        self.assertEqual(caught.exception.code, ErrorCode.VERSION_CONFLICT)
+        with self.store.transaction() as connection:
+            connection.execute("UPDATE attempts SET worker_id = NULL WHERE id = ?", (run_id,))
+        with self.assertRaises(RuntimeFault) as caught:
+            self.store.assign_office_session(str(uuid4()), self.store.revision, "parent_001", job_id, run_id)
+        self.assertEqual(caught.exception.code, ErrorCode.POLICY_DENIED)
+        self.assertEqual(self.store.list_office_sessions(), [])
+
+    def test_office_session_rejects_occupied_station_duplicate_run_and_duplicate_worker(self) -> None:
+        job_id, run_id, worker_id = self._recorded_run()
+        other_job, other_run, _ = self._recorded_run()
+        worker_job, worker_run, _ = self._recorded_run(worker_id)
+        self.store.assign_office_session(str(uuid4()), self.store.revision, "parent_001", job_id, run_id)
+        for station, requested_job, requested_run in (
+            ("parent_001", other_job, other_run),
+            ("parent_002", job_id, run_id),
+            ("parent_002", worker_job, worker_run),
+        ):
+            with self.subTest(station=station, run=requested_run), self.assertRaises(RuntimeFault) as caught:
+                self.store.assign_office_session(str(uuid4()), self.store.revision, station, requested_job, requested_run)
+            self.assertEqual(caught.exception.code, ErrorCode.VERSION_CONFLICT)
+        self.assertEqual(len(self.store.list_office_sessions()), 1)
+
+    def test_office_session_database_rejects_forged_relationships(self) -> None:
+        job_id, run_id, worker_id = self._recorded_run()
+        other_job, _, other_worker = self._recorded_run()
+        for requested_job, requested_worker in ((other_job, worker_id), (job_id, other_worker)):
+            with self.subTest(job=requested_job, worker=requested_worker), self.assertRaises(sqlite3.IntegrityError):
+                with self.store.transaction() as connection:
+                    connection.execute(
+                        "INSERT INTO office_sessions(station_id, job_id, run_id, worker_id, project_id, assigned_at) "
+                        "VALUES ('parent_001', ?, ?, ?, ?, 'fixture')",
+                        (requested_job, run_id, requested_worker, self.project_id),
+                    )
+        self.assertEqual(self.store.list_office_sessions(), [])
 
     def test_zero_reservation_is_limited_to_trusted_deterministic_verify_work(self) -> None:
         response = self.store.create_job(

@@ -75,6 +75,16 @@ For Electron, pass the same host variables to `npm start` after building. The pr
 
 The deterministic inspection clones the registered commit unchanged, so its candidate diff is empty. The computer viewer separately compares the configured committed base and HEAD. Completed checks make inspection results ready, while the backend keeps `verifying` with source delivery disabled. This is a genuine local job pipeline, not a coding-agent demonstration.
 
+## Recorded session ownership and conversation
+
+Click a figure, open **Attach recorded session**, select an actual task/run and click **Assign session**. SQLite stores the station, job, run, worker and project relationship. One recorded worker/run can occupy one station; occupied stations and conflicting identities are rejected. **Detach session** clears only this presentation relationship. Neither action starts, moves, resumes or cancels execution, changes project permissions or grants spending. Result display assignment stays separate.
+
+The figure shows its persisted task/worker/run identity and **Conversation & events**. Expanding it reads the existing bounded run-event adapter; the original task request and event/output text remain literal. Recorded usage shows actual nullable token/cost fields, keeping unknown and uncertain values explicit. The run is pinned to its saved worker; a changed worker identity is rejected and previous data is labeled last known. Reads pause when hidden/collapsed; completed runs stop polling. **Open results** opens the same job's immutable artifacts. The selected board task links to its recorded station/session.
+
+The existing browser harness uses a real completed zero-model inspection to verify ownership across reload, contextual events, same-job results, board navigation, narrow accessibility and explicit detach. A wrong-worker response is labeled as a test fixture and never changes persisted data. This proves recorded ownership and a read-only conversation/event view. Sending conversational turns and native orchestration remain incomplete. Provider quota/reset telemetry remains unknown; per-run recorded usage is available.
+
+[Native host status](../docs/NATIVE_HOST_STATUS.md) documents the read-only supported-path investigation. No existing authenticated daemon or supported sandbox/runtime-state setup was found; the independent USD gate remains enforced.
+
 ## Verification
 
 ```sh

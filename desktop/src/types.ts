@@ -13,7 +13,8 @@ export interface RuntimeJob {id:string;project_id?:string;title:string;state:str
 export interface RuntimeRun {id:string;job_id:string;task_id:string;worker_id:string|null;attempt:number;state:string;model:string|null;effort:string|null;started_at:string|null;ended_at:string|null;usage:{input_tokens:number|null;cached_input_tokens:number|null;output_tokens:number|null;total_tokens:number|null;cost_usd:number|string|null;uncertain:boolean}}
 export interface RunEvent {seq:number;at:string;type:string;message:string;artifact_id:string|null;task_id:string;job_id?:string}
 export interface RunEventPage {v:1;run_id:string;items:RunEvent[];next_after_seq:number;has_more:boolean}
-export interface RuntimeSnapshot {v:1;revision:number;mode:string;projects:RuntimeProject[];jobs:RuntimeJob[];stopped:boolean}
+export interface OfficeSession {station_id:string;job_id:string;run_id:string;worker_id:string;project_id:string;assigned_at:string}
+export interface RuntimeSnapshot {v:1;revision:number;mode:string;projects:RuntimeProject[];jobs:RuntimeJob[];stopped:boolean;office_sessions?:OfficeSession[];budget?:{limit_usd:number;reserved_usd:number;spent_usd:number|null;uncertain:boolean}}
 export interface RuntimeCapabilities {v:1;features:{local_git_inspection?:boolean;computer_artifacts:boolean;coding?:boolean;codex_session?:boolean};worker_model:{id:string;effort:string;verified:boolean};reasons:string[];codex?:{state:string;host_enabled?:boolean;catalog_verified?:boolean;usd_cost_enforced:boolean;reason?:string|null;subscription_quota?:{ordinary_usage_allowed:boolean|null;purchased_credits_available:boolean|null}}}
 export interface RuntimeArtifact {id:string;kind:string;job_id:string;sha256:string;display_name?:string;size_bytes?:number;candidate_id?:string|null;source_revision:string;immutable?:boolean}
 export interface RuntimeFile {file_id:string;path:string;status:string;binary:boolean;size_bytes:number;sha256:string|null;media_type:string}
@@ -27,6 +28,7 @@ export interface JobView {artifactId:string;fileId:string;tab:'text'|'diff';star
 export interface RuntimeBridge {
   snapshot():Promise<RuntimeSnapshot>;capabilities():Promise<RuntimeCapabilities>;job(id:string):Promise<{v:1;job:RuntimeJob}>;
   runInfo(id:string):Promise<{v:1;run:RuntimeRun}>;runEvents(id:string,afterSeq?:number):Promise<RunEventPage>;
+  assignSession(station:string,job:string,run:string,revision:number):Promise<CommandReply>;clearSession(station:string,revision:number):Promise<CommandReply>;
   artifact(id:string):Promise<{v:1;artifact:RuntimeArtifact;preview_text:string|null}>;
   artifacts(id:string,cursor?:string):Promise<{v:1;items:RuntimeArtifact[];next_cursor:string|null}>;files(id:string,cursor?:string):Promise<FilePage>;
   text(artifact:string,file:string,startLine?:number):Promise<TextPage>;diff(artifact:string,file:string,cursor?:string):Promise<DiffPage>;

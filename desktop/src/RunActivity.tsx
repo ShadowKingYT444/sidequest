@@ -3,7 +3,7 @@ import { bridge } from './bridge';
 import type { RunEventPage, RuntimeJob, RuntimeRun } from './types';
 import './RunActivity.css';
 
-interface Props { job: RuntimeJob; active: boolean }
+interface Props { job: RuntimeJob; active: boolean; selectedRunId?:string; expectedWorkerId?:string; contextual?:boolean }
 interface RunRead { run: RuntimeRun; page: RunEventPage; readAt: string }
 interface ReadState { key: string; data?: RunRead; loading: boolean; error: string }
 const runStates = new Set(['running', 'completed', 'failed', 'cancelled', 'ambiguous']);
@@ -58,11 +58,11 @@ function timestamp(value: string | null) {
 function count(value: number | null) { return value === null ? 'Unknown' : value.toLocaleString(); }
 function cost(value: number | string | null) { return typeof value !== 'number' ? 'Unknown' : `$${value.toLocaleString(undefined, { maximumFractionDigits: 6 })}`; }
 
-export default function RunActivity({ job, active }: Props) {
+export default function RunActivity({ job, active, selectedRunId, expectedWorkerId, contextual=false }: Props) {
   const controlId = useId();
   const ids = [...new Set(job.run_ids ?? [])].slice(-100);
   const [selection, setSelection] = useState({ jobId: job.id, runId: ids.at(-1) ?? '' });
-  const runId = selection.jobId === job.id && ids.includes(selection.runId) ? selection.runId : ids.at(-1) ?? '';
+  const runId = selectedRunId ? (ids.includes(selectedRunId)?selectedRunId:'') : selection.jobId === job.id && ids.includes(selection.runId) ? selection.runId : ids.at(-1) ?? '';
   const selectionKey = `${job.id}:${runId}`;
   const [cursor, setCursor] = useState({ key: selectionKey, afterSeq: 0, previous: [] as number[] });
   const afterSeq = cursor.key === selectionKey ? cursor.afterSeq : 0;
@@ -101,6 +101,7 @@ export default function RunActivity({ job, active }: Props) {
         ]);
         if (!alive || request !== generation.current) return;
         const selectedRun = requireRun(runReply, selectedJob, runId);
+        if(expectedWorkerId&&selectedRun.worker_id!==expectedWorkerId)throw new Error('Recorded session worker identity changed.');
         const page = requireEvents(eventReply, selectedRun, afterSeq);
         setRead({ key: readKey, data: { run: selectedRun, page, readAt: new Date().toISOString() }, loading: false, error: '' });
         poll = selectedRun.state === 'running' && selectedRun.ended_at === null;
@@ -113,22 +114,22 @@ export default function RunActivity({ job, active }: Props) {
     }
     void load();
     return () => { alive = false; generation.current++; clearTimeout(timer); };
-  }, [runId, readKey, afterSeq, active, visible, refresh]);
+  }, [runId, readKey, afterSeq, active, visible, refresh, expectedWorkerId]);
 
   const chooseRun = (id: string) => {
     setSelection({ jobId: job.id, runId: id });
     setCursor({ key: `${job.id}:${id}`, afterSeq: 0, previous: [] });
   };
 
-  return <section className="run-activity" aria-label="Run activity" data-run-id={runId || undefined}>
+  return <section className={'run-activity'+(contextual?' is-contextual':'')} aria-label="Run activity" data-run-id={runId || undefined}>
     <header className="run-activity-heading">
-      <div><h4>Run activity</h4><span className="run-activity-profile">{localInspection ? 'Local Git inspection' : codexProfile ? 'Codex worker profile' : 'Execution profile unavailable'}</span></div>
+      <div><h4>{contextual?'Conversation & events':'Run activity'}</h4><span className="run-activity-profile">{localInspection ? 'Local Git inspection' : codexProfile ? 'Codex worker profile' : 'Execution profile unavailable'}</span></div>
       {runId && <button type="button" className="run-activity-refresh" disabled={!active || !visible || current?.loading} onClick={() => setRefresh(value => value + 1)}>Refresh</button>}
     </header>
     {!runId ? <p className="run-activity-empty">No run attempts recorded yet.</p> : <>
       <div className="run-activity-toolbar">
         <label htmlFor={controlId}>Run</label>
-        <select id={controlId} value={runId} onChange={event => chooseRun(event.target.value)}>
+        <select id={controlId} value={runId} disabled={!!selectedRunId} onChange={event => chooseRun(event.target.value)}>
           {ids.map((id, index) => <option key={id} value={id}>Run {index + 1} · {id.slice(0, 8)}</option>)}
         </select>
         {run && <span className="run-activity-state" data-state={run.state}>{label(run.state)}</span>}
@@ -143,6 +144,7 @@ export default function RunActivity({ job, active }: Props) {
           <div><dt>Model</dt><dd>{localInspection ? 'No model call' : run.model ?? 'Not recorded'}</dd></div>
           <div><dt>Effort</dt><dd>{localInspection ? '—' : run.effort ?? 'Not recorded'}</dd></div>
         </dl>
+        <p className="run-activity-note">Recorded usage: {count(run.usage.total_tokens)} tokens · {cost(run.usage.cost_usd)}{run.usage.uncertain?' · uncertain':''}</p>
         <details className="run-activity-details"><summary>Run details</summary><dl>
           <div><dt>Run</dt><dd>{run.id}</dd></div><div><dt>Task</dt><dd>{run.task_id}</dd></div>
           <div><dt>Recorded model</dt><dd>{run.model ?? 'Not recorded'}</dd></div><div><dt>Recorded effort</dt><dd>{run.effort ?? 'Not recorded'}</dd></div>

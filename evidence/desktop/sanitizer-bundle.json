@@ -1,8 +1,8 @@
 {
-  "built_editor": "desktop/dist/assets/DiffEditor-BdQyfGlH.js",
-  "sha256": "77923aaa8faacdf857c28963926b165cbd8d99a80a4d2dbbefde11c0b30e77cb",
+  "built_editor": "desktop/dist/assets/DiffEditor-DzRuyfdb.js",
+  "sha256": "158928191108840c124f2cd170f44afd2869e3983dfb2106e150659fe4e384ec",
   "dompurify_version": "3.4.17",
   "old_vendored_version_absent": true,
-  "scope": "Actual final production editor bundle, not dependency metadata alone",
+  "scope": "Actual session-integration production bundle",
   "npm_audit": "evidence/desktop/security-audit.json"
 }

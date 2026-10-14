@@ -72,6 +72,7 @@
 .run-activity-pages { justify-content: flex-end; flex-wrap: wrap; padding-top: 10px; }
 .run-activity-empty { padding: 12px 0; color: var(--run-muted); }
 .run-activity-note { padding-top: 12px; color: var(--run-muted); font-size: 11px; }
+.run-activity.is-contextual{padding:10px;margin:12px 0;font-size:11px}.is-contextual .run-activity-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px 0}.is-contextual .run-activity-timeline{max-height:180px}.is-contextual .run-activity-toolbar select{min-width:0;width:100%}.is-contextual .run-activity-heading{gap:6px}.is-contextual .run-activity-profile{font-size:10px}.is-contextual .run-activity-pages{justify-content:space-between}.is-contextual .run-activity-pages button{padding:5px;font-size:10px}
 @media (max-width: 600px) {
   .run-activity { padding: 12px; }
   .run-activity-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }

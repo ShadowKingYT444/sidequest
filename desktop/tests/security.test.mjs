@@ -33,7 +33,7 @@ test('preload exposes fixed read and validated local-runtime capabilities withou
   assert.equal(exposed.name, 'sidequest');
   assert.deepEqual(Object.keys(exposed.api), ['runtime', 'providers', 'snapshot', 'diff']);
   assert.equal(Object.isFrozen(exposed.api.runtime), true);
-  assert.deepEqual(Object.keys(exposed.api.runtime), ['snapshot','capabilities','runInfo','runEvents','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop','refreshReadiness','enableCoding','submitCoding','runCoding']);
+  assert.deepEqual(Object.keys(exposed.api.runtime), ['snapshot','capabilities','runInfo','runEvents','assignSession','clearSession','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop','refreshReadiness','enableCoding','submitCoding','runCoding']);
   assert.equal(Object.isFrozen(exposed.api), true);
   assert.deepEqual(await exposed.api.snapshot(), { ok: true });
   assert.deepEqual(calls, [['sidequest:snapshot']]);

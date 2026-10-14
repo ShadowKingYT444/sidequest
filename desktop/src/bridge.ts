@@ -12,6 +12,7 @@ async function runtimeRequest<T>(method:string,args:(string|number)[]=[]):Promis
 const runtime:RuntimeBridge={
   snapshot:()=>runtimeRequest('snapshot'),capabilities:()=>runtimeRequest('capabilities'),job:id=>runtimeRequest('job',[id]),artifacts:(id,cursor='')=>runtimeRequest('artifacts',[id,cursor]),
   runInfo:id=>runtimeRequest('runInfo',[id]),runEvents:(id,afterSeq=0)=>runtimeRequest('runEvents',[id,afterSeq]),
+  assignSession:(station,job,run,revision)=>runtimeRequest('assignSession',[station,job,run,revision]),clearSession:(station,revision)=>runtimeRequest('clearSession',[station,revision]),
   artifact:id=>runtimeRequest('artifact',[id]),
   files:(id,cursor='')=>runtimeRequest('files',[id,cursor]),text:(artifact,file,startLine=1)=>runtimeRequest('text',[artifact,file,startLine]),diff:(artifact,file,cursor='')=>runtimeRequest('diff',[artifact,file,cursor]),
   register:revision=>runtimeRequest('register',[revision]),submitInspection:(project,title,revision)=>runtimeRequest('submitInspection',[project,title,revision]),run:(job,revision)=>runtimeRequest('run',[job,revision]),stop:revision=>runtimeRequest('stop',[revision]),

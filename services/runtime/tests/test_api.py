@@ -254,6 +254,51 @@ class RuntimeApiTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("\x1b", preview)
         self.assertIn("<script>hostile</script>", preview)
 
+    async def test_office_session_commands_authenticate_and_never_enqueue_work(self) -> None:
+        body = {
+            "v": 1, "command_id": str(uuid4()), "type": "office.assign_session",
+            "expected_revision": self.store.revision,
+            "payload": {"station_id": "parent_019", "job_id": self.job_id, "run_id": self.run_id},
+        }
+        self.assertEqual((await self.http.post("/v1/commands", json=body)).status_code, 403)
+        response = await self.http.post("/v1/commands", headers=self.auth, json=body)
+        self.assertEqual(response.status_code, 202, response.text)
+        session = response.json()["result"]["office_session"]
+        self.assertEqual(session["worker_id"], self.store.get_run(self.run_id)["worker_id"])
+        snapshot = (await self.http.get("/v1/snapshot", headers=self.auth)).json()
+        self.assertEqual(snapshot["office_sessions"], [session])
+        self.assertNotIn("provider_thread_id", json.dumps(session))
+        self.assertNotIn("provider_turn_id", json.dumps(session))
+        replay = await self.http.post("/v1/commands", headers=self.auth, json=body)
+        self.assertEqual(replay.json(), response.json())
+        cleared = await self.http.post("/v1/commands", headers=self.auth, json={
+            "v": 1, "command_id": str(uuid4()), "type": "office.clear_session",
+            "expected_revision": self.store.revision, "payload": {"station_id": "parent_019"},
+        })
+        self.assertEqual(cleared.status_code, 202, cleared.text)
+        self.assertTrue(cleared.json()["result"]["cleared"])
+        self.assertEqual((await self.http.get("/v1/snapshot", headers=self.auth)).json()["office_sessions"], [])
+        self.assertEqual(self.scheduler.enqueued, [])
+
+    async def test_office_session_commands_reject_spoofed_payloads_and_require_revision(self) -> None:
+        payload = {"station_id": "parent_019", "job_id": self.job_id, "run_id": self.run_id}
+        for command_type, expected, attempted in (
+            ("office.assign_session", None, payload),
+            ("office.assign_session", self.store.revision, {**payload, "worker_id": str(uuid4())}),
+            ("office.assign_session", self.store.revision, {**payload, "project_id": str(uuid4())}),
+            ("office.assign_session", self.store.revision, {**payload, "station_id": "parent_025"}),
+            ("office.clear_session", None, {"station_id": "parent_019"}),
+            ("office.clear_session", self.store.revision, payload),
+        ):
+            with self.subTest(command_type=command_type, payload=attempted):
+                response = await self.http.post("/v1/commands", headers=self.auth, json={
+                    "v": 1, "command_id": str(uuid4()), "type": command_type,
+                    "expected_revision": expected, "payload": attempted,
+                })
+                self.assertEqual(response.status_code, 400, response.text)
+        self.assertEqual(self.store.list_office_sessions(), [])
+        self.assertEqual(self.scheduler.enqueued, [])
+
     async def test_manifest_text_diff_and_cursor_scope(self) -> None:
         response = await self.http.get(f"/v1/artifacts/{self.manifest_id}/files?limit=2", headers=self.auth)
         self.assertEqual(response.status_code, 200)

@@ -8,6 +8,7 @@ function opaque(value) {
   return encodeURIComponent(value);
 }
 function revision(value) { if (!Number.isSafeInteger(value) || value < 0) throw new Error('Invalid revision.'); return value; }
+function station(value) {if(typeof value!=='string'||!/^parent_(?:00[1-9]|01[0-9]|02[0-4])$/.test(value))throw new Error('Invalid office station.');return value;}
 function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } = {}) {
   let origin;
   if (url) {
@@ -50,6 +51,13 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
     job:id=>request(`/v1/jobs/${opaque(id)}`),
     runInfo:id=>request(`/v1/runs/${opaque(id)}`),
     runEvents:(id,afterSeq=0)=>{revision(afterSeq);return request(`/v1/runs/${opaque(id)}/events?after_seq=${afterSeq}&limit=200`);},
+    assignSession:async(stationId,jobId,runId,expectedRevision)=>{
+      station(stationId);opaque(jobId);opaque(runId);revision(expectedRevision);
+      const [job,run]=await Promise.all([request(`/v1/jobs/${opaque(jobId)}`),request(`/v1/runs/${opaque(runId)}`)]);
+      if(job.v!==1||job.job?.id!==jobId||!job.job.run_ids?.includes(runId)||run.v!==1||run.run?.id!==runId||run.run.job_id!==jobId||typeof run.run.worker_id!=='string'||!ID.test(run.run.worker_id))throw new Error('Recorded session ownership is unavailable.');
+      return command('office.assign_session',{station_id:stationId,job_id:jobId,run_id:runId},expectedRevision);
+    },
+    clearSession:(stationId,expectedRevision)=>command('office.clear_session',{station_id:station(stationId)},expectedRevision),
     artifact:id=>request(`/v1/artifacts/${opaque(id)}`),
     artifacts:(id,cursor='')=>{
       if(typeof cursor!=='string'||cursor.length>2048)throw new Error('Invalid artifact cursor.');
@@ -104,7 +112,7 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
     stop:expectedRevision=>command('system.stop',{},expectedRevision),
   });
 }
-const METHOD_ARITY = Object.freeze({snapshot:[0,0],capabilities:[0,0],job:[1,1],runInfo:[1,1],runEvents:[1,2],artifact:[1,1],artifacts:[1,2],files:[1,2],text:[2,3],diff:[2,3],register:[1,1],submitInspection:[3,3],run:[2,2],stop:[1,1],refreshReadiness:[1,1],enableCoding:[2,2],submitCoding:[6,6],runCoding:[2,2]});
+const METHOD_ARITY = Object.freeze({snapshot:[0,0],capabilities:[0,0],job:[1,1],runInfo:[1,1],runEvents:[1,2],assignSession:[4,4],clearSession:[2,2],artifact:[1,1],artifacts:[1,2],files:[1,2],text:[2,3],diff:[2,3],register:[1,1],submitInspection:[3,3],run:[2,2],stop:[1,1],refreshReadiness:[1,1],enableCoding:[2,2],submitCoding:[6,6],runCoding:[2,2]});
 async function dispatchRuntime(client,method,args) {
   const arity = typeof method === 'string' && Object.hasOwn(METHOD_ARITY,method) && METHOD_ARITY[method];
   if (!arity || !Array.isArray(args) || args.length < arity[0] || args.length > arity[1] || args.some(value => !['string','number'].includes(typeof value))) throw new Error('Invalid local runtime request.');

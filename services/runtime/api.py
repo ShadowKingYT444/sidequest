@@ -704,6 +704,7 @@ def create_app(
                 {"id": item["id"], "role": item["role"], "state": item["state"], "job_id": item["current_job_id"]}
                 for item in runtime_store.list_workers()[:50]
             ],
+            "office_sessions": runtime_store.list_office_sessions(),
             "workshops": [],
             "approvals": runtime_store.list_approvals(),
             "layout": runtime_store.get_setting("layout", {"version": 0, "nodes": [], "edges": []}),
@@ -1110,6 +1111,16 @@ def create_app(
                 payload["job_id"],
                 payload["worker_id"],
             )
+        elif command.type == "office.assign_session":
+            if expected is None or set(payload) != {"station_id", "job_id", "run_id"}:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "office.assign_session requires expected_revision, station_id, job_id and run_id")
+            result = runtime_store.assign_office_session(
+                command.command_id, expected, payload["station_id"], payload["job_id"], payload["run_id"]
+            )
+        elif command.type == "office.clear_session":
+            if expected is None or set(payload) != {"station_id"}:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "office.clear_session requires expected_revision and station_id")
+            result = runtime_store.clear_office_session(command.command_id, expected, payload["station_id"])
         elif command.type == "system.stop":
             if payload:
                 raise RuntimeFault(ErrorCode.INVALID_INPUT, "system.stop takes an empty payload")

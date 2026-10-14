@@ -80,3 +80,17 @@ test('coding methods require verified capability and USD enforcement before muta
   profile='codex_session';await client.runCoding('job-1',1);
   assert.deepEqual(requests.at(-1).body.payload,{job_id:'job-1'});
 });
+
+test('office session commands validate station and recorded run ownership without launching work',async t=>{
+ const requests=[];let runJob='job-1';
+ const server=http.createServer(async(req,res)=>{
+  let body='';for await(const chunk of req)body+=chunk;requests.push({url:req.url,body:body?JSON.parse(body):null});res.setHeader('Content-Type','application/json');
+  res.end(JSON.stringify(req.url==='/v1/jobs/job-1'?{v:1,job:{id:'job-1',run_ids:['run-1']}}:req.url==='/v1/runs/run-1'?{v:1,run:{id:'run-1',job_id:runJob,worker_id:'worker-1'}}:{v:1,accepted:true}));
+ });await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));t.after(()=>server.close());
+ const client=createRuntimeClient({url:`http://127.0.0.1:${server.address().port}`,token:'test-session'});
+ await assert.rejects(dispatchRuntime(client,'assignSession',['parent_099','job-1','run-1',1]));assert.equal(requests.length,0);
+ runJob='other';await assert.rejects(client.assignSession('parent_019','job-1','run-1',1),/ownership/);assert.equal(requests.some(r=>r.body),false);
+ runJob='job-1';await client.assignSession('parent_019','job-1','run-1',1);assert.equal(requests.at(-1).body.type,'office.assign_session');
+ await client.clearSession('parent_019',2);assert.equal(requests.at(-1).body.type,'office.clear_session');
+ assert.equal(requests.some(r=>r.body?.type==='job.run'||r.url==='/v1/capabilities'),false);
+});

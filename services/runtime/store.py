@@ -36,6 +36,7 @@ _MAX_EVENT_LENGTH = 4096
 _GIT_OBJECT_ID_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
 _OPAQUE_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:_-]{0,199}$")
 _PROVIDER_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,511}$")
+_OFFICE_STATION_RE = re.compile(r"^parent_(?:00[1-9]|01[0-9]|02[0-4])$")
 
 
 def utc_now() -> str:
@@ -57,6 +58,12 @@ def _require_opaque_id(value: str, label: str) -> str:
 
 def _json_load(value: str) -> Any:
     return json.loads(value)
+
+
+def _require_office_station(value: str) -> str:
+    if not isinstance(value, str) or not _OFFICE_STATION_RE.fullmatch(value):
+        raise RuntimeFault(ErrorCode.INVALID_INPUT, "station_id must be an original office station parent_001 through parent_024")
+    return value
 
 
 class RuntimeStore:
@@ -1672,6 +1679,74 @@ class RuntimeStore:
             return {"job_id": job_id, "worker_id": worker_id}
 
         return self.execute_command(command_id, "job.assign", payload, expected_revision, write)
+
+    def list_office_sessions(self) -> list[dict[str, Any]]:
+        """Return bounded recorded ownership, without provider identifiers or dispatch."""
+        with self.read_connection() as connection:
+            rows = connection.execute(
+                "SELECT station_id, job_id, run_id, worker_id, project_id, assigned_at "
+                "FROM office_sessions ORDER BY station_id LIMIT 24"
+            ).fetchall()
+            return [dict(row) for row in rows]
+
+    def assign_office_session(
+        self,
+        command_id: str | UUID,
+        expected_revision: int,
+        station_id: str,
+        job_id: str,
+        run_id: str,
+    ) -> dict[str, Any]:
+        station_id = _require_office_station(station_id)
+        job_id = _require_uuid(job_id, "job_id")
+        run_id = _require_uuid(run_id, "run_id")
+        payload = {"station_id": station_id, "job_id": job_id, "run_id": run_id}
+
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            run = connection.execute(
+                "SELECT a.worker_id, t.job_id, j.project_id FROM attempts a "
+                "JOIN tasks t ON t.id = a.task_id JOIN jobs j ON j.id = t.job_id WHERE a.id = ?",
+                (run_id,),
+            ).fetchone()
+            if not run:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "recorded run was not found")
+            if run["job_id"] != job_id:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "recorded run does not belong to the requested job")
+            if not run["worker_id"]:
+                raise RuntimeFault(ErrorCode.POLICY_DENIED, "recorded run has no recorded worker ownership")
+            if connection.execute("SELECT 1 FROM office_sessions WHERE station_id = ?", (station_id,)).fetchone():
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "station is occupied; clear its recorded session explicitly")
+            if connection.execute(
+                "SELECT 1 FROM office_sessions WHERE run_id = ? OR worker_id = ?", (run_id, run["worker_id"])
+            ).fetchone():
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "recorded run or worker already belongs to an office station")
+            session = {
+                "station_id": station_id,
+                "job_id": job_id,
+                "run_id": run_id,
+                "worker_id": run["worker_id"],
+                "project_id": run["project_id"],
+                "assigned_at": utc_now(),
+            }
+            connection.execute(
+                "INSERT INTO office_sessions(station_id, job_id, run_id, worker_id, project_id, assigned_at) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                tuple(session[key] for key in ("station_id", "job_id", "run_id", "worker_id", "project_id", "assigned_at")),
+            )
+            return {"office_session": session}
+
+        return self.execute_command(command_id, "office.assign_session", payload, expected_revision, write)
+
+    def clear_office_session(
+        self, command_id: str | UUID, expected_revision: int, station_id: str
+    ) -> dict[str, Any]:
+        station_id = _require_office_station(station_id)
+
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            deleted = connection.execute("DELETE FROM office_sessions WHERE station_id = ?", (station_id,))
+            return {"station_id": station_id, "cleared": deleted.rowcount == 1}
+
+        return self.execute_command(command_id, "office.clear_session", {"station_id": station_id}, expected_revision, write)
 
     def system_stop(self, command_id: str | UUID, expected_revision: int | None, stopped: bool) -> dict[str, Any]:
         command_type = "system.stop" if stopped else "system.resume"
