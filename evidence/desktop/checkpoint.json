@@ -1,9 +1,9 @@
 {
-  "at": "2026-10-14T10:14:28.785709+00:00",
-  "status": "Final full browser regression failed (10 passed, 1 failed); recorded-session test passed; native and interactive conversation incomplete",
+  "at": "2026-10-14T11:03:59.938043+00:00",
+  "status": "Monaco reopen lifecycle defect repaired; full 12-test browser suite verified; native orchestration remains incomplete",
   "branch": "feat/electron-office-diff",
   "tested_source_base_commit": "8a1ea251677a705b5cff58457234e310d27ca346",
-  "source_files_sha256": "34f3d1ba9c7f8b74ead697324f2dc3495b2078f913b9fc970aa8c7dd74165aad",
+  "source_files_sha256": "546cd47a63a3acdd4c4c603149417a4e543ef44454ff3a71594e312d0af45b36",
   "verified": {
     "desktop": 30,
     "runtime": 48,
@@ -16,16 +16,19 @@
   "native_gates": "unchanged blocked; no supported remedy found",
   "new_session_library_upload": "network failure before preparation; captures committed",
   "model_calls": 0,
-  "published_tested_source_commit": "cc9d70a71825d5434ad0d7c8a2330395c08a1da5",
+  "published_tested_source_commit": "f6b8a1921e3000de82268b1878a090fd900b0560",
   "final_full_browser": {
-    "exit_code": 1,
-    "passed": 10,
-    "failed": 1,
-    "minutes": 8.9,
-    "retries": 0,
-    "record": "evidence/desktop/final-11-run.json"
+    "exit_code": 0,
+    "passed": 12,
+    "failed": 0,
+    "minutes": 9.9,
+    "retries": 0
   },
   "source_unchanged": true,
   "features_added": false,
-  "native_or_model_runs": 0
+  "native_or_model_runs": 0,
+  "browser_record": "evidence/desktop/repaired-12-run.json",
+  "monaco_reopen_cause_established": true,
+  "monaco_reopen_fix_verified": true,
+  "source_unchanged_during_tests": true
 }

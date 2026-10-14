@@ -3,12 +3,16 @@
   "trace": [
     {
       "phase": "added",
-      "at": 44477.5,
+      "at": 43350.5,
       "testId": "diff-editor",
       "fileId": "f_03d72050ecef630081601cb44a0cec9a",
       "scrollTop": "479",
       "connected": true,
       "children": 1
     }
-  ]
+  ],
+  "reopenMounts": 1,
+  "readsBeforeRefresh": 1,
+  "readsAfterRefresh": 2,
+  "refreshRereadVerified": true
 }

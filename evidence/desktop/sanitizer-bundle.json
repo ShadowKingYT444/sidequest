@@ -1,8 +1,8 @@
 {
-  "built_editor": "desktop/dist/assets/DiffEditor-xXDZkCFS.js",
-  "sha256": "dde605f2533b720b1cc6266200047c0fe9f5df512999a945ea3df43317c3e147",
+  "built_editor": "desktop/dist/assets/DiffEditor-CaCC253o.js",
+  "sha256": "0ce393591ec1021b508fefbe694477cb3507392293013b33682ff59880532f63",
   "dompurify_version": "3.4.17",
   "old_vendored_version_absent": true,
-  "scope": "Actual final production bundle",
+  "scope": "Actual production bundle after the scoped Monaco reopen repair",
   "npm_audit": "evidence/desktop/security-audit.json"
 }

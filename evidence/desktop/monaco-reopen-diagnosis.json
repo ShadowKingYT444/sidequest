@@ -4,7 +4,7 @@
   "trace": [
     {
       "phase": "added",
-      "at": 40709,
+      "at": 43233,
       "testId": "diff-editor",
       "fileId": "f_03d72050ecef630081601cb44a0cec9a",
       "connected": true,
@@ -12,7 +12,7 @@
     },
     {
       "phase": "removed",
-      "at": 51143,
+      "at": 48109.79999999702,
       "testId": "diff-editor",
       "fileId": "f_03d72050ecef630081601cb44a0cec9a",
       "scrollTop": "437",
@@ -21,7 +21,7 @@
     },
     {
       "phase": "added",
-      "at": 61330.60000000149,
+      "at": 57414.09999999404,
       "testId": "diff-editor",
       "fileId": "f_03d72050ecef630081601cb44a0cec9a",
       "scrollTop": "458",

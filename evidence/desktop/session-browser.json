@@ -2,11 +2,11 @@
   "scope": "Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation",
   "owner": {
     "station_id": "parent_019",
-    "job_id": "dd7f180e-8d35-461e-a693-23728a3e29a5",
-    "run_id": "9825384f-bf7d-4e92-94db-a6f6c3aef495",
+    "job_id": "a76a869b-a5cd-4610-a114-334940d91961",
+    "run_id": "820549dc-621b-47ce-8c87-1ddb961d9122",
     "worker_id": "316ba303-4fbd-4a1b-ba4c-7dc080e8a478",
     "project_id": "2a79639a-8823-49cf-ba6a-da0b8108c6ed",
-    "assigned_at": "2026-10-14T10:06:37.111Z"
+    "assigned_at": "2026-10-14T10:53:01.009Z"
   },
   "reload_restored": true,
   "board_links_same_session": true,
