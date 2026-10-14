@@ -20,6 +20,15 @@ from config import Settings
 from git_ops import AdapterError, prepare_clone, resolve_commit
 
 
+def synthetic_secret_json(key: str, value: str) -> str:
+    """Build scanner fixtures at runtime so test source contains no secret sample."""
+    return json.dumps({key: value}) + "\n"
+
+
+def synthetic_private_key_header() -> str:
+    return "-----BEGIN " + "PRIVATE " + "KEY" + "-----"
+
+
 def git(cwd: Path, *args: str, input_data: bytes | None = None, env: dict[str, str] | None = None) -> bytes:
     command_env = {
         "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
@@ -358,6 +367,33 @@ class GitInspectionAndFreezeTests(GitFixture):
         snapshot = Path(data["snapshot_root"])
         self.assertEqual(snapshot.joinpath(*weird.split("/")).read_bytes(), b"safe text\n")
 
+    def test_token_budget_docs_and_environment_lookup_code_are_not_credentials(self) -> None:
+        workspace = self.prepare("token-budget-docs")
+        (workspace / "docs/LOW_TOKEN_EXECUTION.md").write_text(
+            "The worker has a 30,000 token budget and a bounded execution window.\n"
+        )
+        (workspace / "src/auth_config.py").write_text(
+            "import os\n"
+            "token = os.environ.get('API_TOKEN')\n"
+            "secret = load_secret()\n"
+        )
+        data, artifacts = self.freeze(workspace, paths=["docs", "src"])
+        self.assertEqual(data["candidate"]["base_revision"], self.base)
+        self.assertEqual(len(artifacts), 3)
+
+    def test_literal_credential_assignment_and_secret_named_data_file_remain_blocked(self) -> None:
+        workspace = self.prepare("literal-secret-assignment")
+        assignment_name = "API_" + "TOKEN"
+        sample_value = "fixture" + "-secret-value-long-enough"
+        (workspace / "src/config.py").write_text(assignment_name + ' = "' + sample_value + '"\n')
+        with self.assertRaisesRegex(AdapterError, "Credential-like"):
+            self.freeze(workspace)
+
+        workspace = self.prepare("secret-token-file")
+        (workspace / "src/token.json").write_text(synthetic_secret_json("token", "live" + "_example_value"))
+        with self.assertRaisesRegex(AdapterError, "Credential-like"):
+            self.freeze(workspace)
+
     def test_freeze_rejects_symlink_traversal_scope_oversize_and_credentials(self) -> None:
         workspace = self.prepare("symlink-workspace")
         external = self.root / "external.txt"
@@ -405,12 +441,13 @@ class GitInspectionAndFreezeTests(GitFixture):
 
         workspace = self.prepare("credential-content")
         (workspace / "config/serviceAccountKey.json").parent.mkdir(parents=True)
-        (workspace / "config/serviceAccountKey.json").write_text('{"private_key":"-----BEGIN PRIVATE KEY-----abc"}\n')
+        private_key_sample = synthetic_private_key_header() + "abc"
+        (workspace / "config/serviceAccountKey.json").write_text(synthetic_secret_json("private_key", private_key_sample))
         with self.assertRaisesRegex(AdapterError, "Credential-like"):
             self.freeze(workspace)
 
         workspace = self.prepare("generic-token")
-        (workspace / "src/token.json").write_text('{"token":"live_example_value"}\n')
+        (workspace / "src/token.json").write_text(synthetic_secret_json("token", "live" + "_example_value"))
         with self.assertRaisesRegex(AdapterError, "Credential-like"):
             self.freeze(workspace)
 

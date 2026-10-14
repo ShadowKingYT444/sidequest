@@ -31,6 +31,7 @@ test('host runtime client uses fixed paths and secret authentication, and gates 
   for(const [method,args] of [['shell',['id']],['__proto__',[]],['job',['../secret']],['text',['artifact','file',0]],['run',['job',-1]],['submitInspection',['project','bad\ntext',1]],['snapshot',[1]]])await assert.rejects(dispatchRuntime(client,method,args));
   assert.equal(requests.length,count,'invalid inputs produce no network calls');
   await client.register(2);assert.equal(requests.at(-1).body.payload.repo_path,'/configured/repo');
+  assert.deepEqual(requests.at(-1).body.payload.policy,{allowed_actions:['read_repo','run_checks']});
   const beforeRun=requests.filter(item=>item.body?.type==='job.run').length;
   await assert.rejects(client.run('job-1',2),/not a queued zero-budget/);
   assert.equal(requests.filter(item=>item.body?.type==='job.run').length,beforeRun,'mixed-runtime coding job cannot launch through inspection capability');

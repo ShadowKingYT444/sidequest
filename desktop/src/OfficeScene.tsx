@@ -3,13 +3,14 @@ import React, {
   Suspense,
   useEffect,
   useRef,
+  useMemo,
   type ErrorInfo,
   type MouseEvent,
   type ReactNode,
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls, useGLTF } from "@react-three/drei";
-import { DoubleSide, MathUtils, Vector3 as ThreeVector3 } from "three";
+import { Box3, DirectionalLight, DoubleSide, MathUtils, Mesh, Vector3 as ThreeVector3 } from "three";
 import type { GLTFLoader, OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { validateOfficeResourceUrl } from "./office-bindings";
 import type { OfficeBindings, OfficeStationBinding, Vector3 } from "./office-bindings";
@@ -18,6 +19,7 @@ export interface OfficeSceneProps {
   bindings: OfficeBindings;
   selectedStationId: string | null;
   onSelectStation: (id: string) => void;
+  onSelectBoard?: () => void;
   childrenForStation?: (id: string) => ReactNode;
   reducedMotion: boolean;
   active: boolean;
@@ -30,8 +32,16 @@ interface OfficeModelProps {
 
 function OfficeModel({ url }: OfficeModelProps) {
   const gltf = useGLTF(url, false, true, configureOfficeAssetLoader);
+  const light=useRef<DirectionalLight>(null);
+  const bounds=useMemo(()=>new Box3().setFromObject(gltf.scene),[gltf.scene]);
+  const center=bounds.getCenter(new ThreeVector3());
+  const radius=Math.max(1,bounds.getSize(new ThreeVector3()).length()/2);
+  useEffect(()=>{
+    gltf.scene.traverse(object=>{if(object instanceof Mesh){object.castShadow=true;object.receiveShadow=true;}});
+    if(light.current){light.current.target.position.copy(center);light.current.target.updateMatrixWorld();}
+  },[gltf.scene,bounds]);
   // Keep the imported scene intact: bindings add interaction surfaces around it.
-  return <primitive object={gltf.scene} dispose={null} />;
+  return <><primitive object={gltf.scene} dispose={null}/><directionalLight ref={light} position={[center.x+radius*.6,center.y+radius*1.4,center.z+radius*.8]} intensity={0.9} castShadow shadow-mapSize={[1024,1024]} shadow-camera-left={-radius} shadow-camera-right={radius} shadow-camera-top={radius} shadow-camera-bottom={-radius} shadow-camera-near={.1} shadow-camera-far={radius*5} shadow-normalBias={.02}/></>;
 }
 
 function configureOfficeAssetLoader(loader: GLTFLoader) {
@@ -248,6 +258,7 @@ export function OfficeScene({
   bindings,
   selectedStationId,
   onSelectStation,
+  onSelectBoard,
   childrenForStation,
   reducedMotion,
   active,
@@ -261,10 +272,10 @@ export function OfficeScene({
       dpr={[1, 1.5]}
       camera={{ position: bindings.overview.position, fov: 40, near: 0.05, far: 1000 }}
       gl={{ antialias: true, alpha: false }}
+      shadows="soft"
     >
       <color attach="background" args={["#111820"]} />
       <ambientLight intensity={0.72} />
-      <directionalLight position={[4, 7, 5]} intensity={0.9} />
       <LoaderErrorBoundary onError={onError}>
         <Suspense fallback={null}>
           <OfficeModel url={bindings.modelUrl} />
@@ -279,6 +290,7 @@ export function OfficeScene({
           childrenForStation={childrenForStation}
         />
       ))}
+      {bindings.board&&onSelectBoard&&<group position={bindings.board.anchor} rotation={bindings.board.rotation}><mesh onClick={event=>{event.stopPropagation();onSelectBoard();}}><planeGeometry args={bindings.board.size}/><meshBasicMaterial transparent opacity={0} depthWrite={false} side={DoubleSide}/></mesh></group>}
       <OrbitControls
         ref={controlsRef}
         makeDefault

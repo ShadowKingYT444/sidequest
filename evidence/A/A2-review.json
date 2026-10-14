@@ -1,0 +1,66 @@
+{
+  "candidate_sha": "1fdda3386e8eeb9bb479a877e50b8ab1a2f653ea",
+  "verdict": "FAIL",
+  "review_scope": "Authenticated FastAPI reads and commands; immutable artifact import, paging, cursors and ownership; the fixed zero-budget local_git_inspection pipeline; and host subprocess boundaries. No candidate source was edited.",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "21 tests passed, 0 failed. Includes HTTPX auth/paging/traversal/binary-content checks and the actual B/D modules on a disposable temporary Git fixture."
+    },
+    {
+      "command": "python3 -m py_compile services/runtime/*.py",
+      "exit_code": 0,
+      "result": "Runtime modules compile."
+    },
+    {
+      "command": "python3 -m services.runtime.main --help",
+      "exit_code": 0,
+      "result": "Help shows the loopback entrypoint and data/config/runtime, token, allowed-root, worker, adapter argv, port and timeout settings. services/runtime/README.md documents startup and secret placement."
+    },
+    {
+      "command": "Focused HTTPX auth/CORS/token probe with RuntimeApiTests temporary fixture",
+      "exit_code": 0,
+      "result": "Unauthenticated /v1/capabilities returned 403; /health returned 200; authenticated capabilities returned 200; no Access-Control-* response header and no token in either response."
+    },
+    {
+      "command": "Disposable HTTPX long-line and manifest-page bound probe",
+      "exit_code": 0,
+      "result": "A 150,000-byte line of quote characters returned a 300,264-byte text response. A 150,000-byte diff row returned a 300,837-byte diff response. A 100-entry manifest page with long valid relative paths returned 303,614 bytes. Each exceeds the documented 262,144-byte page limit."
+    },
+    {
+      "command": "Disposable fake-adapter descendant timeout probe",
+      "exit_code": 0,
+      "result": "With a 1-second adapter timeout, a fake B wrote a valid response, spawned a 20-second child inheriting stdout/stderr, and exited. AdapterRunner reported B adapter timed out, but the child PID remained alive; the probe killed it."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A2-R1",
+      "severity": "high",
+      "location": "services/runtime/adapters.py:108-122, 248-259",
+      "title": "Timeout and cancellation can leave adapter descendants running",
+      "detail": "_terminate returns as soon as the direct process has a returncode. asyncio process.wait can remain pending while a descendant holds inherited stdout/stderr open, so the timeout path reaches _terminate after the adapter has exited and skips killing its process group. The reproduced child remained alive after the request was reported timed out. Such a child can continue using the assigned workspace or output root after A marks the attempt failed or cancelled."
+    },
+    {
+      "id": "A2-R2",
+      "severity": "medium",
+      "location": "services/runtime/api.py:602-620, 653-674, 705-725",
+      "title": "Serialized artifact pages exceed the 256 KiB limit",
+      "detail": "Text and diff paging budgets count UTF-8 source bytes before JSON escaping and omit response-field overhead. A 150,000-byte line of quote characters therefore expands to a 300,264-byte text response; the equivalent diff row produced 300,837 bytes. The manifest-files route limits entry count but does not bound serialized bytes; the 100-entry probe produced 303,614 bytes. This exceeds COMPUTER_UI.md's 256 KiB page ceiling."
+    }
+  ],
+  "verified": [
+    "All /v1 routes exercised require the bearer token; /health is the public endpoint. The app installs no CORS middleware, token comparison uses hmac.compare_digest, and the tested token was not returned in responses.",
+    "The supported run gate is derived from stored source/check/action/budget/task data; the API rejects a coding-profile job.run, and the scheduler revalidates the persisted inspection profile. Coding capability and worker model verification remain false.",
+    "The fixed pipeline invokes only B repo.inspect, B repo.prepare, B artifacts.freeze, and D check.run. Its candidate manifest and snapshot are rehashed before D checks the staged manifest and read-only frozen tree. No model/provider call or delivery operation is enabled by AdapterRunner's allowlist.",
+    "Artifact reads use registered IDs and digest-checked content; path traversal and binary text access are rejected. HMAC cursors reject malformed/noncanonical values and are scoped to the requested job/artifact data in exercised cases.",
+    "Inspection jobs use a zero-dollar reservation; completed run usage token counts remain null and known cost remains zero. The HTTP and real B/D fixture runs reached verifying with no product job, provider call, or external delivery."
+  ],
+  "limits_vs_full_A2": [
+    "This candidate implements only the fixed single-task local_git_inspection profile. The A2-2 general scheduler acceptance for disjoint-task overlap, dependency ordering and overlapping write-scope serialization is not implemented or tested; coding/model execution remains unavailable as instructed for this MVP profile.",
+    "A hard-killed runtime has no A3 reconciliation path in this candidate. Startup does not reconcile persisted running attempts; the affected job can remain running and cannot be explicitly rerun. No automatic duplicate dispatch was observed or enabled, but restart recovery remains an A3 requirement.",
+    "A2-3 interaction/idle model-call counting is not a runtime UI test here. The runtime route and adapter allowlist inspection shows reads do not dispatch work, and the fixed check reports zero inference calls."
+  ],
+  "fixture_live_distinction": "All API and subprocess probes used disposable temporary databases, paths and Git fixtures. No registered user repository, primary source file, product job, provider/model service, external delivery, or spending was used."
+}

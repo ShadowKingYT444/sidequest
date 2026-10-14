@@ -1,0 +1,107 @@
+{
+  "candidate_sha": "ffb46bdf036dd059ed99521b4b07bd2c67e2faac",
+  "reviewed_at": "2026-10-14",
+  "review_type": "fresh narrow Electron/runtime bridge security review",
+  "review_tree": "/workspace/sidequest-reviews/C-runtime-repair",
+  "verdict": "PASS_WITH_INTEGRATION_LIMITS",
+  "summary": "All four findings from the review of 87b3112 are resolved in this candidate. The client re-reads and validates the selected job before job.run; the UI applies the same profile/state/budget gate; artifact and page identity checks reject mismatches; DTOs match the A2 API; and snapshot refreshes suppress out-of-order responses. No material C bridge finding remains in the reviewed scope.",
+  "scope": [
+    "desktop/electron/runtime-client.cjs",
+    "desktop/electron/main.cjs",
+    "desktop/electron/preload.cjs",
+    "desktop/vite.config.ts",
+    "desktop/src/JobsBoard.tsx",
+    "desktop/src/bridge.ts",
+    "desktop/src/runtime-identity.ts",
+    "desktop/src/types.ts",
+    "desktop/tests/runtime-client.test.mjs",
+    "desktop/tests/runtime-identity.test.mjs",
+    "desktop/tests/security.test.mjs",
+    "contracts/PROTOCOL.md",
+    "contracts/EXTENSIONS.md",
+    "services/runtime/api.py",
+    "evidence/A/A2.json"
+  ],
+  "prior_findings": [
+    {
+      "id": "C-RUNTIME-001",
+      "status": "resolved",
+      "evidence": "runtime-client.cjs re-reads /v1/jobs/{id} immediately before job.run and requires matching job ID, execution_profile=local_git_inspection, state=queued, and budget_usd=0. JobsBoard disables the button unless the snapshot job meets the same profile/state/budget checks and local inspection capability is enabled. A stale expected revision is returned as VERSION_CONFLICT without retry."
+    },
+    {
+      "id": "C-RUNTIME-002",
+      "status": "resolved",
+      "evidence": "runtime-identity.ts requires immutable=true, a 64-character lowercase SHA-256 digest, and selected job ownership. File, text, and diff pages are checked against the selected artifact, candidate, file, and file hash. The UI labels an artifact immutable only when the value is true and verifies fetched artifact ID and digest against its selected metadata."
+    },
+    {
+      "id": "C-RUNTIME-003",
+      "status": "resolved",
+      "evidence": "DTOs and JobsBoard use items, lines[].number, and next_line. Diff selection uses the registered diff artifact with the same candidate ID as the selected file manifest. These match the A2 endpoint shapes in EXTENSIONS.md and services/runtime/api.py."
+    },
+    {
+      "id": "C-RUNTIME-004",
+      "status": "resolved",
+      "evidence": "JobsBoard increments a snapshot request generation and discards both stale successes and stale failures. Artifact/file requests use cleanup guards; text/diff reads retain generation checks."
+    }
+  ],
+  "verification": {
+    "unit_tests": {
+      "command": "cd desktop && npm test",
+      "tests": 26,
+      "passed": 26,
+      "failed": 0,
+      "exit_code": 0
+    },
+    "typecheck": {
+      "command": "cd desktop && npm run typecheck",
+      "exit_code": 0
+    },
+    "mock_mixed_runtime_dispatch": [
+      {"case": "queued local_git_inspection, budget 0, matching job ID", "result": "one job.run command sent"},
+      {"case": "different execution profile", "result": "rejected before command"},
+      {"case": "non-queued state", "result": "rejected before command"},
+      {"case": "positive budget", "result": "rejected before command"},
+      {"case": "returned job ID mismatch", "result": "rejected before command"},
+      {"case": "stale expected revision", "result": "VERSION_CONFLICT surfaced; no retry"}
+    ],
+    "identity_negative_probes": {
+      "rejected_cases": 13,
+      "cases": [
+        "mutable artifact",
+        "wrong job ownership",
+        "invalid digest",
+        "wrong manifest artifact ID",
+        "wrong manifest candidate ID",
+        "file list over 100 entries",
+        "wrong text file ID",
+        "wrong text file hash",
+        "mutable text page",
+        "wrong diff artifact ID",
+        "wrong diff candidate ID",
+        "text page over 200 lines",
+        "diff page over 200 rows"
+      ]
+    },
+    "streamed_response_bound": "A temporary local server streamed 2 MiB without Content-Length; the runtime client rejected it at 1 MiB.",
+    "page_bounds": "Client requests artifact/file pages at 100 and text/diff pages at 200; identity helpers reject file/text/diff arrays above those row limits. A2 enforces the 100/200 endpoint limits and 256 KiB text/diff page bound in services/runtime/api.py. Overall client response size is capped at 1 MiB.",
+    "root_server": "Did not start or call the root UI server on port 5173.",
+    "worktree": "No source edits; temporary node_modules symlink removed; detached review worktree clean at the recorded SHA."
+  },
+  "assessments": {
+    "profile_gating": "PASS",
+    "artifact_and_page_identity": "PASS",
+    "wire_shape_and_diff_selection": "PASS",
+    "stale_response_suppression": "PASS",
+    "renderer_isolation_and_fixed_ipc": "PASS; security suite passed and IPC methods remain narrowly allowlisted.",
+    "shell_filesystem_and_credentials": "PASS; no renderer shell or arbitrary filesystem capability, runtime URL remains literal loopback HTTP, and the token remains in the host client.",
+    "same_origin_csrf": "No change to the Vite origin-check implementation from 87b3112. Security tests passed; no live request was sent to port 5173 because the root UI server owns it.",
+    "response_bounds": "PASS for the reviewed response cap and explicit pages; A2 supplies the smaller per-page byte/cardinality caps.",
+    "coding_model_and_delivery": "Not exercised. No provider call, job execution, or external delivery was made."
+  },
+  "remaining_limits": [
+    "This review used a temporary mocked runtime for C dispatch and identity probes; it did not run an integrated browser acceptance flow against the root UI server.",
+    "Native Electron remains blocked by the documented host OS sandbox limitation. The actual office asset transfer remains blocked by the host proxy; neither boundary was bypassed.",
+    "A2 reports the fixed deterministic inspection profile and API contracts; actual coding adapter work remains under B2, and no provider call was authorized."
+  ],
+  "findings": []
+}

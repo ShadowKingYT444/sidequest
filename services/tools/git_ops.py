@@ -24,11 +24,10 @@ except ImportError:  # Direct script execution by the adapter host.
     from protocol import AdapterError
 
 
-_SECRET_NAME = re.compile(
-    r"(?:^|[._-])(?:credentials?|secrets?|tokens?|private[_-]?keys?)(?:$|[._-])", re.IGNORECASE
-)
+_SECRET_NAME = re.compile(r"(?:^|[._-])(?:credentials?|secrets?|tokens?|passwords?|private[_-]?keys?)(?:$|[._-])", re.IGNORECASE)
+_SECRET_FILE_EXTENSIONS = {".json", ".yaml", ".yml", ".toml", ".ini", ".conf", ".cfg", ".txt", ".env"}
 _SECRET_ASSIGNMENT = re.compile(
-    rb"(?im)^\s*[A-Z0-9_]*(?:TOKEN|SECRET|API_KEY|PASSWORD|PRIVATE_KEY|ACCESS_KEY)[A-Z0-9_]*\s*[:=]\s*[^\s#]{4,}"
+    rb"(?im)^\s*(?:export\s+)?[A-Z0-9_]*(?:TOKEN|SECRET|API_KEY|PASSWORD|PRIVATE_KEY|ACCESS_KEY)[A-Z0-9_]*\s*[:=]\s*(['\"])([^'\"\r\n]{12,})\1\s*(?:\#.*)?$"
 )
 _SECRET_JSON = re.compile(
     rb"(?is)[\"'](?:private_key|client_secret|refresh_token|access_token|api_key|api_token|token|secret|password)[\"']\s*:\s*[\"'][^\"']{4,}[\"']"
@@ -223,7 +222,9 @@ def is_sensitive_path(path: str) -> bool:
         return True
     if basename.endswith((".pem", ".key", ".p12", ".pfx")):
         return True
-    return bool(_SECRET_NAME.search(basename))
+    suffix = Path(basename).suffix.lower()
+    stem = basename[: -len(suffix)] if suffix else basename
+    return suffix in _SECRET_FILE_EXTENSIONS and bool(_SECRET_NAME.search(stem))
 
 
 def contains_secret(data: bytes) -> bool:

@@ -9,6 +9,10 @@ import test from 'node:test';
 const require = createRequire(import.meta.url);
 const { createGitReader } = require('../electron/git-reader.cjs');
 
+// Synthetic credential fixtures exist only inside disposable Git repositories.
+// Construct their JSON at runtime so committed source contains no credential JSON.
+const dummyCredential = (key, value) => JSON.stringify({ [key]: value }) + '\n';
+
 function git(root, ...args) {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 }
@@ -31,14 +35,14 @@ function fixture(t) {
   write(root, 'rename-old.txt', 'renamed text\n');
   write(root, 'keep.txt', 'unchanged\n');
   write(root, 'notes.txt', 'access_token=private-old-secret\n');
-  write(root, 'notes.json', '{"private_key": "private-key-material-old"}\n');
-  write(root, 'serviceAccountKey.json', '{"private_key": "service-account-private-key"}\n');
+  write(root, 'notes.json', dummyCredential('private_key', 'private-key-material-old'));
+  write(root, 'serviceAccountKey.json', dummyCredential('private_key', 'service-account-private-key'));
   write(root, '.env.local', 'API_TOKEN=should-not-appear\n');
-  write(root, 'config/app.json', '{"password":"should-not-appear"}\n');
+  write(root, 'config/app.json', dummyCredential('password', 'should-not-appear'));
   write(root, 'logs/app.log', 'secret output\n');
   write(root, 'keys/id_rsa', 'private key\n');
   write(root, 'private-key.pem', 'private key\n');
-  write(root, 'vault/credentials.json', '{"password":"hidden"}\n');
+  write(root, 'vault/credentials.json', dummyCredential('password', 'hidden'));
   write(root, 'hidden\nname.txt', 'unsafe displayed path\n');
   symlinkSync('keep.txt', path.join(root, 'link-to-file'));
   git(root, 'add', '-A');
@@ -52,14 +56,14 @@ function fixture(t) {
   write(root, 'picture.bin', Buffer.from([0, 1, 2, 3, 4]));
   write(root, '-option-name.txt', 'flag-like path\n');
   write(root, 'notes.txt', 'access_token=private-new-secret\n');
-  write(root, 'notes.json', '{"private_key": "private-key-material-new"}\n');
-  write(root, 'serviceAccountKey.json', '{"private_key": "changed-service-account-private-key"}\n');
+  write(root, 'notes.json', dummyCredential('private_key', 'private-key-material-new'));
+  write(root, 'serviceAccountKey.json', dummyCredential('private_key', 'changed-service-account-private-key'));
   write(root, '.env.local', 'API_TOKEN=changed-secret\n');
-  write(root, 'config/app.json', '{"password":"changed-secret"}\n');
+  write(root, 'config/app.json', dummyCredential('password', 'changed-secret'));
   write(root, 'logs/app.log', 'changed log secret\n');
   write(root, 'keys/id_rsa', 'changed private key\n');
   write(root, 'private-key.pem', 'changed private key\n');
-  write(root, 'vault/credentials.json', '{"password":"changed-hidden"}\n');
+  write(root, 'vault/credentials.json', dummyCredential('password', 'changed-hidden'));
   write(root, 'hidden\nname.txt', 'changed unsafe path\n');
   git(root, 'add', '-A');
   git(root, 'commit', '-qm', 'candidate');

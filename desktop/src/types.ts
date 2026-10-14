@@ -15,7 +15,7 @@ export interface RuntimeCapabilities {v:1;features:{local_git_inspection?:boolea
 export interface RuntimeArtifact {id:string;kind:string;job_id:string;sha256:string;display_name?:string;size_bytes?:number;candidate_id?:string|null;source_revision:string;immutable?:boolean}
 export interface RuntimeFile {file_id:string;path:string;status:string;binary:boolean;size_bytes:number;sha256:string|null;media_type:string}
 export interface FilePage {v:1;artifact_id:string;candidate_id:string;files:RuntimeFile[];next_cursor:string|null}
-export interface DiffPage {v:1;artifact_id:string;candidate_id:string;base_revision:string;candidate_revision:string;rows:{kind:string;old_line:number|null;new_line:number|null;text:string}[];next_cursor:string|null}
+export interface DiffPage {v:1;artifact_id:string;candidate_id:string;base_revision:string;candidate_revision:string;rows:{kind:string;old_line:number|null;new_line:number|null;text:string;clipped?:boolean}[];next_cursor:string|null}
 export interface TextPage {v:1;artifact_id:string;file_id:string;sha256:string;immutable:boolean;lines:{number:number;text:string;clipped?:boolean}[];next_line:number|null}
 export interface CommandReply {v:1;accepted:boolean;command_id:string;revision:number}
 export interface RuntimeBridge {

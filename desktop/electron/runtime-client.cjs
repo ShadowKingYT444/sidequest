@@ -63,7 +63,7 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
     },
     register:expectedRevision=>{
       if(!repo || !path.isAbsolute(repo)) throw new Error('A host repository must be configured.');
-      return command('project.register',{name:path.basename(repo),repo_path:repo,base_ref:baseRef},expectedRevision);
+      return command('project.register',{name:path.basename(repo),repo_path:repo,base_ref:baseRef,policy:{allowed_actions:['read_repo','run_checks']}},expectedRevision);
     },
     submitInspection:async(projectId,title,expectedRevision)=>{
       opaque(projectId);

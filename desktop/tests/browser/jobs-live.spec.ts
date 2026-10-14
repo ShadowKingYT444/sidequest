@@ -1,0 +1,52 @@
+import {test,expect} from '@playwright/test';
+import path from 'node:path';
+import {writeFile} from 'node:fs/promises';
+import AxeBuilder from '@axe-core/playwright';
+
+test('genuine local inspection job produces immutable files and a check report',async({page,request})=>{
+  test.setTimeout(120_000);
+  test.skip(process.env.SIDEQUEST_TEST_INSPECTION!=='1','Opt in only against the configured real local inspection runtime. Never starts a coding model.');
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  const calls:{method:string;args:unknown[]}[]=[];
+  page.on('request',req=>{if(req.url().includes('/__sidequest/runtime/'))calls.push({method:req.url().split('/').at(-1)!,args:req.postDataJSON()});});
+  await page.goto('/');await page.getByRole('button',{name:'Jobs',exact:true}).click();
+  const board=page.getByRole('region',{name:'Local jobs board'});
+  await expect(board).toBeVisible();await expect(board).toContainText('Local Git inspection');
+  await expect(page.getByTestId('diff-editor')).toHaveCount(0);
+  const projects=board.locator('#job-project');
+  if(await projects.inputValue()===''){
+    await board.getByRole('button',{name:'Register configured repository'}).click();
+    await expect.poll(()=>projects.inputValue()).not.toBe('');
+  }
+  const title=`Browser inspection ${new Date().toISOString()}`;
+  await board.getByLabel('Inspection title').fill(title);
+  await board.getByRole('button',{name:'Submit inspection',exact:true}).click();
+  await board.getByRole('button',{name:new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))}).click();
+  await expect(board.getByRole('button',{name:'Run inspection',exact:true})).toBeEnabled();
+  await page.screenshot({path:path.resolve('../evidence/desktop/job-queued.png')});
+  await board.getByRole('button',{name:'Run inspection',exact:true}).click();
+  await expect(board.locator('.job-state')).toHaveText('verifying',{timeout:20_000});
+  await expect(board.locator('.job-checks')).toContainText('pass',{timeout:90_000});
+  await expect(board.locator('.artifact-files>button').first()).toBeVisible();
+  await expect(board.locator('.artifact-text')).not.toContainText('Loading file text…');
+  await expect(board.locator('.artifact-files>button').first()).toBeVisible();
+  await page.screenshot({path:path.resolve('../evidence/desktop/job-result.png')});
+  await board.getByRole('button',{name:'Git diff',exact:true}).click();
+  await expect(board.locator('.artifact-text')).toContainText('No textual changes in this inspected candidate.');
+  await page.screenshot({path:path.resolve('../evidence/desktop/job-diff.png')});
+  await board.locator('#job-artifact').selectOption({label:await board.locator('#job-artifact option').filter({hasText:'test_report'}).first().textContent()??''});
+  await expect(board.locator('.artifact-text')).toContainText('candidate.frozen_identity');
+  await expect(board.locator('.artifact-text')).toContainText('"inference_calls": 0');
+  await page.screenshot({path:path.resolve('../evidence/desktop/job-check-report.png')});
+  const accessibility=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
+  await writeFile(path.resolve('../evidence/desktop/job-accessibility.json'),JSON.stringify(accessibility.violations,null,2));
+  expect(accessibility.violations.map(item=>({id:item.id,impact:item.impact}))).toEqual([]);
+  const selectedArtifact=await board.locator('#job-artifact').inputValue();
+  await page.keyboard.press('Escape');await expect(board).toBeHidden();
+  await expect(page.getByRole('button',{name:'Jobs',exact:true})).toBeFocused();
+  await page.getByRole('button',{name:'Jobs',exact:true}).click();
+  await expect(board.locator('#job-artifact')).toHaveValue(selectedArtifact);
+  const response=await request.get('/__sidequest/snapshot');const git=await response.json();
+  await writeFile(path.resolve('../evidence/desktop/job-browser.json'),JSON.stringify({title,source:{base:git.baseRevision,candidate:git.candidateRevision},browser_requests:calls,model_calls:0,scope:'Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run',page_errors:errors},null,2));
+  expect(errors).toEqual([]);
+});
