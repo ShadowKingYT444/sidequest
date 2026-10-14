@@ -315,7 +315,10 @@ class RuntimeStore:
             connection.execute(
                 "INSERT INTO settings(key, value_json) VALUES ('codex_readiness', ?) "
                 "ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json",
-                (canonical_json(record),),
+                # Readiness percentages are JSON numbers. The monetary command
+                # canonicalizer converts floats to strings and loses their type.
+                (json.dumps(record, ensure_ascii=False, sort_keys=True,
+                            separators=(",", ":"), allow_nan=False),),
             )
             return {"capability": capability, "refreshed_at": refreshed_at}
 

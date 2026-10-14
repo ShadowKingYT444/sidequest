@@ -353,6 +353,76 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             self.store.set_job_command(str(uuid4()), self.store.revision, "job.run", job_id, codex_ready=False)
         self.assertEqual(denied.exception.code, ErrorCode.POLICY_DENIED)
 
+    async def test_subscription_reserve_survives_refresh_without_granting_execution(self) -> None:
+        scheduler = FakeScheduler()
+        scheduler.adapters = FakeAdapters({
+            **CAPABILITY,
+            "usd_cost_enforced": False,
+            "subscription_reserve": {
+                "primary_used_percent": 15,
+                "secondary_used_percent": 25.5,
+                "remaining_percent": 999,
+                "required_percent": 0,
+                "ready": False,
+                "account_id": "must-not-leak",
+            },
+        })
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            response = await client.post("/v1/commands", headers=auth, json={
+                "v": 1, "command_id": str(uuid4()), "type": "system.codex.refresh",
+                "expected_revision": self.store.revision, "payload": {},
+            })
+            self.assertEqual(response.status_code, 202)
+            caps = (await client.get("/v1/capabilities", headers=auth)).json()
+            self.assertEqual(caps["codex"].get("subscription_reserve"), {
+                "primary_used_percent": 15,
+                "secondary_used_percent": 25.5,
+                "remaining_percent": 74.5,
+                "required_percent": 10,
+                "ready": True,
+            })
+            self.assertFalse(caps["features"]["coding"])
+            self.assertFalse(caps["codex"]["usd_cost_enforced"])
+            self.assertNotIn("must-not-leak", json.dumps(caps))
+            self.assertEqual(len(scheduler.adapters.calls), 1)
+
+    async def test_subscription_reserve_unknown_boundary_and_stale_reads(self) -> None:
+        scheduler = FakeScheduler()
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            for secondary, remaining, ready in [(90, 10, False), (89.5, 10.5, True),
+                                                ("25", None, None), (True, None, None),
+                                                (-1, None, None), (101, None, None), (None, None, None)]:
+                with self.subTest(secondary=secondary):
+                    self.store.record_codex_readiness(
+                        str(uuid4()), self.store.revision,
+                        config_sha256=codex_configuration_fingerprint(self.config),
+                        capability={**CAPABILITY, "usd_cost_enforced": False,
+                                    "subscription_reserve": {"primary_used_percent": 15,
+                                                             "secondary_used_percent": secondary,
+                                                             "ready": True}},
+                        refreshed_at=utc_now(),
+                    )
+                    caps = (await client.get("/v1/capabilities", headers=auth)).json()
+                    reserve = caps["codex"].get("subscription_reserve")
+                    self.assertIsInstance(reserve, dict)
+                    self.assertEqual(reserve["remaining_percent"], remaining)
+                    self.assertIs(reserve["ready"], ready)
+                    self.assertFalse(caps["features"]["coding"])
+            self.store.record_codex_readiness(
+                str(uuid4()), self.store.revision,
+                config_sha256=codex_configuration_fingerprint(self.config),
+                capability={**CAPABILITY, "subscription_reserve": {
+                    "primary_used_percent": 0, "secondary_used_percent": 0, "ready": True}},
+                refreshed_at="2000-01-01T00:00:00Z",
+            )
+            caps = (await client.get("/v1/capabilities", headers=auth)).json()
+            self.assertNotIn("subscription_reserve", caps["codex"])
+            self.assertEqual(scheduler.adapters.calls, [])
+
     async def test_native_capability_without_verified_usd_ceiling_cannot_dispatch(self) -> None:
         capability = {
             **CAPABILITY,

@@ -1,0 +1,7 @@
+test_subscription_reserve_survives_refresh_without_granting_execution (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_survives_refresh_without_granting_execution) ... ok
+test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.107s
+
+OK

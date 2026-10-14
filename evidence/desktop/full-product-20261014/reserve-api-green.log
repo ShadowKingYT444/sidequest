@@ -1,0 +1,50 @@
+test_subscription_reserve_survives_refresh_without_granting_execution (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_survives_refresh_without_granting_execution) ... FAIL
+test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) ... 
+  test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=89.5) ... FAIL
+
+======================================================================
+FAIL: test_subscription_reserve_survives_refresh_without_granting_execution (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_survives_refresh_without_granting_execution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 379, in test_subscription_reserve_survives_refresh_without_granting_execution
+    self.assertEqual(caps["codex"].get("subscription_reserve"), {
+AssertionError: {'pri[45 chars]nt': None, 'remaining_percent': None, 'require[25 chars]None} != {'pri[45 chars]nt': 25.5, 'remaining_percent': 74.5, 'require[25 chars]True}
+  {'primary_used_percent': 15,
+-  'ready': None,
+?           ^^^
+
++  'ready': True,
+?           ^^^
+
+-  'remaining_percent': None,
+?                       ^^^^
+
++  'remaining_percent': 74.5,
+?                       ^^^^
+
+   'required_percent': 10,
+-  'secondary_used_percent': None}
+?                            ^^^^
+
++  'secondary_used_percent': 25.5}
+?                            ^^^^
+
+
+======================================================================
+FAIL: test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=89.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 412, in test_subscription_reserve_unknown_boundary_and_stale_reads
+    self.assertEqual(reserve["remaining_percent"], remaining)
+AssertionError: None != 10.5
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.114s
+
+FAILED (failures=2)

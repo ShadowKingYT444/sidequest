@@ -203,6 +203,9 @@ def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[st
     quota = _safe_subscription_quota(data.get("subscription_quota"))
     if quota is not None:
         normalized["subscription_quota"] = quota
+    reserve = _safe_subscription_reserve(data.get("subscription_reserve"))
+    if reserve is not None:
+        normalized["subscription_reserve"] = reserve
     return normalized
 
 
@@ -213,6 +216,27 @@ def _safe_subscription_quota(value: Any) -> dict[str, bool | None] | None:
     return {
         key: value.get(key) if isinstance(value.get(key), bool) or value.get(key) is None else None
         for key in ("ordinary_usage_allowed", "purchased_credits_available")
+    }
+
+
+def _safe_subscription_reserve(value: Any) -> dict[str, Any] | None:
+    """Recompute a reserve snapshot from bounded usage; never trust adapter claims."""
+    if not isinstance(value, dict):
+        return None
+
+    def percentage(key: str) -> int | float | None:
+        raw = value.get(key)
+        return raw if type(raw) in (int, float) and 0 <= raw <= 100 else None
+
+    primary = percentage("primary_used_percent")
+    secondary = percentage("secondary_used_percent")
+    remaining = None if primary is None or secondary is None else 100 - max(primary, secondary)
+    return {
+        "primary_used_percent": primary,
+        "secondary_used_percent": secondary,
+        "remaining_percent": remaining,
+        "required_percent": 10,
+        "ready": None if remaining is None else remaining > 10,
     }
 
 
@@ -645,6 +669,9 @@ def create_app(
             quota = _safe_subscription_quota(cached_capability.get("subscription_quota"))
             if quota is not None:
                 codex_public["subscription_quota"] = quota
+            reserve = _safe_subscription_reserve(cached_capability.get("subscription_reserve"))
+            if reserve is not None:
+                codex_public["subscription_reserve"] = reserve
         return {
             "v": 1,
             "contract_revision": "1.1",

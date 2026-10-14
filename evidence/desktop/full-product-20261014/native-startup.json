@@ -1,0 +1,13 @@
+{
+  "started_at": "2026-10-14T19:55:04.581430+00:00",
+  "sandbox_disabled": false,
+  "display_set": false,
+  "executable": "/workspace/sidequest/desktop/node_modules/electron/dist/electron",
+  "sandbox_helper": {
+    "uid": 1000,
+    "gid": 1000,
+    "mode": "0o755"
+  },
+  "returncode": -5,
+  "status": "blocked"
+}

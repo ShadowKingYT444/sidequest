@@ -1,0 +1,30 @@
+{
+  "started_at": "2026-10-14T19:55:50.700327+00:00",
+  "argv": [
+    "/opt/codex/bin/codex",
+    "app-server",
+    "--strict-config",
+    "--config",
+    "sqlite_home=\"/tmp/sidequest-readiness-x0hswcuh/state\"",
+    "--config",
+    "mcp_servers={}",
+    "--config",
+    "hooks={}",
+    "--config",
+    "shell_environment_policy.inherit=\"none\"",
+    "--config",
+    "allow_login_shell=false",
+    "--stdio"
+  ],
+  "returncode": 1,
+  "requested_methods": [
+    "initialize"
+  ],
+  "response_line_count": 0,
+  "account_verified": false,
+  "quota_reserve_verified": false,
+  "model_calls": 0,
+  "auth_locator_unchanged": true,
+  "state_directory": "/tmp/sidequest-readiness-x0hswcuh/state",
+  "status": "blocked"
+}
