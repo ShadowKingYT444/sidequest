@@ -1,0 +1,178 @@
+{
+  "scope": "PR #1 browser repair; not complete native/live product acceptance",
+  "status": "passed",
+  "starting_head": "5f02817dcd7d5849e86c0b39d61383ec683f5cc6",
+  "tested_source_commit": "abf94969c9e56717f31aa6220c27fab445971a60",
+  "browser": {
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "exit_code": 0,
+    "elapsed_minutes": 10.9,
+    "started_at": "2026-10-14T18:38:28.967789+00:00",
+    "ended_at": "2026-10-14T18:49:24.402144+00:00",
+    "source_file_count": 306,
+    "source_unchanged": true,
+    "log_sha256": "2b61495519b442640b421b968d3d24cc07da624ef45abe7a374ae4396093d2a9"
+  },
+  "protected_assets": {
+    "files": 126,
+    "hashes_unchanged": true,
+    "bindings": 24,
+    "maximum_surface_error_metres": 1.5359333226589626e-06
+  },
+  "checks": {
+    "desktop_unit": {
+      "passed": 50,
+      "failed": 0
+    },
+    "runtime_unit": {
+      "passed": 48,
+      "failed": 0
+    },
+    "tools_unit_serial": {
+      "passed": 42,
+      "failed": 0
+    },
+    "typecheck": "pass",
+    "production_build": "pass",
+    "production_dependency_advisories": 0
+  },
+  "regressions": [
+    "unchanged static shadows remain cached across monitor navigation",
+    "local draft edits do not redraw the unchanged office",
+    "HTML figure cards lock controls without redrawing world pixels"
+  ],
+  "changes": [
+    "Correct the stale Expand locator to the visible outer monitor header while retaining assertions",
+    "Cache static shadows, invalidating after original geometry/pose load and context restoration",
+    "Stabilize scene callbacks and world identity; apply nonvisual card control locks directly"
+  ],
+  "session": {
+    "full_test_seconds": 79.8,
+    "before_reload_seconds": 50.3,
+    "reload_restored": true,
+    "unexpected_page_or_context_errors": []
+  },
+  "test_results": [
+    {
+      "name": "local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages",
+      "status": "passed",
+      "elapsed_ms": 73838
+    },
+    {
+      "name": "provider settings and preserved work at 1440px",
+      "status": "passed",
+      "elapsed_ms": 37842
+    },
+    {
+      "name": "genuine local inspection job produces immutable files and a check report",
+      "status": "passed",
+      "elapsed_ms": 24606
+    },
+    {
+      "name": "real jobs clear stale notices, recover reads and preserve assigned computer results",
+      "status": "passed",
+      "elapsed_ms": 55492
+    },
+    {
+      "name": "compact provider picker and guarded monitor task setup at 1440px",
+      "status": "passed",
+      "elapsed_ms": 31824
+    },
+    {
+      "name": "Escape/reopen mounts one selected Monaco editor and keeps its saved scroll",
+      "status": "passed",
+      "elapsed_ms": 29309
+    },
+    {
+      "name": "local figure details preserve the unchanged office frame",
+      "status": "passed",
+      "elapsed_ms": 19521
+    },
+    {
+      "name": "real Git diff, lazy single editor, expanded state, Escape and keyboard",
+      "status": "passed",
+      "elapsed_ms": 40956
+    },
+    {
+      "name": "viewer reflows at 390px with reduced motion",
+      "status": "passed",
+      "elapsed_ms": 13864
+    },
+    {
+      "name": "keyboard-accessible viewer has no automated WCAG A/AA violations",
+      "status": "passed",
+      "elapsed_ms": 30621
+    },
+    {
+      "name": "compact provider picker and guarded monitor task setup at 390px",
+      "status": "passed",
+      "elapsed_ms": 18219
+    },
+    {
+      "name": "recorded session ownership persists at a figure and renders real contextual events",
+      "status": "passed",
+      "elapsed_ms": 79836
+    },
+    {
+      "name": "viewer reflows at 960px with reduced motion",
+      "status": "passed",
+      "elapsed_ms": 24791
+    },
+    {
+      "name": "static office shadows stay cached while opening the lazy editor and returning",
+      "status": "passed",
+      "elapsed_ms": 37449
+    },
+    {
+      "name": "hostile source stays literal and a failed read can retry",
+      "status": "passed",
+      "elapsed_ms": 24461
+    },
+    {
+      "name": "physical monitor POV restores orbited office camera through an interrupted return",
+      "status": "passed",
+      "elapsed_ms": 36522
+    },
+    {
+      "name": "provider settings and preserved work at 390px",
+      "status": "passed",
+      "elapsed_ms": 18078
+    },
+    {
+      "name": "read API rejects outside origins and mutations",
+      "status": "passed",
+      "elapsed_ms": 35
+    },
+    {
+      "name": "explicit read-only fixture shows distinct notifications and one badge per primary figure",
+      "status": "passed",
+      "elapsed_ms": 26913
+    },
+    {
+      "name": "local draft edits preserve demand rendering of the unchanged office",
+      "status": "passed",
+      "elapsed_ms": 25345
+    }
+  ],
+  "versions": {
+    "node": "24.19.0",
+    "python": "3.12.14",
+    "chromium": "151.0.7922.173 (Debian 13)"
+  },
+  "preservation": {
+    "prior_failed_log_sha256": "edf0d4e4c3a16209a33eac3ee8209b92f044b727473336453dc3e430869818f7",
+    "prior_failures_retained": true,
+    "new_capture_pngs": 32
+  },
+  "limits": [
+    "Native Electron not attempted here; prior host sandbox failure remains historical evidence",
+    "No live coding/model calls, paid spending, new authentication, credential copying or security/sandbox changes",
+    "Codex protected-state EROFS and unverified enforceable USD cap remain prior blockers; dispatch gates preserved",
+    "Files/attachments staged locally; session/attachment sending unavailable",
+    "Interactive live orchestration incomplete; owner-device/native performance not established",
+    "Inspected project pinned to genuine small revision 8a9fb11; unchanged resource caps deny the large PR tree"
+  ]
+}

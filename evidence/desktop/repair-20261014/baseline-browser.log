@@ -1,0 +1,49 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0 --grep genuine local inspection|real jobs clear|recorded session ownership|keyboard-accessible viewer|provider settings and preserved work at 1440
+
+[WebServer] (node:865) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+(node:934) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 5:57:56 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+
+
+  1) tests/browser/jobs-live.spec.ts:6:1 › genuine local inspection job produces immutable files and a check report 
+
+    Test was interrupted.
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByRole('region', { name: 'Local jobs board' }).locator('.job-state')
+    Expected: "verifying"
+    Received: "failed"
+
+    Call log:
+      - Expect "toHaveText" getByRole('region', { name: 'Local jobs board' }).locator('.job-state') with timeout 20000ms
+      - waiting for getByRole('region', { name: 'Local jobs board' }).locator('.job-state')
+        2 × locator resolved to <span class="job-state">queued</span>
+          - unexpected value "queued"
+        7 × locator resolved to <span class="job-state">running</span>
+          - unexpected value "running"
+        10 × locator resolved to <span class="job-state">failed</span>
+           - unexpected value "failed"
+      - Test ended.
+
+
+      26 |   await page.screenshot({path:path.resolve('../evidence/desktop/job-queued.png')});
+      27 |   await board.getByRole('button',{name:'Run inspection',exact:true}).click();
+    > 28 |   await expect(board.locator('.job-state')).toHaveText('verifying',{timeout:20_000});
+         |                                             ^
+      29 |   await expect(board.locator('.job-checks')).toContainText('pass',{timeout:90_000});
+      30 |   await expect(board).toContainText('Inspection results ready.');
+      31 |   await expect(board.locator('.artifact-files>button').first()).toBeVisible();
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:28:45
+
+    Error Context: test-results/jobs-live-genuine-local-in-a168f-le-files-and-a-check-report/error-context.md
+
+  1 interrupted
+    tests/browser/jobs-live.spec.ts:6:1 › genuine local inspection job produces immutable files and a check report 
+  4 did not run

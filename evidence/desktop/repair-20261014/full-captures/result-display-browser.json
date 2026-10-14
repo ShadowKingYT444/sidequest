@@ -1,0 +1,9 @@
+{
+  "job_id": "bcae94b4-ef76-4cf9-a6a2-133d4f1d11d1",
+  "queued_test_title": "Repeated submission 2026-10-14T18:39:15.675Z",
+  "queued_test_executed": false,
+  "selected_file": "README.md",
+  "temporary_network_failure": true,
+  "recovered": true,
+  "scope": "Actual local inspection artifacts; display assignment only; zero coding/model launches"
+}

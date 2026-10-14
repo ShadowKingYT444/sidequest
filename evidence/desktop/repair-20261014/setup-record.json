@@ -1,0 +1,32 @@
+{
+  "starting_head": "5f02817dcd7d5849e86c0b39d61383ec683f5cc6",
+  "starting_head_matches_github": true,
+  "prior_tested_code_and_assets_match": true,
+  "prior_source_hash_difference": "desktop/README.md was updated by the already-published evidence checkpoint",
+  "initial_inspection_denial": {
+    "action": "Deterministic local repo.inspect on a clean clone of the latest PR",
+    "target": "/tmp/sidequest-eval-source at 5f02817dcd7d5849e86c0b39d61383ec683f5cc6",
+    "tree_bytes": 214667693,
+    "code": "DEPENDENCY_FAILED",
+    "reason": "Git output exceeded the configured limit.",
+    "outcome": "denied",
+    "resolution": "Use the same genuine committed evaluation project as the earlier acceptance run, 8a9fb11c3b01a404c4dd305b71458377082697c1 (3079537 bytes). Renderer and runtime still run the repaired checkout.",
+    "resource_or_security_limits_changed": false
+  },
+  "initial_browser_preparation": {
+    "baseline-browser.log": "Wrong-working-directory fixture preparation was followed by an explicitly interrupted diagnostic run. Its test/server processes were terminated and confirmed absent.",
+    "diagnostic-browser-red.log": "A new start was refused while port 5173 was occupied. No duplicate suite started.",
+    "transport_disconnects": "Read-only shell probes temporarily failed; access recovered. Running suites were inspected, not duplicated."
+  },
+  "tools_cancellation_fixture": {
+    "baseline": "42 tests, 1 cancellation-fixture error while a software-WebGL browser was active; tools-unit.log preserves it",
+    "serial_validation": "42 tests passed in 7.617 seconds, with no browser running",
+    "source_assertions_and_timeouts_changed": false,
+    "production_codex_calls": 0
+  },
+  "new_native_attempts": 0,
+  "new_coding_model_attempts": 0,
+  "new_authentication_or_credential_copying": false,
+  "sandbox_or_security_permission_changes": false,
+  "prior_native_limits": "Previous host evidence records Electron sandbox failure, Codex protected-state EROFS and no verified enforceable USD cap. Fresh native acceptance was not attempted. Session/attachment sending and interactive live orchestration remain incomplete."
+}

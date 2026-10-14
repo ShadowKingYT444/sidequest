@@ -1,0 +1,80 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0 --grep static office shadows|genuine local inspection|real jobs clear|recorded session ownership|keyboard-accessible viewer|provider settings and preserved work at 1440
+
+[WebServer] (node:7008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+(node:7040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:11:14 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 6:11:54 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 6:13:12 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+T(node:7885) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:15:22 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 6:16:21 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+F(node:8116) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:17:11 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·
+
+  1) tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+
+    Test timeout of 120000ms exceeded.
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByRole('dialog', { name: 'Agent session' }).locator('.session-records')
+    Expected: "6ef3081e-0cee-4c13-9d69-5709e1bc403e"
+    Received: ""
+
+    Call log:
+      - Expect "toHaveAttribute" getByRole('dialog', { name: 'Agent session' }).locator('.session-records') with timeout 15000ms
+      - waiting for getByRole('dialog', { name: 'Agent session' }).locator('.session-records')
+        2 × locator resolved to <div data-session-run="" class="session-records">…</div>
+          - unexpected value ""
+      - Test timeout of 120000ms exceeded.
+
+
+      161 |  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});
+      162 |  await session.getByRole('button',{name:'Open results',exact:true}).click();const results=page.getByRole('region',{name:'Computer job results'});await expect(results).toBeVisible();await expect(results.locator('.job-summary')).toContainText(job.title);await page.keyboard.press('Escape');
+    > 163 |  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
+          |                                                                                                                                                                                                         ^
+      164 |  const saved=await read();const owner=saved.office_sessions.find((owner:{station_id:string})=>owner.station_id==='parent_019');expect(owner).toMatchObject({job_id:job.id,run_id:runId,worker_id:run.worker_id,project_id:job.project_id});
+      165 |  await writeFile(path.resolve('../evidence/desktop/repair-20261014/session-before-reload.json'),JSON.stringify({elapsedMs:Date.now()-sessionTestStarted,entries:await page.evaluate(()=>performance.getEntries().filter(e=>e.name.startsWith('sidequest:')).map(e=>e.toJSON()))},null,2));
+      166 |  await page.reload();await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:163:201
+
+    Error Context: test-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md
+
+  2) tests/browser/viewer.spec.ts:106:1 › keyboard-accessible viewer has no automated WCAG A/AA violations 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('diff-editor').locator('.monaco-editor').last()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('diff-editor').locator('.monaco-editor').last() with timeout 15000ms
+      - waiting for getByTestId('diff-editor').locator('.monaco-editor').last()
+
+
+      106 | test('keyboard-accessible viewer has no automated WCAG A/AA violations',async({page})=>{
+      107 |   await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000}); await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
+    > 108 |   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
+          |                                                                                  ^
+      109 |   await page.getByRole('button',{name:'Expand',exact:true}).click();
+      110 |   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
+      111 |   const code=page.getByRole('button',{name:/dev\/luna\.py/});
+        at /workspace/sidequest/desktop/tests/browser/viewer.spec.ts:108:82
+
+    Error Context: test-results/viewer-keyboard-accessible-9e29a-omated-WCAG-A-AA-violations/error-context.md
+
+  2 failed
+    tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+    tests/browser/viewer.spec.ts:106:1 › keyboard-accessible viewer has no automated WCAG A/AA violations 
+  4 passed (6.8m)

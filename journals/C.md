@@ -87,3 +87,14 @@ Repair: cache static shadows with resource/context invalidation; stabilize scene
 Final focused tests: 4/4 pass, including session reload (75.9s under unchanged 120s) and interrupted physical camera return. Earlier shadow/draft regressions and editor startup checks also pass. 50 desktop, 48 runtime, 42 tools tests pass; build/typecheck, production audit (zero advisories) and 24 asset bindings pass. The initial tools cancellation fixture failure under concurrent browser load remains preserved; it passes when run alone without code/assertion changes.
 
 Evidence: `evidence/desktop/repair-20261014/`. Next: one frozen 20-test suite, retries zero, then publish the existing branch. Native dispatch/session sending/live orchestration limits remain.
+
+
+### PR #1 frozen repair verification
+
+**20/20 browser tests passed, exit 0, retries 0, 10.9 minutes**, tested source `abf94969c9e56717f31aa6220c27fab445971a60`, October 14 18:38:28–18:49:24 UTC. All 306 source/config/document/asset hashes match during the run; all 126 protected art files match the starting checkpoint. No browser assertions or timeouts were relaxed. Three rendering regressions have preserved red-to-green evidence.
+
+Session reload completes in 79.8s with the unchanged 120s deadline; pre-reload time is 50.3s. All original inspection, monitor, local paste/attachment/draft/scroll/outage, notification fixture, single-Monaco, accessibility, settings and provider checks pass. Source timings establish unnecessary static rendering as the delay; no actor decode/context defect was reproduced.
+
+50 desktop, 48 runtime, 42 serial tools tests; typecheck/build; production audit zero advisories; 24 asset bindings pass. Earlier failures, including the initial concurrent tools cancellation fixture error, remain preserved. 32 current screenshot PNGs and all timing traces are under `evidence/desktop/repair-20261014/`.
+
+Only documentation/evidence changes follow the tested source. Publish the existing PR branch normally; retain draft state. No model/native attempts, spending, auth/credential/security changes, merge or deployment. Native/live/session-send limits remain; this is not complete product acceptance.

@@ -1,0 +1,964 @@
+{
+  "elapsedMs": 86291,
+  "entries": [
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 1626.9000000001397,
+      "duration": 47.699999999953434,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:shadow-render",
+      "entryType": "measure",
+      "startTime": 1630.3000000000466,
+      "duration": 0.30000000004656613,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 2033.3000000000466,
+      "duration": 7.199999999953434,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:shadow-render",
+      "entryType": "measure",
+      "startTime": 2036,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 2113.3000000000466,
+      "duration": 2.6000000000931323,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:shadow-render",
+      "entryType": "measure",
+      "startTime": 2113.9000000001397,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 2273.100000000093,
+      "duration": 6.300000000046566,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:shadow-render",
+      "entryType": "measure",
+      "startTime": 2273.5,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 2423,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 2436.4000000001397,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 2474.100000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 3092.8000000000466,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 3124.4000000001397,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 3155.1999999999534,
+      "duration": 2274.4000000001397,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:shadow-render",
+      "entryType": "measure",
+      "startTime": 3191.6999999999534,
+      "duration": 2.300000000046566,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 10517,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 10637.90000000014,
+      "duration": 183,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:shadow-render",
+      "entryType": "measure",
+      "startTime": 10739.300000000047,
+      "duration": 52.199999999953434,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15584.90000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15590.800000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15598.699999999953,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15603.199999999953,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15613.600000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15619.300000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15622.699999999953,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15627.100000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15643.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15647.699999999953,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15648.40000000014,
+      "duration": 5.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15666.40000000014,
+      "duration": 0.7999999998137355,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15670,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15693.90000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15706.100000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15720.100000000093,
+      "duration": 6.099999999860302,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15728.800000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15734.199999999953,
+      "duration": 1.8000000000465661,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15736.800000000047,
+      "duration": 2.300000000046566,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15764.600000000093,
+      "duration": 0.8000000000465661,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15765.90000000014,
+      "duration": 0.6999999999534339,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15766.800000000047,
+      "duration": 0.6000000000931323,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15767.699999999953,
+      "duration": 0.7000000001862645,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15768.699999999953,
+      "duration": 1.2000000001862645,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15770.199999999953,
+      "duration": 1.4000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15772.100000000093,
+      "duration": 1,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15773.600000000093,
+      "duration": 1,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15775.199999999953,
+      "duration": 0.9000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15788.199999999953,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15799.100000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15813.100000000093,
+      "duration": 1,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 15816.300000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15925.5,
+      "duration": 7.600000000093132,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15947.5,
+      "duration": 0.6999999999534339,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15948.699999999953,
+      "duration": 0.8000000000465661,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15950,
+      "duration": 0.6000000000931323,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15950.90000000014,
+      "duration": 0.6999999999534339,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15951.90000000014,
+      "duration": 1.0999999998603016,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 15956.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 15980.199999999953,
+      "duration": 0.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 16000.600000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 16012.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16028.5,
+      "duration": 1,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16029.800000000047,
+      "duration": 0.8000000000465661,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16031.199999999953,
+      "duration": 0.4000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16032,
+      "duration": 0.6000000000931323,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16032.800000000047,
+      "duration": 0.6000000000931323,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 16035.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-start",
+      "entryType": "mark",
+      "startTime": 16047.600000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 16074.300000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 16075.100000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16075.300000000047,
+      "duration": 0.8000000000465661,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 16078.600000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-decode-ready",
+      "entryType": "mark",
+      "startTime": 16079.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16079.800000000047,
+      "duration": 0.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16080.40000000014,
+      "duration": 0.7999999998137355,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16081.199999999953,
+      "duration": 0.4000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16082,
+      "duration": 1.1999999999534339,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16083.5,
+      "duration": 0.6999999999534339,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16084.40000000014,
+      "duration": 1.0999999998603016,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16085.699999999953,
+      "duration": 0.4000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16086.40000000014,
+      "duration": 0.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16087,
+      "duration": 0.6000000000931323,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16087.699999999953,
+      "duration": 0.4000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16088.199999999953,
+      "duration": 0.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16088.800000000047,
+      "duration": 0.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16089.40000000014,
+      "duration": 0.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16090,
+      "duration": 0.30000000004656613,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16090.5,
+      "duration": 0.30000000004656613,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16091.199999999953,
+      "duration": 0.4000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16091.90000000014,
+      "duration": 0.2999999998137355,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16092.300000000047,
+      "duration": 0.6000000000931323,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16093,
+      "duration": 0.4000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16093.600000000093,
+      "duration": 1.0999999998603016,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16095,
+      "duration": 0.4000000001396984,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16095.5,
+      "duration": 0.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16096.100000000093,
+      "duration": 0.30000000004656613,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16096.600000000093,
+      "duration": 0.8999999999068677,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16097.699999999953,
+      "duration": 0.7000000001862645,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-assembly",
+      "entryType": "measure",
+      "startTime": 16098.600000000093,
+      "duration": 1,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16128.5,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16150.199999999953,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16166,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16183.5,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16194.600000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16212.90000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16225.199999999953,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16237.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16251.699999999953,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16259.100000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16269.90000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16279.100000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16292.5,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16301.100000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16314.300000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16327.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16340.5,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16351,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16358.90000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16369.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16380.600000000093,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16393.300000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16406.300000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16417.40000000014,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16426.800000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:actor-mounted",
+      "entryType": "mark",
+      "startTime": 16439.300000000047,
+      "duration": 0,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 16448.100000000093,
+      "duration": 1079.5999999998603,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:shadow-render",
+      "entryType": "measure",
+      "startTime": 16763.800000000047,
+      "duration": 253.30000000004657,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 25491.100000000093,
+      "duration": 42.800000000046566,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 31969.600000000093,
+      "duration": 15.800000000046566,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 36841.10000000009,
+      "duration": 8.199999999953434,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 42043.5,
+      "duration": 33.800000000046566,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 47561.60000000009,
+      "duration": 12.699999999953434,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 54272.90000000014,
+      "duration": 8.5,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 60264.30000000005,
+      "duration": 10.399999999906868,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 64780.30000000005,
+      "duration": 6.300000000046566,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 67855.90000000014,
+      "duration": 18.399999999906868,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 74182.1000000001,
+      "duration": 18.800000000046566,
+      "navigationId": 6015
+    },
+    {
+      "name": "sidequest:render",
+      "entryType": "measure",
+      "startTime": 79636.69999999995,
+      "duration": 13.700000000186265,
+      "navigationId": 6015
+    }
+  ]
+}
