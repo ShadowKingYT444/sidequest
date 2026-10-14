@@ -479,8 +479,11 @@ class ArtifactStore:
             raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate manifest identity changed.')
         source_artifacts = {item['display_name']: item for item in self.store.list_candidate_artifacts(candidate_id)
                             if item['kind'] == 'source_file'}
-        for entry in manifest['files']:
-            if entry['status'] == 'unchanged': continue
+        changed = [entry for entry in manifest['files'] if entry['status'] != 'unchanged']
+        removals: set[str] = set()
+        # Validate all paths before mutating the disposable clone. Then remove
+        # old files before materializing replacements, independent of manifest order.
+        for entry in changed:
             path = _safe_relative_path(entry['path'])
             paths = [path] + ([entry['old_path']] if entry.get('old_path') else [])
             for relative in paths:
@@ -488,30 +491,60 @@ class ArtifactStore:
                 if any(part in {'.git','.codex'} for part in relative.split('/')) or not any(
                     relative == prefix or relative.startswith(prefix.rstrip('/') + '/') for prefix in write_paths):
                     raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate exceeds the original follow-up scope.')
-                parent = workspace.joinpath(*PurePosixPath(relative).parts[:-1])
-                directory_fd = _directory(parent)
+            if entry['status'] == 'deleted': removals.add(path)
+            if entry.get('old_path'): removals.add(entry['old_path'])
+        for relative in sorted(removals, key=lambda p: (-len(PurePosixPath(p).parts),p)):
+            directory_fd = _directory(workspace.joinpath(*PurePosixPath(relative).parts[:-1]))
+            try:
+                name = PurePosixPath(relative).name
                 try:
-                    name = PurePosixPath(relative).name
-                    if relative != path or entry['status'] == 'deleted':
-                        try: os.unlink(name, dir_fd=directory_fd)
-                        except FileNotFoundError: pass
-                        continue
-                    raw = source_artifacts.get(path)
-                    if (not raw or raw['sha256'] != entry['sha256'] or raw['size_bytes'] != entry['size_bytes']):
-                        raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate source artifact is missing or changed.')
-                    data = self.read_artifact(raw)
-                    try:
-                        info = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
-                        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
-                            raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Follow-up destination is not a single-link regular file.')
-                        os.unlink(name, dir_fd=directory_fd)
-                    except FileNotFoundError: pass
-                    fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                                 0o755 if entry['mode'] == '100755' else 0o644, dir_fd=directory_fd)
-                    with os.fdopen(fd,'wb') as stream:
-                        stream.write(data); stream.flush(); os.fsync(stream.fileno())
-                finally:
-                    os.close(directory_fd)
+                    info = os.stat(name,dir_fd=directory_fd,follow_symlinks=False)
+                    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+                        raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate deletion is not a single-link file.')
+                    os.unlink(name,dir_fd=directory_fd)
+                except FileNotFoundError: pass
+            finally: os.close(directory_fd)
+        empty_parents: set[PurePosixPath] = set()
+        for relative in removals:
+            parent = PurePosixPath(relative).parent
+            while str(parent) != '.':
+                if any(str(parent)==prefix or str(parent).startswith(prefix.rstrip('/')+'/') for prefix in write_paths):
+                    empty_parents.add(parent)
+                parent=parent.parent
+        for parent in sorted(empty_parents,key=lambda p:(-len(p.parts),str(p))):
+            directory_fd=_directory(workspace.joinpath(*parent.parts[:-1]))
+            try:
+                try: os.rmdir(parent.name,dir_fd=directory_fd)
+                except OSError: pass  # Nonempty or absent directories are retained.
+            finally: os.close(directory_fd)
+        for entry in changed:
+            if entry['status'] == 'deleted': continue
+            path = _safe_relative_path(entry['path'])
+            raw = source_artifacts.get(path)
+            if (not raw or raw['sha256'] != entry['sha256'] or raw['size_bytes'] != entry['size_bytes']):
+                raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate source artifact is missing or changed.')
+            data = self.read_artifact(raw)
+            directory_fd = _directory(workspace.joinpath(*PurePosixPath(path).parts[:-1]))
+            try:
+                name = PurePosixPath(path).name
+                try:
+                    info = os.stat(name,dir_fd=directory_fd,follow_symlinks=False)
+                    if stat.S_ISDIR(info.st_mode):
+                        # Only an empty directory may be replaced. Never recursively
+                        # remove contents absent from the verified deletion manifest.
+                        try: os.rmdir(name,dir_fd=directory_fd)
+                        except OSError:
+                            raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate directory still contains unverified files.') from None
+                    elif stat.S_ISREG(info.st_mode) and info.st_nlink == 1:
+                        os.unlink(name,dir_fd=directory_fd)
+                    else:
+                        raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Follow-up destination is not a regular file or empty directory.')
+                except FileNotFoundError: pass
+                fd = os.open(name,os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                             0o755 if entry['mode']=='100755' else 0o644,dir_fd=directory_fd)
+                with os.fdopen(fd,'wb') as stream:
+                    stream.write(data);stream.flush();os.fsync(stream.fileno())
+            finally: os.close(directory_fd)
         return candidate['tree_sha256']
 
     def read_path(self, storage_key: str, expected_sha256: str) -> bytes:

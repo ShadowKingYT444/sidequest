@@ -278,6 +278,8 @@ class Scheduler:
         finally:
             if attempt_id:
                 self.store.settle_session_message(attempt_id)
+            else:
+                self.store.reject_unstarted_messages(job_id)
             self._cancel_events.pop(job_id, None)
             for path in (
                 self.config.workspaces_dir / f"inspection-{attempt_id}" if attempt_id else None,

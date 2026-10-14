@@ -252,8 +252,10 @@ class SessionStoreMixin:
                 attachment = connection.execute('SELECT run_id FROM session_attachments WHERE id=?',(attachment_id,)).fetchone()
                 if not attachment or attachment['run_id']!=run_id:
                     raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Attachment is not staged for this recorded run.')
-            connection.execute('INSERT INTO session_messages VALUES (?,?,?,?,NULL,?,?,?,?)',
-                (command_id,row['job_id'],row['task_id'],run_id,prompt,json.dumps(attachment_ids),'queued',_now()))
+            connection.execute('INSERT INTO session_messages '
+                '(id,job_id,task_id,parent_run_id,prompt,attachment_ids_json,state,created_at,previous_job_state) '
+                'VALUES (?,?,?,?,?,?,?,?,?)',
+                (command_id,row['job_id'],row['task_id'],run_id,prompt,json.dumps(attachment_ids),'queued',_now(),row['job_state']))
             connection.execute("UPDATE tasks SET state='queued',resume_requested=0 WHERE id=?",(row['task_id'],))
             connection.execute("UPDATE approvals SET state='stale' WHERE job_id=? AND state IN ('pending','approved')",(row['job_id'],))
             connection.execute("UPDATE jobs SET state='running',blocked_reason=NULL,updated_at=? WHERE id=?",(_now(),row['job_id']))
@@ -291,6 +293,25 @@ class SessionStoreMixin:
         with self.transaction() as connection:
             changed = connection.execute("UPDATE session_messages SET state='uncertain' WHERE state='dispatching'").rowcount
             if changed: self._bump_revision(connection)
+
+    def reject_unstarted_messages(self, job_id):
+        """Release known undispatched intents after a failure; never touch uncertain turns."""
+        with self.transaction() as connection:
+            job=connection.execute('SELECT state,blocked_reason FROM jobs WHERE id=?',(job_id,)).fetchone()
+            if not job or job['state'] not in {'blocked','failed','cancelled'}: return
+            messages=connection.execute("SELECT m.* FROM session_messages m JOIN tasks t ON t.id=m.task_id "
+                "JOIN attempts a ON a.id=m.parent_run_id WHERE m.job_id=? AND m.state='queued' "
+                "AND t.current_attempt_id=m.parent_run_id AND a.state='completed'",(job_id,)).fetchall()
+            for message in messages:
+                connection.execute("UPDATE session_messages SET state='rejected' WHERE id=?",(message['id'],))
+                if job['state']!='cancelled':
+                    connection.execute("UPDATE tasks SET state='completed',worker_id=NULL,resume_requested=0 WHERE id=?",(message['task_id'],))
+                    explanation='Follow-up was not dispatched. Prior task and candidate were retained. '+(job['blocked_reason'] or '')
+                    connection.execute('UPDATE jobs SET state=?,outcome=?,blocked_reason=NULL,updated_at=? WHERE id=?',
+                        (message['previous_job_state'],explanation,_now(),job_id))
+                self._insert_event(connection,job_id,message['parent_run_id'],None,'warning',
+                    'Follow-up was rejected before provider dispatch; review the retained input before sending again.',None)
+            if messages: self._bump_revision(connection)
 
     def queued_message_jobs(self):
         with self.read_connection() as connection:

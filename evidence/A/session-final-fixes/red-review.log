@@ -1,0 +1,41 @@
+test_candidate_directory_to_file_restores_deletions_before_writes (services.runtime.tests.test_session_transport.SessionTransportTests.test_candidate_directory_to_file_restores_deletions_before_writes) ... ERROR
+test_readiness_expiry_before_claim_rejects_saved_intent_and_restores_parent (services.runtime.tests.test_session_transport.SessionTransportTests.test_readiness_expiry_before_claim_rejects_saved_intent_and_restores_parent) ... FAIL
+
+======================================================================
+ERROR: test_candidate_directory_to_file_restores_deletions_before_writes (services.runtime.tests.test_session_transport.SessionTransportTests.test_candidate_directory_to_file_restores_deletions_before_writes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/tmp/sidequest-integrated-fixes/services/runtime/tests/test_session_transport.py", line 331, in test_candidate_directory_to_file_restores_deletions_before_writes
+    self.assertEqual(artifacts.restore_candidate_for_followup(candidate['id'],self.run_id,workspace,['src']),'a'*64)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/sidequest-integrated-fixes/services/runtime/artifacts.py", line 506, in restore_candidate_for_followup
+    raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Follow-up destination is not a single-link regular file.')
+services.runtime.policy.RuntimeFault: Follow-up destination is not a single-link regular file.
+
+======================================================================
+FAIL: test_readiness_expiry_before_claim_rejects_saved_intent_and_restores_parent (services.runtime.tests.test_session_transport.SessionTransportTests.test_readiness_expiry_before_claim_rejects_saved_intent_and_restores_parent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/tmp/sidequest-integrated-fixes/services/runtime/tests/test_session_transport.py", line 347, in test_readiness_expiry_before_claim_rejects_saved_intent_and_restores_parent
+    self.assertEqual(self.store.command_receipt(command['command_id'])['message']['state'],'rejected')
+AssertionError: 'queued' != 'rejected'
+- queued
++ rejected
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.129s
+
+FAILED (failures=1, errors=1)

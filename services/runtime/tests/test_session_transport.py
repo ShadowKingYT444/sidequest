@@ -7,6 +7,7 @@ import json
 import hashlib
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from uuid import uuid4
 
@@ -306,3 +307,47 @@ class SessionTransportTests(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(RuntimeFault):
             artifact_store.restore_candidate_for_followup(candidate['id'],self.run_id,unsafe,['src'])
         self.assertEqual((untouched/'edit.txt').read_text(),'keep')
+
+    async def test_candidate_directory_to_file_restores_deletions_before_writes(self):
+        artifacts = ArtifactStore(self.config.artifacts_dir,self.store)
+        data = b'replacement file\n';digest=hashlib.sha256(data).hexdigest()
+        source_id=artifacts._register_file_bytes(data,expected_sha256=digest,job_id=self.job_id,run_id=self.run_id,
+                    kind='source_file',media_type='text/plain',display_name='src/item')
+        source=self.store.get_artifact(source_id)
+        base=self.store.get_project(self.project_id)['base_revision']
+        candidate={'id':'cand_directory_fixture','job_id':self.job_id,'run_id':self.run_id,
+                   'base_revision':base,'candidate_revision':'f'*40,'tree_sha256':'a'*64,
+                   'patch_sha256':'b'*64,'manifest_artifact_id':'fake-manifest'}
+        manifest={'v':1,'candidate':candidate,'files':[
+            {'path':'src/item','status':'added','sha256':digest,'size_bytes':len(data),'mode':'100644'},
+            {'path':'src/item/nested/old.txt','status':'deleted','sha256':None,'size_bytes':0,'mode':'100644'}]}
+        workspace=Path(self.temp.name)/'directory-worker';(workspace/'src/item/nested').mkdir(parents=True)
+        (workspace/'src/item/nested/old.txt').write_text('old tree')
+        with patch.object(self.store,'get_candidate',return_value=candidate), \
+             patch.object(self.store,'get_job',return_value={'candidate_id':candidate['id']}), \
+             patch.object(self.store,'get_artifact',return_value={'kind':'file_manifest'}), \
+             patch.object(artifacts,'read_manifest',return_value=manifest), \
+             patch.object(self.store,'list_candidate_artifacts',return_value=[source]):
+            self.assertEqual(artifacts.restore_candidate_for_followup(candidate['id'],self.run_id,workspace,['src']),'a'*64)
+        self.assertTrue((workspace/'src/item').is_file())
+        self.assertEqual((workspace/'src/item').read_bytes(),data)
+
+    async def test_readiness_expiry_before_claim_rejects_saved_intent_and_restores_parent(self):
+        command=self.message()
+        self.assertEqual((await self.http.post('/v1/commands',headers=self.auth,json=command)).status_code,202)
+        self.store.record_codex_readiness(str(uuid4()),self.store.revision,
+            config_sha256=codex_configuration_fingerprint(self.config),
+            capability={**CAPABILITY,'usd_cost_enforced':False},refreshed_at=utc_now())
+        class NeverDispatch:
+            async def call(fake,*args,**kwargs): raise AssertionError('No provider/Git adapter may dispatch.')
+        scheduler=Scheduler(self.store,self.config,NeverDispatch(),ArtifactStore(self.config.artifacts_dir,self.store))
+        scheduler.start();scheduler.enqueue(self.job_id)
+        try: await scheduler._tasks[self.job_id]
+        finally: await scheduler.stop()
+        self.assertEqual(self.store.command_receipt(command['command_id'])['message']['state'],'rejected')
+        self.assertEqual(self.store.get_job(self.job_id)['state'],'verifying')
+        self.assertEqual(self.store.get_job(self.job_id)['tasks'][0]['state'],'completed')
+        self.assertEqual(len(self.store.list_job_runs(self.job_id)),1)
+        self.store.record_codex_readiness(str(uuid4()),self.store.revision,
+            config_sha256=codex_configuration_fingerprint(self.config),capability=CAPABILITY,refreshed_at=utc_now())
+        self.assertEqual((await self.http.post('/v1/commands',headers=self.auth,json=self.message())).status_code,202)
