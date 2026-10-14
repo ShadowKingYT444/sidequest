@@ -381,5 +381,7 @@
   "no_canceled_evals_restarted": true,
   "no_unity_installation": true,
   "no_merge_or_deployment": true,
-  "run_instructions": "docs/RUN_EVALS.md"
+  "run_instructions": "docs/RUN_EVALS.md",
+  "published_source_commit": "c175a8a79bc04489abdf4415011c8a163da029b8",
+  "publication_note": "All 92 tested code/configuration file hashes match this published implementation commit. Subsequent evidence-only commits may change the branch head without changing these tested files."
 }
