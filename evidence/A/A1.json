@@ -1,0 +1,41 @@
+{
+  "goal": "A1 persistent project/job/task state",
+  "status": "ready_for_review",
+  "scope": "A1 only; no API, scheduler, adapter, workshop, or delivery execution added",
+  "implementation": [
+    "Initial SQLite migration follows contracts/STORAGE.md, including fixed tables, indexes, constraints, and immutable candidate/approval identity triggers.",
+    "Project registration resolves an allowlisted canonical Git repository root and persists the requested ref's resolved commit ID.",
+    "Jobs, task plans, attempts, events, candidate identity, approvals, command outcomes, and budget reservations persist across reload.",
+    "BEGIN IMMEDIATE serializes writes; task claims record dispatch intent and reserve capacity/budget atomically.",
+    "Money is stored in integer micro-dollars; unknown usage fields remain NULL and uncertain reservations remain budgeted.",
+    "Pinned runtime dependencies are in services/runtime/requirements.lock."
+  ],
+  "validation": {
+    "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+    "exit_code": 0,
+    "python_observed": "3.12.14",
+    "python_compatibility_target": "3.11",
+    "tests_run": 10,
+    "passed": 10,
+    "failed": 0,
+    "test_names": [
+      "test_concurrent_claims_never_exceed_worker_capacity",
+      "test_concurrent_reservations_cannot_overspend_one_job",
+      "test_new_command_rejects_a_stale_global_revision",
+      "test_rejects_cycles_and_unsafe_scopes",
+      "test_rejects_denied_action_and_missing_project",
+      "test_rejects_differing_body_duplicate_command_but_replays_identical_body",
+      "test_rejects_project_root_outside_the_approved_roots",
+      "test_rejects_stale_approval_identity",
+      "test_initial_migration_reload_source_task_metadata_and_candidate_linkage",
+      "test_unknown_usage_remains_null_and_keeps_budget_reservation"
+    ],
+    "output": "Ran 10 tests in 0.255s\nOK"
+  },
+  "fixtures": "Tests create temporary Git repositories with fixture commits and temporary SQLite databases.",
+  "external_calls": {
+    "product_jobs_started": 0,
+    "model_or_provider_calls": 0
+  },
+  "blockers": []
+}
