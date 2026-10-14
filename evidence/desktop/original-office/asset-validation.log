@@ -1,0 +1,4 @@
+(node:2423) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
+Replace `const THREE = require("three")` with `import * as THREE from "three"`.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"bindingContractPassed":true,"stationCount":24,"allMonitorSurfacesMatchedOriginalRuntimeGeometry":true,"surfaceToleranceMetres":0.0001,"maximumErrorMetres":0.0000015359333226589626,"allRuntimeAndActorResourceHashesPassed":true,"allResourcesLocal":true,"meshCompressionRequired":false,"checks":24}

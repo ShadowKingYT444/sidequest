@@ -1,0 +1,57 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(received).toEqual(expected) // deep equality
+
+- Expected  -  0
++ Received  + 10
+
+  Array [
+    17,
++   17,
++   17,
++   17,
++   17,
++   17,
++   17,
++   17,
++   17,
++   17,
++   17,
+  ]
+    at captureRawStack (/workspace/sidequest-assets/desktop/node_modules/playwright-core/lib/coreBundle.js:9282:17)
+    at callMatcherAsStep (/workspace/sidequest-assets/desktop/node_modules/playwright/lib/matchers/expect.js:13316:57)
+    at Object.toEqual (/workspace/sidequest-assets/desktop/node_modules/playwright/lib/matchers/expect.js:13308:23)
+    at /workspace/sidequest-assets/evidence/desktop/original-office/check-browser-actors.mjs:48:75 {
+  matcherResult: {
+    actual: [
+      17, 17, 17, 17, 17,
+      17, 17, 17, 17, 17,
+      17
+    ],
+    expected: [ 17 ],
+    message: 'expect(received).toEqual(expected) // deep equality\n' +
+      '\n' +
+      '- Expected  -  0\n' +
+      '+ Received  + 10\n' +
+      '\n' +
+      '  Array [\n' +
+      '    17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '+   17,\n' +
+      '  ]',
+    name: 'toEqual',
+    pass: false
+  }
+}
+
+Node.js v24.19.0

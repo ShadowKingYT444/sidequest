@@ -1,0 +1,107 @@
+(node:1903) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
+Replace `const THREE = require("three")` with `import * as THREE from "three"`.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(locator).toBeVisible() failed
+
+Locator: getByRole('dialog', { name: 'Jobs board' })
+Expected: visible
+Timeout: 15000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" getByRole('dialog', { name: 'Jobs board' }) with timeout 15000ms
+  - waiting for getByRole('dialog', { name: 'Jobs board' })
+
+    at captureRawStack (/workspace/sidequest-assets/desktop/node_modules/playwright-core/lib/coreBundle.js:9282:17)
+    at callMatcherAsStep (/workspace/sidequest-assets/desktop/node_modules/playwright/lib/matchers/expect.js:13316:57)
+    at Object.toBeVisible (/workspace/sidequest-assets/desktop/node_modules/playwright/lib/matchers/expect.js:13308:23)
+    at /workspace/sidequest-assets/evidence/desktop/original-office/check-browser-bindings.mjs:35:60 {
+  matcherResult: {
+    message: 'expect(locator).toBeVisible() failed\n' +
+      '\n' +
+      "Locator: getByRole('dialog', { name: 'Jobs board' })\n" +
+      'Expected: visible\n' +
+      'Timeout: 15000ms\n' +
+      'Error: element(s) not found\n' +
+      '\n' +
+      'Call log:\n' +
+      `  - Expect "toBeVisible" getByRole('dialog', { name: 'Jobs board' }) with timeout 15000ms\n` +
+      "  - waiting for getByRole('dialog', { name: 'Jobs board' })\n",
+    pass: false,
+    actual: undefined,
+    name: 'toBeVisible',
+    expected: 'visible',
+    log: [
+      `  - Expect "toBeVisible" getByRole('dialog', { name: 'Jobs board' }) with timeout 15000ms`,
+      "  - waiting for getByRole('dialog', { name: 'Jobs board' })"
+    ],
+    timeout: 15000,
+    ariaSnapshot: '- main:\n' +
+      '  - text: sidequestlocal workspace sidequest-assetsassets/original-drive-import-v2\n' +
+      '  - button "Settings"\n' +
+      '  - button "Jobs"\n' +
+      '  - button "Refresh Git"\n' +
+      '  - navigation "Office computers":\n' +
+      '    - button "Open Computer 01"\n' +
+      '    - button "Open Computer 02"\n' +
+      '    - button "Open Computer 03"\n' +
+      '    - button "Open Computer 04"\n' +
+      '    - button "Open Computer 05"\n' +
+      '    - button "Open Computer 06"\n' +
+      '    - button "Open Computer 07"\n' +
+      '    - button "Open Computer 08"\n' +
+      '    - button "Open Computer 09"\n' +
+      '    - button "Open Computer 10"\n' +
+      '    - button "Open Computer 11"\n' +
+      '    - button "Open Computer 12"\n' +
+      '    - button "Open Computer 13"\n' +
+      '    - button "Open Computer 14"\n' +
+      '    - button "Open Computer 15"\n' +
+      '    - button "Open Computer 16"\n' +
+      '    - button "Open Computer 17"\n' +
+      '    - button "Open Computer 18"\n' +
+      '    - button "Open Computer 19"\n' +
+      '    - button "Open Computer 20"\n' +
+      '    - button "Open Computer 21"\n' +
+      '    - button "Open Computer 22"\n' +
+      '    - button "Open Computer 23"\n' +
+      '    - button "Open Computer 24"\n' +
+      '  - region "Local jobs board":\n' +
+      '    - paragraph: Local work · explicit execution\n' +
+      '    - heading "Jobs" [level=2]\n' +
+      '    - button "Refresh status"\n' +
+      '    - button "Office Esc"\n' +
+      '    - strong: Runtime unavailable\n' +
+      '    - text: Inspection uses zero model calls · coding requires verified readiness\n' +
+      '    - group: "Codex execution: unavailable"\n' +
+      '    - alert: The local runtime request failed. Refresh state and review the host configuration.\n' +
+      '    - complementary:\n' +
+      '      - text: Work type\n' +
+      '      - combobox "Work type":\n' +
+      '        - option "Local Git inspection" [selected]\n' +
+      '        - option "Codex coding task"\n' +
+      '      - text: Repository\n' +
+      '      - combobox "Repository" [disabled]:\n' +
+      '        - option "No registered repository" [selected]\n' +
+      '      - button "Register configured repository" [disabled]\n' +
+      '      - text: Inspection title\n' +
+      '      - textbox "Inspection title": Inspect current repository\n' +
+      '      - button "Submit inspection" [disabled]\n' +
+      '      - paragraph: Reads a committed repository into an isolated workspace. Checks its frozen bytes. Source changes and delivery are outside this job.\n' +
+      '      - navigation "Submitted jobs"\n' +
+      '    - region "Selected job":\n' +
+      '      - heading "Inspect your repository" [level=3]\n' +
+      '      - paragraph: Register the host-configured project, submit an inspection, and run it to read genuine local artifacts.\n' +
+      '      - paragraph: The local runtime needs to be configured before jobs are available.\n' +
+      '    - text: Runtime disconnected · last known snapshot · Coding execution unavailable\n' +
+      '  - text: Original office Git read-only Usage unknown · 0 UI model calls\n' +
+      '- alert\n' +
+      '- alert'
+  }
+}
+
+Node.js v24.19.0

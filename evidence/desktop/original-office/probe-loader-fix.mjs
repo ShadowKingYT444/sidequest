@@ -1,0 +1,32 @@
+// Diagnostic response-only probe. Product source files and CSP stay unchanged.
+import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import {writeFile} from 'node:fs/promises';
+import path from 'node:path';
+const evidence=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(evidence,'../../..');
+const require=createRequire(path.join(root,'desktop/package.json'));
+const {chromium,expect}=require('@playwright/test');
+const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--enable-unsafe-swiftshader']});
+const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
+let replacements=0;
+page.on('pageerror',e=>errors.push(e.message));
+await page.route('**/src/OfficeScene.tsx*',async route=>{
+  const response=await route.fetch(),original=await response.text();
+  const body=original.replace('useGLTF(url, false, true, configureOfficeAssetLoader)','useGLTF(url, false, false, configureOfficeAssetLoader)');
+  expect(body).not.toBe(original);replacements++;
+  await route.fulfill({response,body});
+});
+await page.emulateMedia({reducedMotion:'reduce'});
+await page.goto('http://127.0.0.1:5173/');
+await expect(page.locator('.office-canvas canvas')).toBeVisible({timeout:120000});
+await page.waitForLoadState('networkidle',{timeout:120000});
+await page.waitForTimeout(3000);
+await page.getByRole('navigation',{name:'Office computers'}).getByRole('button',{name:'Open Computer 19',exact:true}).click();
+await expect(page.getByTestId('diff-editor')).toHaveCount(1);
+await page.getByRole('button',{name:'Expand',exact:true}).click();
+await expect(page.getByRole('dialog',{name:'Computer work viewer'})).toBeVisible();
+await page.waitForTimeout(1000);
+const result={diagnosticOnly:true,productFilesUnchanged:true,cspUnchanged:true,officeSceneResponseReplacements:replacements,probedChange:'useGLTF(url, false, false, configureOfficeAssetLoader)',sceneAndGitDiffRendered:true,pageErrors:errors};
+await writeFile(path.join(evidence,'loader-fix-probe.json'),JSON.stringify(result,null,2)+'\n');
+await browser.close();expect(replacements).toBe(1);expect(errors).toEqual([]);
+console.log(JSON.stringify(result));
