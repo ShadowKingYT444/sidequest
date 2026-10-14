@@ -3,28 +3,177 @@
   "spec_revision": "0.3",
   "preferred_model": "gpt-6-luna",
   "preferred_effort": "max",
-  "limits": {"attempts": 3, "thread_seconds": 3600, "builder_tokens": 40000, "validator_tokens": 12000},
-  "lanes": {
-    "A": {"name":"Runtime and artifact API","doc":"docs/goals/A-runtime.md","owned":["services/runtime/","journals/A.md","evidence/A/"],"goals":[
-      {"id":"A1","objective":"Complete A1: Implement fixed persistent project/job/task state and policy. Follow docs/goals/A-runtime.md and its Read list. Write journals/A.md and .sidequest/handoff.json. Do not redesign the stack or begin A2.","checks":["A1-1","A1-2","A1-3"]},
-      {"id":"A2","objective":"Complete A2: Implement fixed scheduler and native computer artifact API. Follow docs/goals/A-runtime.md and its Read list. Write journals/A.md and .sidequest/handoff.json. Finish only this goal.","checks":["A2-1","A2-2","A2-3"]},
-      {"id":"A3","objective":"Complete A3: Implement restart reconciliation, exact approval, watcher events and workshop activation. Follow docs/goals/A-runtime.md and its Read list. Write journals/A.md and .sidequest/handoff.json.","checks":["A3-1","A3-2","A3-3"]}
-    ]},
-    "B": {"name":"Git, Codex and lookouts","doc":"docs/goals/B-tools.md","owned":["services/tools/","journals/B.md","evidence/B/"],"goals":[
-      {"id":"B1","objective":"Complete B1: Implement isolated Git and immutable file/diff artifacts. Follow docs/goals/B-tools.md and its Read list. Write journals/B.md and .sidequest/handoff.json. Finish only this goal.","checks":["B1-1","B1-2","B1-3"]},
-      {"id":"B2","objective":"Complete B2: Implement bounded real Luna/max coding provider and approved delivery adapter. Follow docs/goals/B-tools.md and its Read list. Write journals/B.md and .sidequest/handoff.json. Finish only this goal.","checks":["B2-1","B2-2","B2-3"]},
-      {"id":"B3","objective":"Complete B3: Implement structured and consent-based local screen monitoring. Follow docs/goals/B-tools.md and its Read list. Write journals/B.md and .sidequest/handoff.json. Missing real capture/model evidence is blocked.","checks":["B3-1","B3-2","B3-3"]}
-    ]},
-    "C": {"name":"Existing office and computer UI","doc":"docs/goals/C-unity.md","owned":["unity/","journals/C.md","evidence/C/"],"goals":[
-      {"id":"C1","objective":"Complete C1: Bind the owner's completed office assets and computer surfaces; do not create replacement art. Follow docs/goals/C-unity.md and its Read list. Write journals/C.md and .sidequest/handoff.json.","checks":["C1-1","C1-2","C1-3"]},
-      {"id":"C2","objective":"Complete C2: Implement all native main/worker computer tabs, artifacts/diffs and swarm controls. Follow docs/goals/C-unity.md and its Read list. Write journals/C.md and .sidequest/handoff.json. No external-browser substitute.","checks":["C2-1","C2-2","C2-3"]},
-      {"id":"C3","objective":"Complete C3: Build and validate the Linux Unity client with the completed office and native computer. Follow docs/goals/C-unity.md and its Read list. Write journals/C.md and .sidequest/handoff.json.","checks":["C3-1","C3-2","C3-3"]}
-    ]},
-    "D": {"name":"QA, recipes and acceptance","doc":"docs/goals/D-workshops.md","owned":["services/workshops/","demo/","tests/e2e/","journals/D.md","evidence/D/"],"goals":[
-      {"id":"D1","objective":"Complete D1: Implement trusted browser checks and immutable evidence. Follow docs/goals/D-workshops.md and its Read list. Write journals/D.md and .sidequest/handoff.json. Finish only this goal.","checks":["D1-1","D1-2","D1-3"]},
-      {"id":"D2","objective":"Complete D2: Implement fixed recipe manifests, scope validation and safe matching. Follow docs/goals/D-workshops.md and its Read list. Write journals/D.md and .sidequest/handoff.json. Finish only this goal.","checks":["D2-1","D2-2","D2-3"]},
-      {"id":"D3","objective":"Complete D3: Implement complete live/fixture acceptance rig and feature coverage. Follow docs/goals/D-workshops.md and its Read list. Write journals/D.md and .sidequest/handoff.json. Do not claim integrated acceptance before I1.","checks":["D3-1","D3-2","D3-3"]}
-    ]}
+  "limits": {
+    "attempts": 3,
+    "thread_seconds": 3600,
+    "builder_tokens": 40000,
+    "validator_tokens": 12000
   },
-  "integration": {"id":"I1","doc":"docs/goals/I1-integration.md","checks":["I1-1","I1-2","I1-3","I1-4"]}
+  "lanes": {
+    "A": {
+      "name": "Runtime and artifact API",
+      "doc": "docs/goals/A-runtime.md",
+      "owned": [
+        "services/runtime/",
+        "journals/A.md",
+        "evidence/A/"
+      ],
+      "goals": [
+        {
+          "id": "A1",
+          "objective": "Complete A1: Implement fixed persistent project/job/task state and policy. Follow docs/goals/A-runtime.md and its Read list. Write journals/A.md and .sidequest/handoff.json. Do not redesign the stack or begin A2.",
+          "checks": [
+            "A1-1",
+            "A1-2",
+            "A1-3"
+          ]
+        },
+        {
+          "id": "A2",
+          "objective": "Complete A2: Implement fixed scheduler and native computer artifact API. Follow docs/goals/A-runtime.md and its Read list. Write journals/A.md and .sidequest/handoff.json. Finish only this goal.",
+          "checks": [
+            "A2-1",
+            "A2-2",
+            "A2-3"
+          ]
+        },
+        {
+          "id": "A3",
+          "objective": "Complete A3: Implement restart reconciliation, exact approval, watcher events and workshop activation. Follow docs/goals/A-runtime.md and its Read list. Write journals/A.md and .sidequest/handoff.json.",
+          "checks": [
+            "A3-1",
+            "A3-2",
+            "A3-3"
+          ]
+        }
+      ]
+    },
+    "B": {
+      "name": "Git, Codex and lookouts",
+      "doc": "docs/goals/B-tools.md",
+      "owned": [
+        "services/tools/",
+        "journals/B.md",
+        "evidence/B/"
+      ],
+      "goals": [
+        {
+          "id": "B1",
+          "objective": "Complete B1: Implement isolated Git and immutable file/diff artifacts. Follow docs/goals/B-tools.md and its Read list. Write journals/B.md and .sidequest/handoff.json. Finish only this goal.",
+          "checks": [
+            "B1-1",
+            "B1-2",
+            "B1-3"
+          ]
+        },
+        {
+          "id": "B2",
+          "objective": "Complete B2: Implement bounded real Luna/max coding provider and approved delivery adapter. Follow docs/goals/B-tools.md and its Read list. Write journals/B.md and .sidequest/handoff.json. Finish only this goal.",
+          "checks": [
+            "B2-1",
+            "B2-2",
+            "B2-3"
+          ]
+        },
+        {
+          "id": "B3",
+          "objective": "Complete B3: Implement structured and consent-based local screen monitoring. Follow docs/goals/B-tools.md and its Read list. Write journals/B.md and .sidequest/handoff.json. Missing real capture/model evidence is blocked.",
+          "checks": [
+            "B3-1",
+            "B3-2",
+            "B3-3"
+          ]
+        }
+      ]
+    },
+    "C": {
+      "name": "Existing office and Electron computer UI",
+      "doc": "docs/goals/C-desktop.md",
+      "owned": [
+        "desktop/",
+        "journals/C.md",
+        "evidence/C/",
+        "evidence/desktop/"
+      ],
+      "goals": [
+        {
+          "id": "C1",
+          "objective": "Complete C1 only: Bind and verify the owner\u2019s actual office GLB and measured monitor/camera surfaces. Follow docs/goals/C-desktop.md and its Read list. Write journals/C.md and .sidequest/handoff.json. No replacement art, sandbox bypass, fake live claims or next goal.",
+          "checks": [
+            "C1-1",
+            "C1-2",
+            "C1-3"
+          ]
+        },
+        {
+          "id": "C2",
+          "objective": "Complete C2 only: Implement the full Electron computer UI and narrow authenticated runtime bridge. Follow docs/goals/C-desktop.md and its Read list. Write journals/C.md and .sidequest/handoff.json. No replacement art, sandbox bypass, fake live claims or next goal.",
+          "checks": [
+            "C2-1",
+            "C2-2",
+            "C2-3"
+          ]
+        },
+        {
+          "id": "C3",
+          "objective": "Complete C3 only: Build and validate the native Linux Electron client with the actual office and real artifacts. Follow docs/goals/C-desktop.md and its Read list. Write journals/C.md and .sidequest/handoff.json. No replacement art, sandbox bypass, fake live claims or next goal.",
+          "checks": [
+            "C3-1",
+            "C3-2",
+            "C3-3"
+          ]
+        }
+      ]
+    },
+    "D": {
+      "name": "QA, recipes and acceptance",
+      "doc": "docs/goals/D-workshops.md",
+      "owned": [
+        "services/workshops/",
+        "demo/",
+        "tests/e2e/",
+        "journals/D.md",
+        "evidence/D/"
+      ],
+      "goals": [
+        {
+          "id": "D1",
+          "objective": "Complete D1: Implement trusted browser checks and immutable evidence. Follow docs/goals/D-workshops.md and its Read list. Write journals/D.md and .sidequest/handoff.json. Finish only this goal.",
+          "checks": [
+            "D1-1",
+            "D1-2",
+            "D1-3"
+          ]
+        },
+        {
+          "id": "D2",
+          "objective": "Complete D2: Implement fixed recipe manifests, scope validation and safe matching. Follow docs/goals/D-workshops.md and its Read list. Write journals/D.md and .sidequest/handoff.json. Finish only this goal.",
+          "checks": [
+            "D2-1",
+            "D2-2",
+            "D2-3"
+          ]
+        },
+        {
+          "id": "D3",
+          "objective": "Complete D3: Implement complete live/fixture acceptance rig and feature coverage. Follow docs/goals/D-workshops.md and its Read list. Write journals/D.md and .sidequest/handoff.json. Do not claim integrated acceptance before I1.",
+          "checks": [
+            "D3-1",
+            "D3-2",
+            "D3-3"
+          ]
+        }
+      ]
+    }
+  },
+  "integration": {
+    "id": "I1",
+    "doc": "docs/goals/I1-integration.md",
+    "checks": [
+      "I1-1",
+      "I1-2",
+      "I1-3",
+      "I1-4"
+    ]
+  }
 }

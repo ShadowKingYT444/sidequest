@@ -2,7 +2,7 @@
 
 The owner now requires Electron + React + TypeScript + React Three Fiber/Drei, replacing Unity presentation. `desktop/` implements the first read-only Git viewer slice. See `desktop/README.md` for exact setup, limits and evidence. Preserve the Python runtime/Codex/Git/permission design and existing art; do not launch agent jobs to demonstrate the UI. Office/status/file operations make zero model calls. No Unity installation or replacement art.
 
-The legacy lane/controller rules below remain for the original managed development workflow. This coordinated feature branch is outside that runner; the owner explicitly authorized orthogonal implementation/review, branch publication and a reviewable PR. Do not use the unchanged legacy C Unity goals for the Electron work. No merge or deployment is authorized.
+The legacy lane/controller rules below remain for the original managed development workflow. This coordinated feature branch is outside that runner; the owner explicitly authorized orthogonal implementation/review, branch publication and a reviewable PR. The machine plan now adapts C to `desktop/`, `journals/C.md`, `evidence/C/` and `evidence/desktop/`, with `docs/goals/C-desktop.md`. A/B/D ownership and fixed backend contracts are unchanged. Do not use the retained C Unity goal document for current work. No merge or deployment is authorized.
 
 # Sidequest implementation rules
 
@@ -10,7 +10,7 @@ Implement the active goal, not a new architecture. Scope is fixed in SPEC.md. St
 
 ## Boundaries
 
-A owns services/runtime/, journals/A.md, evidence/A/. B owns services/tools/, journals/B.md, evidence/B/. C owns unity/, journals/C.md, evidence/C/. D owns services/workshops/, demo/, tests/e2e/, journals/D.md, evidence/D/. dev/plan.json is the machine-readable authority. All other paths are frozen during managed development. Shared contracts change only through the coordinator; report a specific incompatible field rather than improvising.
+A owns services/runtime/, journals/A.md, evidence/A/. B owns services/tools/, journals/B.md, evidence/B/. C owns desktop/, journals/C.md, evidence/C/ and evidence/desktop/. D owns services/workshops/, demo/, tests/e2e/, journals/D.md, evidence/D/. dev/plan.json is the machine-readable authority. All other paths are frozen during managed development. Shared contracts change only through the coordinator; report a specific incompatible field rather than improvising.
 
 The office assets are complete. Do not generate replacement art, characters, furniture, shaders, or a new room. Follow docs/ASSET_BINDING.md. C alone wires scenes, wrapper prefabs, GUID references, UI, input and package settings. Preserve imported art. No second Unity writer.
 

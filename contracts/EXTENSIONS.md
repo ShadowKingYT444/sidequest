@@ -60,3 +60,13 @@ Selected-screen watchers are armed only after OS consent, source/mask configurat
 ## Layout clarification
 
 layout.save remains a versioned workflow topology command from the explicit workflow editor. It is not the same as moving desks. Ordinary office placement lives in C's local presentation settings and has zero effect on task permissions or currently running dependencies. A validates workflow edges before activation. Older grid examples are logical coordinates, not instructions to remodel the owner's office.
+
+## Coordinator implementation clarifications — 2026-10-14
+
+The frozen file-manifest artifact is JSON `{v:1,candidate,files:[FileEntry]}`. Each entry additionally records `mode` as a Git regular-file mode string (100644 or 100755). It contains all safe current candidate files, including unchanged entries, and deleted entries with null sha256. A frozen workspace contains exactly the non-deleted entries; no symlinks, special files or extra candidate files are allowed.
+
+`candidate.tree_sha256` hashes canonical UTF-8 JSON `{v:1,files:[{path,mode,size_bytes,sha256}]}` over non-deleted entries sorted by path. Object keys are sorted, separators are compact, and Unicode is emitted directly (`ensure_ascii=false`). B freezes this identity; A rechecks before registering; D verifies exact bytes and modes before and after checks. Artifact SHA is still the hash of raw artifact bytes. For `check.run`, payload and context source_revision refer to the frozen candidate_revision; B execution requests use the registered base revision.
+
+Privileged `repo.deliver` uses context.delivery_id and context.action_id; they must match in this release. The existing payload.approval carries identity metadata only. Context additionally supplies `approval_record:{id,sha256,staged_path}` for a host-staged approved record outside the worker workspace and under a configured host-owned approval root. B verifies regular-file containment, digest, approved state, exact source/candidate/tree/patch/action/destination and matching ID against that record. An arbitrary payload approval cannot grant permission. Manifest/patch artifacts resolve only through hash-checked context.artifact_inputs. Persist intent before action and reconcile repeated or uncertain IDs; do not blindly retry an external write.
+
+These additive encodings resolve previously unspecified implementation placement. They do not grant a new action, change wire v1, weaken required checks or authorize a demonstration provider/delivery call.
