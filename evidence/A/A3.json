@@ -1,0 +1,73 @@
+{
+  "v": 1,
+  "lane": "A",
+  "goal": "A3 authenticated Codex session lifecycle integration",
+  "status": "ready_for_fresh_review_native_readiness_blocked",
+  "scope": "A-owned runtime integration only; no live provider turn, delivery, workshop, or capture",
+  "implementation": [
+    "Host configuration is disabled by default and requires explicit Codex enablement, consent, executable, model, effort, time/token bounds, and a separate state directory.",
+    "The authenticated system.codex.refresh command is the only path that invokes agent.capabilities. It caches sanitized model/account readiness for ten minutes against a host configuration fingerprint; ordinary status/capability reads launch no provider process.",
+    "Only a canonical stored typed-source build profile with read_repo/propose_patch/run_checks, candidate.frozen_identity, a bounded write scope, and positive budget can dispatch. Public execution_profile is host-derived. job.resume requires fresh readiness, current source identity, uncertain positive reservation, and the same persisted provider thread.",
+    "Typed thread/turn progress is request-bound, sequence-checked, bounded, persisted before a generic public event, and never exposes provider IDs to renderer-facing events. Startup interruption becomes ambiguous; no automatic retry creates a replacement turn.",
+    "The scheduler connects B repo inspection/preparation and agent.execute to frozen candidate import and D frozen-identity verification. Candidate files and linked artifacts are hash-checked into runtime-owned storage. Unknown provider USD cost stays NULL/uncertain and the reservation remains held."
+  ],
+  "validation": {
+    "python_observed": "3.12.14",
+    "python_compatibility_target": "3.11",
+    "commands": [
+      {
+        "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+        "exit_code": 0,
+        "tests_run": 36,
+        "passed": 36,
+        "failed": 0
+      },
+      {
+        "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+        "exit_code": 0,
+        "tests_run": 39,
+        "passed": 39,
+        "failed": 0
+      },
+      {
+        "command": "python3 -m compileall -q services/runtime",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -m services.runtime.main --help",
+        "exit_code": 0
+      },
+      {
+        "command": "git diff --check",
+        "exit_code": 0
+      }
+    ],
+    "runtime_test_coverage": [
+      "explicit cached capability refresh and zero status dispatch",
+      "verified readiness/consent run gate",
+      "session persistence, generic public events, exact bounded provider-ID contract",
+      "restart ambiguity and explicit same-attempt/thread resume without a second reservation",
+      "pause interrupts a running fake session, retains uncertain reservation and does not retry",
+      "fake-only end-to-end scheduler candidate and frozen-identity path with unknown USD cost",
+      "A2 API, paging, auth, storage, policy, concurrency, process-group cleanup, and disposable B/D fixture pipeline"
+    ],
+    "tools_test_coverage": "Fake app-server transport, capability probe with no thread/turn calls, consent/config gates, cancellation/resume, credential isolation, safe progress, candidate freeze, Git filters, and protocol validation."
+  },
+  "readiness": {
+    "native_app_server": "blocked before initialize response by read-only Codex state under host CODEX_HOME",
+    "model_catalog_and_account_read": "not completed",
+    "configured_model_and_effort_verified": false,
+    "provider_turns_started": 0,
+    "fixture_status": "All A lifecycle pipeline tests inject fake adapters; B app-server tests use fake JSON-RPC transport and disposable repositories."
+  },
+  "limits": [
+    "USD cost is not independently verified by the installed app-server; the reservation remains held, but max_cost_usd is not a provider-enforced spend ceiling.",
+    "Workspace-write execution is not an OS/container boundary; Codex execution remains disabled unless the host enables and consents to it.",
+    "This A3 candidate is awaiting fresh coordinator review."
+  ],
+  "live_calls": {
+    "capability_probe": 0,
+    "model_or_provider_turn": 0,
+    "external_delivery": 0
+  }
+}

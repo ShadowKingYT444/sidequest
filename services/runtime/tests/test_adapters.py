@@ -31,6 +31,18 @@ if mode == "timeout":
     sys.exit(0)
 '''
 
+_SESSION_PROGRESS_ADAPTER = r'''import json, sys
+from pathlib import Path
+request = json.loads(sys.stdin.buffer.readline())
+records = [
+    {"v":1,"request_id":request["request_id"],"seq":1,"type":"session","message":"Codex provider session is available.","provider_thread_id":"thread-fixture-001","provider_turn_id":None},
+    {"v":1,"request_id":request["request_id"],"seq":2,"type":"session","message":"Codex provider session is available.","provider_thread_id":"thread-fixture-001","provider_turn_id":"turn-fixture-001"},
+]
+Path(request["context"]["progress_path"]).write_text("".join(json.dumps(record, separators=(",",":")) + "\n" for record in records), encoding="utf-8")
+response = {"v":1,"request_id":request["request_id"],"ok":True,"data":{},"artifacts":[]}
+sys.stdout.write(json.dumps(response, separators=(",",":")) + "\n")
+'''
+
 
 def _process_is_live(pid: int) -> bool:
     try:
@@ -51,6 +63,8 @@ class AdapterDescendantTests(unittest.IsolatedAsyncioTestCase):
         self.root = Path(self.temporary.name)
         self.script = self.root / "fake_adapter.py"
         self.script.write_text(_DESCENDANT_ADAPTER, encoding="utf-8")
+        self.session_script = self.root / "fake_session_adapter.py"
+        self.session_script.write_text(_SESSION_PROGRESS_ADAPTER, encoding="utf-8")
 
     async def asyncTearDown(self) -> None:
         self.temporary.cleanup()
@@ -116,6 +130,56 @@ class AdapterDescendantTests(unittest.IsolatedAsyncioTestCase):
             await self._call(runner, pid_path)
         self.assertEqual(raised.exception.code, ErrorCode.INVALID_INPUT)
         await self._assert_descendant_stopped(await self._read_pid(pid_path))
+
+    async def test_typed_session_progress_is_allowed_only_for_agent_execute(self) -> None:
+        config = RuntimeConfig(
+            data_dir=self.root / "session-data",
+            config_dir=self.root / "config",
+            runtime_dir=self.root / "session-runtime",
+            b_argv=(sys.executable, str(self.session_script)),
+            d_argv=(sys.executable, str(self.session_script)),
+        )
+        runner = AdapterRunner(config)
+        captured: list[dict] = []
+
+        async def capture(record: dict) -> None:
+            captured.append(record)
+
+        await runner.call(
+            "B",
+            op="agent.execute",
+            job_id="job_session_progress",
+            workspace=self.root / "unused-workspace",
+            payload={},
+            context={},
+            progress_callback=capture,
+        )
+        self.assertEqual(captured, [
+            {
+                "type": "session",
+                "message": "Codex provider session is available.",
+                "provider_thread_id": "thread-fixture-001",
+                "provider_turn_id": None,
+            },
+            {
+                "type": "session",
+                "message": "Codex provider session is available.",
+                "provider_thread_id": "thread-fixture-001",
+                "provider_turn_id": "turn-fixture-001",
+            },
+        ])
+
+        with self.assertRaises(RuntimeFault) as denied:
+            await runner.call(
+                "B",
+                op="agent.capabilities",
+                job_id="system_probe",
+                workspace=self.root / "unused-workspace",
+                payload={},
+                context={},
+                progress_callback=capture,
+            )
+        self.assertEqual(denied.exception.code, ErrorCode.INVALID_INPUT)
 
 
 if __name__ == "__main__":

@@ -26,6 +26,7 @@ from .models import (
     canonical_json,
     canonical_sha256,
     is_local_git_inspection,
+    is_codex_job_from_stored,
 )
 from .policy import ErrorCode, PolicyEngine, RuntimeFault
 
@@ -34,6 +35,7 @@ _MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 _MAX_EVENT_LENGTH = 4096
 _GIT_OBJECT_ID_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
 _OPAQUE_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:_-]{0,199}$")
+_PROVIDER_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,511}$")
 
 
 def utc_now() -> str:
@@ -272,6 +274,94 @@ class RuntimeStore:
             if prior["request_sha256"] != request_sha:
                 raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "command_id was already used with a different request")
             return _json_load(prior["response_json"])
+
+    def lookup_command_result(
+        self,
+        command_id: str | UUID,
+        command_type: str,
+        payload: dict[str, Any],
+        expected_revision: int | None,
+    ) -> dict[str, Any] | None:
+        normalized_id = _require_uuid(str(command_id), "command_id")
+        request_sha = self._command_request_sha(command_type, payload, expected_revision)
+        return self._read_command_result(normalized_id, request_sha)
+
+    def get_codex_readiness(self) -> dict[str, Any] | None:
+        return self.get_setting("codex_readiness")
+
+    def record_codex_readiness(
+        self,
+        command_id: str | UUID,
+        expected_revision: int,
+        *,
+        config_sha256: str,
+        capability: dict[str, Any],
+        refreshed_at: str,
+    ) -> dict[str, Any]:
+        record = {
+            "config_sha256": config_sha256,
+            "capability": capability,
+            "refreshed_at": refreshed_at,
+        }
+
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            connection.execute(
+                "INSERT INTO settings(key, value_json) VALUES ('codex_readiness', ?) "
+                "ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json",
+                (canonical_json(record),),
+            )
+            return {"capability": capability, "refreshed_at": refreshed_at}
+
+        return self.execute_command(command_id, "system.codex.refresh", {}, expected_revision, write)
+
+    def reconcile_interrupted_attempts(self) -> int:
+        """Block persisted live attempts on startup; never auto-repeat inference."""
+        with self.transaction() as connection:
+            rows = connection.execute(
+                "SELECT a.id, a.task_id, a.worker_id, t.job_id FROM attempts a "
+                "JOIN tasks t ON t.id = a.task_id WHERE a.state = 'running'"
+            ).fetchall()
+            if not rows:
+                return 0
+            now = utc_now()
+            for row in rows:
+                connection.execute(
+                    "UPDATE attempts SET state = 'ambiguous', ended_at = ?, cost_micro = NULL, usage_uncertain = 1 "
+                    "WHERE id = ? AND state = 'running'",
+                    (now, row["id"]),
+                )
+                connection.execute(
+                    "UPDATE budget_reservations SET settled_micro = NULL, state = 'uncertain' WHERE attempt_id = ?",
+                    (row["id"],),
+                )
+                connection.execute(
+                    "UPDATE tasks SET state = 'blocked', worker_id = NULL, resume_requested = 0 WHERE id = ?",
+                    (row["task_id"],),
+                )
+                if row["worker_id"]:
+                    connection.execute(
+                        "UPDATE workers SET state = 'idle', current_task_id = NULL WHERE id = ?",
+                        (row["worker_id"],),
+                    )
+                connection.execute(
+                    "UPDATE jobs SET state = 'blocked', blocked_reason = ?, updated_at = ? WHERE id = ? "
+                    "AND state IN ('running', 'queued', 'paused')",
+                    ("An interrupted attempt is ambiguous; explicitly resume its saved Codex session or create a new job.", now, row["job_id"]),
+                )
+                next_seq = connection.execute(
+                    "SELECT COALESCE(MAX(run_seq), 0) + 1 FROM events WHERE run_id = ?", (row["id"],)
+                ).fetchone()[0]
+                self._insert_event(
+                    connection,
+                    row["job_id"],
+                    row["id"],
+                    next_seq,
+                    "warning",
+                    "Runtime restarted during an attempt; usage and provider completion are uncertain. No automatic retry was scheduled.",
+                    None,
+                )
+            self._bump_revision(connection)
+            return len(rows)
 
     def register_project(
         self,
@@ -856,7 +946,8 @@ class RuntimeStore:
                         continue
                 has_ready = True
                 worker_configuration = _json_load(worker["configuration_json"])
-                if reservation_micro == 0 and not (
+                is_resume = task["resume_requested"] == 1
+                if reservation_micro == 0 and not is_resume and not (
                     task["kind"] == "verify"
                     and worker["role"] == "verifier"
                     and worker_configuration.get("trusted_deterministic_internal") is True
@@ -889,6 +980,68 @@ class RuntimeStore:
                 task_scopes = _json_load(task["write_paths_json"])
                 if any(PolicyEngine.scopes_overlap(task_scopes, _json_load(row[0])) for row in active_scopes):
                     continue
+
+                if is_resume:
+                    prior_id = task["current_attempt_id"]
+                    prior = connection.execute(
+                        "SELECT a.state, a.provider_thread_id, a.base_revision AS attempt_revision, "
+                        "br.reserved_micro, br.state AS reservation_state "
+                        "FROM attempts a JOIN budget_reservations br ON br.attempt_id = a.id "
+                        "WHERE a.id = ? AND a.task_id = ?",
+                        (prior_id, task["id"]),
+                    ).fetchone()
+                    if (
+                        not prior
+                        or prior["state"] != "ambiguous"
+                        or not prior["provider_thread_id"]
+                        or prior["reservation_state"] != "uncertain"
+                        or not isinstance(prior["reserved_micro"], int)
+                        or prior["reserved_micro"] <= 0
+                        or prior["attempt_revision"] != task["base_revision"]
+                    ):
+                        raise RuntimeFault(ErrorCode.POLICY_DENIED, "explicit resume requires an ambiguous attempt with a persisted provider session and reservation")
+                    now = utc_now()
+                    connection.execute(
+                        "UPDATE attempts SET state = 'running', ended_at = NULL, resume_count = resume_count + 1 "
+                        "WHERE id = ?",
+                        (prior_id,),
+                    )
+                    connection.execute(
+                        "UPDATE budget_reservations SET state = 'active', settled_micro = NULL WHERE attempt_id = ?",
+                        (prior_id,),
+                    )
+                    connection.execute(
+                        "UPDATE tasks SET state = 'running', worker_id = ?, resume_requested = 0 WHERE id = ?",
+                        (worker_id, task["id"]),
+                    )
+                    connection.execute(
+                        "UPDATE workers SET state = 'working', current_task_id = ? WHERE id = ?",
+                        (task["id"], worker_id),
+                    )
+                    connection.execute("UPDATE jobs SET state = 'running', blocked_reason = NULL, updated_at = ? WHERE id = ?", (now, task["job_id"]))
+                    next_seq = connection.execute(
+                        "SELECT COALESCE(MAX(run_seq), 0) + 1 FROM events WHERE run_id = ?", (prior_id,)
+                    ).fetchone()[0]
+                    self._insert_event(connection, task["job_id"], prior_id, next_seq, "status", "Explicit Codex session resume reserved.", None)
+                    revision = self._bump_revision(connection)
+                    return {
+                        "task_id": task["id"],
+                        "job_id": task["job_id"],
+                        "worker_id": worker_id,
+                        "attempt_id": prior_id,
+                        "reservation_id": connection.execute("SELECT id FROM budget_reservations WHERE attempt_id = ?", (prior_id,)).fetchone()[0],
+                        "reserved_micro": prior["reserved_micro"],
+                        "provider_thread_id": prior["provider_thread_id"],
+                        "resume": True,
+                        "revision": revision,
+                    }
+
+                if task["current_attempt_id"]:
+                    prior_state = connection.execute(
+                        "SELECT state FROM attempts WHERE id = ?", (task["current_attempt_id"],)
+                    ).fetchone()
+                    if prior_state and prior_state["state"] == "ambiguous":
+                        raise RuntimeFault(ErrorCode.POLICY_DENIED, "ambiguous provider work requires an explicit session resume")
 
                 attempt_id = str(uuid4())
                 reservation_id = str(uuid4())
@@ -923,11 +1076,60 @@ class RuntimeStore:
                     "attempt_id": attempt_id,
                     "reservation_id": reservation_id,
                     "reserved_micro": reservation_micro,
+                    "provider_thread_id": None,
+                    "resume": False,
                     "revision": revision,
                 }
             if has_ready and budget_blocked:
                 raise RuntimeFault(ErrorCode.BUDGET_LIMIT, "job budget cannot cover the requested reservation")
             return None
+
+    def record_provider_session(
+        self,
+        attempt_id: str,
+        *,
+        provider_thread_id: str | None,
+        provider_turn_id: str | None,
+        model: str | None,
+        effort: str | None,
+    ) -> None:
+        attempt_id = _require_uuid(attempt_id, "attempt_id")
+        for label, value in (("provider thread id", provider_thread_id), ("provider turn id", provider_turn_id)):
+            if value is not None and (
+                not isinstance(value, str)
+                or len(value) > 512
+                or not _PROVIDER_ID_RE.fullmatch(value)
+            ):
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{label} is invalid")
+        if model is not None and (not isinstance(model, str) or len(model) > 128 or not _OPAQUE_ID_RE.fullmatch(model)):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "provider model id is invalid")
+        if effort is not None and (not isinstance(effort, str) or len(effort) > 32 or not _OPAQUE_ID_RE.fullmatch(effort)):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "provider effort is invalid")
+        with self.transaction() as connection:
+            row = connection.execute(
+                "SELECT state, provider_thread_id, model, effort FROM attempts WHERE id = ?",
+                (attempt_id,),
+            ).fetchone()
+            if not row:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "attempt was not found")
+            if row["state"] != "running":
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "provider session belongs to a non-running attempt")
+            if (
+                row["provider_thread_id"] is not None
+                and provider_thread_id is not None
+                and row["provider_thread_id"] != provider_thread_id
+            ):
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "provider thread identity changed during this attempt")
+            if row["model"] is not None and model is not None and row["model"] != model:
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "provider model identity changed during this attempt")
+            if row["effort"] is not None and effort is not None and row["effort"] != effort:
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "provider effort identity changed during this attempt")
+            connection.execute(
+                "UPDATE attempts SET provider_thread_id = COALESCE(?, provider_thread_id), "
+                "provider_turn_id = COALESCE(?, provider_turn_id), model = COALESCE(?, model), effort = COALESCE(?, effort) "
+                "WHERE id = ?",
+                (provider_thread_id, provider_turn_id, model, effort, attempt_id),
+            )
 
     def settle_attempt(
         self,
@@ -993,6 +1195,7 @@ class RuntimeStore:
                 "UPDATE tasks SET state = ?, worker_id = NULL WHERE id = ?",
                 (task_state, row["task_id"]),
             )
+            connection.execute("UPDATE tasks SET resume_requested = 0 WHERE id = ?", (row["task_id"],))
             cost_rows = connection.execute(
                 "SELECT cost_micro, state FROM attempts WHERE task_id IN (SELECT id FROM tasks WHERE job_id = ?)",
                 (row["job_id"],),
@@ -1022,6 +1225,19 @@ class RuntimeStore:
             if not row:
                 raise RuntimeFault(ErrorCode.NOT_FOUND, "job was not found")
             return dict(row)
+
+    def block_unclaimed_tasks(self, job_id: str) -> int:
+        """Prevent a failed dispatch gate from leaving queued work under a blocked job."""
+        job_id = _require_uuid(job_id, "job_id")
+        with self.transaction() as connection:
+            changed = connection.execute(
+                "UPDATE tasks SET state = 'blocked', resume_requested = 0 "
+                "WHERE job_id = ? AND state = 'queued'",
+                (job_id,),
+            ).rowcount
+            if changed:
+                self._bump_revision(connection)
+            return changed
 
     def list_projects(self) -> list[dict[str, Any]]:
         with self.read_connection() as connection:
@@ -1213,15 +1429,17 @@ class RuntimeStore:
         expected_revision: int,
         command_type: str,
         job_id: str,
+        *,
+        codex_ready: bool = False,
     ) -> dict[str, Any]:
-        if command_type not in {"job.run", "job.pause", "job.cancel"}:
+        if command_type not in {"job.run", "job.resume", "job.pause", "job.cancel"}:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "job command is unsupported")
         job_id = _require_uuid(job_id, "job_id")
         payload = {"job_id": job_id}
 
         def write(connection: sqlite3.Connection) -> dict[str, Any]:
             row = connection.execute(
-                "SELECT state, source_json, checks_json, allowed_actions_json, budget_micro FROM jobs WHERE id = ?",
+                "SELECT state, source_json, checks_json, allowed_actions_json, budget_micro, project_id FROM jobs WHERE id = ?",
                 (job_id,),
             ).fetchone()
             if not row:
@@ -1240,10 +1458,32 @@ class RuntimeStore:
                     and create_data["checks"] == ["candidate.frozen_identity"]
                     and create_data["budget_micro"] == 0
                 )
-                if not safe_run:
+                task_rows = connection.execute("SELECT * FROM tasks WHERE job_id = ? ORDER BY sort_order, id", (job_id,)).fetchall()
+                tasks = []
+                for task in task_rows:
+                    item = dict(task)
+                    item["depends_on"] = _json_load(item["depends_on_json"])
+                    item["write_paths"] = _json_load(item["write_paths_json"])
+                    item["check_ids"] = _json_load(item["check_ids_json"])
+                    tasks.append(item)
+                codex_profile = codex_ready and is_codex_job_from_stored(
+                    {
+                        **create_data,
+                        "checks": create_data["checks"],
+                        "budget_micro": create_data["budget_micro"],
+                    },
+                    tasks,
+                )
+                if not safe_run and not codex_profile:
                     raise RuntimeFault(ErrorCode.POLICY_DENIED, "no verified coding worker is configured")
                 if state not in {"queued", "paused"}:
                     raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "job is not ready to run")
+                if codex_profile and connection.execute(
+                    "SELECT 1 FROM tasks t JOIN attempts a ON a.id = t.current_attempt_id "
+                    "WHERE t.job_id = ? AND a.state = 'ambiguous'",
+                    (job_id,),
+                ).fetchone():
+                    raise RuntimeFault(ErrorCode.POLICY_DENIED, "ambiguous Codex work requires the explicit job.resume command")
                 connection.execute(
                     "UPDATE jobs SET state = 'running', blocked_reason = NULL, updated_at = ? WHERE id = ?",
                     (utc_now(), job_id),
@@ -1252,8 +1492,63 @@ class RuntimeStore:
                     "UPDATE tasks SET state = 'queued' WHERE job_id = ? AND state IN ('paused', 'cancelled')",
                     (job_id,),
                 )
-                self._insert_event(connection, job_id, None, None, "status", "Read-only inspection queued.", None)
+                self._insert_event(
+                    connection,
+                    job_id,
+                    None,
+                    None,
+                    "status",
+                    "Host-authorized Codex task queued." if codex_profile else "Read-only inspection queued.",
+                    None,
+                )
                 return {"job_id": job_id, "state": "running"}
+            if command_type == "job.resume":
+                if not codex_ready:
+                    raise RuntimeFault(ErrorCode.POLICY_DENIED, "a fresh verified Codex capability and host consent are required to resume")
+                task_rows = connection.execute(
+                    "SELECT t.*, a.state AS attempt_state, a.provider_thread_id, a.base_revision AS attempt_revision, "
+                    "br.state AS reservation_state, br.reserved_micro, p.base_revision AS project_revision "
+                    "FROM tasks t JOIN projects p ON p.id = ? "
+                    "LEFT JOIN attempts a ON a.id = t.current_attempt_id "
+                    "LEFT JOIN budget_reservations br ON br.attempt_id = a.id "
+                    "WHERE t.job_id = ? AND t.state = 'blocked' ORDER BY t.sort_order, t.id",
+                    (row["project_id"], job_id),
+                ).fetchall()
+                resume_task = next((item for item in task_rows if item["attempt_state"] == "ambiguous"), None)
+                profile_tasks = []
+                all_tasks = connection.execute("SELECT * FROM tasks WHERE job_id = ? ORDER BY sort_order, id", (job_id,)).fetchall()
+                for task in all_tasks:
+                    item = dict(task)
+                    item["depends_on"] = _json_load(item["depends_on_json"])
+                    item["write_paths"] = _json_load(item["write_paths_json"])
+                    item["check_ids"] = _json_load(item["check_ids_json"])
+                    profile_tasks.append(item)
+                profile = {
+                    "source": _json_load(row["source_json"]),
+                    "checks": _json_load(row["checks_json"]),
+                    "allowed_actions": _json_load(row["allowed_actions_json"]),
+                    "budget_micro": row["budget_micro"],
+                }
+                if state not in {"paused", "blocked"} or not is_codex_job_from_stored(profile, profile_tasks):
+                    raise RuntimeFault(ErrorCode.POLICY_DENIED, "job is not an eligible Codex session to resume")
+                if (
+                    not resume_task
+                    or not resume_task["provider_thread_id"]
+                    or resume_task["reservation_state"] != "uncertain"
+                    or not resume_task["reserved_micro"]
+                    or resume_task["attempt_revision"] != resume_task["project_revision"]
+                ):
+                    raise RuntimeFault(ErrorCode.POLICY_DENIED, "explicit resume requires a saved session, uncertain reservation and current source revision")
+                connection.execute(
+                    "UPDATE tasks SET state = 'queued', resume_requested = 1 WHERE id = ?",
+                    (resume_task["id"],),
+                )
+                connection.execute(
+                    "UPDATE jobs SET state = 'running', blocked_reason = NULL, updated_at = ? WHERE id = ?",
+                    (utc_now(), job_id),
+                )
+                self._insert_event(connection, job_id, resume_task["current_attempt_id"], None, "status", "Explicit Codex session resume requested.", None)
+                return {"job_id": job_id, "task_id": resume_task["id"], "state": "running", "resumed": True}
             if command_type == "job.pause":
                 if state not in {"queued", "running"}:
                     raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "job cannot be paused in its current state")

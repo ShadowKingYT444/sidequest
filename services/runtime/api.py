@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import asyncio
 import base64
 import hashlib
 import hmac
@@ -10,6 +11,7 @@ import json
 import os
 import re
 from decimal import Decimal
+from datetime import datetime, timezone
 from typing import Any, Callable
 
 from fastapi import Depends, FastAPI, Query, Request, Response
@@ -20,12 +22,18 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .adapters import AdapterRunner, _safe_message
 from .artifacts import ArtifactStore, text_preview
-from .config import RuntimeConfig
+from .config import (
+    RuntimeConfig,
+    codex_configuration_fingerprint,
+    codex_execution_enabled,
+    codex_readiness_is_fresh,
+)
 from .models import (
     CommandRequest,
     JobCreate,
     ProjectRegistration,
     canonical_json,
+    is_codex_job_from_stored,
 )
 from .policy import ErrorCode, RuntimeFault
 from .scheduler import Scheduler, is_local_git_inspection_from_stored
@@ -116,6 +124,66 @@ def _json_error(status: int, code: str, message: str, retryable: bool = False) -
     return JSONResponse(_fault_body(code, message, retryable), status_code=status)
 
 
+def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[str, Any]:
+    unavailable = {
+        "state": "unavailable",
+        "provider": "codex-app-server",
+        "model": {"id": config.codex_model, "verified": False},
+        "effort": {"id": config.codex_effort, "verified": False},
+        "account_type": "unknown",
+        "reason": "The host could not verify Codex model readiness.",
+    }
+    if not isinstance(data, dict):
+        return unavailable
+    model = data.get("model")
+    effort = data.get("effort")
+    reason = data.get("reason")
+    if (
+        data.get("provider") != "codex-app-server"
+        or data.get("state") not in {"available", "unavailable"}
+        or not isinstance(model, dict)
+        or not isinstance(effort, dict)
+        or not isinstance(model.get("verified"), bool)
+        or not isinstance(effort.get("verified"), bool)
+        or data.get("account_type") not in {"chatgpt", "unknown"}
+        or reason is not None and not isinstance(reason, str)
+    ):
+        return unavailable
+    clean_reason = _safe_message(reason)[:256] if isinstance(reason, str) else None
+    matched = (
+        model.get("id") == config.codex_model
+        and effort.get("id") == config.codex_effort
+        and model.get("verified") is True
+        and effort.get("verified") is True
+        and data.get("account_type") == "chatgpt"
+        and data.get("state") == "available"
+        and clean_reason is None
+    )
+    if not matched:
+        return {
+            "state": "unavailable",
+            "provider": "codex-app-server",
+            "model": {
+                "id": model.get("id") if isinstance(model.get("id"), str) else config.codex_model,
+                "verified": model.get("verified") is True and model.get("id") == config.codex_model,
+            },
+            "effort": {
+                "id": effort.get("id") if isinstance(effort.get("id"), str) else config.codex_effort,
+                "verified": effort.get("verified") is True and effort.get("id") == config.codex_effort,
+            },
+            "account_type": data.get("account_type"),
+            "reason": clean_reason or "The host-configured model and effort were not fully verified.",
+        }
+    return {
+        "state": "available",
+        "provider": "codex-app-server",
+        "model": {"id": config.codex_model, "verified": True},
+        "effort": {"id": config.codex_effort, "verified": True},
+        "account_type": "chatgpt",
+        "reason": None,
+    }
+
+
 def _usd(micro: int | None) -> float | None:
     return None if micro is None else float(Decimal(micro) / Decimal(1_000_000))
 
@@ -203,6 +271,8 @@ def _job_public(store: RuntimeStore, job_id: str, *, detail: bool) -> dict[str, 
         check_state = "blocked" if job["state"] == "blocked" else "fail"
     else:
         check_state = "pending"
+    is_codex_profile = is_codex_job_from_stored(profile_data, job["tasks"])
+    codex_ready = codex_execution_enabled(store.config, store.get_codex_readiness())
     public = {
         "id": job["id"],
         "project_id": job["project_id"],
@@ -239,7 +309,11 @@ def _job_public(store: RuntimeStore, job_id: str, *, detail: bool) -> dict[str, 
             for task in job["tasks"]
         ],
         "candidate_id": job["candidate_id"],
-        "execution_profile": "local_git_inspection" if is_local_git_inspection_from_stored(profile_data) else None,
+        "execution_profile": (
+            "local_git_inspection" if is_local_git_inspection_from_stored(profile_data)
+            else "codex_session" if is_codex_profile and codex_ready
+            else None
+        ),
         "delivery_state": "disabled",
     }
     if detail:
@@ -426,6 +500,7 @@ def create_app(
     artifact_store = ArtifactStore(config.artifacts_dir, runtime_store)
     if scheduler is None:
         scheduler = Scheduler(runtime_store, config, AdapterRunner(config), artifact_store)
+    codex_refresh_lock = asyncio.Lock()
 
     async def lifespan(_app: FastAPI):
         scheduler.start()
@@ -494,7 +569,24 @@ def create_app(
             except OSError:
                 continue
         local_enabled = bool(roots and config.b_argv and config.d_argv)
-        reasons = ["No coding model is verified; coding jobs are unavailable."]
+        readiness = runtime_store.get_codex_readiness()
+        readiness_fresh = codex_readiness_is_fresh(config, readiness)
+        codex_ready = codex_execution_enabled(config, readiness)
+        cached_capability = readiness.get("capability") if isinstance(readiness, dict) else None
+        cached_capability = cached_capability if isinstance(cached_capability, dict) else {}
+        cached_model = cached_capability.get("model") if isinstance(cached_capability.get("model"), dict) else {}
+        cached_effort = cached_capability.get("effort") if isinstance(cached_capability.get("effort"), dict) else {}
+        reasons = []
+        if not config.codex_enabled:
+            reasons.append("Codex execution is disabled by host settings.")
+        elif not readiness_fresh:
+            reasons.append("Codex model readiness is not verified or has expired; use the explicit host readiness refresh command.")
+        elif not config.codex_consent:
+            reasons.append("Host consent for Codex task execution has not been recorded.")
+        elif not codex_ready:
+            reasons.append("Codex task execution is unavailable.")
+        if cached_capability.get("state") == "unavailable" and isinstance(cached_capability.get("reason"), str):
+            reasons.append(_safe_message(cached_capability["reason"])[:256])
         if not local_enabled:
             reasons.append("Configure an allowed local Git root and both host adapters to enable read-only inspection.")
         return {
@@ -505,11 +597,26 @@ def create_app(
                 "screen_watch": "unavailable",
                 "github_delivery": False,
                 "local_git_inspection": local_enabled,
-                "coding": False,
+                "coding": codex_ready,
+                "codex_session": codex_ready,
             },
-            "worker_model": {"id": "none", "effort": "unavailable", "verified": False, "coding_available": False},
+            "worker_model": {
+                "id": cached_model.get("id") if isinstance(cached_model.get("id"), str) else (config.codex_model if config.codex_enabled else "none"),
+                "effort": cached_effort.get("id") if isinstance(cached_effort.get("id"), str) else (config.codex_effort if config.codex_enabled else "unavailable"),
+                "verified": readiness_fresh,
+                "coding_available": codex_ready,
+            },
             "limits": {"max_parallel": config.max_parallel, "max_tasks_per_plan": config.max_tasks_per_plan},
             "reasons": reasons,
+            "codex": {
+                "state": cached_capability.get("state") if readiness_fresh else "unverified",
+                "provider": "codex-app-server",
+                "model": {"id": cached_model.get("id"), "verified": cached_model.get("verified") is True} if cached_model else {"id": config.codex_model, "verified": False},
+                "effort": {"id": cached_effort.get("id"), "verified": cached_effort.get("verified") is True} if cached_effort else {"id": config.codex_effort, "verified": False},
+                "account_type": cached_capability.get("account_type") if readiness_fresh else "unknown",
+                "refreshed_at": readiness.get("refreshed_at") if readiness_fresh and isinstance(readiness, dict) else None,
+                "reason": _safe_message(cached_capability.get("reason", ""))[:256] if isinstance(cached_capability.get("reason"), str) else None,
+            },
         }
 
     @app.get("/v1/snapshot", dependencies=[Depends(authenticate)])
@@ -858,13 +965,74 @@ def create_app(
         elif command.type == "job.create":
             create = JobCreate.model_validate(payload)
             result = runtime_store.create_job(command.command_id, expected, create)
-        elif command.type in {"job.run", "job.pause", "job.cancel"}:
+        elif command.type == "system.codex.refresh":
+            if expected is None or payload:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "system.codex.refresh requires expected_revision and an empty payload")
+            if command.command_id:
+                previous = runtime_store.lookup_command_result(
+                    command.command_id,
+                    command.type,
+                    {},
+                    expected,
+                )
+                if previous is not None:
+                    return JSONResponse(previous, status_code=202)
+            async with codex_refresh_lock:
+                previous = runtime_store.lookup_command_result(
+                    command.command_id,
+                    command.type,
+                    {},
+                    expected,
+                )
+                if previous is not None:
+                    return JSONResponse(previous, status_code=202)
+                if expected != runtime_store.revision:
+                    raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "state changed; review the current project state")
+                if not config.codex_enabled:
+                    capability = _codex_capability_from_response(None, config)
+                    capability["reason"] = "Codex is disabled by host settings."
+                else:
+                    try:
+                        adapter_result = await scheduler.adapters.call(
+                            "B",
+                            op="agent.capabilities",
+                            job_id="system-codex-capabilities",
+                            workspace=config.runtime_dir,
+                            payload={},
+                            context={},
+                        )
+                        capability = _codex_capability_from_response(adapter_result.get("data"), config)
+                    except RuntimeFault:
+                        capability = _codex_capability_from_response(None, config)
+                fingerprint = codex_configuration_fingerprint(config)
+                refreshed_at = datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+                result = runtime_store.record_codex_readiness(
+                    command.command_id,
+                    expected,
+                    config_sha256=fingerprint,
+                    capability=capability,
+                    refreshed_at=refreshed_at,
+                )
+        elif command.type in {"job.run", "job.resume", "job.pause", "job.cancel"}:
             if expected is None or set(payload) != {"job_id"}:
                 raise RuntimeFault(ErrorCode.INVALID_INPUT, "job command requires expected_revision and job_id")
-            if command.type == "job.run" and runtime_store.get_setting("stopped", False):
+            if command.type in {"job.run", "job.resume"} and runtime_store.get_setting("stopped", False):
                 raise RuntimeFault(ErrorCode.POLICY_DENIED, "runtime dispatch is stopped")
-            result = runtime_store.set_job_command(command.command_id, expected, command.type, payload["job_id"])
-            if command.type == "job.run":
+            if command.type == "job.resume":
+                # Resume must be based on a fresh registered-root identity. If
+                # Git moved since the last read, refreshing bumps the revision
+                # and forces the caller to review current state before resume.
+                resume_job = runtime_store.get_job(payload["job_id"])
+                runtime_store.refresh_project_revision(resume_job["project_id"])
+            codex_ready = config.codex_enabled and codex_execution_enabled(config, runtime_store.get_codex_readiness())
+            result = runtime_store.set_job_command(
+                command.command_id,
+                expected,
+                command.type,
+                payload["job_id"],
+                codex_ready=codex_ready,
+            )
+            if command.type in {"job.run", "job.resume"}:
                 scheduler.enqueue(payload["job_id"])
             elif command.type == "job.pause":
                 await scheduler.pause_job(payload["job_id"])

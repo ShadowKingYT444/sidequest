@@ -283,6 +283,32 @@ def is_local_git_inspection(job: JobCreate) -> bool:
     )
 
 
+def is_codex_job_from_stored(profile: dict[str, Any], tasks: list[dict[str, Any]]) -> bool:
+    """Recognize the deliberately narrow, host-dispatched build profile from persisted data."""
+    actions = profile.get("allowed_actions")
+    if (
+        not isinstance(profile.get("source"), dict)
+        or profile["source"].get("kind") != "typed"
+        or not isinstance(actions, list)
+        or set(actions) != {"read_repo", "propose_patch", "run_checks"}
+        or profile.get("checks") != ["candidate.frozen_identity"]
+        or not isinstance(profile.get("budget_micro"), int)
+        or isinstance(profile.get("budget_micro"), bool)
+        or profile["budget_micro"] <= 0
+        or not isinstance(tasks, list)
+        or len(tasks) != 1
+    ):
+        return False
+    task = tasks[0]
+    return (
+        task.get("kind") == "build"
+        and bool(task.get("write_paths"))
+        and task.get("check_ids") == ["candidate.frozen_identity"]
+        and task.get("depends_on") == []
+        and task.get("check_ids") == profile.get("checks")
+    )
+
+
 def budget_to_micro(value: Decimal | str | int | float, *, allow_zero: bool = False) -> int:
     """Convert USD into integer micro-dollars without binary rounding."""
     try:

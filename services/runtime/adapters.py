@@ -22,6 +22,7 @@ _MAX_PROGRESS_BYTES = 10 * 1024 * 1024
 _MAX_PROGRESS_RECORD_BYTES = 4 * 1024
 _MAX_PROGRESS_PER_SECOND = 10
 _SAFE_REQUEST_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
+_SAFE_PROVIDER_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,511}$")
 _PROCESS_TERM_GRACE_SECONDS = 0.25
 _PROCESS_REAP_TIMEOUT_SECONDS = 1.0
 
@@ -74,7 +75,7 @@ class AdapterRunner:
             return self.config.d_argv
         raise RuntimeFault(ErrorCode.INTERNAL, "adapter selection is invalid")
 
-    def _environment(self) -> dict[str, str]:
+    def _environment(self, *, codex_operation: bool = False) -> dict[str, str]:
         # Deliberately do not inherit arbitrary host values or provider/account tokens.
         env = {
             "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
@@ -92,6 +93,27 @@ class AdapterRunner:
         }
         # Defense in depth if the host has this token in its environment.
         env.pop("SIDEQUEST_API_TOKEN", None)
+        if codex_operation:
+            codex_values = {
+                "SIDEQUEST_CODEX_ENABLED": "true" if self.config.codex_enabled else "false",
+                "SIDEQUEST_CODEX_CONSENT": "true" if self.config.codex_consent else "false",
+                "SIDEQUEST_CODEX_MAX_SECONDS": str(self.config.codex_max_seconds),
+                "SIDEQUEST_CODEX_TOKEN_BUDGET": str(self.config.codex_token_budget),
+            }
+            for name, value in (
+                ("SIDEQUEST_CODEX_EXECUTABLE", self.config.codex_executable),
+                ("SIDEQUEST_CODEX_MODEL", self.config.codex_model),
+                ("SIDEQUEST_CODEX_EFFORT", self.config.codex_effort),
+                ("SIDEQUEST_CODEX_STATE_DIR", self.config.codex_state_dir),
+            ):
+                if value is not None:
+                    codex_values[name] = str(value)
+            env.update(codex_values)
+            # These are account locators rather than copied credentials. B
+            # forwards them unchanged only to its dedicated Codex subprocess.
+            for name in ("HOME", "CODEX_HOME"):
+                if name in os.environ:
+                    env[name] = os.environ[name]
         return env
 
     async def _read_bounded(self, stream: asyncio.StreamReader, limit: int) -> bytes:
@@ -140,6 +162,8 @@ class AdapterRunner:
         request_id: str,
         process: asyncio.subprocess.Process,
         callback: ProgressCallback | None,
+        *,
+        allow_session: bool = False,
     ) -> None:
         offset = 0
         total = 0
@@ -179,11 +203,29 @@ class AdapterRunner:
                         or not isinstance(item.get("seq"), int)
                         or isinstance(item.get("seq"), bool)
                         or item["seq"] != sequence + 1
-                        or item.get("type") not in {"status", "tool_started", "tool_finished", "output", "warning", "usage"}
+                        or item.get("type") not in {"status", "tool_started", "tool_finished", "output", "warning", "usage", "session"}
                         or not isinstance(item.get("message"), str)
                         or len(item["message"].encode("utf-8")) > 4096
                     ):
                         raise RuntimeFault(ErrorCode.INVALID_INPUT, "adapter progress record failed validation")
+                    allowed_fields = {"v", "request_id", "seq", "type", "message", "artifact_id"}
+                    if item.get("type") == "session":
+                        thread_id = item.get("provider_thread_id")
+                        turn_id = item.get("provider_turn_id")
+                        if (
+                            not allow_session
+                            or not isinstance(thread_id, str)
+                            or not _SAFE_PROVIDER_ID.fullmatch(thread_id)
+                            or turn_id is not None
+                            and (
+                                not isinstance(turn_id, str)
+                                or not _SAFE_PROVIDER_ID.fullmatch(turn_id)
+                            )
+                        ):
+                            raise RuntimeFault(ErrorCode.INVALID_INPUT, "adapter session progress failed validation")
+                        allowed_fields.update({"provider_thread_id", "provider_turn_id"})
+                    if set(item) - allowed_fields:
+                        raise RuntimeFault(ErrorCode.INVALID_INPUT, "adapter progress record contains unexpected fields")
                     now = time.monotonic()
                     times = [stamp for stamp in times if now - stamp < 1.0]
                     if len(times) >= _MAX_PROGRESS_PER_SECOND:
@@ -191,7 +233,11 @@ class AdapterRunner:
                     sequence += 1
                     times.append(now)
                     if callback is not None:
-                        await callback({"type": item["type"], "message": _safe_message(item["message"])})
+                        callback_record = {"type": item["type"], "message": _safe_message(item["message"])}
+                        if item["type"] == "session":
+                            callback_record["provider_thread_id"] = item["provider_thread_id"]
+                            callback_record["provider_turn_id"] = item["provider_turn_id"]
+                        await callback(callback_record)
             except FileNotFoundError:
                 pass
             if process.returncode is not None:
@@ -209,8 +255,9 @@ class AdapterRunner:
         payload: dict[str, Any],
         context: dict[str, Any],
         progress_callback: ProgressCallback | None = None,
+        cancel_event: asyncio.Event | None = None,
     ) -> dict[str, Any]:
-        allowed = {"repo.inspect", "repo.prepare", "artifacts.freeze"} if adapter == "B" else {"check.run"}
+        allowed = {"repo.inspect", "repo.prepare", "artifacts.freeze", "agent.capabilities", "agent.execute"} if adapter == "B" else {"check.run"}
         if op not in allowed:
             raise RuntimeFault(ErrorCode.POLICY_DENIED, "adapter operation is not enabled in this runtime profile")
         argv = self._argv(adapter)
@@ -238,10 +285,11 @@ class AdapterRunner:
         if len(encoded) > _MAX_PROTOCOL_BYTES:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "adapter request exceeded its protocol limit")
         try:
+            codex_operation = adapter == "B" and op in {"agent.capabilities", "agent.execute"}
             process = await asyncio.create_subprocess_exec(
                 *argv,
                 cwd=self.repo_root,
-                env=self._environment(),
+                env=self._environment(codex_operation=codex_operation),
                 stdin=asyncio.subprocess.PIPE,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
@@ -254,15 +302,46 @@ class AdapterRunner:
         assert process.stdin and process.stdout and process.stderr
         stdout_task = asyncio.create_task(self._read_bounded(process.stdout, _MAX_PROTOCOL_BYTES))
         stderr_task = asyncio.create_task(self._read_bounded(process.stderr, _MAX_STDERR_BYTES))
-        progress_task = asyncio.create_task(self._tail_progress(progress_path, request_id, process, progress_callback))
+        progress_task = asyncio.create_task(
+            self._tail_progress(
+                progress_path,
+                request_id,
+                process,
+                progress_callback,
+                allow_session=adapter == "B" and op == "agent.execute",
+            )
+        )
         child_tasks = (stdout_task, stderr_task, progress_task)
+        cancel_task: asyncio.Task[None] | None = None
+
+        async def signal_codex_cancel() -> None:
+            assert cancel_event is not None
+            await cancel_event.wait()
+            # B handles SIGTERM by interrupting the app-server turn and writing
+            # its final envelope. Give that bounded graceful path time before
+            # the unconditional process-group cleanup in finally.
+            if process.returncode is None:
+                try:
+                    process.send_signal(signal.SIGTERM)
+                except ProcessLookupError:
+                    return
+                try:
+                    await asyncio.wait_for(asyncio.shield(process.wait()), timeout=5.0)
+                except asyncio.TimeoutError:
+                    pass
+
         try:
+            if cancel_event is not None and op == "agent.execute":
+                cancel_task = asyncio.create_task(signal_codex_cancel())
             process.stdin.write(encoded)
-            await asyncio.wait_for(process.stdin.drain(), timeout=self.config.adapter_timeout_seconds)
+            timeout_seconds = self.config.adapter_timeout_seconds
+            if op == "agent.execute":
+                timeout_seconds = max(timeout_seconds, self.config.codex_max_seconds + 45.0)
+            await asyncio.wait_for(process.stdin.drain(), timeout=timeout_seconds)
             process.stdin.close()
             _, stdout, stderr, _ = await asyncio.wait_for(
                 asyncio.gather(process.wait(), stdout_task, stderr_task, progress_task),
-                timeout=self.config.adapter_timeout_seconds,
+                timeout=timeout_seconds,
             )
             if process.returncode != 0:
                 raise RuntimeFault(ErrorCode.UNAVAILABLE, f"{adapter} adapter exited unsuccessfully")
@@ -292,10 +371,14 @@ class AdapterRunner:
             response["_request_id"] = request_id
             response["_stderr"] = _safe_message(stderr.decode("utf-8", "replace"))[:1024]
             response["_progress_path"] = str(progress_path)
+            response["_cancel_requested"] = cancel_event.is_set() if cancel_event is not None else False
             return response
         except asyncio.TimeoutError:
             raise RuntimeFault(ErrorCode.UNAVAILABLE, f"{adapter} adapter timed out", retryable=True) from None
         finally:
+            if cancel_task is not None and not cancel_task.done():
+                cancel_task.cancel()
+                await asyncio.gather(cancel_task, return_exceptions=True)
             if process.stdin and not process.stdin.is_closing():
                 process.stdin.close()
             await self._terminate(process)
