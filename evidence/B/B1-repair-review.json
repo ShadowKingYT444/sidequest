@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "B1",
+  "candidate_sha": "a10f2760efca247dfe5ab81fc7f7654c1051b18e",
+  "status": "PASS",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+      "result": "PASS",
+      "evidence": "19 tests passed, 0 failures. Repository delivery and all write probes in the suite use disposable temporary fixtures."
+    },
+    {
+      "command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m services.tools.main --help",
+      "result": "PASS",
+      "exit_code": 0,
+      "evidence": "Printed adapter usage and exited without runtime configuration."
+    },
+    {
+      "command": "git diff --check 0265dd14c524c965606709531446a5c1877920cb a10f2760efca247dfe5ab81fc7f7654c1051b18e",
+      "result": "PASS",
+      "exit_code": 0
+    }
+  ],
+  "checks": {
+    "hard_link_sentinels": "PASS: Independent temporary-repository probes hard-linked outside sentinels to .git/config and .git/refs/heads/sidequest-base. artifacts.freeze returned POLICY_DENIED and both sentinels remained byte-identical. A hard-linked progress file also returned POLICY_DENIED without changing its sentinel.",
+    "config_atomic_replacement": "PASS for an entry replacement race: a controlled fixture replaced .git/config with an outside hard link immediately before descriptor-relative os.replace; the outside sentinel remained unchanged and installed config had link count 1.",
+    "configured_output_containment": "PASS: An output_root outside artifact_roots and a symlink under artifact_roots pointing outside were each rejected with POLICY_DENIED; outside directories remained empty.",
+    "state_and_delivery_hardlinks": "PASS: Direct disposable-fixture probes rejected a pre-existing hard-linked delivery state file and a hard-linked destination file; sentinels stayed unchanged.",
+    "approval_and_delivery_identity": "PASS: B tests denied payload-only approval, stale/mismatched identity, changed destination, and reused delivery ID; one host-approved fixture delivery completed and an exact repeat reconciled to the same receipt.",
+    "candidate_capture": "PASS: B suite verified independent no-hardlink clone, unchanged source refs/files, add/edit/delete/rename/binary/mode capture, manifest/tree/patch hashes, and rejection of scope, traversal, symlink, oversize and credential-like inputs.",
+    "same_uid_temporary_inode_race": "LIMIT: In a disposable fixture, a controlled concurrent same-UID link to a newly opened candidate snapshot inode caused freeze to return POLICY_DENIED after the outside sentinel had already been overwritten with candidate-controlled bytes. The same class of race was demonstrated against the fresh .git config staging inode. This is not prevented by the adapter's post-write link-count checks."
+  },
+  "findings": [
+    {
+      "severity": "documented-boundary",
+      "path": "services/tools/artifact_capture.py:181-236; services/tools/git_ops.py:691-727",
+      "title": "Concurrent same-UID access can link a fresh staging inode before its bytes are written",
+      "reproduction": "A deterministic temporary-fixture probe linked the new zero-length candidate snapshot inode to a sentinel outside every configured root immediately before os.write. The adapter later detected link count 2 and denied the freeze, but the sentinel already contained attacker-controlled candidate bytes. A similar probe against the fresh .git config staging inode replaced an outside sentinel with the fixed config contents before denial.",
+      "impact": "Static hard links, symlinked parents, and final-path redirection are rejected or atomically replaced. The adapter alone does not isolate a concurrent process with the same UID and write access to its configured roots. This remains a required sandbox/trusted-repository boundary; do not claim the B adapter is an OS sandbox or safe for hostile repositories."
+    }
+  ],
+  "limits": [
+    "This PASS applies to B1's documented trusted-repository and active-worker-sandbox boundary. The adapter's path allowlists and descriptor-relative checks are not a separate UID/container boundary.",
+    "The same-UID concurrent temporary-file race is a known residual limitation, not evidence that the actual Codex sandbox can cross its configured write boundary. B2/host integration must enforce the mandated worker sandbox before execution.",
+    "All writes, approval checks and local delivery used disposable temporary fixtures. No real repository delivery, provider/model call, spending, authentication change, or source edit was performed."
+  ]
+}

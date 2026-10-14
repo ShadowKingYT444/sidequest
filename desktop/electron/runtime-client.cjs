@@ -45,7 +45,10 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
     snapshot:()=>request('/v1/snapshot'), capabilities:()=>request('/v1/capabilities'),
     job:id=>request(`/v1/jobs/${opaque(id)}`),
     artifact:id=>request(`/v1/artifacts/${opaque(id)}`),
-    artifacts:id=>request(`/v1/jobs/${opaque(id)}/artifacts?limit=100`),
+    artifacts:(id,cursor='')=>{
+      if(typeof cursor!=='string'||cursor.length>2048)throw new Error('Invalid artifact cursor.');
+      return request(`/v1/jobs/${opaque(id)}/artifacts?limit=100&cursor=${encodeURIComponent(cursor)}`);
+    },
     files:(id,cursor='')=>{
       if(typeof cursor!=='string'||cursor.length>2048)throw new Error('Invalid file cursor.');
       return request(`/v1/artifacts/${opaque(id)}/files?limit=100&cursor=${encodeURIComponent(cursor)}`);
@@ -69,11 +72,16 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
       await inspectionOnly();
       return command('job.create',{project_id:projectId,title,source:{kind:'typed',uri:'sidequest:local-git-inspection',text:'Inspect the registered Git repository and produce immutable read-only artifacts with a frozen-identity check. No coding model, source mutation or delivery.'},checks:['candidate.frozen_identity'],allowed_actions:['read_repo','run_checks'],budget_usd:0},expectedRevision);
     },
-    run:async(jobId,expectedRevision)=>{ const id=decodeURIComponent(opaque(jobId)); revision(expectedRevision); await inspectionOnly(); return command('job.run',{job_id:id},expectedRevision); },
+    run:async(jobId,expectedRevision)=>{
+      const id=decodeURIComponent(opaque(jobId)); revision(expectedRevision); await inspectionOnly();
+      const result=await request(`/v1/jobs/${opaque(jobId)}`);
+      if(result.job?.id!==id||result.job.execution_profile!=='local_git_inspection'||result.job.state!=='queued'||result.job.budget_usd!==0)throw new Error('This job is not a queued zero-budget local inspection.');
+      return command('job.run',{job_id:id},expectedRevision);
+    },
     stop:expectedRevision=>command('system.stop',{},expectedRevision),
   });
 }
-const METHOD_ARITY = Object.freeze({snapshot:[0,0],capabilities:[0,0],job:[1,1],artifact:[1,1],artifacts:[1,1],files:[1,2],text:[2,3],diff:[2,3],register:[1,1],submitInspection:[3,3],run:[2,2],stop:[1,1]});
+const METHOD_ARITY = Object.freeze({snapshot:[0,0],capabilities:[0,0],job:[1,1],artifact:[1,1],artifacts:[1,2],files:[1,2],text:[2,3],diff:[2,3],register:[1,1],submitInspection:[3,3],run:[2,2],stop:[1,1]});
 async function dispatchRuntime(client,method,args) {
   const arity = typeof method === 'string' && Object.hasOwn(METHOD_ARITY,method) && METHOD_ARITY[method];
   if (!arity || !Array.isArray(args) || args.length < arity[0] || args.length > arity[1] || args.some(value => !['string','number'].includes(typeof value))) throw new Error('Invalid local runtime request.');

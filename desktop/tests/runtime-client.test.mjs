@@ -9,12 +9,12 @@ const require=createRequire(import.meta.url);
 const {createRuntimeClient,dispatchRuntime}=require('../electron/runtime-client.cjs');
 
 test('host runtime client uses fixed paths and secret authentication, and gates safe execution',async t=>{
-  const requests=[];let enabled=false;
+  const requests=[];let enabled=false;let jobProfile=null;
   const server=http.createServer(async(req,res)=>{
     let body='';for await(const chunk of req)body+=chunk;
     requests.push({url:req.url,authorization:req.headers.authorization,body:body?JSON.parse(body):null});
     res.setHeader('Content-Type','application/json');
-    res.end(JSON.stringify(req.url==='/v1/capabilities'?{v:1,features:{local_git_inspection:enabled}}:{v:1,accepted:true,revision:2}));
+    res.end(JSON.stringify(req.url==='/v1/capabilities'?{v:1,features:{local_git_inspection:enabled}}:req.url==='/v1/jobs/job-1'?{v:1,job:{id:'job-1',state:'queued',execution_profile:jobProfile,budget_usd:0}}:{v:1,accepted:true,revision:2}));
   });
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));t.after(()=>server.close());
   const client=createRuntimeClient({url:`http://127.0.0.1:${server.address().port}`,token:'private-session',repo:'/configured/repo'});
@@ -31,6 +31,11 @@ test('host runtime client uses fixed paths and secret authentication, and gates 
   for(const [method,args] of [['shell',['id']],['__proto__',[]],['job',['../secret']],['text',['artifact','file',0]],['run',['job',-1]],['submitInspection',['project','bad\ntext',1]],['snapshot',[1]]])await assert.rejects(dispatchRuntime(client,method,args));
   assert.equal(requests.length,count,'invalid inputs produce no network calls');
   await client.register(2);assert.equal(requests.at(-1).body.payload.repo_path,'/configured/repo');
+  const beforeRun=requests.filter(item=>item.body?.type==='job.run').length;
+  await assert.rejects(client.run('job-1',2),/not a queued zero-budget/);
+  assert.equal(requests.filter(item=>item.body?.type==='job.run').length,beforeRun,'mixed-runtime coding job cannot launch through inspection capability');
+  jobProfile='local_git_inspection';await client.run('job-1',2);
+  assert.equal(requests.at(-1).body.type,'job.run');assert.equal(requests.at(-1).body.payload.job_id,'job-1');
 });
 
 test('runtime origin and session file reject redirects, remote hosts, links and loose permissions',async t=>{

@@ -10,7 +10,7 @@ async function runtimeRequest<T>(method:string,args:(string|number)[]=[]):Promis
   return response.json() as Promise<T>;
 }
 const runtime:RuntimeBridge={
-  snapshot:()=>runtimeRequest('snapshot'),capabilities:()=>runtimeRequest('capabilities'),job:id=>runtimeRequest('job',[id]),artifacts:id=>runtimeRequest('artifacts',[id]),
+  snapshot:()=>runtimeRequest('snapshot'),capabilities:()=>runtimeRequest('capabilities'),job:id=>runtimeRequest('job',[id]),artifacts:(id,cursor='')=>runtimeRequest('artifacts',[id,cursor]),
   artifact:id=>runtimeRequest('artifact',[id]),
   files:(id,cursor='')=>runtimeRequest('files',[id,cursor]),text:(artifact,file,startLine=1)=>runtimeRequest('text',[artifact,file,startLine]),diff:(artifact,file,cursor='')=>runtimeRequest('diff',[artifact,file,cursor]),
   register:revision=>runtimeRequest('register',[revision]),submitInspection:(project,title,revision)=>runtimeRequest('submitInspection',[project,title,revision]),run:(job,revision)=>runtimeRequest('run',[job,revision]),stop:revision=>runtimeRequest('stop',[revision]),

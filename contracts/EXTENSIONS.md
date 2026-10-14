@@ -2,6 +2,10 @@
 
 This adds explicit first-release features to the wire-v1 base protocol. Read with PROTOCOL.md. All examples retain v:1. Consumers tolerate extra response fields. Servers reject unknown mutation fields/types instead of guessing. No caller-controlled filesystem read path is accepted.
 
+## Deterministic local inspection profile
+
+The MVP exposes additive `features.local_git_inspection:true` only when its host-configured deterministic Git/check pipeline is available. It must keep coding-model verification false until a real coding adapter is proven. A job additionally exposes host-derived `execution_profile:"local_git_inspection"` only when its persisted canonical profile is the fixed zero-budget, read_repo/run_checks inspection with candidate.frozen_identity and no custom plan; other jobs expose null or unavailable. This field is display/dispatch metadata, never accepted from user mutation input. The desktop re-reads the selected job and requires that profile, queued state and zero budget before sending job.run. A independently revalidates persisted policy/profile and current revision at dispatch. Reads and UI status refresh make zero model calls.
+
 ## Capability and project setup
 
 GET /v1/capabilities returns {v,contract_revision:"1.1",features:{computer_artifacts:true,screen_watch:"available"|"unavailable"|"permission_required",github_delivery:boolean},worker_model:{id,effort,verified:boolean},limits:{max_parallel,max_tasks_per_plan},reasons:[string]}.

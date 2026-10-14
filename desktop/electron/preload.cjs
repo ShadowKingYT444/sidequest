@@ -8,7 +8,7 @@ const runtime = Object.freeze({
   capabilities: () => ipcRenderer.invoke('sidequest:runtime', 'capabilities', []),
   job: id => ipcRenderer.invoke('sidequest:runtime', 'job', [id]),
   artifact: id => ipcRenderer.invoke('sidequest:runtime', 'artifact', [id]),
-  artifacts: id => ipcRenderer.invoke('sidequest:runtime', 'artifacts', [id]),
+  artifacts: (id, cursor = '') => ipcRenderer.invoke('sidequest:runtime', 'artifacts', [id, cursor]),
   files: (id, cursor = '') => ipcRenderer.invoke('sidequest:runtime', 'files', [id, cursor]),
   text: (artifact, file, startLine = 1) => ipcRenderer.invoke('sidequest:runtime', 'text', [artifact, file, startLine]),
   diff: (artifact, file, cursor = '') => ipcRenderer.invoke('sidequest:runtime', 'diff', [artifact, file, cursor]),

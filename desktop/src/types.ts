@@ -9,19 +9,19 @@ export interface GitDiff {
   binary: boolean; unavailableReason?: string; baseRevision: string; candidateRevision: string; readOnly: true;
 }
 export interface RuntimeProject {id:string;name:string;base_revision:string;status:string}
-export interface RuntimeJob {id:string;project_id?:string;title:string;state:string;blocked_reason?:string|null;artifact_ids:string[];checks:{id:string;state:string;evidence_artifact_id?:string|null}[];events:{id:string;at:string;type:string;message:string}[];budget_usd:number;spent_usd:number|null;worker_id:string|null}
+export interface RuntimeJob {id:string;project_id?:string;title:string;state:string;execution_profile?:'local_git_inspection'|null;blocked_reason?:string|null;artifact_ids:string[];checks:{id:string;state:string;evidence_artifact_id?:string|null}[];events:{id:string;at:string;type:string;message:string}[];budget_usd:number;spent_usd:number|null;worker_id:string|null}
 export interface RuntimeSnapshot {v:1;revision:number;mode:string;projects:RuntimeProject[];jobs:RuntimeJob[];stopped:boolean}
 export interface RuntimeCapabilities {v:1;features:{local_git_inspection?:boolean;computer_artifacts:boolean};worker_model:{id:string;effort:string;verified:boolean};reasons:string[]}
-export interface RuntimeArtifact {id:string;kind:string;sha256:string;display_name?:string;size_bytes?:number;candidate_id?:string;source_revision:string;immutable?:boolean}
+export interface RuntimeArtifact {id:string;kind:string;job_id:string;sha256:string;display_name?:string;size_bytes?:number;candidate_id?:string|null;source_revision:string;immutable?:boolean}
 export interface RuntimeFile {file_id:string;path:string;status:string;binary:boolean;size_bytes:number;sha256:string|null;media_type:string}
 export interface FilePage {v:1;artifact_id:string;candidate_id:string;files:RuntimeFile[];next_cursor:string|null}
 export interface DiffPage {v:1;artifact_id:string;candidate_id:string;base_revision:string;candidate_revision:string;rows:{kind:string;old_line:number|null;new_line:number|null;text:string}[];next_cursor:string|null}
-export interface TextPage {v:1;artifact_id:string;file_id:string;lines:{line:number;text:string;clipped?:boolean}[];next_start_line:number|null}
+export interface TextPage {v:1;artifact_id:string;file_id:string;sha256:string;immutable:boolean;lines:{number:number;text:string;clipped?:boolean}[];next_line:number|null}
 export interface CommandReply {v:1;accepted:boolean;command_id:string;revision:number}
 export interface RuntimeBridge {
   snapshot():Promise<RuntimeSnapshot>;capabilities():Promise<RuntimeCapabilities>;job(id:string):Promise<{v:1;job:RuntimeJob}>;
   artifact(id:string):Promise<{v:1;artifact:RuntimeArtifact;preview_text:string|null}>;
-  artifacts(id:string):Promise<{v:1;artifacts:RuntimeArtifact[]}>;files(id:string,cursor?:string):Promise<FilePage>;
+  artifacts(id:string,cursor?:string):Promise<{v:1;items:RuntimeArtifact[];next_cursor:string|null}>;files(id:string,cursor?:string):Promise<FilePage>;
   text(artifact:string,file:string,startLine?:number):Promise<TextPage>;diff(artifact:string,file:string,cursor?:string):Promise<DiffPage>;
   register(revision:number):Promise<CommandReply>;submitInspection(project:string,title:string,revision:number):Promise<CommandReply>;
   run(job:string,revision:number):Promise<CommandReply>;stop(revision:number):Promise<CommandReply>;
