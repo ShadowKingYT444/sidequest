@@ -45,6 +45,9 @@ def emit(value):
     sys.stdout.write(json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\\n")
     sys.stdout.flush()
 
+def initialize_result():
+    return {{"codexHome": "/fixture/codex-home", "platformFamily": "unix", "platformOs": "linux", "userAgent": "sidequest-fake-codex/1"}}
+
 def response(request, result=None, error=None):
     value = {{"jsonrpc": "2.0", "id": request.get("id")}}
     if error is not None:
@@ -74,12 +77,15 @@ for raw in sys.stdin:
             sys.stdout.flush()
             break
         if MODE == "boolean_response_id":
-            emit({{"jsonrpc": "2.0", "id": True, "result": {{"serverInfo": {{"name": "fixture", "version": "1"}}}}}})
+            emit({{"jsonrpc": "2.0", "id": True, "result": initialize_result()}})
             continue
         if MODE == "wrong_jsonrpc":
-            emit({{"jsonrpc": "1.0", "id": request.get("id"), "result": {{"serverInfo": {{"name": "fixture", "version": "1"}}}}}})
+            emit({{"jsonrpc": "1.0", "id": request.get("id"), "result": initialize_result()}})
             continue
-        response(request, {{"serverInfo": {{"name": "fixture-app-server", "version": "1"}}}})
+        if MODE == "invalid_initialize_schema":
+            response(request, {{"serverInfo": {{"name": "fixture-app-server", "version": "1"}}}})
+            continue
+        response(request, initialize_result())
     elif method == "initialized":
         continue
     elif method == "model/list":
@@ -92,6 +98,16 @@ for raw in sys.stdin:
     elif method == "account/read":
         account_type = "apiKey" if MODE == "api_key" else "chatgpt"
         response(request, {{"account": {{"type": account_type, "email": "fixture-private@example.invalid"}}}})
+    elif method == "account/rateLimits/read":
+        if MODE == "quota_missing":
+            response(request, {{"rateLimits": {{"credits": {{"hasCredits": 1, "unlimited": False, "balance": "fixture-private-balance"}}}}}})
+        else:
+            quota_value = MODE in ("quota_true", "success")
+            response(request, {{
+                "accountId": "fixture-private-account-id",
+                "ordinaryUsageAllowed": quota_value,
+                "rateLimits": {{"credits": {{"hasCredits": quota_value, "unlimited": False, "balance": "fixture-private-balance"}}}},
+            }})
     elif method in ("thread/start", "thread/resume"):
         thread_id = params.get("threadId", "fixture-thread")
         response(request, {{"thread": {{"id": thread_id, "model": MODEL, "reasoningEffort": "low"}}}})
@@ -208,6 +224,8 @@ for raw in sys.stdin:
         records = self._rpc_log(log_path)
         methods = [row["method"] for row in records if row["kind"] == "rpc"]
         self.assertEqual(methods[:6], ["initialize", "initialized", "model/list", "account/read", "thread/start", "thread/settings/update"])
+        initialize_params = next(row["params"] for row in records if row.get("method") == "initialize")
+        self.assertEqual(set(initialize_params), {"clientInfo"})
         self.assertIn("thread/read", methods)
         self.assertIn("thread/goal/set", methods)
         start_params = next(row["params"] for row in records if row.get("method") == "thread/start")
@@ -258,7 +276,7 @@ for raw in sys.stdin:
                 self.assertNotIn("thread/resume", methods)
                 self.assertNotIn("turn/start", methods)
 
-    def test_capabilities_probe_reads_only_catalog_and_account_without_consent(self) -> None:
+    def test_capabilities_probe_reads_catalog_account_and_subscription_quota_without_consent(self) -> None:
         settings, _executable, log_path = self._settings("success")
         settings = Settings(**{**settings.__dict__, "codex_consent": False})
         request = {
@@ -277,21 +295,60 @@ for raw in sys.stdin:
         self.assertEqual(data["effort"], {"id": self.effort, "verified": True})
         self.assertEqual(data["account_type"], "chatgpt")
         self.assertFalse(data["usd_cost_enforced"])
+        self.assertEqual(data["subscription_quota"], {"ordinary_usage_allowed": True, "purchased_credits_available": True})
         self.assertIn("USD spend ceiling", data["reason"])
         self.assertEqual(artifacts, [])
         self.assertTrue(usage is None)
         records = self._rpc_log(log_path)
         methods = [row.get("method") for row in records if row["kind"] == "rpc"]
-        self.assertEqual(methods, ["initialize", "initialized", "model/list", "account/read"])
+        self.assertEqual(methods, ["initialize", "initialized", "model/list", "account/read", "account/rateLimits/read"])
         self.assertNotIn("thread/start", methods)
         self.assertNotIn("thread/resume", methods)
         self.assertNotIn("turn/start", methods)
         account_read = next(row["params"] for row in records if row.get("method") == "account/read")
         self.assertEqual(account_read, {"refreshToken": False})
-        self.assertNotIn("fixture-private@example.invalid", json.dumps(data))
+        quota_read = next(row["params"] for row in records if row.get("method") == "account/rateLimits/read")
+        self.assertEqual(quota_read, {})
+        serialized = json.dumps(data)
+        for private_value in ("fixture-private@example.invalid", "fixture-private-account-id", "fixture-private-balance"):
+            self.assertNotIn(private_value, serialized)
+
+    def test_capabilities_quota_flags_are_strict_nullable_booleans(self) -> None:
+        expected = {
+            "quota_true": {"ordinary_usage_allowed": True, "purchased_credits_available": True},
+            "quota_false": {"ordinary_usage_allowed": False, "purchased_credits_available": False},
+            "quota_missing": {"ordinary_usage_allowed": None, "purchased_credits_available": None},
+        }
+        for mode, quota in expected.items():
+            with self.subTest(mode=mode):
+                settings, _executable, log_path = self._settings(mode)
+                request = {
+                    "v": 1,
+                    "request_id": "capabilities-quota-fixture",
+                    "op": "agent.capabilities",
+                    "job_id": "capabilities-quota-fixture-job",
+                    "workspace": str(self.staging),
+                    "payload": {},
+                    "context": {},
+                }
+                data, artifacts, usage = dispatch(request, settings)
+                self.assertEqual(data["subscription_quota"], quota)
+                self.assertEqual(data["state"], "unavailable")
+                self.assertFalse(data["usd_cost_enforced"])
+                self.assertEqual(artifacts, [])
+                self.assertIsNone(usage)
+                records = self._rpc_log(log_path)
+                methods = [row.get("method") for row in records if row["kind"] == "rpc"]
+                self.assertIn("account/rateLimits/read", methods)
+                self.assertNotIn("thread/start", methods)
+                self.assertNotIn("thread/resume", methods)
+                self.assertNotIn("turn/start", methods)
+                serialized = json.dumps(data)
+                self.assertNotIn("fixture-private-account-id", serialized)
+                self.assertNotIn("fixture-private-balance", serialized)
 
     def test_capabilities_failure_is_structured_and_never_claims_verification(self) -> None:
-        for mode in ("unsupported_model", "unsupported_effort", "malformed"):
+        for mode in ("unsupported_model", "unsupported_effort", "api_key", "malformed", "invalid_initialize_schema"):
             with self.subTest(mode=mode):
                 settings, _executable, log_path = self._settings(mode)
                 request = {
@@ -315,8 +372,12 @@ for raw in sys.stdin:
                 if mode == "malformed":
                     self.assertFalse(data["model"]["verified"])
                     self.assertEqual(data["account_type"], "unknown")
+                if mode == "api_key":
+                    self.assertEqual(data["subscription_quota"], {"ordinary_usage_allowed": None, "purchased_credits_available": None})
                 methods = [row.get("method") for row in self._rpc_log(log_path) if row["kind"] == "rpc"]
                 self.assertNotIn("thread/start", methods)
+                if mode == "api_key":
+                    self.assertNotIn("account/rateLimits/read", methods)
                 self.assertNotIn("turn/start", methods)
 
     def test_capabilities_requires_an_existing_auth_locator_without_inventing_one(self) -> None:
@@ -414,6 +475,7 @@ for raw in sys.stdin:
             ("truncated", "truncated event"),
             ("boolean_response_id", "invalid JSON-RPC identifier"),
             ("wrong_jsonrpc", "invalid JSON-RPC message"),
+            ("invalid_initialize_schema", "invalid initialization response"),
         ):
             with self.subTest(mode=mode):
                 workspace = self.prepare("codex-bad-wire-" + uuid.uuid4().hex)

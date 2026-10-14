@@ -28,7 +28,7 @@ test('host runtime client uses fixed paths and secret authentication, and gates 
   assert.equal(requests.every(req=>req.authorization==='Bearer private-session'),true);
   assert.equal(JSON.stringify(command).includes('private-session'),false);
   const count=requests.length;
-  for(const [method,args] of [['shell',['id']],['__proto__',[]],['job',['../secret']],['text',['artifact','file',0]],['run',['job',-1]],['submitInspection',['project','bad\ntext',1]],['snapshot',[1]]])await assert.rejects(dispatchRuntime(client,method,args));
+  for(const [method,args] of [['shell',['id']],['__proto__',[]],['job',['../secret']],['text',['artifact','file',0]],['run',['job',-1]],['submitInspection',['project','bad\ntext',1]],['snapshot',[1]],['runInfo',['../secret']],['runEvents',['run-1',-1]],['runEvents',['run-1',1.5]]])await assert.rejects(dispatchRuntime(client,method,args));
   assert.equal(requests.length,count,'invalid inputs produce no network calls');
   await client.register(2);assert.equal(requests.at(-1).body.payload.repo_path,'/configured/repo');
   assert.deepEqual(requests.at(-1).body.payload.policy,{allowed_actions:['read_repo','run_checks']});
@@ -56,4 +56,27 @@ test('runtime response bound limits untrusted artifact output',async t=>{
   const server=http.createServer((_req,res)=>{res.writeHead(200,{'Content-Type':'application/json','Content-Length':2*1024*1024});res.end('x');});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));t.after(()=>server.close());
   await assert.rejects(createRuntimeClient({url:`http://127.0.0.1:${server.address().port}`,token:'private'}).artifact('artifact-1'),/read limit/);
+});
+
+test('coding methods require verified capability and USD enforcement before mutations',async t=>{
+  const requests=[];let usd=false;let profile='local_git_inspection';
+  const server=http.createServer(async(req,res)=>{
+    let body='';for await(const chunk of req)body+=chunk;requests.push({method:req.method,url:req.url,body:body?JSON.parse(body):null});
+    res.setHeader('Content-Type','application/json');
+    res.end(JSON.stringify(req.url==='/v1/capabilities'?{features:{coding:true,codex_session:true},worker_model:{verified:true},codex:{usd_cost_enforced:usd}}:req.url==='/v1/jobs/job-1'?{job:{id:'job-1',state:'queued',execution_profile:profile,budget_usd:'0.01'}}:{accepted:true}));
+  });
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));t.after(()=>server.close());
+  const client=createRuntimeClient({url:`http://127.0.0.1:${server.address().port}`,token:'test-session'});
+  await assert.rejects(client.enableCoding('project-1',1),/USD ceiling/);
+  await assert.rejects(client.submitCoding('project-1','Change','Add a scoped change','src','0.01',1),/USD ceiling/);
+  await assert.rejects(client.runCoding('job-1',1),/USD ceiling/);
+  assert.equal(requests.some(req=>req.method==='POST'),false);
+  const before=requests.length;
+  for(const prefix of ['../secret','/absolute','.git/hooks','.codex/config'])await assert.rejects(client.submitCoding('project-1','Change','Task',prefix,'0.01',1));
+  for(const budget of ['0','-1','NaN','1e9'])await assert.rejects(client.submitCoding('project-1','Change','Task','src',budget,1));
+  assert.equal(requests.length,before,'invalid coding inputs make no network request');
+  usd=true;await assert.rejects(client.runCoding('job-1',1),/queued host-verified/);
+  assert.equal(requests.some(req=>req.method==='POST'),false,'inspection profiles cannot enter coding execution');
+  profile='codex_session';await client.runCoding('job-1',1);
+  assert.deepEqual(requests.at(-1).body.payload,{job_id:'job-1'});
 });

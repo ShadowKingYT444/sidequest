@@ -238,7 +238,7 @@ def codex_configuration_fingerprint(
     })
 
 
-def codex_readiness_is_fresh(
+def _codex_refresh_is_fresh(
     config: RuntimeConfig,
     record: dict[str, object] | None,
     *,
@@ -265,21 +265,55 @@ def codex_readiness_is_fresh(
     if current.tzinfo is None or current.utcoffset() is None:
         return False
     age = (current - parsed).total_seconds()
+    return 0 <= age <= CODEX_READINESS_TTL_SECONDS and capability.get("provider") == "codex-app-server"
+
+
+def codex_catalog_is_fresh(
+    config: RuntimeConfig,
+    record: dict[str, object] | None,
+    *,
+    now: datetime | None = None,
+    environ: dict[str, str] | None = None,
+) -> bool:
+    """Whether the configured model and effort were recently verified for this account.
+
+    This read-only catalog signal is deliberately independent from permission to
+    dispatch: provider USD-ceiling support is an additional execution gate.
+    """
+    if not config.codex_enabled or not _codex_refresh_is_fresh(config, record, now=now, environ=environ):
+        return False
+    assert isinstance(record, dict)
+    capability = record.get("capability")
+    if not isinstance(capability, dict) or capability.get("account_type") != "chatgpt":
+        return False
     model = capability.get("model")
     effort = capability.get("effort")
     return (
-        0 <= age <= CODEX_READINESS_TTL_SECONDS
-        and capability.get("state") == "available"
-        and capability.get("provider") == "codex-app-server"
-        and capability.get("account_type") == "chatgpt"
-        and capability.get("usd_cost_enforced") is True
-        and capability.get("reason") is None
-        and isinstance(model, dict)
+        isinstance(model, dict)
         and model.get("id") == config.codex_model
         and model.get("verified") is True
         and isinstance(effort, dict)
         and effort.get("id") == config.codex_effort
         and effort.get("verified") is True
+    )
+
+
+def codex_readiness_is_fresh(
+    config: RuntimeConfig,
+    record: dict[str, object] | None,
+    *,
+    now: datetime | None = None,
+    environ: dict[str, str] | None = None,
+) -> bool:
+    if not codex_catalog_is_fresh(config, record, now=now, environ=environ):
+        return False
+    assert isinstance(record, dict)
+    capability = record.get("capability")
+    assert isinstance(capability, dict)
+    return (
+        capability.get("state") == "available"
+        and capability.get("usd_cost_enforced") is True
+        and capability.get("reason") is None
     )
 
 

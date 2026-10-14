@@ -2,6 +2,7 @@ import React, {
   Component,
   Suspense,
   useEffect,
+  useCallback,
   useRef,
   useMemo,
   type ErrorInfo,
@@ -10,7 +11,7 @@ import React, {
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls, useGLTF } from "@react-three/drei";
-import { Box3, DirectionalLight, DoubleSide, MathUtils, Mesh, Vector3 as ThreeVector3 } from "three";
+import { Box3, DirectionalLight, DoubleSide, Euler, MathUtils, Mesh, Vector3 as ThreeVector3 } from "three";
 import type { GLTFLoader, OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { validateOfficeResourceUrl } from "./office-bindings";
 import type { OfficeBindings, OfficeStationBinding, Vector3 } from "./office-bindings";
@@ -21,6 +22,8 @@ export interface OfficeSceneProps {
   onSelectStation: (id: string) => void;
   onSelectBoard?: () => void;
   childrenForStation?: (id: string) => ReactNode;
+  onMonitorContainer?:(id:string,node:HTMLDivElement|null)=>void;
+  workElement?:React.RefObject<HTMLDivElement|null>;
   reducedMotion: boolean;
   active: boolean;
   onError?: (error: Error) => void;
@@ -78,16 +81,19 @@ interface StationMonitorProps {
   selected: boolean;
   onSelectStation: (id: string) => void;
   childrenForStation?: (id: string) => ReactNode;
+  onMonitorContainer?:(id:string,node:HTMLDivElement|null)=>void;
 }
 
 const HTML_SCREEN_PIXELS = { width: 640, height: 360 } as const;
 
-function StationMonitor({
+export function StationMonitor({
   station,
   selected,
   onSelectStation,
   childrenForStation,
+  onMonitorContainer,
 }: StationMonitorProps) {
+  const slotRef=useCallback((node:HTMLDivElement|null)=>onMonitorContainer?.(station.id,node),[station.id,onMonitorContainer]);
   const { gl } = useThree();
   const handlePointerEnter = (event: { stopPropagation: () => void }) => {
     event.stopPropagation();
@@ -131,7 +137,7 @@ function StationMonitor({
         ]}
       >
         <Html transform center distanceFactor={400} zIndexRange={[1, 1]} occlude style={{ pointerEvents: "auto" }}>
-          <div
+          <div data-monitor-id={station.id} data-selected={selected}
             style={{
               width: `${HTML_SCREEN_PIXELS.width}px`,
               height: `${HTML_SCREEN_PIXELS.height}px`,
@@ -144,7 +150,7 @@ function StationMonitor({
             }}
           >
             {selected ? (
-              childrenForStation?.(station.id) ?? null
+              onMonitorContainer?<div ref={slotRef} data-work-slot={station.id} style={{width:'100%',height:'100%'}}/>:childrenForStation?.(station.id) ?? null
             ) : (
               <button
                 type="button"
@@ -190,7 +196,24 @@ function asThreeVector(value: Vector3) {
   return new ThreeVector3(value[0], value[1], value[2]);
 }
 
-function CameraRig({
+// Keep the selected application UI in its original React root. The world scene
+// supplies only projection math; secondary HTML roots never own a full editor.
+export function MonitorProjection({station,element,active}:{station?:OfficeStationBinding;element?:React.RefObject<HTMLDivElement|null>;active:boolean}){
+  const {camera,size,invalidate}=useThree();
+  useEffect(()=>{invalidate();},[station,element,active,invalidate]);
+  useFrame(()=>{
+    const node=element?.current;if(!node||!station||!active)return;
+    const ready=camera.position.distanceTo(asThreeVector(station.focus.position))<.15;
+    const corners=[[-1,-1],[1,-1],[-1,1],[1,1]].map(([x,y])=>new ThreeVector3(x*station.screenSize[0]/2,y*station.screenSize[1]/2,.01).applyEuler(new Euler(...station.rotation)).add(asThreeVector(station.anchor)).project(camera));
+    const xs=corners.map(point=>(point.x+1)*size.width/2),ys=corners.map(point=>(1-point.y)*size.height/2);
+    const left=Math.min(...xs),top=Math.min(...ys),width=Math.max(...xs)-left,height=Math.max(...ys)-top;
+    node.style.transform=`translate(${left}px,${top}px) scale(${width/640},${height/360})`;
+    node.style.visibility=ready&&width>0&&height>0?'visible':'hidden';
+  });
+  return null;
+}
+
+export function CameraRig({
   bindings,
   selectedStationId,
   reducedMotion,
@@ -260,6 +283,8 @@ export function OfficeScene({
   onSelectStation,
   onSelectBoard,
   childrenForStation,
+  onMonitorContainer,
+  workElement,
   reducedMotion,
   active,
   onError,
@@ -267,7 +292,7 @@ export function OfficeScene({
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   return (
-    <Canvas
+    <Canvas className="office-canvas"
       frameloop={active ? "demand" : "never"}
       dpr={[1, 1.5]}
       camera={{ position: bindings.overview.position, fov: 40, near: 0.05, far: 1000 }}
@@ -288,6 +313,7 @@ export function OfficeScene({
           selected={selectedStationId === station.id}
           onSelectStation={onSelectStation}
           childrenForStation={childrenForStation}
+          onMonitorContainer={onMonitorContainer}
         />
       ))}
       {bindings.board&&onSelectBoard&&<group position={bindings.board.anchor} rotation={bindings.board.rotation}><mesh onClick={event=>{event.stopPropagation();onSelectBoard();}}><planeGeometry args={bindings.board.size}/><meshBasicMaterial transparent opacity={0} depthWrite={false} side={DoubleSide}/></mesh></group>}
@@ -306,6 +332,7 @@ export function OfficeScene({
         active={active}
         controlsRef={controlsRef}
       />
+      <MonitorProjection station={bindings.stations.find(item=>item.id===selectedStationId)} element={workElement} active={active}/>
     </Canvas>
   );
 }

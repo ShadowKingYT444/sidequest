@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any, Callable, Iterator
 from uuid import UUID, uuid4
 
-from .config import RuntimeConfig
+from .config import RuntimeConfig, codex_execution_enabled
 from .models import (
     ApprovalCreate,
     CandidateCreate,
@@ -411,6 +411,57 @@ class RuntimeStore:
         return self.execute_command(
             normalized_command_id,
             "project.register",
+            payload,
+            expected_revision,
+            write,
+        )
+
+    def enable_project_coding(
+        self,
+        command_id: str | UUID,
+        expected_revision: int,
+        project_id: str,
+    ) -> dict[str, Any]:
+        """Grant only proposal permission after current host readiness is proven."""
+        project_id = _require_uuid(project_id, "project_id")
+        payload = {"project_id": project_id}
+
+        def write(connection: sqlite3.Connection) -> dict[str, Any]:
+            stopped_row = connection.execute(
+                "SELECT value_json FROM settings WHERE key = 'stopped'"
+            ).fetchone()
+            if stopped_row and bool(_json_load(stopped_row[0])):
+                raise RuntimeFault(ErrorCode.POLICY_DENIED, "runtime dispatch is stopped")
+            readiness_row = connection.execute(
+                "SELECT value_json FROM settings WHERE key = 'codex_readiness'"
+            ).fetchone()
+            readiness = _json_load(readiness_row[0]) if readiness_row else None
+            if not codex_execution_enabled(self.config, readiness):
+                raise RuntimeFault(ErrorCode.POLICY_DENIED, "fresh host Codex execution readiness and consent are required")
+            row = connection.execute(
+                "SELECT policy_json, status FROM projects WHERE id = ?", (project_id,)
+            ).fetchone()
+            if not row:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "project was not found")
+            if row["status"] != "active":
+                raise RuntimeFault(ErrorCode.POLICY_DENIED, "project is not active")
+            policy = _json_load(row["policy_json"])
+            if not isinstance(policy, dict) or not isinstance(policy.get("allowed_actions"), list):
+                raise RuntimeFault(ErrorCode.INTERNAL, "stored project policy is invalid")
+            actions = policy["allowed_actions"]
+            if any(not isinstance(action, str) for action in actions):
+                raise RuntimeFault(ErrorCode.INTERNAL, "stored project policy is invalid")
+            if "propose_patch" not in actions:
+                policy["allowed_actions"] = [*actions, "propose_patch"]
+                connection.execute(
+                    "UPDATE projects SET policy_json = ? WHERE id = ?",
+                    (canonical_json(policy), project_id),
+                )
+            return {"project_id": project_id, "allowed_actions": policy["allowed_actions"]}
+
+        return self.execute_command(
+            command_id,
+            "project.enable_coding",
             payload,
             expected_revision,
             write,

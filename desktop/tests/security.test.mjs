@@ -31,9 +31,9 @@ test('preload exposes fixed read and validated local-runtime capabilities withou
   });
 
   assert.equal(exposed.name, 'sidequest');
-  assert.deepEqual(Object.keys(exposed.api), ['runtime', 'snapshot', 'diff']);
+  assert.deepEqual(Object.keys(exposed.api), ['runtime', 'providers', 'snapshot', 'diff']);
   assert.equal(Object.isFrozen(exposed.api.runtime), true);
-  assert.deepEqual(Object.keys(exposed.api.runtime), ['snapshot','capabilities','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop']);
+  assert.deepEqual(Object.keys(exposed.api.runtime), ['snapshot','capabilities','runInfo','runEvents','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop','refreshReadiness','enableCoding','submitCoding','runCoding']);
   assert.equal(Object.isFrozen(exposed.api), true);
   assert.deepEqual(await exposed.api.snapshot(), { ok: true });
   assert.deepEqual(calls, [['sidequest:snapshot']]);
@@ -43,6 +43,7 @@ test('preload exposes fixed read and validated local-runtime capabilities withou
   assert.equal(calls.length, 2, 'invalid identifiers never cross IPC');
   await exposed.api.runtime.run('job-1', 12);
   assert.equal(JSON.stringify(calls[2]), JSON.stringify(['sidequest:runtime', 'run', ['job-1', 12]]));
+  await exposed.api.providers();assert.deepEqual(calls[3],['sidequest:providers']);
 });
 
 test('Electron security helpers trust only the app origin or configured loopback dev origin', () => {

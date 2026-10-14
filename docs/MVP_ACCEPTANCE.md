@@ -1,6 +1,6 @@
 # Four-hour MVP acceptance — 2026-10-14
 
-Deadline: **2026-10-14 05:46:56 UTC** (October 13, 22:46:56 PDT). Scope: office navigation, job submission/status, readable real artifacts/diffs, and one genuine safe job-to-result path. Workshops, selected-screen capture and additional polish are deferred. A local Git inspection/check job must be identified as deterministic local work; it must never be presented as a live coding agent.
+Deadline updated by owner: **2026-10-14 10:00:00 UTC** (October 14, 03:00 PDT). At 05:17 UTC the owner rejected temporary office/settings styling. Original art and T3 Code/reference fidelity are required; previous fallback screenshots are rejected work, not visual acceptance. Scope: office navigation, job submission/status, readable real artifacts/diffs, and one genuine safe job-to-result path. Workshops, selected-screen capture and additional polish are deferred. A local Git inspection/check job must be identified as deterministic local work; it must never be presented as a live coding agent.
 
 ## Exclusive ownership
 

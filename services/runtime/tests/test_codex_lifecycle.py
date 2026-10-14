@@ -15,7 +15,7 @@ import httpx
 from services.runtime.adapters import AdapterRunner
 from services.runtime.api import create_app
 from services.runtime.artifacts import ArtifactStore
-from services.runtime.config import RuntimeConfig, codex_configuration_fingerprint, codex_readiness_is_fresh
+from services.runtime.config import RuntimeConfig, codex_catalog_is_fresh, codex_configuration_fingerprint, codex_readiness_is_fresh
 from services.runtime.models import JobCreate, Source, TaskPlan, TaskSpec, canonical_json
 from services.runtime.policy import ErrorCode, RuntimeFault
 from services.runtime.scheduler import Scheduler
@@ -299,6 +299,16 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.store.close()
         self.temporary.cleanup()
 
+    def _set_project_policy(self, actions: list[str], **extra: object) -> dict:
+        policy = {"allowed_actions": actions, **extra}
+        with self.store.transaction() as connection:
+            connection.execute(
+                "UPDATE projects SET policy_json = ? WHERE id = ?",
+                (canonical_json(policy), self.project_id),
+            )
+            self.store._bump_revision(connection)
+        return policy
+
     async def test_readiness_refresh_is_explicit_cached_and_idempotent(self) -> None:
         scheduler = FakeScheduler()
         app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
@@ -306,6 +316,7 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             auth = {"Authorization": f"Bearer {TOKEN}"}
             initial = await client.get("/v1/capabilities", headers=auth)
             self.assertFalse(initial.json()["features"]["coding"])
+            self.assertTrue(initial.json()["codex"]["host_enabled"])
             self.assertEqual(scheduler.adapters.calls, [])
 
             command = {
@@ -343,11 +354,21 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(denied.exception.code, ErrorCode.POLICY_DENIED)
 
     async def test_native_capability_without_verified_usd_ceiling_cannot_dispatch(self) -> None:
-        capability = {**CAPABILITY, "usd_cost_enforced": False}
+        capability = {
+            **CAPABILITY,
+            "usd_cost_enforced": False,
+            "subscription_quota": {
+                "ordinary_usage_allowed": True,
+                "purchased_credits_available": "unverified",
+                "account_id": "must-not-leak",
+                "balance_usd": 123.45,
+            },
+        }
         scheduler = FakeScheduler()
         scheduler.adapters = FakeAdapters(capability)
         app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
         job_id = create_codex_job(self.store, self.project_id)
+        original_policy = self._set_project_policy(["read_repo", "run_checks", "local_deliver"], custom="keep")
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
             auth = {"Authorization": f"Bearer {TOKEN}"}
             refresh = await client.post("/v1/commands", headers=auth, json={
@@ -361,8 +382,21 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             capabilities = await client.get("/v1/capabilities", headers=auth)
             self.assertEqual(capabilities.status_code, 200)
             self.assertFalse(capabilities.json()["features"]["coding"])
-            self.assertFalse(capabilities.json()["worker_model"]["verified"])
+            self.assertFalse(capabilities.json()["features"]["codex_session"])
+            self.assertTrue(capabilities.json()["worker_model"]["verified"])
+            self.assertTrue(capabilities.json()["codex"]["catalog_verified"])
+            self.assertEqual(capabilities.json()["codex"]["state"], "unavailable")
+            self.assertIsNotNone(capabilities.json()["codex"]["refreshed_at"])
             self.assertFalse(capabilities.json()["codex"]["usd_cost_enforced"])
+            self.assertEqual(capabilities.json()["codex"]["subscription_quota"], {
+                "ordinary_usage_allowed": True,
+                "purchased_credits_available": None,
+            })
+            self.assertNotIn("must-not-leak", json.dumps(capabilities.json()))
+            self.assertNotIn("balance_usd", json.dumps(capabilities.json()))
+            # Fresh GETs are cached reads and must not dispatch another capability process.
+            self.assertEqual((await client.get("/v1/capabilities", headers=auth)).status_code, 200)
+            self.assertEqual(len(scheduler.adapters.calls), 1)
 
             run = await client.post("/v1/commands", headers=auth, json={
                 "v": 1,
@@ -374,8 +408,131 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(run.status_code, 403)
             self.assertEqual(scheduler.enqueued, [])
             self.assertEqual(len(scheduler.adapters.calls), 1)
+            enable = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "project.enable_coding",
+                "expected_revision": self.store.revision,
+                "payload": {"project_id": self.project_id},
+            })
+            self.assertEqual(enable.status_code, 403)
+            self.assertEqual(self.store.get_project(self.project_id)["policy"], original_policy)
 
-    async def test_cached_capability_without_usd_signal_is_stale(self) -> None:
+    async def test_project_enable_coding_requires_running_host_and_replays_exactly(self) -> None:
+        original_policy = self._set_project_policy(["read_repo", "run_checks", "local_deliver"], custom="preserve")
+        scheduler = FakeScheduler()
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            command = {
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "system.codex.refresh",
+                "expected_revision": self.store.revision,
+                "payload": {},
+            }
+            refresh = await client.post("/v1/commands", headers=auth, json=command)
+            self.assertEqual(refresh.status_code, 202)
+            before = await client.get("/v1/snapshot", headers=auth)
+            self.assertEqual(before.status_code, 200)
+            project = next(item for item in before.json()["projects"] if item["id"] == self.project_id)
+            self.assertEqual(project["policy"], {"allowed_actions": original_policy["allowed_actions"]})
+
+            enable_command = {
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "project.enable_coding",
+                "expected_revision": self.store.revision,
+                "payload": {"project_id": self.project_id},
+            }
+            enabled = await client.post("/v1/commands", headers=auth, json=enable_command)
+            self.assertEqual(enabled.status_code, 202)
+            revision = self.store.revision
+            policy = self.store.get_project(self.project_id)["policy"]
+            self.assertEqual(policy, {
+                "allowed_actions": ["read_repo", "run_checks", "local_deliver", "propose_patch"],
+                "custom": "preserve",
+            })
+            after = await client.get("/v1/snapshot", headers=auth)
+            self.assertEqual(after.status_code, 200)
+            updated_project = next(item for item in after.json()["projects"] if item["id"] == self.project_id)
+            self.assertEqual(updated_project["policy"], {"allowed_actions": policy["allowed_actions"]})
+            replay = await client.post("/v1/commands", headers=auth, json=enable_command)
+            self.assertEqual(replay.status_code, 202)
+            self.assertEqual(replay.json(), enabled.json())
+            self.assertEqual(self.store.revision, revision)
+            self.assertEqual(self.store.get_project(self.project_id)["policy"], policy)
+            self.assertEqual(len(scheduler.adapters.calls), 1)
+            malformed = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "project.enable_coding",
+                "expected_revision": self.store.revision,
+                "payload": {"project_id": self.project_id, "allowed_actions": ["github_pr"]},
+            })
+            self.assertEqual(malformed.status_code, 400)
+            self.assertEqual(self.store.get_project(self.project_id)["policy"], policy)
+
+    async def test_project_enable_coding_requires_host_consent(self) -> None:
+        original_policy = self._set_project_policy(["read_repo", "run_checks"], custom="preserve")
+        self.config = replace(self.config, codex_consent=False)
+        self.store.config = self.config
+        scheduler = FakeScheduler()
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            refresh = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "system.codex.refresh",
+                "expected_revision": self.store.revision,
+                "payload": {},
+            })
+            self.assertEqual(refresh.status_code, 202)
+            enable = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "project.enable_coding",
+                "expected_revision": self.store.revision,
+                "payload": {"project_id": self.project_id},
+            })
+            self.assertEqual(enable.status_code, 403)
+            self.assertEqual(self.store.get_project(self.project_id)["policy"], original_policy)
+            self.assertEqual(len(scheduler.adapters.calls), 1)
+
+    async def test_project_enable_coding_is_denied_after_runtime_stop(self) -> None:
+        original_policy = self._set_project_policy(["read_repo", "run_checks"], custom="preserve")
+        scheduler = FakeScheduler()
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            refresh = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "system.codex.refresh",
+                "expected_revision": self.store.revision,
+                "payload": {},
+            })
+            self.assertEqual(refresh.status_code, 202)
+            stopped = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "system.stop",
+                "expected_revision": self.store.revision,
+                "payload": {},
+            })
+            self.assertEqual(stopped.status_code, 202)
+            enable = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "project.enable_coding",
+                "expected_revision": self.store.revision,
+                "payload": {"project_id": self.project_id},
+            })
+            self.assertEqual(enable.status_code, 403)
+            self.assertEqual(self.store.get_project(self.project_id)["policy"], original_policy)
+
+    async def test_cached_capability_without_usd_signal_keeps_catalog_verified_but_blocks_execution(self) -> None:
         capability = {key: value for key, value in CAPABILITY.items() if key != "usd_cost_enforced"}
         self.store.record_codex_readiness(
             str(uuid4()),
@@ -385,11 +542,21 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             refreshed_at=utc_now(),
         )
         self.assertFalse(codex_readiness_is_fresh(self.config, self.store.get_codex_readiness()))
+        self.assertTrue(codex_catalog_is_fresh(self.config, self.store.get_codex_readiness()))
         job_id = create_codex_job(self.store, self.project_id)
         scheduler = FakeScheduler()
         app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
             auth = {"Authorization": f"Bearer {TOKEN}"}
+            capabilities = await client.get("/v1/capabilities", headers=auth)
+            self.assertEqual(capabilities.status_code, 200)
+            self.assertTrue(capabilities.json()["worker_model"]["verified"])
+            self.assertTrue(capabilities.json()["codex"]["catalog_verified"])
+            self.assertEqual(capabilities.json()["codex"]["state"], "available")
+            self.assertIsNotNone(capabilities.json()["codex"]["refreshed_at"])
+            self.assertFalse(capabilities.json()["codex"]["usd_cost_enforced"])
+            self.assertFalse(capabilities.json()["features"]["coding"])
+            self.assertEqual(scheduler.adapters.calls, [])
             run = await client.post("/v1/commands", headers=auth, json={
                 "v": 1,
                 "command_id": str(uuid4()),
@@ -409,6 +576,7 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             capability=CAPABILITY,
             refreshed_at="2026-10-14T05:00:00",
         )
+        self.assertFalse(codex_catalog_is_fresh(self.config, self.store.get_codex_readiness()))
         job_id = create_codex_job(self.store, self.project_id)
         scheduler = FakeScheduler()
         app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
@@ -418,6 +586,9 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(capabilities.status_code, 200)
             self.assertFalse(capabilities.json()["features"]["coding"])
             self.assertFalse(capabilities.json()["worker_model"]["verified"])
+            self.assertFalse(capabilities.json()["codex"]["catalog_verified"])
+            self.assertEqual(capabilities.json()["codex"]["state"], "unverified")
+            self.assertIsNone(capabilities.json()["codex"]["refreshed_at"])
             run = await client.post("/v1/commands", headers=auth, json={
                 "v": 1,
                 "command_id": str(uuid4()),

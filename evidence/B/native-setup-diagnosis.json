@@ -1,0 +1,106 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "native Codex setup and existing-daemon diagnosis",
+  "status": "blocked_no_existing_daemon_route_observed",
+  "scope": "Read-only installed CLI help, generated local schemas, official Codex documentation, and local Unix-socket/process metadata. No socket connections, native app-server initialization, provider turns, credential-content reads, auth changes, protected permission changes, or auth copies were made.",
+  "installed_cli": {
+    "version": "0.159.0-alpha.3",
+    "app_server_help": "codex app-server supports stdio, unix://, and unix://PATH listeners; --code-mode-host supplies an outbound remote Code Mode host.",
+    "proxy_help": "codex app-server proxy accepts --sock SOCKET_PATH and proxies stdio bytes to an already-running app-server control socket.",
+    "daemon_help": "Lists start, restart, stop, version, and bootstrap operations; none were invoked.",
+    "code_mode_host_is_existing_account_route": false
+  },
+  "initialize_schema": {
+    "source": "/tmp/sidequest-codex-schema/v1/InitializeResponse.json",
+    "required_fields": ["codexHome", "platformFamily", "platformOs", "userAgent"],
+    "serverInfo_present": false,
+    "client_capabilities": {
+      "source": "/tmp/sidequest-codex-schema/v1/InitializeParams.json",
+      "experimentalApi_default": false,
+      "required_for_thread_goal_methods": false,
+      "basis": "Installed ClientRequest entries for thread/goal/set and thread/goal/get have no experimental annotation. Official App Server API overview lists them as regular goal methods; it explicitly labels other gated APIs and fields as experimental. B does not send experimentalApi or any experimental field."
+    },
+    "source_filter_impact": "B now validates the four installed response fields and absolute codexHome path; it does not inspect, store, or return codexHome."
+  },
+  "runtime_state_diagnosis": {
+    "prior_native_attempt": "Recorded in evidence/B/B2-readiness.json: stdio startup failed before initialize response with EROFS while attempting CODEX_HOME/tmp/arg0, uid_map and CODEX_HOME/installation_id writes.",
+    "prior_overrides": {
+      "sqlite_home": "A host-selected directory under /tmp; exact value was not retained in B evidence.",
+      "log_dir": "A host-selected directory under /tmp; exact value was not retained in B evidence.",
+      "result": "Both SQLite runtime state and logs were redirected; the unrelated CODEX_HOME writes still failed."
+    },
+    "documented_settings": {
+      "sqlite_home": "Directory for SQLite-backed runtime DB and resumable runtime state; it does not relocate other CODEX_HOME runtime files.",
+      "log_dir": "Directory for local logs; explicit setting also enables opt-in plaintext TUI logging."
+    },
+    "ordinary_config_fix": "No documented CLI/config setting was found for the observed path-alias, uid_map, or installation_id writes. A temp CODEX_HOME would not retain the existing authenticated state by itself."
+  },
+  "existing_daemon_route": {
+    "supported_if_present": "The installed proxy supports --sock SOCKET_PATH; official app-server docs describe Unix transport through the default control socket or a custom Unix socket path.",
+    "local_metadata_checks": [
+      "Filesystem Unix-socket search under /home, /run/codex-environment and /tmp found no Codex app-server socket.",
+      "ss -xlpn and /proc/net/unix showed no Codex app-server control socket; visible sockets were container/runtime services.",
+      "The expected <CODEX_HOME>/app-server-control/app-server-control.sock path was absent.",
+      "The Codex-named process identified by command metadata was the cloud exec-server, not an app-server daemon."
+    ],
+    "route_observed": false,
+    "conclusion": "There is no discoverable already-authenticated app-server daemon socket in this environment to pass to codex app-server proxy. --code-mode-host is a Code Mode host setting, not a route to a local logged-in daemon. No route was tested by connecting."
+  },
+  "subscription_quota": {
+    "read_method": "account/rateLimits/read, only after account/read(refreshToken:false) verifies type chatgpt",
+    "parameters": {},
+    "output": {
+      "ordinary_usage_allowed": "strict boolean from response.ordinaryUsageAllowed, otherwise null",
+      "purchased_credits_available": "strict boolean from response.rateLimits.credits.hasCredits, otherwise null"
+    },
+    "omitted_from_output": ["account IDs", "email", "credit balances", "rate-limit percentages", "reset times", "reset-credit details"],
+    "spend_limit_effect": "None. These ChatGPT quota signals do not provide an independently verified USD cost ceiling; usd_cost_enforced remains false and production agent.execute remains rejected before provider startup.",
+    "schema": "/tmp/sidequest-codex-schema/v2/GetAccountRateLimitsResponse.json"
+  },
+  "validation": {
+    "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+    "result": "PASS: 42 tests.",
+    "compile": "PASS: python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+    "help": "PASS: python3 -m services.tools.main --help",
+    "diff_check": "PASS",
+    "covers": [
+      "installed InitializeResponse fields and malformed initialization responses",
+      "marker-free replies, explicit wrong JSON-RPC marker, and boolean response ID rejection",
+      "true/false/missing or wrong-type quota values with no private account/balance output",
+      "quota read only for verified ChatGPT accounts and no thread/turn/auth-refresh calls"
+    ],
+    "native_attempt": false
+  },
+  "official_sources": [
+    {
+      "title": "Codex App Server",
+      "url": "https://learn.chatgpt.com/docs/app-server",
+      "sections": ["Unix socket transport", "Experimental API opt-in", "Manage a thread goal", "Rate limits (ChatGPT)"],
+      "claims": [
+        "Unix transport can use the default app-server control socket or a custom Unix socket path.",
+        "--code-mode-host controls the outbound Code Mode host and does not change app-server's listener transport.",
+        "thread/goal/set and thread/goal/get are listed as goal APIs; other experimental fields/methods are explicitly marked as gated.",
+        "account/rateLimits/read fetches ChatGPT rate limits; usedPercent and resetsAt describe quota windows, and credits are separate workspace-credit details."
+      ]
+    },
+    {
+      "title": "Codex Configuration Reference",
+      "url": "https://learn.chatgpt.com/docs/config-file/config-reference",
+      "claims": [
+        "sqlite_home stores the SQLite-backed runtime DB used by agent jobs and resumable runtime state.",
+        "log_dir selects local log output and does not relocate other CODEX_HOME state."
+      ]
+    },
+    {
+      "title": "Codex Configuration Basics",
+      "url": "https://learn.chatgpt.com/docs/config-file/config-basic",
+      "claims": ["Codex uses user-level configuration and CLI/config overrides; project config is separate and does not turn a temporary CODEX_HOME into an authenticated host state directory."]
+    }
+  ],
+  "remaining_blockers": [
+    "Native initialization, live catalog/account/quota read, and any provider turn remain unverified; the prior EROFS failure was not retried.",
+    "A host-provided writable runtime mount preserving the existing CODEX_HOME authentication state or an already-running host-owned daemon socket is required before a native readiness probe can proceed.",
+    "Subscription quota signals do not enforce max_cost_usd; no provider execution is permitted under the existing hard-dollar contract."
+  ]
+}

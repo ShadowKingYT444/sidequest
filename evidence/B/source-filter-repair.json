@@ -12,7 +12,7 @@
   "validation": {
     "targeted_regression": "PASS: a synthetic unquoted plaintext secret assignment in src/settings.conf is rejected; a config interpolation reference is accepted.",
     "suite_command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
-    "suite_result": "PASS: 41 tests.",
+    "suite_result": "PASS: 42 tests.",
     "compile_command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
     "compile_result": "PASS",
     "help_command": "python3 -m services.tools.main --help",

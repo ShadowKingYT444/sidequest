@@ -4,6 +4,7 @@ const { app, BrowserWindow, ipcMain, protocol, session } = require('electron');
 const path = require('node:path');
 const { createGitReader } = require('./git-reader.cjs');
 const { createRuntimeClient, dispatchRuntime } = require('./runtime-client.cjs');
+const {discoverProviders}=require('./provider-discovery.cjs');
 const { createStaticAssetHandler } = require('./static-server.cjs');
 const {
   isTrustedIpcSender,
@@ -70,6 +71,8 @@ function assertTrustedSender(event) {
 }
 
 function registerIpc() {
+  ipcMain.removeHandler('sidequest:providers');
+  ipcMain.handle('sidequest:providers',async(event,...args)=>{assertTrustedSender(event);if(args.length)throw new Error('Invalid provider discovery request.');return discoverProviders();});
   ipcMain.removeHandler('sidequest:snapshot');
   ipcMain.removeHandler('sidequest:diff');
   ipcMain.removeHandler('sidequest:runtime');

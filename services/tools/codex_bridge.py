@@ -524,9 +524,11 @@ class AppServer:
             {"clientInfo": {"name": "sidequest-b-adapter", "version": "1"}},
             timeout,
         )
-        server_info = result.get("serverInfo")
-        if not isinstance(server_info, dict):
-            raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server did not return server capabilities.")
+        required_fields = ("codexHome", "platformFamily", "platformOs", "userAgent")
+        if any(not isinstance(result.get(field), str) for field in required_fields):
+            raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned an invalid initialization response.")
+        if not Path(result["codexHome"]).is_absolute():
+            raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned an invalid initialization response.")
         self.notify("initialized")
 
     def read_catalog_and_account(self, timeout: float) -> tuple[dict[str, dict[str, Any]], str]:
@@ -568,6 +570,22 @@ class AppServer:
         account = account_result.get("account")
         account_type = account.get("type") if isinstance(account, dict) and account.get("type") == "chatgpt" else "unknown"
         return catalog, account_type
+
+    def read_subscription_quota(self, timeout: float) -> dict[str, bool | None]:
+        """Return only strict ChatGPT subscription/quota booleans.
+
+        This is a read-only account/rateLimits/read call. Do not expose account
+        IDs, balance strings, or derived claims about dollar spend enforcement.
+        """
+        result = self.request("account/rateLimits/read", {}, min(timeout, 15.0))
+        ordinary_usage = result.get("ordinaryUsageAllowed")
+        rate_limits = result.get("rateLimits")
+        credits = rate_limits.get("credits") if isinstance(rate_limits, dict) else None
+        has_credits = credits.get("hasCredits") if isinstance(credits, dict) else None
+        return {
+            "ordinary_usage_allowed": ordinary_usage if type(ordinary_usage) is bool else None,
+            "purchased_credits_available": has_credits if type(has_credits) is bool else None,
+        }
 
     def verify_account_and_catalog(self, model_id: str, effort: str, timeout: float) -> dict[str, Any]:
         catalog, account_type = self.read_catalog_and_account(timeout)
@@ -881,6 +899,10 @@ def probe_capabilities(settings: Settings, progress: ProgressLog) -> dict[str, A
         "effort": {"id": effort, "verified": False},
         "account_type": "unknown",
         "usd_cost_enforced": False,
+        "subscription_quota": {
+            "ordinary_usage_allowed": None,
+            "purchased_credits_available": None,
+        },
         "reason": None,
     }
     if not settings.codex_enabled:
@@ -899,6 +921,13 @@ def probe_capabilities(settings: Settings, progress: ProgressLog) -> dict[str, A
         app.initialize(15.0)
         catalog, account_type = app.read_catalog_and_account(30.0)
         result["account_type"] = account_type
+        if account_type == "chatgpt":
+            try:
+                result["subscription_quota"] = app.read_subscription_quota(15.0)
+            except AppServerFailure:
+                # Quota telemetry is optional readiness context. Keep unknown
+                # as null and do not change the independent USD spending gate.
+                pass
         model = catalog.get(model_id)
         result["model"]["verified"] = model is not None
         result["effort"]["verified"] = bool(model is not None and effort in model["efforts"])

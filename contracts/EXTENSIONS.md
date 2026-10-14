@@ -88,3 +88,14 @@ The frozen file-manifest artifact is JSON `{v:1,candidate,files:[FileEntry]}`. E
 Privileged `repo.deliver` uses context.delivery_id and context.action_id; they must match in this release. The existing payload.approval carries identity metadata only. Context additionally supplies `approval_record:{id,sha256,staged_path}` for a host-staged approved record outside the worker workspace and under a configured host-owned approval root. B verifies regular-file containment, digest, approved state, exact source/candidate/tree/patch/action/destination and matching ID against that record. An arbitrary payload approval cannot grant permission. Manifest/patch artifacts resolve only through hash-checked context.artifact_inputs. Persist intent before action and reconcile repeated or uncertain IDs; do not blindly retry an external write.
 
 These additive encodings resolve previously unspecified implementation placement. They do not grant a new action, change wire v1, weaken required checks or authorize a demonstration provider/delivery call.
+
+
+## Visual MVP additions — 2026-10-14
+
+Provider discovery is a separate fixed read-only host capability. It reports executable presence/path, scan time and home environment locators for six fixed providers. It never executes binaries or reads config/auth/session files. Account, numeric usage, reset times, token/model/cost analytics remain unknown. The tank represents fraction **used**, never remaining.
+
+Cached capabilities separate `codex.catalog_verified` and `worker_model.verified` from full execution readiness. `codex.subscription_quota` contains only nullable `ordinary_usage_allowed` and `purchased_credits_available` booleans; it is absent/unverified without a successful native account/rate-limit read. Those fields do not prove an enforceable dollar ceiling. `codex.host_enabled` is explicit. `features.coding`/`codex_session` still require every execution gate and `usd_cost_enforced=true`.
+
+Projects expose the allowlisted policy action list. Fixed `project.enable_coding` accepts only `project_id`, uses revision/idempotency and checks current execution readiness, consent and stopped state before adding `propose_patch`. No readiness or status read grants this policy. Renderer methods are fixed validated `refreshReadiness`, `enableCoding`, `submitCoding`, `runCoding`; the existing local inspection path stays separate.
+
+Computer result displays store only a station/job/project association locally. They validate assignment against known stations and resolve the actual job/project identity before displaying immutable artifacts. This is read-only display routing, not live worker ownership or model dispatch.

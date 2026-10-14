@@ -1,0 +1,35 @@
+{
+  "captured_at": "2026-10-14T05:28:11.415Z",
+  "scope": "Read-only actual persisted local inspection plus explicitly test-only response/visibility fault injection. No mutations, launches, model/provider calls or native claims.",
+  "checks": [
+    "Actual persisted worker/task/attempt/state/timestamps, unknown token values and $0 local inspection displayed",
+    "Completed run makes no background run/event polling",
+    "Run activity contained at 1440px with zero scoped WCAG A/AA violations",
+    "Run activity contained at 390px with zero scoped WCAG A/AA violations",
+    "Disconnected event read preserves labeled last known run and recovers",
+    "Cross-job run response rejected before display",
+    "Hostile log text remains literal and creates no DOM script/image",
+    "Explicit 200-event page boundary, More and Previous use exact sequence cursors",
+    "Late completed-run response cannot populate newly selected queued job"
+  ],
+  "fixtures": [
+    "HTTP 503 runEvents response",
+    "runInfo wrong job_id/worker_id response",
+    "Hostile literal event message response",
+    "Two explicitly labeled pagination response pages (200 + 1), no persisted events changed",
+    "1200ms delayed runInfo response while switching actual jobs"
+  ],
+  "errors": [],
+  "actual": {
+    "job_id": "345f1960-5654-4d3f-a548-34ac3451ee9b",
+    "run_id": "a0995f83-cbbb-4bc6-80e7-585a3f18e0d6",
+    "task_id": "f3c77538-d541-4831-96c2-32131876792a",
+    "worker_id": "316ba303-4fbd-4a1b-ba4c-7dc080e8a478",
+    "state": "completed",
+    "event_count": 9,
+    "cost_usd": 0,
+    "model": null
+  },
+  "status": "FAIL",
+  "failure": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Local jobs board' }).getByRole('region', { name: 'Run activity' }).getByRole('button', { name: 'Refresh', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"button\" class=\"run-activity-refresh\">Refresh</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    57 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n"
+}

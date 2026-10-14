@@ -39,7 +39,7 @@ Expected: the deliberately bad signup fixture fails `SIGNUP_DESTINATION_MISMATCH
 
 ## Viewer interaction and accessibility evaluation
 
-The configured repository must contain at least one meaningful committed text change between its base and HEAD:
+The configured repository must contain a long committed text change (over 120 added lines so scroll restoration is meaningfully tested) between its base and HEAD:
 
 ```sh
 cd desktop
@@ -47,7 +47,7 @@ SIDEQUEST_REPO=/absolute/path/to/repository SIDEQUEST_BASE=HEAD~1 \
 CHROMIUM_PATH=/usr/bin/chromium CI=1 npm run test:browser
 ```
 
-Expected: six viewer tests pass; the live inspection test skips unless explicitly enabled below. The suite reads genuine local committed Git data, verifies one lazy editor, Expand/Escape selection and scroll retention, hostile text, origin restrictions, reduced motion, responsive layouts and automated accessibility checks. Real screenshots go to `evidence/desktop/`. It does not establish actual office rendering or native Electron acceptance.
+Expected: six viewer tests pass; settings tests are undergoing the T3 Code redesign; the live inspection test skips unless explicitly enabled below. The suite reads genuine local committed Git data, verifies one lazy editor, Expand/Escape selection and scroll retention, hostile text, origin restrictions, reduced motion, responsive layouts and automated accessibility checks. Real screenshots go to `evidence/desktop/`. Original assets are mandatory for office acceptance. The rejected temporary office has been removed from the default experience; its prior captures are historical only. Settings visual acceptance must use the revised T3 Code view, not the rejected warm version.
 
 ## Native Electron smoke evaluation
 
@@ -91,6 +91,6 @@ SIDEQUEST_TEST_INSPECTION=1 CHROMIUM_PATH=/usr/bin/chromium CI=1 \
 npm run test:browser -- tests/browser/jobs-live.spec.ts
 ```
 
-Expected: one test passes. It explicitly registers the configured repository, submits an inspection, clicks Run, reads real frozen files and the identity-check report, verifies zero inference calls in that report, checks cached readiness refresh, reflows at 960/390px, and returns with Escape while preserving artifact selection. It writes `evidence/desktop/job-*.png`, `job-browser.json` and `job-accessibility.json`. The inspection clones the registered revision unchanged, so its candidate diff is empty; the separate viewer suite proves a nonempty committed Git diff. The backend retains `verifying` because delivery/acceptance is disabled; the UI separately reports ready results after completed tasks and passed checks. Stop terminal 1 with Ctrl-C when finished.
+Expected: two tests pass. It explicitly registers the configured repository, submits an inspection, clicks Run, reads real frozen files and the identity-check report, verifies zero inference calls in that report, checks cached readiness refresh, reflows at 960/390px, and returns with Escape while preserving artifact selection. A second test checks repeated submissions, clearing stale notices, controlled read disconnection/recovery, read-only result assignment and Expand/Escape view continuity. Its extra submitted inspection remains queued and makes no model call. The tests write `evidence/desktop/job-*.png`, `job-browser.json` and `job-accessibility.json`. The inspection clones the registered revision unchanged, so its candidate diff is empty; the separate viewer suite proves a nonempty committed Git diff. The backend retains `verifying` because delivery/acceptance is disabled; the UI separately reports ready results after completed tasks and passed checks. Stop terminal 1 with Ctrl-C when finished.
 
 Codex lifecycle tests use a fake app-server process only. Native startup in this VM is blocked before initialization by read-only protected runtime state, and the installed protocol has no verified enforceable USD ceiling. Native execution is denied before thread/turn creation. These tests establish neither a live agent run nor subscription/model readiness. Follow [MVP_ACCEPTANCE.md](MVP_ACCEPTANCE.md) for the acceptance limits.

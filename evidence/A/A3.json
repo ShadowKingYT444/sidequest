@@ -2,11 +2,13 @@
   "v": 1,
   "lane": "A",
   "goal": "A3 authenticated Codex session lifecycle integration",
-  "status": "ready_for_fresh_review_after_repair_attempt_2_native_spend_gate_blocked",
+  "status": "ready_for_fresh_review_catalog_and_execution_readiness_split",
   "scope": "A-owned runtime integration only; no live provider turn, delivery, workshop, or capture",
   "implementation": [
     "Host configuration is disabled by default and requires explicit Codex enablement, consent, executable, model, effort, time/token bounds, and a separate state directory.",
     "The authenticated system.codex.refresh command is the only path that invokes agent.capabilities. It caches sanitized readiness for ten minutes against a host configuration fingerprint; ordinary status/capability reads launch no provider process.",
+    "Fresh host-configured model/effort catalog verification is reported separately from execution readiness. Catalog status requires a fresh timezone-aware record, matching configuration fingerprint, matching verified model and effort, and a ChatGPT account; coding and job.run still require usd_cost_enforced:true, host consent, policy, and positive reservation.",
+    "The snapshot publishes host_enabled and each project's known action grants. The explicit project.enable_coding command adds only propose_patch under fresh full readiness, consent, and non-stopped runtime gates; replay is idempotent and existing policy fields are preserved.",
     "Dispatch additionally requires the provider's explicit usd_cost_enforced:true capability. Absent or false is sanitized to unavailable, so native Codex currently cannot dispatch even if model, effort, account, consent, policy, and reservation checks pass.",
     "Only a canonical stored typed-source build profile with read_repo/propose_patch/run_checks, candidate.frozen_identity, a bounded write scope, verified USD ceiling, and positive budget can dispatch. Public execution_profile is host-derived. job.resume requires fresh readiness, current source identity, uncertain positive reservation, and the same persisted provider thread.",
     "Typed thread/turn progress is request-bound, sequence-checked, bounded, persisted before a generic public event, and never exposes provider IDs to renderer-facing events. Startup interruption becomes ambiguous; no automatic retry creates a replacement turn.",
@@ -19,15 +21,15 @@
       {
         "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
         "exit_code": 0,
-        "tests_run": 39,
-        "passed": 39,
+        "tests_run": 42,
+        "passed": 42,
         "failed": 0
       },
       {
         "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
         "exit_code": 0,
-        "tests_run": 40,
-        "passed": 40,
+        "tests_run": 42,
+        "passed": 42,
         "failed": 0
       },
       {
@@ -53,7 +55,8 @@
     ],
     "runtime_test_coverage": [
       "explicit cached capability refresh and zero status dispatch",
-      "a native capability lacking USD ceiling enforcement is unavailable and cannot enqueue; timezone-less readiness is stale without HTTP 500",
+      "a native capability lacking USD ceiling enforcement can retain fresh catalog status but cannot enqueue; quota output preserves only two boolean/null indicators; status GETs do not re-dispatch; timezone-less readiness is stale without HTTP 500",
+      "coding permission requires fresh full readiness, host consent, and a running host; exact payload, only-propose_patch mutation, preservation, known snapshot grants, and idempotent replay",
       "verified readiness/consent run gate",
       "session persistence, generic public events, exact bounded provider-ID contract",
       "restart ambiguity and explicit same-attempt/thread resume without a second reservation",
@@ -61,7 +64,7 @@
       "fake-only end-to-end scheduler candidate and frozen-identity path with unknown USD cost",
       "A2 API, paging, auth, storage, policy, concurrency, process-group cleanup, and disposable B/D fixture pipeline"
     ],
-    "tools_test_coverage": "40 tests passed after B added explicit false capability and rejection of public agent.execute before app-server startup when USD cost enforcement is unknown."
+    "tools_test_coverage": "42 tests passed after B added strict nullable subscription quota indicators, explicit false capability, and rejection of public agent.execute before app-server startup when USD cost enforcement is unknown."
   },
   "readiness": {
     "native_app_server": "blocked before initialize response by read-only Codex state under host CODEX_HOME; B reports usd_cost_enforced:false and rejects agent.execute before thread/turn",

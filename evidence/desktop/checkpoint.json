@@ -1,0 +1,46 @@
+{
+  "recorded_at": "2026-10-14T05:30:45.285473+00:00",
+  "status": "progress_checkpoint; original assets and native acceptance pending; revised T3 settings QA pending",
+  "branch": "feat/electron-office-diff",
+  "base_checkpoint": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+  "latest_direction": "Owner rejected temporary office and warm settings at05:17UTC. Original assets mandatory. New deadline10:00UTC. Default generatedoffice removed. T3 source pinned and MIT preserved.",
+  "tests": {
+    "runtime": {
+      "passed": 42,
+      "scope": "latest A capabilities/policy code; deterministic tests"
+    },
+    "tools": {
+      "passed": 42,
+      "scope": "latest B schemas/quota code; fake app-server only"
+    },
+    "desktop": {
+      "passed": 27,
+      "scope": "component/security/asset tests before final UI/checkpoint"
+    },
+    "viewer_browser": {
+      "passed": 6,
+      "scope": "current original-asset pending default; real Git; no native acceptance"
+    },
+    "job_browser": "current rerun failed/pending; prior genuine local inspection+display/status regressions passed before new run activity/global palette",
+    "settings_browser": "revised T3 view QA pending",
+    "run_activity_one_off": "real readonly metadata and several fault probes passed; final hidden/resume probe failed, pending investigation"
+  },
+  "rejected_visual_evidence": [
+    "office-temporary.png",
+    "office-desk.png",
+    "office-expanded.png",
+    "provider-settings.png"
+  ],
+  "blocked": {
+    "original_asset": "old VM denied exact asset host CONNECT403. User republished saved config; parent started separate fresh-environmentassetowner, no oldVM retry.",
+    "electron": "host OS sandbox unavailable; no workaround",
+    "codex": "protected native state EROFS before initialize; USD enforcement gate kept; no native turn"
+  },
+  "ownership": {
+    "ui": "root App/OfficeScene/JobsBoard/types/bridge/globalstyles",
+    "settings": "t3_settings_ui frozen ProviderSettings.tsx/CSS",
+    "activity": "run_activity_ui frozen RunActivity.tsx/CSS; hidden-resume probe pending",
+    "asset_import_owner": "fresh separate environment branch; desktop/public/office/ runtime GLB/resources/bindings + dedicated evidence/desktop/original-office/; no App/settings/backend edits"
+  },
+  "next": "Finalize revised settings QA/capture, restore hidden activity refresh if bug, reconcile actual art bundle through root; push only featurebranch,no merge/deploy"
+}

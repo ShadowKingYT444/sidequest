@@ -11,5 +11,7 @@
   "direct_transfer": "Temporary failure in name resolution",
   "archive_bytes_obtained": 0,
   "actual_glb_verified": false,
-  "original_assets_changed": false
+  "original_assets_changed": false,
+  "exact_denied_hostname": "sdmntprcentralus.oaiusercontent.com",
+  "setup_status": "Parent requested smallest supported saved-environment Additional allowed domains update and republish; pending user configuration. No denied transfer retry before update."
 }

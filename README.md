@@ -1,6 +1,6 @@
 # Sidequest — Electron presentation work
 
-Start the current Electron + React + TypeScript client with [desktop/README.md](desktop/README.md). It replaces the Unity presentation decision and provides a read-only local Git diff viewer with lazy Monaco, expandable reading and Escape/state restoration. The office loader expects the owner’s actual GLB and explicit monitor bindings; no replacement art is generated.
+Start the current Electron + React + TypeScript client with [desktop/README.md](desktop/README.md). It replaces the Unity presentation decision and provides a read-only local Git diff viewer with lazy Monaco, expandable reading and Escape/state restoration. The office loader expects the owner’s actual GLB and explicit monitor bindings; original assets are required. The owner rejected the temporary office/settings at 05:17 UTC; rejected work is archived and excluded from the default experience.
 
 The specified Python/SQLite runtime, scheduling, policy, authenticated artifact API, isolated Git pipeline and trusted checks are implemented. The jobs board completed a genuine local inspection through the browser, runtime and adapters with zero model calls and no source delivery. The Codex app-server adapter and persisted session lifecycle are implemented and tested with a fake transport; native coding execution remains blocked. Browser evidence does not certify Electron or actual office compatibility. See [run/eval instructions](docs/RUN_EVALS.md), [acceptance limits](docs/MVP_ACCEPTANCE.md) and [screenshots/provenance](evidence/desktop/README.md).
 
@@ -10,7 +10,7 @@ The development-controller instructions below are retained for operator context.
 
 A calm office for real agent swarms, with Electron presentation. Inspect artifacts and diffs directly on a selected computer. Use existing coding agents; do not build another agent framework.
 
-The owner's completed Blender/GLB office assets are protected inputs. Their archive has been located but the VM transfer is blocked; the checkout contains no actual office art. Do not regenerate the office. Native Electron and Codex readiness are also blocked as recorded in the acceptance evidence.
+The owner's completed Blender/GLB office assets are protected inputs. Their archive has been located but the VM transfer is blocked; the checkout contains no actual office art. Preserve the originals; the default shows an explicit original-assets-pending state. Native Electron and Codex readiness are also blocked as recorded in the acceptance evidence.
 
 Start at [START HERE](docs/START_HERE.md). Read [SPEC](SPEC.md) for scope or [ARCHITECTURE](docs/ARCHITECTURE.md) for the fixed stack. Workers read only their assigned goal and its relevant documents, not the entire research archive.
 

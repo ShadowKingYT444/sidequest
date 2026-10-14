@@ -5,6 +5,7 @@ import path from 'node:path';
 const require = createRequire(import.meta.url);
 const { createGitReader } = require('./electron/git-reader.cjs');
 const { createRuntimeClient, dispatchRuntime } = require('./electron/runtime-client.cjs');
+const {discoverProviders}=require('./electron/provider-discovery.cjs');
 const desktopRoot = path.dirname(new URL(import.meta.url).pathname);
 function localReads(): Plugin {
   return {
@@ -36,6 +37,7 @@ function localReads(): Plugin {
           const url = request.url ?? '';
           let data: unknown;
           if (url === '/snapshot') data = await reader.snapshot();
+          else if(url==='/providers')data=await discoverProviders();
           else if (/^\/diff\/f_[a-f0-9]{32}$/.test(url)) data = await reader.diff(url.slice(6));
           else { response.statusCode = 404; response.end(JSON.stringify({ error: 'Unknown read.' })); return; }
           response.end(JSON.stringify(data));

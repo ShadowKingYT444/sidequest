@@ -25,10 +25,11 @@ from .artifacts import ArtifactStore, text_preview
 from .config import (
     RuntimeConfig,
     codex_configuration_fingerprint,
+    codex_catalog_is_fresh,
     codex_execution_enabled,
-    codex_readiness_is_fresh,
 )
 from .models import (
+    ALLOWED_ACTIONS,
     CommandRequest,
     JobCreate,
     ProjectRegistration,
@@ -147,23 +148,44 @@ def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[st
         or not isinstance(model.get("verified"), bool)
         or not isinstance(effort.get("verified"), bool)
         or data.get("account_type") not in {"chatgpt", "unknown"}
-        or not isinstance(data.get("usd_cost_enforced"), bool)
+        or ("usd_cost_enforced" in data and not isinstance(data.get("usd_cost_enforced"), bool))
         or reason is not None and not isinstance(reason, str)
     ):
         return unavailable
     clean_reason = _safe_message(reason)[:256] if isinstance(reason, str) else None
-    matched = (
+    usd_cost_enforced = data.get("usd_cost_enforced") is True
+    catalog_matched = (
         model.get("id") == config.codex_model
         and effort.get("id") == config.codex_effort
         and model.get("verified") is True
         and effort.get("verified") is True
         and data.get("account_type") == "chatgpt"
-        and data.get("usd_cost_enforced") is True
-        and data.get("state") == "available"
-        and clean_reason is None
     )
-    if not matched:
-        return {
+    if catalog_matched:
+        execution_state_available = (
+            data.get("state") == "available"
+            and usd_cost_enforced
+            and clean_reason is None
+        )
+        if clean_reason is not None:
+            normalized_reason = clean_reason
+        elif not usd_cost_enforced:
+            normalized_reason = "The provider cannot enforce a verified USD cost ceiling."
+        elif not execution_state_available:
+            normalized_reason = "The provider reported Codex as unavailable."
+        else:
+            normalized_reason = None
+        normalized = {
+            "state": "available" if execution_state_available else "unavailable",
+            "provider": "codex-app-server",
+            "model": {"id": config.codex_model, "verified": True},
+            "effort": {"id": config.codex_effort, "verified": True},
+            "account_type": "chatgpt",
+            "usd_cost_enforced": usd_cost_enforced,
+            "reason": normalized_reason,
+        }
+    else:
+        normalized = {
             "state": "unavailable",
             "provider": "codex-app-server",
             "model": {
@@ -175,21 +197,22 @@ def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[st
                 "verified": effort.get("verified") is True and effort.get("id") == config.codex_effort,
             },
             "account_type": data.get("account_type"),
-            "usd_cost_enforced": data.get("usd_cost_enforced") is True,
-            "reason": clean_reason or (
-                "The provider cannot enforce a verified USD cost ceiling."
-                if data.get("usd_cost_enforced") is not True
-                else "The host-configured model and effort were not fully verified."
-            ),
+            "usd_cost_enforced": usd_cost_enforced,
+            "reason": clean_reason or "The host-configured model, effort, and account were not fully verified.",
         }
+    quota = _safe_subscription_quota(data.get("subscription_quota"))
+    if quota is not None:
+        normalized["subscription_quota"] = quota
+    return normalized
+
+
+def _safe_subscription_quota(value: Any) -> dict[str, bool | None] | None:
+    """Retain only the two documented quota indicators; discard all other fields."""
+    if not isinstance(value, dict):
+        return None
     return {
-        "state": "available",
-        "provider": "codex-app-server",
-        "model": {"id": config.codex_model, "verified": True},
-        "effort": {"id": config.codex_effort, "verified": True},
-        "account_type": "chatgpt",
-        "usd_cost_enforced": True,
-        "reason": None,
+        key: value.get(key) if isinstance(value.get(key), bool) or value.get(key) is None else None
+        for key in ("ordinary_usage_allowed", "purchased_credits_available")
     }
 
 
@@ -579,7 +602,7 @@ def create_app(
                 continue
         local_enabled = bool(roots and config.b_argv and config.d_argv)
         readiness = runtime_store.get_codex_readiness()
-        readiness_fresh = codex_readiness_is_fresh(config, readiness)
+        catalog_fresh = codex_catalog_is_fresh(config, readiness)
         codex_ready = codex_execution_enabled(config, readiness)
         cached_capability = readiness.get("capability") if isinstance(readiness, dict) else None
         cached_capability = cached_capability if isinstance(cached_capability, dict) else {}
@@ -588,16 +611,40 @@ def create_app(
         reasons = []
         if not config.codex_enabled:
             reasons.append("Codex execution is disabled by host settings.")
-        elif not readiness_fresh:
-            reasons.append("Codex model readiness is not verified or has expired; use the explicit host readiness refresh command.")
+        elif not catalog_fresh:
+            reasons.append("Codex model and effort catalog is not verified or has expired; use the explicit host readiness refresh command.")
+        elif cached_capability.get("usd_cost_enforced") is not True and not isinstance(cached_capability.get("reason"), str):
+            reasons.append("Provider USD ceiling support is not verified; Codex task execution is disabled.")
         elif not config.codex_consent:
             reasons.append("Host consent for Codex task execution has not been recorded.")
         elif not codex_ready:
             reasons.append("Codex task execution is unavailable.")
-        if cached_capability.get("state") == "unavailable" and isinstance(cached_capability.get("reason"), str):
-            reasons.append(_safe_message(cached_capability["reason"])[:256])
+        if catalog_fresh and isinstance(cached_capability.get("reason"), str):
+            safe_reason = _safe_message(cached_capability["reason"])[:256]
+            if safe_reason not in reasons:
+                reasons.append(safe_reason)
         if not local_enabled:
             reasons.append("Configure an allowed local Git root and both host adapters to enable read-only inspection.")
+        codex_public = {
+            "host_enabled": config.codex_enabled,
+            "catalog_verified": catalog_fresh,
+            "state": cached_capability.get("state") if catalog_fresh and cached_capability.get("state") in {"available", "unavailable"} else "unverified",
+            "provider": "codex-app-server",
+            "model": {"id": cached_model.get("id"), "verified": cached_model.get("verified") is True} if cached_model else {"id": config.codex_model, "verified": False},
+            "effort": {"id": cached_effort.get("id"), "verified": cached_effort.get("verified") is True} if cached_effort else {"id": config.codex_effort, "verified": False},
+            "account_type": cached_capability.get("account_type") if catalog_fresh else "unknown",
+            "usd_cost_enforced": cached_capability.get("usd_cost_enforced") is True if catalog_fresh else False,
+            "refreshed_at": readiness.get("refreshed_at") if catalog_fresh and isinstance(readiness, dict) else None,
+            "reason": _safe_message(cached_capability.get("reason", ""))[:256] if isinstance(cached_capability.get("reason"), str) else (
+                "The provider has not verified a USD cost ceiling."
+                if catalog_fresh and cached_capability.get("usd_cost_enforced") is not True
+                else None
+            ),
+        }
+        if catalog_fresh:
+            quota = _safe_subscription_quota(cached_capability.get("subscription_quota"))
+            if quota is not None:
+                codex_public["subscription_quota"] = quota
         return {
             "v": 1,
             "contract_revision": "1.1",
@@ -612,21 +659,12 @@ def create_app(
             "worker_model": {
                 "id": cached_model.get("id") if isinstance(cached_model.get("id"), str) else (config.codex_model if config.codex_enabled else "none"),
                 "effort": cached_effort.get("id") if isinstance(cached_effort.get("id"), str) else (config.codex_effort if config.codex_enabled else "unavailable"),
-                "verified": readiness_fresh,
+                "verified": catalog_fresh,
                 "coding_available": codex_ready,
             },
             "limits": {"max_parallel": config.max_parallel, "max_tasks_per_plan": config.max_tasks_per_plan},
             "reasons": reasons,
-            "codex": {
-                "state": cached_capability.get("state") if readiness_fresh else "unverified",
-                "provider": "codex-app-server",
-                "model": {"id": cached_model.get("id"), "verified": cached_model.get("verified") is True} if cached_model else {"id": config.codex_model, "verified": False},
-                "effort": {"id": cached_effort.get("id"), "verified": cached_effort.get("verified") is True} if cached_effort else {"id": config.codex_effort, "verified": False},
-                "account_type": cached_capability.get("account_type") if readiness_fresh else "unknown",
-                "usd_cost_enforced": cached_capability.get("usd_cost_enforced") is True if readiness_fresh else False,
-                "refreshed_at": readiness.get("refreshed_at") if readiness_fresh and isinstance(readiness, dict) else None,
-                "reason": _safe_message(cached_capability.get("reason", ""))[:256] if isinstance(cached_capability.get("reason"), str) else None,
-            },
+            "codex": codex_public,
         }
 
     @app.get("/v1/snapshot", dependencies=[Depends(authenticate)])
@@ -649,7 +687,18 @@ def create_app(
             "v": 1,
             "revision": runtime_store.revision,
             "mode": "local-git",
-            "projects": [{"id": item["id"], "name": item["name"], "base_revision": item["base_revision"], "status": item["status"]} for item in projects],
+            "projects": [{
+                "id": item["id"],
+                "name": item["name"],
+                "base_revision": item["base_revision"],
+                "status": item["status"],
+                "policy": {
+                    "allowed_actions": [
+                        action for action in item["policy"].get("allowed_actions", [])
+                        if isinstance(action, str) and action in ALLOWED_ACTIONS
+                    ] if isinstance(item.get("policy"), dict) else [],
+                },
+            } for item in projects],
             "jobs": [_job_public(runtime_store, item["id"], detail=False) for item in jobs],
             "workers": [
                 {"id": item["id"], "role": item["role"], "state": item["state"], "job_id": item["current_job_id"]}
@@ -968,6 +1017,10 @@ def create_app(
                 raise RuntimeFault(ErrorCode.INVALID_INPUT, "expected_revision is required for project registration")
             registration = ProjectRegistration.model_validate(payload)
             result = runtime_store.register_project(command.command_id, expected, registration)
+        elif command.type == "project.enable_coding":
+            if expected is None or set(payload) != {"project_id"}:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "project.enable_coding requires expected_revision and project_id")
+            result = runtime_store.enable_project_coding(command.command_id, expected, payload["project_id"])
         elif command.type == "project.select":
             if expected is None or set(payload) != {"project_id"}:
                 raise RuntimeFault(ErrorCode.INVALID_INPUT, "project.select requires expected_revision and project_id")

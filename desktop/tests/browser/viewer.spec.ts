@@ -18,7 +18,7 @@ test('real Git diff, lazy single editor, expanded state, Escape and keyboard', a
   await expect(page.getByRole('button', {name:'Inspect local Git diff'})).toBeEnabled();
   await page.screenshot({path:path.join(evidence,'setup-desktop.png')});
   await page.getByRole('button', {name:'Inspect local Git diff'}).click();
-  await page.getByRole('button', {name:new RegExp(source.path.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))}).click();
+  await page.locator(`.file-list button[data-file-id="${source.id}"]`).click();
   const editor = page.getByTestId('diff-editor');
   await expect(editor).toHaveCount(1);
   await expect(editor.locator('.view-lines').last()).toBeVisible();
@@ -27,7 +27,7 @@ test('real Git diff, lazy single editor, expanded state, Escape and keyboard', a
   await expect.poll(async () => Number(await editor.getAttribute('data-scroll-top'))).toBeGreaterThan(300);
   const before = Number(await editor.getAttribute('data-scroll-top'));
   await page.screenshot({path:path.join(evidence,'git-diff.png')});
-  await page.getByRole('button',{name:'Expand'}).click();
+  await page.getByRole('button',{name:'Expand',exact:true}).click();
   await expect(page.getByRole('dialog', {name:'Computer work viewer'})).toBeVisible();
   await expect(editor).toHaveCount(1);
   await expect.poll(async () => Number(await editor.getAttribute('data-scroll-top'))).toBeGreaterThan(Math.max(100,before-250));
@@ -50,7 +50,7 @@ for (const width of [960,390]) test(`viewer reflows at ${width}px with reduced m
   await page.setViewportSize({width,height:780});await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('/');await page.getByRole('button',{name:'Inspect local Git diff'}).click();
   await expect(page.getByTestId('diff-editor')).toHaveCount(1);
-  await page.getByRole('button',{name:'Expand'}).click();
+  await page.getByRole('button',{name:'Expand',exact:true}).click();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:path.join(evidence,`viewer-${width}.png`)});
   await page.keyboard.press('Escape');await expect(page.getByTestId('diff-editor')).toHaveCount(0);
@@ -60,7 +60,7 @@ for (const width of [960,390]) test(`viewer reflows at ${width}px with reduced m
 test('keyboard-accessible viewer has no automated WCAG A/AA violations',async({page})=>{
   await page.goto('/'); await page.getByRole('button',{name:'Inspect local Git diff'}).click();
   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
-  await page.getByRole('button',{name:'Expand'}).click();
+  await page.getByRole('button',{name:'Expand',exact:true}).click();
   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
   const code=page.getByRole('button',{name:/dev\/luna\.py/});
   if(await code.count()) {await code.click();await expect(page.getByTestId('diff-editor').locator('.view-lines').last()).toBeVisible();}

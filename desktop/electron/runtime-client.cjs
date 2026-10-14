@@ -41,9 +41,15 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
     const capabilities = await request('/v1/capabilities');
     if (capabilities.features?.local_git_inspection !== true) throw new Error('This runtime does not support the safe local inspection profile.');
   }
+  async function codingReady() {
+    const capabilities=await request('/v1/capabilities');
+    if(capabilities.features?.coding!==true||capabilities.features?.codex_session!==true||capabilities.worker_model?.verified!==true||capabilities.codex?.usd_cost_enforced!==true)throw new Error('Coding execution requires fresh host readiness, consent and an enforced USD ceiling.');
+  }
   return Object.freeze({
     snapshot:()=>request('/v1/snapshot'), capabilities:()=>request('/v1/capabilities'),
     job:id=>request(`/v1/jobs/${opaque(id)}`),
+    runInfo:id=>request(`/v1/runs/${opaque(id)}`),
+    runEvents:(id,afterSeq=0)=>{revision(afterSeq);return request(`/v1/runs/${opaque(id)}/events?after_seq=${afterSeq}&limit=200`);},
     artifact:id=>request(`/v1/artifacts/${opaque(id)}`),
     artifacts:(id,cursor='')=>{
       if(typeof cursor!=='string'||cursor.length>2048)throw new Error('Invalid artifact cursor.');
@@ -65,6 +71,23 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
       if(!repo || !path.isAbsolute(repo)) throw new Error('A host repository must be configured.');
       return command('project.register',{name:path.basename(repo),repo_path:repo,base_ref:baseRef,policy:{allowed_actions:['read_repo','run_checks']}},expectedRevision);
     },
+    refreshReadiness:expectedRevision=>command('system.codex.refresh',{},expectedRevision),
+    enableCoding:async(projectId,expectedRevision)=>{opaque(projectId);revision(expectedRevision);await codingReady();return command('project.enable_coding',{project_id:projectId},expectedRevision);},
+    submitCoding:async(projectId,title,objective,writePrefix,budget,expectedRevision)=>{
+      opaque(projectId);revision(expectedRevision);
+      if(typeof title!=='string'||!title.trim()||title.length>200||/[\u0000-\u001f]/.test(title))throw new Error('Coding title must contain 1–200 readable characters.');
+      if(typeof objective!=='string'||!objective.trim()||objective.length>2000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(objective))throw new Error('Coding objective must contain 1–2000 readable characters.');
+      if(typeof writePrefix!=='string'||writePrefix.length>240||!writePrefix.split('/').every(part=>/^[A-Za-z0-9_][A-Za-z0-9_.-]*$/.test(part))||writePrefix.split('/').some(part=>['.git','.codex'].includes(part)))throw new Error('Choose a safe relative write prefix.');
+      if(typeof budget!=='string'||!/^\d{1,6}(?:\.\d{1,6})?$/.test(budget)||Number(budget)<=0)throw new Error('Choose a positive USD budget with at most six decimal places.');
+      await codingReady();
+      return command('job.create',{project_id:projectId,title,source:{kind:'typed',uri:'sidequest:manual-coding',text:objective},checks:['candidate.frozen_identity'],allowed_actions:['read_repo','propose_patch','run_checks'],budget_usd:budget,plan:{tasks:[{id:'coding',objective,depends_on:[],write_paths:[writePrefix],check_ids:['candidate.frozen_identity']}]}},expectedRevision);
+    },
+    runCoding:async(jobId,expectedRevision)=>{
+      const id=decodeURIComponent(opaque(jobId));revision(expectedRevision);await codingReady();
+      const result=await request(`/v1/jobs/${opaque(jobId)}`);
+      if(result.job?.id!==id||result.job.execution_profile!=='codex_session'||result.job.state!=='queued'||!(result.job.budget_usd>0))throw new Error('This job is not a queued host-verified coding task.');
+      return command('job.run',{job_id:id},expectedRevision);
+    },
     submitInspection:async(projectId,title,expectedRevision)=>{
       opaque(projectId);
       revision(expectedRevision);
@@ -81,7 +104,7 @@ function createRuntimeClient({ url, token, tokenFile, repo, baseRef = 'HEAD' } =
     stop:expectedRevision=>command('system.stop',{},expectedRevision),
   });
 }
-const METHOD_ARITY = Object.freeze({snapshot:[0,0],capabilities:[0,0],job:[1,1],artifact:[1,1],artifacts:[1,2],files:[1,2],text:[2,3],diff:[2,3],register:[1,1],submitInspection:[3,3],run:[2,2],stop:[1,1]});
+const METHOD_ARITY = Object.freeze({snapshot:[0,0],capabilities:[0,0],job:[1,1],runInfo:[1,1],runEvents:[1,2],artifact:[1,1],artifacts:[1,2],files:[1,2],text:[2,3],diff:[2,3],register:[1,1],submitInspection:[3,3],run:[2,2],stop:[1,1],refreshReadiness:[1,1],enableCoding:[2,2],submitCoding:[6,6],runCoding:[2,2]});
 async function dispatchRuntime(client,method,args) {
   const arity = typeof method === 'string' && Object.hasOwn(METHOD_ARITY,method) && METHOD_ARITY[method];
   if (!arity || !Array.isArray(args) || args.length < arity[0] || args.length > arity[1] || args.some(value => !['string','number'].includes(typeof value))) throw new Error('Invalid local runtime request.');
