@@ -9,23 +9,23 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('/');await expect(page.getByRole('button',{name:'Inspect local Git diff'})).toBeEnabled();
   await expect(page.getByRole('region',{name:'Office asset pending'})).toBeVisible();
-  
+
   await page.waitForTimeout(1000);
   if(width===1440)await page.screenshot({path:path.join(evidence,'original-office-pending.png')});
   await page.getByRole('button',{name:'Inspect local Git diff'}).click();
   await expect(page.getByTestId('diff-editor')).toHaveCount(1);
   await expect(page.getByRole('button',{name:'Expand',exact:true})).toBeVisible();
-  
+
   await page.getByRole('button',{name:'Expand',exact:true}).click();
   await expect(page.getByRole('dialog',{name:'Computer work viewer'})).toBeVisible();
-  
+
   const selected=await page.getByTestId('diff-editor').getAttribute('data-file-id');
   await page.getByRole('button',{name:'Settings',exact:true}).click();
   const settings=page.getByRole('dialog',{name:'Provider settings dialog'});
   await expect(settings).toBeVisible();await expect(settings.getByRole('heading',{name:'Codex',exact:true})).toBeVisible();
   await expect(settings.getByLabel('Binary path')).toHaveValue(/codex/);
   await expect(settings.getByText('Account status',{exact:true})).toBeVisible();
-  
+
   if(width===1440){
     await settings.getByRole('button',{name:/Claude/}).click();
     await expect(settings.getByRole('heading',{name:'Claude',exact:true})).toBeVisible();
