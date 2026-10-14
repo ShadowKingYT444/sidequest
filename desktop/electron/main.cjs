@@ -3,6 +3,7 @@
 const { app, BrowserWindow, ipcMain, protocol, session } = require('electron');
 const path = require('node:path');
 const { createGitReader } = require('./git-reader.cjs');
+const { createRuntimeClient, dispatchRuntime } = require('./runtime-client.cjs');
 const { createStaticAssetHandler } = require('./static-server.cjs');
 const {
   isTrustedIpcSender,
@@ -25,6 +26,7 @@ const DEV_SERVER = process.env.SIDEQUEST_DEV_SERVER_URL
 const DEV_ORIGIN = DEV_SERVER?.origin || null;
 let mainWindow = null;
 let gitReader = null;
+let runtimeClient = null;
 const hardenedSessions = new WeakSet();
 
 function hardenWindow(window) {
@@ -70,6 +72,12 @@ function assertTrustedSender(event) {
 function registerIpc() {
   ipcMain.removeHandler('sidequest:snapshot');
   ipcMain.removeHandler('sidequest:diff');
+  ipcMain.removeHandler('sidequest:runtime');
+  ipcMain.handle('sidequest:runtime', async (event, method, args, ...extra) => {
+    assertTrustedSender(event);
+    if (extra.length || !runtimeClient) throw new Error('Local runtime is not configured.');
+    return dispatchRuntime(runtimeClient, method, args);
+  });
   ipcMain.handle('sidequest:snapshot', async (event, ...args) => {
     assertTrustedSender(event);
     if (args.length !== 0) {
@@ -123,6 +131,7 @@ async function createWindow() {
 async function start() {
   const repo = process.env.SIDEQUEST_REPO;
   if (repo) gitReader = createGitReader(repo, process.env.SIDEQUEST_BASE || 'HEAD~1');
+  runtimeClient = createRuntimeClient({url:process.env.SIDEQUEST_RUNTIME_URL,token:process.env.SIDEQUEST_RUNTIME_TOKEN,tokenFile:process.env.SIDEQUEST_API_TOKEN_FILE,repo,baseRef:process.env.SIDEQUEST_PROJECT_BASE || 'HEAD'});
   await protocol.handle('app', serveAppRequest);
   registerIpc();
   await createWindow();

@@ -4,12 +4,14 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 const require = createRequire(import.meta.url);
 const { createGitReader } = require('./electron/git-reader.cjs');
+const { createRuntimeClient, dispatchRuntime } = require('./electron/runtime-client.cjs');
 const desktopRoot = path.dirname(new URL(import.meta.url).pathname);
 function localReads(): Plugin {
   return {
     name: 'sidequest-read-only-development',
     configureServer(server) {
       const reader = createGitReader(process.env.SIDEQUEST_REPO ?? path.resolve(desktopRoot, '..'), process.env.SIDEQUEST_BASE ?? 'HEAD~1');
+      const runtime = createRuntimeClient({url:process.env.SIDEQUEST_RUNTIME_URL, token:process.env.SIDEQUEST_RUNTIME_TOKEN, tokenFile:process.env.SIDEQUEST_API_TOKEN_FILE,repo:process.env.SIDEQUEST_REPO ?? path.resolve(desktopRoot,'..'),baseRef:process.env.SIDEQUEST_PROJECT_BASE ?? 'HEAD'});
       server.middlewares.use('/__sidequest', async (request, response) => {
         response.setHeader('Cache-Control', 'no-store');
         response.setHeader('Content-Type', 'application/json');
@@ -18,6 +20,16 @@ function localReads(): Plugin {
         const origin = request.headers.origin;
         if (host !== '127.0.0.1:5173' || (origin && origin !== 'http://127.0.0.1:5173') || request.headers['sec-fetch-site'] === 'cross-site') {
           response.statusCode = 403; response.end(JSON.stringify({ error: 'Local origin required.' })); return;
+        }
+        const runtimeMethod = /^\/runtime\/([A-Za-z]+)$/.exec(request.url ?? '')?.[1];
+        if (runtimeMethod) {
+          if (request.method !== 'POST' || origin !== 'http://127.0.0.1:5173' || request.headers['content-type'] !== 'application/json') { response.statusCode=403;response.end(JSON.stringify({error:'Local JSON request required.'}));return; }
+          try {
+            let body='';for await (const chunk of request) {body+=chunk.toString('utf8');if(Buffer.byteLength(body)>4096)throw new Error('Input limit exceeded.');}
+            const data=await dispatchRuntime(runtime,runtimeMethod,JSON.parse(body));
+            response.end(JSON.stringify(data));
+          } catch {response.statusCode=503;response.end(JSON.stringify({error:'Local runtime request failed. Refresh state and review the host configuration.'}));}
+          return;
         }
         if (request.method !== 'GET') { response.statusCode = 405; response.end(JSON.stringify({ error: 'Read-only endpoint.' })); return; }
         try {

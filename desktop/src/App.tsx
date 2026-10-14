@@ -5,6 +5,7 @@ import { loadOfficeBindings, type OfficeBindings } from './office-bindings';
 import type { EditorViews } from './DiffEditor';
 const OfficeScene = lazy(() => import('./OfficeScene'));
 const DiffEditor = lazy(() => import('./DiffEditor'));
+const JobsBoard = lazy(() => import('./JobsBoard'));
 type Mode = 'overview' | 'desk' | 'expanded';
 class SceneBoundary extends Component<{ children: ReactNode; onError: (error: Error) => void }, { failed: boolean }> {
   state = { failed: false };
@@ -35,6 +36,9 @@ export default function App() {
   const [diff, setDiff] = useState<GitDiff | null>(null);
   const [diffError, setDiffError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>('overview');
+  const [jobsOpen,setJobsOpen]=useState(false);
+  const [jobsMounted,setJobsMounted]=useState(false);
+  const jobsButton=useRef<HTMLButtonElement>(null);
   const views = useRef<EditorViews>(new Map());
   const requestId = useRef(0);
   const returnFocus = useRef<HTMLButtonElement | null>(null);
@@ -66,6 +70,7 @@ export default function App() {
     return () => { ++requestId.current; };
   }, [selectedFile, readVersion, snapshot?.candidateRevision, mode === 'overview']);
   const close = useCallback(() => { setMode('overview'); requestAnimationFrame(() => returnFocus.current?.focus()); }, []);
+  const closeJobs=useCallback(()=>{setJobsOpen(false);requestAnimationFrame(()=>jobsButton.current?.focus());},[]);
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && mode !== 'overview') { event.preventDefault(); close(); }
@@ -101,12 +106,13 @@ export default function App() {
   );
   const officeReady = !!bindings && !assetFailure;
   return <main className="app-shell">
-    <header className="app-header"><div className="brand">sidequest<span>local workspace</span></div><div className="project-label">{snapshot?.project.name ?? 'Connecting to Git…'}<span>{snapshot?.project.branch}</span></div><button disabled={refreshing} onClick={() => void refresh()}>{refreshing ? 'Reading…' : 'Refresh Git'}</button></header>
+    <header className="app-header"><div className="brand">sidequest<span>local workspace</span></div><div className="project-label">{snapshot?.project.name ?? 'Connecting to Git…'}<span>{snapshot?.project.branch}</span></div><button ref={jobsButton} onClick={()=>{setMode('overview');setJobsMounted(true);setJobsOpen(true);}}>Jobs</button><button disabled={refreshing} onClick={() => void refresh()}>{refreshing ? 'Reading…' : 'Refresh Git'}</button></header>
     <div className="office-area">
       {officeReady ? <SceneBoundary onError={failScene}><Suspense fallback={<div className="scene-loading" role="status">Loading your office…</div>}><OfficeScene bindings={bindings} selectedStationId={mode === 'overview' ? null : selectedStation} onSelectStation={selectStation} childrenForStation={id => mode === 'desk' && id === selectedStation ? work : null} reducedMotion={reducedMotion} active={active} onError={failScene}/></Suspense></SceneBoundary> : <section className="asset-gate" aria-label="Office setup status"><div className="gate-marker">Office / pending assets</div><h1>{assetFailure ? 'Your office belongs here.' : 'Opening the office…'}</h1><p>{assetStatus}</p>{assetFailure && <><p className="gate-detail">Add the existing GLB export and map its monitor anchors. Blender originals stay untouched.</p><button className="primary" ref={returnFocus} onClick={() => selectStation('repository')} disabled={!snapshot || !!gitError}>Inspect local Git diff <span>→</span></button><span className="gate-note">Real repository data · no connected agent session</span></>}</section>}
       {gitError && mode === 'overview' && <div className="git-banner" role="alert">{gitError}</div>}
       {mode !== 'overview' && (mode === 'expanded' || !officeReady) && <div className={`panel-layer ${mode === 'expanded' ? 'is-expanded' : ''}`}>{work}</div>}
       {officeReady && mode === 'overview' && <nav className="station-nav" aria-label="Office computers">{bindings.stations.map(item => <button key={item.id} ref={item.id === selectedStation ? returnFocus : undefined} onClick={event => { returnFocus.current = event.currentTarget; selectStation(item.id); }}>Open {item.label}</button>)}</nav>}
+      {jobsMounted&&<Suspense fallback={<div className="scene-loading" role="status">Loading jobs…</div>}><JobsBoard open={jobsOpen} active={active} onClose={closeJobs}/></Suspense>}
     </div>
     <footer className="app-footer"><span className="status-dot" aria-hidden="true"/><span>{officeReady ? 'Office ready' : 'Office assets unavailable'}</span><span className="footer-divider"/><span>Git read-only</span><span className="footer-right">Agent service unavailable · 0 UI model calls</span></footer>
   </main>;
