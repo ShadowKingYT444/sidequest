@@ -1,0 +1,542 @@
+{
+  "source": "scene/Sidequest_Office_Master.blend",
+  "frame": 48,
+  "units": "metres",
+  "stationCount": 24,
+  "stations": [
+    {
+      "stationId": "parent_001",
+      "sourceInstance": "Desk_parent_001",
+      "sourceMesh": "Left display screen.001",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -9.7999992364923,
+        0.968999981880188,
+        5.814499610844999
+      ]
+    },
+    {
+      "stationId": "parent_002",
+      "sourceInstance": "Desk_parent_002",
+      "sourceMesh": "Left display screen.002",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -7.340000152019643,
+        0.968999981880188,
+        5.814499610844999
+      ]
+    },
+    {
+      "stationId": "parent_003",
+      "sourceInstance": "Desk_parent_003",
+      "sourceMesh": "Left display screen",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -10.65999984741211,
+        0.968999981880188,
+        5.385500198420138
+      ]
+    },
+    {
+      "stationId": "parent_004",
+      "sourceInstance": "Desk_parent_004",
+      "sourceMesh": "Left display screen.001",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -8.199999809265137,
+        0.968999981880188,
+        5.385500198420138
+      ]
+    },
+    {
+      "stationId": "parent_005",
+      "sourceInstance": "Desk_parent_005",
+      "sourceMesh": "Left display screen.002",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -0.8000000709573257,
+        0.968999981880188,
+        5.814499610844999
+      ]
+    },
+    {
+      "stationId": "parent_006",
+      "sourceInstance": "Desk_parent_006",
+      "sourceMesh": "Left display screen",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        1.659999967189647,
+        0.968999981880188,
+        5.814499610844999
+      ]
+    },
+    {
+      "stationId": "parent_007",
+      "sourceInstance": "Desk_parent_007",
+      "sourceMesh": "Left display screen.001",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -1.6600000858306885,
+        0.968999981880188,
+        5.385500198420138
+      ]
+    },
+    {
+      "stationId": "parent_008",
+      "sourceInstance": "Desk_parent_008",
+      "sourceMesh": "Left display screen.002",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        0.800000011920929,
+        0.968999981880188,
+        5.385500198420138
+      ]
+    },
+    {
+      "stationId": "parent_009",
+      "sourceInstance": "Desk_parent_009",
+      "sourceMesh": "Left display screen",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        8.199999809833384,
+        0.968999981880188,
+        5.814499610844999
+      ]
+    },
+    {
+      "stationId": "parent_010",
+      "sourceInstance": "Desk_parent_010",
+      "sourceMesh": "Left display screen.001",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        10.659999847980357,
+        0.968999981880188,
+        5.814499610844999
+      ]
+    },
+    {
+      "stationId": "parent_011",
+      "sourceInstance": "Desk_parent_011",
+      "sourceMesh": "Left display screen.002",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        7.340000152587891,
+        0.968999981880188,
+        5.385500198420138
+      ]
+    },
+    {
+      "stationId": "parent_012",
+      "sourceInstance": "Desk_parent_012",
+      "sourceMesh": "Left display screen",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        9.799999237060547,
+        0.968999981880188,
+        5.385500198420138
+      ]
+    },
+    {
+      "stationId": "parent_013",
+      "sourceInstance": "Desk_parent_013",
+      "sourceMesh": "Left display screen.001",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -9.7999992364923,
+        0.968999981880188,
+        -2.7855000553689897
+      ]
+    },
+    {
+      "stationId": "parent_014",
+      "sourceInstance": "Desk_parent_014",
+      "sourceMesh": "Left display screen.002",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -7.340000152019643,
+        0.968999981880188,
+        -2.7855000553689897
+      ]
+    },
+    {
+      "stationId": "parent_015",
+      "sourceInstance": "Desk_parent_015",
+      "sourceMesh": "Left display screen",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -10.65999984741211,
+        0.968999981880188,
+        -3.2144999446310103
+      ]
+    },
+    {
+      "stationId": "parent_016",
+      "sourceInstance": "Desk_parent_016",
+      "sourceMesh": "Left display screen.001",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -8.199999809265137,
+        0.968999981880188,
+        -3.2144999446310103
+      ]
+    },
+    {
+      "stationId": "parent_017",
+      "sourceInstance": "Desk_parent_017",
+      "sourceMesh": "Left display screen.002",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -0.8000000709573257,
+        0.968999981880188,
+        -2.7855000553689897
+      ]
+    },
+    {
+      "stationId": "parent_018",
+      "sourceInstance": "Desk_parent_018",
+      "sourceMesh": "Left display screen",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        1.659999967189647,
+        0.968999981880188,
+        -2.7855000553689897
+      ]
+    },
+    {
+      "stationId": "parent_019",
+      "sourceInstance": "Desk_parent_019",
+      "sourceMesh": "Left display screen.001",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        -1.6600000858306885,
+        0.968999981880188,
+        -3.2144999446310103
+      ]
+    },
+    {
+      "stationId": "parent_020",
+      "sourceInstance": "Desk_parent_020",
+      "sourceMesh": "Left display screen.002",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        0.800000011920929,
+        0.968999981880188,
+        -3.2144999446310103
+      ]
+    },
+    {
+      "stationId": "parent_021",
+      "sourceInstance": "Desk_parent_021",
+      "sourceMesh": "Left display screen",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        8.199999809833384,
+        0.968999981880188,
+        -5.285500293787569
+      ]
+    },
+    {
+      "stationId": "parent_022",
+      "sourceInstance": "Desk_parent_022",
+      "sourceMesh": "Left display screen.001",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        8.742277657347586e-08,
+        0.0,
+        1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        10.659999847980357,
+        0.968999981880188,
+        -5.285500293787569
+      ]
+    },
+    {
+      "stationId": "parent_023",
+      "sourceInstance": "Desk_parent_023",
+      "sourceMesh": "Left display screen.002",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        7.340000152587891,
+        0.968999981880188,
+        -5.714499706212431
+      ]
+    },
+    {
+      "stationId": "parent_024",
+      "sourceInstance": "Desk_parent_024",
+      "sourceMesh": "Left display screen",
+      "surfaceSizeMetres": [
+        0.7350000143051147,
+        0.40799999237060547
+      ],
+      "insetMetres": 0.006,
+      "standOffMetres": 0.004,
+      "frontNormalGltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "basis": "[Blender X, Blender Z, -Blender Y]",
+      "anchor": [
+        9.799999237060547,
+        0.968999981880188,
+        -5.714499706212431
+      ]
+    }
+  ],
+  "boardSource": {
+    "instance": "JobBoard_board_01",
+    "mesh": "Job board writing surface"
+  },
+  "overviewSource": "Camera_Full_Office; same viewing direction, perspective distance at 72% of source position",
+  "workerPolicy": "No backend workerId is inferred from authored actor IDs."
+}

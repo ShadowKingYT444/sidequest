@@ -1,0 +1,477 @@
+{
+  "profiles": [
+    {
+      "variant": "01_ink_hoodie",
+      "office_prototypes": [
+        "Wardrobe_00_codex_parent",
+        "Wardrobe_16_claude_code_child01"
+      ],
+      "reusable_fit_basis_prototype": "Wardrobe_00_codex_parent",
+      "cap_objects": [
+        "Reference cream baseball cap \u00b7 codex",
+        "Reference cotton cap visor",
+        "Reference six panel seams",
+        "Reference cap cotton button",
+        "Official OpenAI Blossom cap embroidery"
+      ],
+      "fit_parameters": {
+        "rx": 0.4,
+        "front": 0.412,
+        "rear": 0.338,
+        "base": 1.515,
+        "height": 0.285,
+        "bun": false
+      },
+      "original_library_clip_names": [
+        "Human_01_ink_hoodie_Root_Idle",
+        "Human_01_ink_hoodie_Root_Point",
+        "Human_01_ink_hoodie_Root_Typing",
+        "Human_01_ink_hoodie_Root_Walk"
+      ],
+      "frames_checked": [
+        1,
+        7,
+        13,
+        19,
+        25
+      ],
+      "attachment": {
+        "vertex_group": "head",
+        "weight": 1.0,
+        "armature_modifier": "target original human rig",
+        "parent": "target original human root",
+        "object_local_transform": "identity",
+        "origin_coordinate_system": "Original shared rest-character coordinates; Blender -Y forward, Z up"
+      },
+      "result": "No evaluated cap-part versus original-hair/headphone surface intersections in tested frames",
+      "read_only_original_library": true
+    },
+    {
+      "variant": "02_clay_cardigan",
+      "office_prototypes": [
+        "Wardrobe_01_claude_code_parent",
+        "Wardrobe_06_claude_code_parent",
+        "Wardrobe_18_claude_code_child01"
+      ],
+      "reusable_fit_basis_prototype": "Wardrobe_01_claude_code_parent",
+      "cap_objects": [
+        "Reference cream baseball cap \u00b7 claude_code",
+        "Reference cotton cap visor.001",
+        "Reference six panel seams.001",
+        "Reference cap cotton button.001",
+        "User reference orange Clawd orange_rects",
+        "User reference orange Clawd eye_rects"
+      ],
+      "fit_parameters": {
+        "rx": 0.4,
+        "front": 0.412,
+        "rear": 0.338,
+        "base": 1.515,
+        "height": 0.285,
+        "bun": false
+      },
+      "original_library_clip_names": [
+        "Human_02_clay_cardigan_Root_Idle",
+        "Human_02_clay_cardigan_Root_Point",
+        "Human_02_clay_cardigan_Root_Typing",
+        "Human_02_clay_cardigan_Root_Walk"
+      ],
+      "frames_checked": [
+        1,
+        7,
+        13,
+        19,
+        25
+      ],
+      "attachment": {
+        "vertex_group": "head",
+        "weight": 1.0,
+        "armature_modifier": "target original human rig",
+        "parent": "target original human root",
+        "object_local_transform": "identity",
+        "origin_coordinate_system": "Original shared rest-character coordinates; Blender -Y forward, Z up"
+      },
+      "result": "No evaluated cap-part versus original-hair/headphone surface intersections in tested frames",
+      "read_only_original_library": true
+    },
+    {
+      "variant": "03_sage_overshirt",
+      "office_prototypes": [
+        "Wardrobe_09_claude_code_parent",
+        "Wardrobe_11_codex_child01"
+      ],
+      "reusable_fit_basis_prototype": "Wardrobe_09_claude_code_parent",
+      "cap_objects": [
+        "Reference cream baseball cap \u00b7 claude_code.003",
+        "Reference cotton cap visor.006",
+        "Reference six panel seams.006",
+        "Reference cap cotton button.006",
+        "User reference orange Clawd orange_rects.003",
+        "User reference orange Clawd eye_rects.003"
+      ],
+      "fit_parameters": {
+        "rx": 0.4,
+        "front": 0.356,
+        "rear": 0.338,
+        "base": 1.515,
+        "height": 0.285,
+        "bun": false
+      },
+      "original_library_clip_names": [
+        "Human_03_sage_overshirt_Root_Idle",
+        "Human_03_sage_overshirt_Root_Point",
+        "Human_03_sage_overshirt_Root_Typing",
+        "Human_03_sage_overshirt_Root_Walk"
+      ],
+      "frames_checked": [
+        1,
+        7,
+        13,
+        19,
+        25
+      ],
+      "attachment": {
+        "vertex_group": "head",
+        "weight": 1.0,
+        "armature_modifier": "target original human rig",
+        "parent": "target original human root",
+        "object_local_transform": "identity",
+        "origin_coordinate_system": "Original shared rest-character coordinates; Blender -Y forward, Z up"
+      },
+      "result": "No evaluated cap-part versus original-hair/headphone surface intersections in tested frames",
+      "read_only_original_library": true
+    },
+    {
+      "variant": "04_slate_beanie",
+      "office_prototypes": [
+        "Wardrobe_03_codex_parent",
+        "Wardrobe_14_codex_child01"
+      ],
+      "reusable_fit_basis_prototype": "Wardrobe_03_codex_parent",
+      "cap_objects": [
+        "Reference cream baseball cap \u00b7 codex.001",
+        "Reference cotton cap visor.002",
+        "Reference six panel seams.002",
+        "Reference cap cotton button.002",
+        "Official OpenAI Blossom cap embroidery.001"
+      ],
+      "fit_parameters": {
+        "rx": 0.4,
+        "front": 0.356,
+        "rear": 0.338,
+        "base": 1.515,
+        "height": 0.285,
+        "bun": false
+      },
+      "original_library_clip_names": [
+        "Human_04_slate_beanie_Root_Idle",
+        "Human_04_slate_beanie_Root_Point",
+        "Human_04_slate_beanie_Root_Typing",
+        "Human_04_slate_beanie_Root_Walk"
+      ],
+      "frames_checked": [
+        1,
+        7,
+        13,
+        19,
+        25
+      ],
+      "attachment": {
+        "vertex_group": "head",
+        "weight": 1.0,
+        "armature_modifier": "target original human rig",
+        "parent": "target original human root",
+        "object_local_transform": "identity",
+        "origin_coordinate_system": "Original shared rest-character coordinates; Blender -Y forward, Z up"
+      },
+      "result": "No evaluated cap-part versus original-hair/headphone surface intersections in tested frames",
+      "read_only_original_library": true
+    },
+    {
+      "variant": "05_oat_headphones",
+      "office_prototypes": [
+        "Wardrobe_04_codex_parent",
+        "Wardrobe_12_claude_code_child01",
+        "Wardrobe_15_codex_child02"
+      ],
+      "reusable_fit_basis_prototype": "Wardrobe_04_codex_parent",
+      "cap_objects": [
+        "Reference cream baseball cap \u00b7 codex.002",
+        "Reference cotton cap visor.003",
+        "Reference six panel seams.003",
+        "Reference cap cotton button.003",
+        "Official OpenAI Blossom cap embroidery.002"
+      ],
+      "fit_parameters": {
+        "rx": 0.405,
+        "front": 0.412,
+        "rear": 0.338,
+        "base": 1.515,
+        "height": 0.285,
+        "bun": true
+      },
+      "original_library_clip_names": [
+        "Human_05_oat_headphones_Root_Idle",
+        "Human_05_oat_headphones_Root_Point",
+        "Human_05_oat_headphones_Root_Typing",
+        "Human_05_oat_headphones_Root_Walk"
+      ],
+      "frames_checked": [
+        1,
+        7,
+        13,
+        19,
+        25
+      ],
+      "attachment": {
+        "vertex_group": "head",
+        "weight": 1.0,
+        "armature_modifier": "target original human rig",
+        "parent": "target original human root",
+        "object_local_transform": "identity",
+        "origin_coordinate_system": "Original shared rest-character coordinates; Blender -Y forward, Z up"
+      },
+      "result": "No evaluated cap-part versus original-hair/headphone surface intersections in tested frames",
+      "read_only_original_library": true
+    },
+    {
+      "variant": "06_plum_wave",
+      "office_prototypes": [
+        "Wardrobe_05_claude_code_parent"
+      ],
+      "reusable_fit_basis_prototype": "Wardrobe_05_claude_code_parent",
+      "cap_objects": [
+        "Reference cream baseball cap \u00b7 claude_code.001",
+        "Reference cotton cap visor.004",
+        "Reference six panel seams.004",
+        "Reference cap cotton button.004",
+        "User reference orange Clawd orange_rects.001",
+        "User reference orange Clawd eye_rects.001"
+      ],
+      "fit_parameters": {
+        "rx": 0.4,
+        "front": 0.412,
+        "rear": 0.338,
+        "base": 1.515,
+        "height": 0.285,
+        "bun": false
+      },
+      "original_library_clip_names": [
+        "Human_06_plum_wave_Root_Idle",
+        "Human_06_plum_wave_Root_Point",
+        "Human_06_plum_wave_Root_Typing",
+        "Human_06_plum_wave_Root_Walk"
+      ],
+      "frames_checked": [
+        1,
+        7,
+        13,
+        19,
+        25
+      ],
+      "attachment": {
+        "vertex_group": "head",
+        "weight": 1.0,
+        "armature_modifier": "target original human rig",
+        "parent": "target original human root",
+        "object_local_transform": "identity",
+        "origin_coordinate_system": "Original shared rest-character coordinates; Blender -Y forward, Z up"
+      },
+      "result": "No evaluated cap-part versus original-hair/headphone surface intersections in tested frames",
+      "read_only_original_library": true
+    }
+  ],
+  "head_rest_matrices": {
+    "01_ink_hoodie": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        1.0080000162124634
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "02_clay_cardigan": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        1.0080000162124634
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "03_sage_overshirt": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        1.0080000162124634
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "04_slate_beanie": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        1.0080000162124634
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "05_oat_headphones": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        1.0080000162124634
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "06_plum_wave": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        1.0080000162124634
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "independent_selection": {
+    "provider_id": "nullable string",
+    "product_id": "nullable string",
+    "harness_id": "nullable string",
+    "cap_asset_id": "independent asset ID",
+    "floor_asset_id": "independent asset ID",
+    "hairstyle_profile_id": "one of six original variants"
+  },
+  "example": {
+    "provider_id": "deepseek",
+    "product_id": null,
+    "harness_id": "opencode",
+    "cap_asset_id": "SQ_CAP_HARNESS_OPENCODE",
+    "floor_asset_id": "SQ_FLOOR_MARK_DEEPSEEK",
+    "hairstyle_profile_id": "05_oat_headphones"
+  },
+  "example_is_visual_selection_only": true,
+  "mutually_exclusive_original_accessories": {
+    "04_slate_beanie": {
+      "hide_while_cap_is_equipped_name_fragments": [
+        "_Beanie",
+        "_RolledBrim",
+        "_KnitRib",
+        "_HatLabel"
+      ],
+      "restore_when_cap_is_removed": true,
+      "reason": "Approved fit replaces original beanie accessories, preserving hair and human geometry.",
+      "native_actor_visibility_only": true,
+      "joined_original_glb_runtime_requirement": "Preserved original base-human GLB is a joined skinned mesh. Derive a beanie-off/component-separated actor for runtime omission; unchanged original GLB has no named beanie nodes."
+    },
+    "05_oat_headphones": {
+      "retain_original_headphones_bun_and_tie": true,
+      "reason": "Approved rear opening/widened crown already provides clearance."
+    }
+  }
+}

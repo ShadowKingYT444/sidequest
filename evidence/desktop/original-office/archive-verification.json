@@ -1,0 +1,47 @@
+{
+  "archiveBytes": 535951540,
+  "archiveSha256": "f7159fbda50771486d65e1a5bd2a42d265120a422d88a686471a9bbb6fb60a95",
+  "parts": [
+    {
+      "part": 1,
+      "bytes": 67108864,
+      "sha256": "6d681668be68827494ed3bc4281a7f599a4d0108a9d74b3e3bafe74b278271d8"
+    },
+    {
+      "part": 2,
+      "bytes": 67108864,
+      "sha256": "32feb7d3afc0c505d876e46c23b5d5ea6055ce86d726665cfc3d152d19f954b9"
+    },
+    {
+      "part": 3,
+      "bytes": 67108864,
+      "sha256": "bb61d7989f8ac356e3641e9f48e865e61adf4212bcc5e350b9da04f8c3838d25"
+    },
+    {
+      "part": 4,
+      "bytes": 67108864,
+      "sha256": "591d20791a4c2fb9a4629d8abfb4a6bf9558b8f834260f26354bae31f31cac97"
+    },
+    {
+      "part": 5,
+      "bytes": 67108864,
+      "sha256": "296245569041708939de03ea2a8a27f9fdc60e8ee16ca8f0be2155bd0e6f11e7"
+    },
+    {
+      "part": 6,
+      "bytes": 67108864,
+      "sha256": "1db08e05f91de8f00be519dbafdaf2fe9a3e28824b7514331e9a1a18dfe41a99"
+    },
+    {
+      "part": 7,
+      "bytes": 67108864,
+      "sha256": "7571632bb77d322a8d8e37a3d2fa259e556a2f0203e5af88c1adebd79e3d0c1f"
+    },
+    {
+      "part": 8,
+      "bytes": 66189492,
+      "sha256": "e99a0c032ac0fbf0db75bf8e61d14f690846664c8ce4ff61bd3c359e4532f81d"
+    }
+  ],
+  "allChecksPassed": true
+}

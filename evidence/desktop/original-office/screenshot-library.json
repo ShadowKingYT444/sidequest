@@ -1,0 +1,10 @@
+{
+  "library_file_id": "libfile_7987934df1cc8191a62fcc1dd8d08c2c",
+  "file_id": "file_0000000070fc81f58457ad0aad239f9c",
+  "file_name": "original-office-overview.png",
+  "sha256": "22ba81b8010e67ccd50bd523dd87bd2071a6365d2c72bca9d7d00a12f05b6bb7",
+  "bytes": 586666,
+  "capturedAt": "2026-10-14T06:34:16Z",
+  "savedToLibrary": true,
+  "imageShows": "Actual original runtime environment rendered in Chromium; staged actor loading is owned by the UI integration."
+}

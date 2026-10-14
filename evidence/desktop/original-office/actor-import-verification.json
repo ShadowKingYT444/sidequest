@@ -1,0 +1,201 @@
+{
+  "unchangedSourceCopies": true,
+  "humanVariants": 7,
+  "capAssets": 12,
+  "clipsPerHuman": 4,
+  "jointsPerHuman": 17,
+  "resources": [
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/characters/game/SQ_HUMAN_01_INK_HOODIE.glb",
+      "path": "actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "size_bytes": 1752988,
+      "sha256": "2994831a6a4a127f759743a498e4eb77828e5cefb4496b3871cf65f396c3c916"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/characters/game/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "path": "actors/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "size_bytes": 2020244,
+      "sha256": "ea22e774c5a0cd3842ade62a0ab3c582bfd45f38761a3651ac10f25b2e48e135"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/characters/game/SQ_HUMAN_03_SAGE_OVERSHIRT.glb",
+      "path": "actors/SQ_HUMAN_03_SAGE_OVERSHIRT.glb",
+      "size_bytes": 2063456,
+      "sha256": "1a27dd410b1e3602f94df2202eb20e4e7cc3b9624f89d02564af2cf05fb552f9"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/characters/game/SQ_HUMAN_04_SLATE_BEANIE.glb",
+      "path": "actors/SQ_HUMAN_04_SLATE_BEANIE.glb",
+      "size_bytes": 1934308,
+      "sha256": "7b52675aa65764ac9c324cf2be5ae5804e05ea8dcbe4b1910ac65d1ee260588b"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/characters/game/SQ_HUMAN_04_SLATE_BEANIE__CAP_READY.glb",
+      "path": "actors/SQ_HUMAN_04_SLATE_BEANIE__CAP_READY.glb",
+      "size_bytes": 1589664,
+      "sha256": "a77eb0fb5dba2f8939d37c2ee275dbc8f1b3f129b86f363bc625c5e481bad4c0"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/characters/game/SQ_HUMAN_05_OAT_HEADPHONES.glb",
+      "path": "actors/SQ_HUMAN_05_OAT_HEADPHONES.glb",
+      "size_bytes": 1800336,
+      "sha256": "ef6296289e0fc978dd27328283e8cfc4033903e40a9c5d58ff6220da6f653b37"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/characters/game/SQ_HUMAN_06_PLUM_WAVE.glb",
+      "path": "actors/SQ_HUMAN_06_PLUM_WAVE.glb",
+      "size_bytes": 2094920,
+      "sha256": "09e9a4bbab58b534849a4c3af956e67edc80225b1f74ac105930f6c97ba3bf5b"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_BASE_01_INK_HOODIE.glb",
+      "path": "caps/SQ_CAP_BASE_01_INK_HOODIE.glb",
+      "size_bytes": 3278768,
+      "sha256": "d5cfe9168532170e3ade0ce2ca75fc10bde3e22b88ddbd82514f7f3824576848"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+      "path": "caps/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+      "size_bytes": 3278812,
+      "sha256": "48b31b1a5bb4517ba1974dbfffada7a81cd5e72a21806a7cc504a03949422224"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+      "path": "caps/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+      "size_bytes": 3326164,
+      "sha256": "e8ddbce2eeca5ed2055321ad2c0125fe3a21e2e0fb125b32708d878e72e9afad"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+      "path": "caps/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+      "size_bytes": 3326132,
+      "sha256": "e841c5188d394d0445553d91b63ccf42c827b78d1bc2a599378c029f55a3ce21"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+      "path": "caps/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+      "size_bytes": 3332624,
+      "sha256": "38e5574ebcdcda61c34b10c31db078e85420c382453ee8a679cb55b21094bf7d"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_BASE_06_PLUM_WAVE.glb",
+      "path": "caps/SQ_CAP_BASE_06_PLUM_WAVE.glb",
+      "size_bytes": 3278752,
+      "sha256": "8ccfd43b77a1b497c66ff741efc10524d119a690710574c749729b1c678da9dd"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_CLAUDE_CODE.glb",
+      "path": "caps/SQ_CAP_CLAUDE_CODE.glb",
+      "size_bytes": 3301776,
+      "sha256": "a97a4b6a85b2b60c5a0c738eead5ec187088ac204b6bc219e338f2b71381950e"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_CODEX.glb",
+      "path": "caps/SQ_CAP_CODEX.glb",
+      "size_bytes": 3406524,
+      "sha256": "9b60c95987975fcfe1457477b9f2d2b50330950f8180642c0eb0d98376d82dfe"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_DEEPSEEK.glb",
+      "path": "caps/SQ_CAP_DEEPSEEK.glb",
+      "size_bytes": 3375352,
+      "sha256": "2458ad679cf2dc018e44aa425895126ca183e68cce7218691425451af943eb94"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_GOOGLE_GEMINI.glb",
+      "path": "caps/SQ_CAP_GOOGLE_GEMINI.glb",
+      "size_bytes": 3656116,
+      "sha256": "f29fd130aa91076be940139c115f2c5108d44b1581fc3e260f5ab470c5136ea3"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_HARNESS_OPENCODE.glb",
+      "path": "caps/SQ_CAP_HARNESS_OPENCODE.glb",
+      "size_bytes": 3299948,
+      "sha256": "56755636e194aab436e29283266e42c76d711961ae228fd28c68131fd5f866fb"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/glb/SQ_CAP_XAI_GROK.glb",
+      "path": "caps/SQ_CAP_XAI_GROK.glb",
+      "size_bytes": 3380256,
+      "sha256": "605281b92941f0b49758e202f85a042bd0bc4535d5d5ced2f9137d5c23746d69"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/CLAUDE_CODE_cap_RGBA.png",
+      "path": "caps/textures/CLAUDE_CODE_cap_RGBA.png",
+      "size_bytes": 22804,
+      "sha256": "e29bf2e1c70167afac64fec4731263fdc52d7665d9071cc8b190681e25406c41"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/CODEX_cap_RGBA.png",
+      "path": "caps/textures/CODEX_cap_RGBA.png",
+      "size_bytes": 127625,
+      "sha256": "ff00d6a017f6f1f4287516f4fa562ddb88fc1d6b09a5df2bca26545dbf63ae35"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/DEEPSEEK_cap_RGBA.png",
+      "path": "caps/textures/DEEPSEEK_cap_RGBA.png",
+      "size_bytes": 96422,
+      "sha256": "e63f3e941ef23b3c9980ec158d744844ef662995163fe2cb4890a9a3d0e3ab2c"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/GOOGLE_GEMINI_cap_RGBA.png",
+      "path": "caps/textures/GOOGLE_GEMINI_cap_RGBA.png",
+      "size_bytes": 377113,
+      "sha256": "b8607ed181a70976e14703b9b1803322afa4ed6db6317be47d3acd253c1a5523"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/HARNESS_OPENCODE_cap_RGBA.png",
+      "path": "caps/textures/HARNESS_OPENCODE_cap_RGBA.png",
+      "size_bytes": 20913,
+      "sha256": "001595fbfb28f3c81ba7b7af54eca33b92d6c033a6d102e959cfcdb51af5df2d"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/XAI_GROK_cap_RGBA.png",
+      "path": "caps/textures/XAI_GROK_cap_RGBA.png",
+      "size_bytes": 101325,
+      "sha256": "d2651fe213fe65d3d3da365807f0a32a2b42f8c7d62ba96d2af413502a1ea9a3"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/portable_CLAUDE_CODE_cap_RGBA.png",
+      "path": "caps/textures/portable_CLAUDE_CODE_cap_RGBA.png",
+      "size_bytes": 22804,
+      "sha256": "e29bf2e1c70167afac64fec4731263fdc52d7665d9071cc8b190681e25406c41"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/portable_CODEX_cap_RGBA.png",
+      "path": "caps/textures/portable_CODEX_cap_RGBA.png",
+      "size_bytes": 127625,
+      "sha256": "ff00d6a017f6f1f4287516f4fa562ddb88fc1d6b09a5df2bca26545dbf63ae35"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/portable_DEEPSEEK_cap_RGBA.png",
+      "path": "caps/textures/portable_DEEPSEEK_cap_RGBA.png",
+      "size_bytes": 96422,
+      "sha256": "e63f3e941ef23b3c9980ec158d744844ef662995163fe2cb4890a9a3d0e3ab2c"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/portable_GOOGLE_GEMINI_cap_RGBA.png",
+      "path": "caps/textures/portable_GOOGLE_GEMINI_cap_RGBA.png",
+      "size_bytes": 377113,
+      "sha256": "b8607ed181a70976e14703b9b1803322afa4ed6db6317be47d3acd253c1a5523"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/portable_HARNESS_OPENCODE_cap_RGBA.png",
+      "path": "caps/textures/portable_HARNESS_OPENCODE_cap_RGBA.png",
+      "size_bytes": 20913,
+      "sha256": "001595fbfb28f3c81ba7b7af54eca33b92d6c033a6d102e959cfcdb51af5df2d"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/textures/portable_XAI_GROK_cap_RGBA.png",
+      "path": "caps/textures/portable_XAI_GROK_cap_RGBA.png",
+      "size_bytes": 101325,
+      "sha256": "d2651fe213fe65d3d3da365807f0a32a2b42f8c7d62ba96d2af413502a1ea9a3"
+    },
+    {
+      "source_member": "Sidequest_Complete_Art_Kit/providers/attachment_profiles.json",
+      "path": "caps/attachment-profiles.json",
+      "size_bytes": 12465,
+      "sha256": "c37c9ccba779dfe826869366040c57871d20bcfce47fa3ef6dd1ccfecac9e842"
+    }
+  ]
+}

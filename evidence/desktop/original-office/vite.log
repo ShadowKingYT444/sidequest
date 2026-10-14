@@ -1,0 +1,341 @@
+
+> sidequest-desktop@0.1.0 dev
+> vite --host 127.0.0.1
+
+
+  VITE v8.3.4  ready in 207 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+6:31:03 AM [vite] (client) [optimizer] bundling dependencies...
+6:33:55 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:33:55 AM [vite] (client) [Unhandled rejection] CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self'".
+ > MeshoptDecoder node_modules/three-stdlib/libs/MeshoptDecoder.js:132:30
+ > node_modules/@react-three/drei/core/Gltf.js:22:70
+ > node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1299:20
+ > query node_modules/suspend-react/index.js:51:26
+ > suspend node_modules/suspend-react/index.js:68:38
+ > useLoader node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1318:18
+ > useGLTF node_modules/@react-three/drei/core/Gltf.js:26:62
+ > OfficeModel src/OfficeScene.tsx:37:15
+    35 |
+    36 |  function OfficeModel({ url }: OfficeModelProps) {
+    37 |    const gltf = useGLTF(url, false, true, configureOfficeAssetLoader);
+       |                 ^
+    38 |    const light=useRef<DirectionalLight>(null);
+    39 |    const bounds=useMemo(()=>new Box3().setFromObject(gltf.scene),[gltf.scene]);
+ > Object.react_stack_bottom_frame node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:15108:21
+ > ap node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:10243:16
+
+6:33:56 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+6:42:46 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:42:47 AM [vite] (client) [Unhandled rejection] CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self'".
+ > MeshoptDecoder node_modules/three-stdlib/libs/MeshoptDecoder.js:132:30
+ > node_modules/@react-three/drei/core/Gltf.js:22:70
+ > node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1299:20
+ > query node_modules/suspend-react/index.js:51:26
+ > suspend node_modules/suspend-react/index.js:68:38
+ > useLoader node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1318:18
+ > useGLTF node_modules/@react-three/drei/core/Gltf.js:26:62
+ > OfficeModel src/OfficeScene.tsx:37:15
+    35 |
+    36 |  function OfficeModel({ url }: OfficeModelProps) {
+    37 |    const gltf = useGLTF(url, false, true, configureOfficeAssetLoader);
+       |                 ^
+    38 |    const light=useRef<DirectionalLight>(null);
+    39 |    const bounds=useMemo(()=>new Box3().setFromObject(gltf.scene),[gltf.scene]);
+ > Object.react_stack_bottom_frame node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:15108:21
+ > ap node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:10243:16
+
+6:42:48 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+6:44:30 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:30 AM [vite] (client) [Unhandled rejection] CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self'".
+ > MeshoptDecoder node_modules/three-stdlib/libs/MeshoptDecoder.js:132:30
+ > node_modules/@react-three/drei/core/Gltf.js:22:70
+ > node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1299:20
+ > query node_modules/suspend-react/index.js:51:26
+ > suspend node_modules/suspend-react/index.js:68:38
+ > useLoader node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1318:18
+ > useGLTF node_modules/@react-three/drei/core/Gltf.js:26:62
+ > OfficeModel src/OfficeScene.tsx:37:15
+    35 |
+    36 |  function OfficeModel({ url }: OfficeModelProps) {
+    37 |    const gltf = useGLTF(url, false, true, configureOfficeAssetLoader);
+       |                 ^
+    38 |    const light=useRef<DirectionalLight>(null);
+    39 |    const bounds=useMemo(()=>new Box3().setFromObject(gltf.scene),[gltf.scene]);
+ > Object.react_stack_bottom_frame node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:15108:21
+ > ap node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:10243:16
+
+6:44:31 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+6:44:31 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:32 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:44:33 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+6:46:54 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:46:54 AM [vite] (client) [Unhandled rejection] CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self'".
+ > MeshoptDecoder node_modules/three-stdlib/libs/MeshoptDecoder.js:132:30
+ > node_modules/@react-three/drei/core/Gltf.js:22:70
+ > node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1299:20
+ > query node_modules/suspend-react/index.js:51:26
+ > suspend node_modules/suspend-react/index.js:68:38
+ > useLoader node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1318:18
+ > useGLTF node_modules/@react-three/drei/core/Gltf.js:26:62
+ > OfficeModel src/OfficeScene.tsx:37:15
+    35 |
+    36 |  function OfficeModel({ url }: OfficeModelProps) {
+    37 |    const gltf = useGLTF(url, false, true, configureOfficeAssetLoader);
+       |                 ^
+    38 |    const light=useRef<DirectionalLight>(null);
+    39 |    const bounds=useMemo(()=>new Box3().setFromObject(gltf.scene),[gltf.scene]);
+ > Object.react_stack_bottom_frame node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:15108:21
+ > ap node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:10243:16
+
+6:46:56 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+6:47:00 AM [vite] (client) [console.warn] THREE.WARNING: Multiple instances of Three.js being imported.
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/10aed528-b273-4fc8-aa62-398ebc209328
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/53287def-7fc6-4843-b5bd-13a3b38084a8
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/1b9f2777-5e7b-4a12-8501-265768523581
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/b75903f4-febf-40cb-a158-6627c32adf05
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/01482f3e-cdc2-4fb8-89de-7bd884363bbb
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/d15fe229-fb80-4aed-ba07-abcddda7bc26
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/d5a6b339-97e5-46f9-8cbe-43330abb6a25
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/97d6e7a8-bc17-4f99-a507-8a2f144ca340
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/fb0c43ad-7e70-42a7-bb04-c6f72923d40b
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/eb47161b-cc47-4063-b3e5-b021aa8b4a34
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/1a8b3d2b-2c61-4eb1-9756-9c754fb3b220
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/663ce6b5-1cc2-4319-b31f-56e990ee04c6
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/f724430d-0179-4060-bbb4-1dbdc1eb19c6
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/26124e0d-492b-4ddf-a1e7-1b70db0cde07
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/e0a83433-0ef9-4704-bc57-938d41b72f2f
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/dbda62da-aa7f-4676-a689-774907adfd50
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/fd88879a-a712-4b74-ac04-5314060c5ecc
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/f9c96306-69ee-46a7-bddf-ceb4f8b44103
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/e5ada13a-4f21-47c4-b417-5280f0c6eb7f
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/c38fcebb-7abd-4e36-9a84-ddcec48c7382
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/20812d74-fe1a-4b58-bc89-798fabb304c2
+6:47:00 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/1243090c-2234-40a7-b548-b63abc08280d
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/a814c85a-ab64-43fc-a04a-cda47ef5845e
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/5b127929-e2ec-4b20-b849-b310f44ee9b5
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/220d51f8-c56f-4c27-98a0-5976afc02117
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/0f1cc276-61ab-4a24-bbdf-fdc44722b3dc
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/9479499c-1895-4545-9b4b-b8340b60c959
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/6aa337e4-be22-4883-8688-4ccd0021f8e3
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/b8792349-9965-4168-8afe-d0cb29b7f9d4
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/1e14639c-bd11-415d-a9ec-925e571167ce
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/5da8afa3-02e4-4790-bee5-5b1c9b6a073f
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/593d2c2f-2fd2-430a-a74f-4067c7c70005
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/e140da98-7b65-47fa-ba6d-0c3822e67138
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/d82dbc1a-1ed5-4599-9ee0-1f59b047d278
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/961042a5-3467-4fda-b074-3da6d3c759ae
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/c293a410-d46b-4092-ae6b-9b7c31de6fe2
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/646b913b-b081-49b3-87eb-c292f260a176
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/c0984de1-4759-4202-a494-1b763f4e59a9
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/3949e138-45c1-478c-90fc-4687ff3c6ea8
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/f79ad3b4-6c8b-4c67-b565-174109739966
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/c19abe72-805c-453a-95a7-a1c6304e28a2
+6:47:01 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/f55b6a55-a844-46c6-a34b-76856e8dbf3e
+6:48:14 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [console.error] Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.
+6:48:15 AM [vite] (client) [Unhandled rejection] CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self'".
+ > MeshoptDecoder node_modules/three-stdlib/libs/MeshoptDecoder.js:132:30
+ > node_modules/@react-three/drei/core/Gltf.js:22:70
+ > node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1299:20
+ > query node_modules/suspend-react/index.js:51:26
+ > suspend node_modules/suspend-react/index.js:68:38
+ > useLoader node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:1318:18
+ > useGLTF node_modules/@react-three/drei/core/Gltf.js:26:62
+ > OfficeModel src/OfficeScene.tsx:37:15
+    35 |
+    36 |  function OfficeModel({ url }: OfficeModelProps) {
+    37 |    const gltf = useGLTF(url, false, true, configureOfficeAssetLoader);
+       |                 ^
+    38 |    const light=useRef<DirectionalLight>(null);
+    39 |    const bounds=useMemo(()=>new Box3().setFromObject(gltf.scene),[gltf.scene]);
+ > Object.react_stack_bottom_frame node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:15108:21
+ > ap node_modules/@react-three/fiber/dist/events-9ce18a08.esm.js:10243:16
+
+6:48:16 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+6:48:20 AM [vite] (client) [console.warn] THREE.WARNING: Multiple instances of Three.js being imported.
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/abe8317b-f2f5-4671-a7b8-99cbe3f54bf1
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/32e81f31-4ba2-45a9-8d36-1643256be22c
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/e8c7c23e-b0e4-43fe-8b8b-7388502a274d
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/c5e0b5c9-a06b-42a6-af9a-ab03a58ab394
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/45a1d677-bbd0-4d29-9c45-904c0e316efc
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/7a014b97-883a-4f41-8ff7-abad299706ed
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/174eb88d-b106-4af6-afb2-12c3cd9a743a
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/64338d47-97f1-4e7e-a212-a947a801c01a
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/675984fe-48d4-4f5d-955f-5c7a7dff05df
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/42d8a14b-7f24-44af-9f72-3f6a968c8668
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/d9e5d81a-e7dc-4401-ac37-87a61284951b
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/995fd77f-bcda-451c-bd30-045c6399df5f
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/2367dde9-b99a-43df-8428-fc355ff925df
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/79afabd3-c3a3-4884-9caf-dfad4ac8959e
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/fb0e0d21-7f1b-47c1-bfac-d25ff9cb3d3c
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/2688c82c-a0f1-4ce5-a79b-03aea48cd709
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/c76f9d1d-053d-4690-95df-9c6243d6e0e7
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/cbeac37e-259b-4259-8bee-aee5bfb71d4a
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/53e78e31-dbf0-491c-89b5-49269b5c4780
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/4141f812-4b32-42ec-810d-373d165cef75
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/c5d6eb86-8d51-439c-9f32-921ddf08620f
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/035a31c0-0acf-4bfd-831f-4be683e88547
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/2e1c6fe8-b271-46f7-a2ed-9435f917f186
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/cbba7a4c-b225-4300-a8a9-0eaaa18f54a7
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/0aeb1355-1cc7-4533-818c-79409dd35680
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/5cf915a5-07f4-4663-bb5a-ca02ec0f1701
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/8534930a-6902-4d85-bc23-351653ae5f4c
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/ac09a5b1-bd95-40c4-b662-90efaa6ec5ee
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/2cb9cbb9-660e-4a82-981b-bdab7c980e39
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/8f83c5c0-2a06-4e4f-a410-c62bf8cb2846
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/fa58b318-b8d0-4f61-833a-224d6af04d2d
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/b47dbfad-da55-4d26-b280-754b311f94b7
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/14573896-68d5-4f4f-b3ce-17bc2fc07f5f
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/1cb496cf-991d-4afa-89eb-c1cf8ae9c36d
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/1535dcaa-c90b-4dcd-bd95-598e64704188
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/ae02433f-e539-40e6-8948-170ce07f3974
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/fe18a51b-8075-4404-814d-89c1555cab0f
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/56cc7715-d1c4-4ffd-8d9e-585cde22b0ea
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/1062f5f6-89f7-4345-9b9b-a7421efff7a9
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/0014fbc2-c2d5-4183-b4d7-22bbf47f9917
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/cd8891db-d6d0-4969-9a9d-8141bd5f4af3
+6:48:20 AM [vite] (client) [console.error] THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:5173/f4b6908f-84d1-41aa-8a81-f3665568a469

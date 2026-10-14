@@ -1,0 +1,1565 @@
+{
+  "schema": "sidequest-original-actors-v1",
+  "units": "metres",
+  "axes": "glTF Y-up; original transforms already converted",
+  "workers": [
+    {
+      "assetId": "SQ_HUMAN_01_INK_HOODIE",
+      "url": "/office/actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "jointCount": 17,
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666666666667
+        }
+      ],
+      "capReady": false
+    },
+    {
+      "assetId": "SQ_HUMAN_02_CLAY_CARDIGAN",
+      "url": "/office/actors/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "jointCount": 17,
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666666666667
+        }
+      ],
+      "capReady": false
+    },
+    {
+      "assetId": "SQ_HUMAN_03_SAGE_OVERSHIRT",
+      "url": "/office/actors/SQ_HUMAN_03_SAGE_OVERSHIRT.glb",
+      "jointCount": 17,
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666666666667
+        }
+      ],
+      "capReady": false
+    },
+    {
+      "assetId": "SQ_HUMAN_04_SLATE_BEANIE",
+      "url": "/office/actors/SQ_HUMAN_04_SLATE_BEANIE.glb",
+      "jointCount": 17,
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666666666667
+        }
+      ],
+      "capReady": false
+    },
+    {
+      "assetId": "SQ_HUMAN_04_SLATE_BEANIE__CAP_READY",
+      "url": "/office/actors/SQ_HUMAN_04_SLATE_BEANIE__CAP_READY.glb",
+      "jointCount": 17,
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666666666667
+        }
+      ],
+      "capReady": true
+    },
+    {
+      "assetId": "SQ_HUMAN_05_OAT_HEADPHONES",
+      "url": "/office/actors/SQ_HUMAN_05_OAT_HEADPHONES.glb",
+      "jointCount": 17,
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666666666667
+        }
+      ],
+      "capReady": false
+    },
+    {
+      "assetId": "SQ_HUMAN_06_PLUM_WAVE",
+      "url": "/office/actors/SQ_HUMAN_06_PLUM_WAVE.glb",
+      "jointCount": 17,
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666666666667
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666666666667
+        }
+      ],
+      "capReady": false
+    }
+  ],
+  "caps": [
+    {
+      "assetId": "SQ_CAP_BASE_01_INK_HOODIE",
+      "url": "/office/caps/SQ_CAP_BASE_01_INK_HOODIE.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_BLANK_EmblemReceiver",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_BASE_02_CLAY_CARDIGAN",
+      "url": "/office/caps/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_BLANK_EmblemReceiver",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_BASE_03_SAGE_OVERSHIRT",
+      "url": "/office/caps/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_55fd3108506c3ffc",
+        "SQ_CAP_BLANK_EmblemReceiver",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_46d2c0a14c5740e1"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_BASE_04_SLATE_BEANIE",
+      "url": "/office/caps/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_55fd3108506c3ffc",
+        "SQ_CAP_BLANK_EmblemReceiver",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_46d2c0a14c5740e1"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_BASE_05_OAT_HEADPHONES",
+      "url": "/office/caps/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_a3cba7c162dcd060",
+        "SQ_CAP_BLANK_EmblemReceiver",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_98d03b42a4b11d34"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_BASE_06_PLUM_WAVE",
+      "url": "/office/caps/SQ_CAP_BASE_06_PLUM_WAVE.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_BLANK_EmblemReceiver",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_CLAUDE_CODE",
+      "url": "/office/caps/SQ_CAP_CLAUDE_CODE.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_CLAUDE_CODE_EXACT_RGBA",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_CODEX",
+      "url": "/office/caps/SQ_CAP_CODEX.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_CODEX_EXACT_RGBA",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_DEEPSEEK",
+      "url": "/office/caps/SQ_CAP_DEEPSEEK.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_DEEPSEEK_EXACT_RGBA",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_GOOGLE_GEMINI",
+      "url": "/office/caps/SQ_CAP_GOOGLE_GEMINI.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_GOOGLE_GEMINI_EXACT_RGBA",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_HARNESS_OPENCODE",
+      "url": "/office/caps/SQ_CAP_HARNESS_OPENCODE.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_HARNESS_OPENCODE_EXACT_RGBA",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    },
+    {
+      "assetId": "SQ_CAP_XAI_GROK",
+      "url": "/office/caps/SQ_CAP_XAI_GROK.glb",
+      "jointCount": 1,
+      "materials": [
+        "Reference_cap_warm_ivory_cotton_portable_d16cd641a757f968",
+        "SQ_CAP_XAI_GROK_EXACT_RGBA",
+        "Reference cap \u00b7 subtle cotton seam",
+        "Reference_cap_warm_ivory_cotton_portable_41f05a75af08a28a",
+        "Reference_cap_warm_ivory_cotton_portable_8ece3e118675baeb"
+      ]
+    }
+  ],
+  "identityTextures": [
+    {
+      "assetId": "CLAUDE_CODE_cap_RGBA",
+      "url": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png"
+    },
+    {
+      "assetId": "CODEX_cap_RGBA",
+      "url": "/office/caps/textures/CODEX_cap_RGBA.png"
+    },
+    {
+      "assetId": "DEEPSEEK_cap_RGBA",
+      "url": "/office/caps/textures/DEEPSEEK_cap_RGBA.png"
+    },
+    {
+      "assetId": "GOOGLE_GEMINI_cap_RGBA",
+      "url": "/office/caps/textures/GOOGLE_GEMINI_cap_RGBA.png"
+    },
+    {
+      "assetId": "HARNESS_OPENCODE_cap_RGBA",
+      "url": "/office/caps/textures/HARNESS_OPENCODE_cap_RGBA.png"
+    },
+    {
+      "assetId": "XAI_GROK_cap_RGBA",
+      "url": "/office/caps/textures/XAI_GROK_cap_RGBA.png"
+    },
+    {
+      "assetId": "portable_CLAUDE_CODE_cap_RGBA",
+      "url": "/office/caps/textures/portable_CLAUDE_CODE_cap_RGBA.png"
+    },
+    {
+      "assetId": "portable_CODEX_cap_RGBA",
+      "url": "/office/caps/textures/portable_CODEX_cap_RGBA.png"
+    },
+    {
+      "assetId": "portable_DEEPSEEK_cap_RGBA",
+      "url": "/office/caps/textures/portable_DEEPSEEK_cap_RGBA.png"
+    },
+    {
+      "assetId": "portable_GOOGLE_GEMINI_cap_RGBA",
+      "url": "/office/caps/textures/portable_GOOGLE_GEMINI_cap_RGBA.png"
+    },
+    {
+      "assetId": "portable_HARNESS_OPENCODE_cap_RGBA",
+      "url": "/office/caps/textures/portable_HARNESS_OPENCODE_cap_RGBA.png"
+    },
+    {
+      "assetId": "portable_XAI_GROK_cap_RGBA",
+      "url": "/office/caps/textures/portable_XAI_GROK_cap_RGBA.png"
+    }
+  ],
+  "attachmentProfilesUrl": "/office/caps/attachment-profiles.json",
+  "stagedReferenceInstances": [
+    {
+      "sceneId": "worker_parent_001",
+      "stationId": "parent_001",
+      "assetUrl": "/office/actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "worldMatrixGltfRows": [
+        [
+          -1.0,
+          -3.82137093032941e-15,
+          -8.742277657347586e-08,
+          -10.229999542236328
+        ],
+        [
+          3.82137093032941e-15,
+          1.0,
+          -8.742277657347586e-08,
+          2.9286630365277233e-07
+        ],
+        [
+          8.742277657347586e-08,
+          -8.742277657347586e-08,
+          -1.0,
+          6.699999809265137
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_01_INK_HOODIE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_01_INK_HOODIE.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_01_INK_HOODIE.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_002",
+      "stationId": "parent_002",
+      "assetUrl": "/office/actors/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "worldMatrixGltfRows": [
+        [
+          -1.0,
+          -3.82137093032941e-15,
+          -8.742277657347586e-08,
+          -7.769999980926514
+        ],
+        [
+          3.82137093032941e-15,
+          1.0,
+          -8.742277657347586e-08,
+          2.9286630365277233e-07
+        ],
+        [
+          8.742277657347586e-08,
+          -8.742277657347586e-08,
+          -1.0,
+          6.699999809265137
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_02_CLAY_CARDIGAN",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_003",
+      "stationId": "parent_003",
+      "assetUrl": "/office/actors/SQ_HUMAN_03_SAGE_OVERSHIRT.glb",
+      "worldMatrixGltfRows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -10.229999542236328
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          1.9670125084303436e-07
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          4.5
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": null,
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_004",
+      "stationId": "parent_004",
+      "assetUrl": "/office/actors/SQ_HUMAN_04_SLATE_BEANIE__CAP_READY.glb",
+      "worldMatrixGltfRows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -7.769999980926514
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          1.9670125084303436e-07
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          4.5
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_04_SLATE_BEANIE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": true,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_005",
+      "stationId": "parent_005",
+      "assetUrl": "/office/actors/SQ_HUMAN_05_OAT_HEADPHONES.glb",
+      "worldMatrixGltfRows": [
+        [
+          -1.0,
+          -3.82137093032941e-15,
+          -8.742277657347586e-08,
+          -1.2300000190734863
+        ],
+        [
+          3.82137093032941e-15,
+          1.0,
+          -8.742277657347586e-08,
+          2.9286630365277233e-07
+        ],
+        [
+          8.742277657347586e-08,
+          -8.742277657347586e-08,
+          -1.0,
+          6.699999809265137
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_05_OAT_HEADPHONES",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_006",
+      "stationId": "parent_006",
+      "assetUrl": "/office/actors/SQ_HUMAN_06_PLUM_WAVE.glb",
+      "worldMatrixGltfRows": [
+        [
+          -1.0,
+          -3.82137093032941e-15,
+          -8.742277657347586e-08,
+          1.2300000190734863
+        ],
+        [
+          3.82137093032941e-15,
+          1.0,
+          -8.742277657347586e-08,
+          2.9286630365277233e-07
+        ],
+        [
+          8.742277657347586e-08,
+          -8.742277657347586e-08,
+          -1.0,
+          6.699999809265137
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_06_PLUM_WAVE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_06_PLUM_WAVE.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_06_PLUM_WAVE.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_017",
+      "stationId": "parent_017",
+      "assetUrl": "/office/actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "worldMatrixGltfRows": [
+        [
+          -1.0,
+          -3.82137093032941e-15,
+          -8.742277657347586e-08,
+          -1.2300000190734863
+        ],
+        [
+          3.82137093032941e-15,
+          1.0,
+          -8.742277657347586e-08,
+          -8.30516384553448e-08
+        ],
+        [
+          8.742277657347586e-08,
+          -8.742277657347586e-08,
+          -1.0,
+          -1.899999976158142
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_01_INK_HOODIE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_01_INK_HOODIE.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_01_INK_HOODIE.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_008",
+      "stationId": "parent_008",
+      "assetUrl": "/office/actors/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "worldMatrixGltfRows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.2300000190734863
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          1.9670125084303436e-07
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          4.5
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_02_CLAY_CARDIGAN",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_014",
+      "stationId": "parent_014",
+      "assetUrl": "/office/actors/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "worldMatrixGltfRows": [
+        [
+          -1.0,
+          -3.82137093032941e-15,
+          -8.742277657347586e-08,
+          -1.25
+        ],
+        [
+          3.82137093032941e-15,
+          1.0,
+          -8.742277657347586e-08,
+          -3.9427675346814794e-07
+        ],
+        [
+          8.742277657347586e-08,
+          -8.742277657347586e-08,
+          -1.0,
+          -9.020000457763672
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "point",
+      "clipHint": "Point",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_02_CLAY_CARDIGAN",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_018",
+      "stationId": "parent_018",
+      "assetUrl": "/office/actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "worldMatrixGltfRows": [
+        [
+          0.7648422122001648,
+          -2.8159648834957807e-08,
+          -0.6442176699638367,
+          -4.519999980926514
+        ],
+        [
+          2.8159648834957807e-08,
+          1.0,
+          -1.0279073592300847e-08,
+          -4.371138828673793e-08
+        ],
+        [
+          0.6442176699638367,
+          -1.0279073592300847e-08,
+          0.7648422122001648,
+          -1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "walking",
+      "clipHint": "Walking",
+      "headAccessory": null,
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_019",
+      "stationId": "parent_019",
+      "assetUrl": "/office/actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "worldMatrixGltfRows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -1.2300000190734863
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -1.7921668415965541e-07
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -4.099999904632568
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_01_INK_HOODIE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_01_INK_HOODIE.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_01_INK_HOODIE.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_020",
+      "stationId": "parent_020",
+      "assetUrl": "/office/actors/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "worldMatrixGltfRows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.2300000190734863
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -1.7921668415965541e-07
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -4.099999904632568
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": null,
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_021",
+      "stationId": "parent_021",
+      "assetUrl": "/office/actors/SQ_HUMAN_03_SAGE_OVERSHIRT.glb",
+      "worldMatrixGltfRows": [
+        [
+          -1.0,
+          -3.82137093032941e-15,
+          -8.742277657347586e-08,
+          7.769999980926514
+        ],
+        [
+          3.82137093032941e-15,
+          1.0,
+          -8.742277657347586e-08,
+          -1.9233010561947594e-07
+        ],
+        [
+          8.742277657347586e-08,
+          -8.742277657347586e-08,
+          -1.0,
+          -4.400000095367432
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_03_SAGE_OVERSHIRT",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_022",
+      "stationId": "parent_022",
+      "assetUrl": "/office/actors/SQ_HUMAN_04_SLATE_BEANIE.glb",
+      "worldMatrixGltfRows": [
+        [
+          0.7648422122001648,
+          2.8159648834957807e-08,
+          0.6442176699638367,
+          4.449999809265137
+        ],
+        [
+          -2.8159648834957807e-08,
+          1.0,
+          -1.0279073592300847e-08,
+          -3.278354085978208e-07
+        ],
+        [
+          -0.6442176699638367,
+          -1.0279073592300847e-08,
+          0.7648422122001648,
+          -7.5
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "walking",
+      "clipHint": "Walking",
+      "headAccessory": null,
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_023",
+      "stationId": "parent_023",
+      "assetUrl": "/office/actors/SQ_HUMAN_05_OAT_HEADPHONES.glb",
+      "worldMatrixGltfRows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          7.769999980926514
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -2.884951584292139e-07
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -6.599999904632568
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_05_OAT_HEADPHONES",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "worker_parent_024",
+      "stationId": "parent_024",
+      "assetUrl": "/office/actors/SQ_HUMAN_06_PLUM_WAVE.glb",
+      "worldMatrixGltfRows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          10.229999542236328
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -2.884951584292139e-07
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -6.599999904632568
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_06_PLUM_WAVE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_06_PLUM_WAVE.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_06_PLUM_WAVE.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_001_01",
+      "stationId": "parent_001",
+      "assetUrl": "/office/actors/SQ_HUMAN_03_SAGE_OVERSHIRT.glb",
+      "worldMatrixGltfRows": [
+        [
+          -0.7799999713897705,
+          -2.980669130839362e-15,
+          -6.818976316935732e-08,
+          -12.100000381469727
+        ],
+        [
+          2.980669130839362e-15,
+          0.7799999713897705,
+          -6.818976316935732e-08,
+          2.8499826498773473e-07
+        ],
+        [
+          6.818976316935732e-08,
+          -6.818976316935732e-08,
+          -0.7799999713897705,
+          6.519999980926514
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_03_SAGE_OVERSHIRT",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_002_01",
+      "stationId": "parent_002",
+      "assetUrl": "/office/actors/SQ_HUMAN_05_OAT_HEADPHONES.glb",
+      "worldMatrixGltfRows": [
+        [
+          -0.7799999713897705,
+          -2.980669130839362e-15,
+          -6.818976316935732e-08,
+          -5.900000095367432
+        ],
+        [
+          2.980669130839362e-15,
+          0.7799999713897705,
+          -6.818976316935732e-08,
+          2.8499826498773473e-07
+        ],
+        [
+          6.818976316935732e-08,
+          -6.818976316935732e-08,
+          -0.7799999713897705,
+          6.519999980926514
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_05_OAT_HEADPHONES",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_003_01",
+      "stationId": "parent_003",
+      "assetUrl": "/office/actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "worldMatrixGltfRows": [
+        [
+          0.7799999713897705,
+          0.0,
+          0.0,
+          -12.100000381469727
+        ],
+        [
+          0.0,
+          0.7799999713897705,
+          0.0,
+          2.0456928950807196e-07
+        ],
+        [
+          0.0,
+          0.0,
+          0.7799999713897705,
+          4.679999828338623
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": null,
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_005_01",
+      "stationId": "parent_005",
+      "assetUrl": "/office/actors/SQ_HUMAN_04_SLATE_BEANIE__CAP_READY.glb",
+      "worldMatrixGltfRows": [
+        [
+          -0.7799999713897705,
+          -2.980669130839362e-15,
+          -6.818976316935732e-08,
+          -3.0999999046325684
+        ],
+        [
+          2.980669130839362e-15,
+          0.7799999713897705,
+          -6.818976316935732e-08,
+          2.8499826498773473e-07
+        ],
+        [
+          6.818976316935732e-08,
+          -6.818976316935732e-08,
+          -0.7799999713897705,
+          6.519999980926514
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_04_SLATE_BEANIE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": true,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_005_02",
+      "stationId": "parent_005",
+      "assetUrl": "/office/actors/SQ_HUMAN_05_OAT_HEADPHONES.glb",
+      "worldMatrixGltfRows": [
+        [
+          -0.7799999713897705,
+          -2.980669130839362e-15,
+          -6.818976316935732e-08,
+          -3.0999999046325684
+        ],
+        [
+          2.980669130839362e-15,
+          0.7799999713897705,
+          -6.818976316935732e-08,
+          3.475055336821242e-07
+        ],
+        [
+          6.818976316935732e-08,
+          -6.818976316935732e-08,
+          -0.7799999713897705,
+          7.949999809265137
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_05_OAT_HEADPHONES",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_006_01",
+      "stationId": "parent_006",
+      "assetUrl": "/office/actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "worldMatrixGltfRows": [
+        [
+          -0.7799999713897705,
+          -2.980669130839362e-15,
+          -6.818976316935732e-08,
+          3.0999999046325684
+        ],
+        [
+          2.980669130839362e-15,
+          0.7799999713897705,
+          -6.818976316935732e-08,
+          2.8499826498773473e-07
+        ],
+        [
+          6.818976316935732e-08,
+          -6.818976316935732e-08,
+          -0.7799999713897705,
+          6.519999980926514
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_01_INK_HOODIE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_01_INK_HOODIE.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_01_INK_HOODIE.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_017_01",
+      "stationId": "parent_017",
+      "assetUrl": "/office/actors/SQ_HUMAN_03_SAGE_OVERSHIRT.glb",
+      "worldMatrixGltfRows": [
+        [
+          -0.7799999713897705,
+          -2.980669130839362e-15,
+          -6.818976316935732e-08,
+          -3.0999999046325684
+        ],
+        [
+          2.980669130839362e-15,
+          0.7799999713897705,
+          -6.818976316935732e-08,
+          -9.091968422580976e-08
+        ],
+        [
+          6.818976316935732e-08,
+          -6.818976316935732e-08,
+          -0.7799999713897705,
+          -2.0799999237060547
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_03_SAGE_OVERSHIRT",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_019_01",
+      "stationId": "parent_019",
+      "assetUrl": "/office/actors/SQ_HUMAN_04_SLATE_BEANIE__CAP_READY.glb",
+      "worldMatrixGltfRows": [
+        [
+          0.7799999713897705,
+          0.0,
+          0.0,
+          -3.0999999046325684
+        ],
+        [
+          0.0,
+          0.7799999713897705,
+          0.0,
+          -1.713486454946178e-07
+        ],
+        [
+          0.0,
+          0.0,
+          0.7799999713897705,
+          -3.9200000762939453
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_04_SLATE_BEANIE",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+        "identity_asset_id": "SQ_CAP_CODEX",
+        "identity_rgba": "providers/textures/CODEX_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": true,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+        "identityTextureUrl": "/office/caps/textures/CODEX_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_020_01",
+      "stationId": "parent_020",
+      "assetUrl": "/office/actors/SQ_HUMAN_06_PLUM_WAVE.glb",
+      "worldMatrixGltfRows": [
+        [
+          0.7799999713897705,
+          0.0,
+          0.0,
+          3.0999999046325684
+        ],
+        [
+          0.0,
+          0.7799999713897705,
+          0.0,
+          -1.713486454946178e-07
+        ],
+        [
+          0.0,
+          0.0,
+          0.7799999713897705,
+          -3.9200000762939453
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": null,
+      "runtimeConnected": false
+    },
+    {
+      "sceneId": "child_021_01",
+      "stationId": "parent_021",
+      "assetUrl": "/office/actors/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "worldMatrixGltfRows": [
+        [
+          -0.7799999713897705,
+          -2.980669130839362e-15,
+          -6.818976316935732e-08,
+          5.900000095367432
+        ],
+        [
+          2.980669130839362e-15,
+          0.7799999713897705,
+          -6.818976316935732e-08,
+          -2.0019815849536826e-07
+        ],
+        [
+          6.818976316935732e-08,
+          -6.818976316935732e-08,
+          -0.7799999713897705,
+          -4.579999923706055
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "poseHint": "typing",
+      "clipHint": "Typing",
+      "headAccessory": {
+        "fit_base_asset_id": "SQ_CAP_BASE_02_CLAY_CARDIGAN",
+        "fit_base_glb": "providers/glb/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+        "identity_asset_id": "SQ_CAP_CLAUDE_CODE",
+        "identity_rgba": "providers/textures/CLAUDE_CODE_cap_RGBA.png",
+        "receiver_uv": "SQ_EmblemUV",
+        "alpha_mode": "MASK",
+        "alpha_cutoff": 0.5,
+        "attachment_profiles": "providers/attachment_profiles.json",
+        "binding": "Attach the matching fit base to the actor head with its documented root_to_head_inverse. Replace only the receiver material with the chosen identity texture. Inherit actor scale once.",
+        "slate_original_beanie_omitted": false,
+        "fitBaseUrl": "/office/caps/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
+        "identityTextureUrl": "/office/caps/textures/CLAUDE_CODE_cap_RGBA.png",
+        "attachmentProfilesUrl": "/office/caps/attachment-profiles.json"
+      },
+      "runtimeConnected": false
+    }
+  ],
+  "renderPolicy": "The static office.glb excludes staged actors. Spawn from these unchanged original assets using a shared original skeleton and source transforms. Authored scene IDs and pose hints are visual references, not backend worker ownership or live job status."
+}
