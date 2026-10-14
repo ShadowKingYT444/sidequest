@@ -141,6 +141,11 @@ class StorageTests(unittest.TestCase):
         with self.store.transaction() as connection:
             connection.execute("UPDATE tasks SET kind = 'verify' WHERE id = ?", (task_id,))
         verifier = self.store.create_worker("verifier")
-        claim = self.store.claim_ready_task(verifier, 0)
+        with self.assertRaises(RuntimeFault) as caught:
+            self.store.claim_ready_task(verifier, 0)
+        self.assertEqual(caught.exception.code, ErrorCode.BUDGET_LIMIT)
+        self.assertEqual(self.store.list_tasks(job_id)[0]["state"], "queued")
+        trusted_verifier = self.store.create_worker("verifier", trusted_deterministic_internal=True)
+        claim = self.store.claim_ready_task(trusted_verifier, 0)
         self.assertIsNotNone(claim)
         self.assertEqual(claim["reserved_micro"], 0)

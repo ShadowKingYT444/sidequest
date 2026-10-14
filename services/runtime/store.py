@@ -487,11 +487,18 @@ class RuntimeStore:
         *,
         worker_id: str | UUID | None = None,
         configuration: dict[str, Any] | None = None,
+        trusted_deterministic_internal: bool = False,
     ) -> str:
         if role not in {"builder", "researcher", "verifier"}:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "worker role is invalid")
+        if not isinstance(trusted_deterministic_internal, bool) or (
+            trusted_deterministic_internal and role != "verifier"
+        ):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "only verifier workers can be trusted for deterministic internal work")
         worker_id = _require_uuid(str(worker_id or uuid4()), "worker_id")
-        configuration_json = canonical_json(configuration or {})
+        worker_configuration = dict(configuration or {})
+        worker_configuration["trusted_deterministic_internal"] = trusted_deterministic_internal
+        configuration_json = canonical_json(worker_configuration)
         with self.transaction() as connection:
             connection.execute(
                 "INSERT INTO workers(id, role, state, current_task_id, configuration_json) VALUES (?, ?, 'idle', NULL, ?)",
@@ -789,7 +796,7 @@ class RuntimeStore:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "worker capacity must be between 1 and 4")
         capacity = self.config.max_parallel if max_parallel is None else min(self.config.max_parallel, max_parallel)
         with self.transaction() as connection:
-            worker = connection.execute("SELECT state, role FROM workers WHERE id = ?", (worker_id,)).fetchone()
+            worker = connection.execute("SELECT state, role, configuration_json FROM workers WHERE id = ?", (worker_id,)).fetchone()
             if not worker:
                 raise RuntimeFault(ErrorCode.NOT_FOUND, "worker was not found")
             if worker["state"] != "idle":
@@ -827,8 +834,11 @@ class RuntimeStore:
                     if any(state_by_id.get(dep) != "completed" for dep in deps):
                         continue
                 has_ready = True
+                worker_configuration = _json_load(worker["configuration_json"])
                 if reservation_micro == 0 and not (
-                    task["kind"] == "verify" and worker["role"] == "verifier"
+                    task["kind"] == "verify"
+                    and worker["role"] == "verifier"
+                    and worker_configuration.get("trusted_deterministic_internal") is True
                 ):
                     budget_blocked = True
                     continue
