@@ -1,0 +1,19 @@
+{
+  "v": 1,
+  "checks": [
+    {
+      "id": "club.signup.popup_destination",
+      "kind": "browser_signup",
+      "entry_path": "/",
+      "link_role": "link",
+      "link_name": "Join the club",
+      "expected_path": "/members/welcome",
+      "success_selector": "[data-testid='signup-confirmed']",
+      "success_text": "Your membership is confirmed."
+    },
+    {
+      "id": "candidate.frozen_identity",
+      "kind": "candidate_identity"
+    }
+  ]
+}
