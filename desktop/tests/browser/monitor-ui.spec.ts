@@ -1,0 +1,68 @@
+import {test,expect,type Page} from '@playwright/test';
+import {writeFile} from 'node:fs/promises';
+import path from 'node:path';
+import {PerspectiveCamera,Vector3,Euler} from 'three';
+import AxeBuilder from '@axe-core/playwright';
+const evidence=path.resolve('../evidence/desktop');
+const origin={Origin:'http://127.0.0.1:5173'};
+const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aTioAAAAASUVORK5CYII=','base64');
+const pose=async(page:Page)=>page.locator('.office-canvas canvas').evaluate(node=>({position:JSON.parse((node as HTMLElement).dataset.cameraPosition!),target:JSON.parse((node as HTMLElement).dataset.cameraTarget!)}));
+async function paste(page:Page,text:string,image=false){await page.getByRole('textbox',{name:'Message this session'}).evaluate((node,payload)=>{const transfer=new DataTransfer();transfer.setData('text/plain',payload.text);transfer.setData('text/html','<img src=x onerror="window.__badPaste=true">');if(payload.image)transfer.items.add(new File([Uint8Array.from(payload.bytes)],'clipboard.png',{type:'image/png',lastModified:1}));node.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));},{text,image,bytes:Array.from(png)});}
+
+test('monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll',async({page,request})=>{
+  test.setTimeout(120_000);test.skip(process.env.SIDEQUEST_TEST_INSPECTION!=='1','Requires existing deterministic local inspection records; no coding job launches.');
+  const mutations:string[]=[],errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/__sidequest\/runtime\/(submitCoding|runCoding|enableCoding|submitInspection|run|register)$/.test(r.url())||/upload/i.test(r.url()))mutations.push(r.url());});
+  const read=async()=>{const r=await request.post('/__sidequest/runtime/snapshot',{data:[],headers:origin});expect(r.ok()).toBe(true);return r.json();};
+  let state=await read();const job=state.jobs.find((j:{execution_profile:string;run_ids:string[]})=>j.execution_profile==='local_git_inspection'&&j.run_ids?.length);expect(job).toBeTruthy();
+  const runId=job.run_ids.at(-1),run=(await (await request.post('/__sidequest/runtime/runInfo',{data:[runId],headers:origin})).json()).run;
+  const previous=state.office_sessions.filter((o:{station_id:string;worker_id:string})=>o.station_id==='parent_019'||o.worker_id===run.worker_id);
+  for(const owner of previous){expect((await request.post('/__sidequest/runtime/clearSession',{data:[owner.station_id,state.revision],headers:origin})).ok()).toBe(true);state=await read();}
+  expect((await request.post('/__sidequest/runtime/assignSession',{data:['parent_019',job.id,runId,state.revision],headers:origin})).ok()).toBe(true);
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});
+  const canvas=page.locator('.office-canvas canvas'),box=(await canvas.boundingBox())!;const initial=await pose(page);
+  await page.mouse.move(box.x+box.width*.9,box.y+box.height*.12);await page.mouse.wheel(0,-120);await expect.poll(async()=>JSON.stringify(await pose(page))).not.toBe(JSON.stringify(initial));
+  const office=await pose(page);
+  const bindings=await (await request.get('/office/bindings.json')).json(),station=bindings.stations.find((s:{id:string})=>s.id==='parent_019');
+  const camera=new PerspectiveCamera(35,box.width/box.height,.05,1000);camera.position.fromArray(office.position);camera.lookAt(new Vector3().fromArray(office.target));camera.updateMatrixWorld();
+  const point=new Vector3(0,station.screenSize[1]*.3,.012).applyEuler(new Euler(...station.rotation as [number,number,number])).add(new Vector3().fromArray(station.anchor)).project(camera);
+  const click={x:box.x+(point.x+1)*box.width/2,y:box.y+(1-point.y)*box.height/2};await page.mouse.click(click.x,click.y);
+  await expect(page.locator('main')).toHaveAttribute('data-mode','desk');await expect(page.locator('main')).toHaveAttribute('data-station','parent_019');
+  const trace=page.getByRole('region',{name:'Session execution trace'}),composer=page.getByRole('form',{name:'Local prompt composer'}),input=page.getByRole('textbox',{name:'Message this session'});
+  await expect(trace).toHaveAttribute('data-session-run',runId);await expect(trace.locator('.monitor-events>li').first()).toBeVisible();await expect(trace).toContainText('Checking');await expect(page.getByTestId('diff-editor')).toHaveCount(0);
+  await input.fill('Keep this draft. ');await input.evaluate(node=>(node as HTMLTextAreaElement).setSelectionRange(17,17));await paste(page,'Plain\r\n<script>literal</script>',true);
+  await expect(input).toHaveValue('Keep this draft. Plain\n<script>literal</script>');await expect(composer.getByRole('img',{name:'Preview of clipboard.png'})).toBeVisible();
+  await composer.getByLabel('Select local files').setInputFiles({name:'notes.txt',mimeType:'text/plain',buffer:Buffer.from('Local notes')});await expect(composer.getByRole('button',{name:'Remove notes.txt'})).toBeVisible();
+  await composer.evaluate(node=>{const transfer=new DataTransfer();transfer.items.add(new File(['diff --git a/a b/a'],'review.diff',{type:'text/plain',lastModified:2}));node.dispatchEvent(new DragEvent('drop',{dataTransfer:transfer,bubbles:true,cancelable:true}));});await expect(composer.getByRole('button',{name:'Remove review.diff'})).toBeVisible();
+  await composer.getByLabel('Select local files').setInputFiles({name:'bad.svg',mimeType:'image/svg+xml',buffer:Buffer.from('<svg onload="alert(1)"/>')});await expect(composer.getByRole('alert')).toContainText('use PNG');await expect(composer.getByRole('button',{name:'Remove bad.svg'})).toHaveCount(0);await composer.getByRole('button',{name:'Dismiss attachment errors'}).click();
+  await composer.getByLabel('Select local files').setInputFiles({name:'huge.txt',mimeType:'text/plain',buffer:Buffer.alloc(10*1024*1024+1)});await expect(composer.getByRole('alert')).toContainText('10 MiB');await composer.getByRole('button',{name:'Dismiss attachment errors'}).click();
+  await expect(composer.getByRole('button',{name:'Send message'})).toBeDisabled();await input.press('Control+Enter');expect(mutations).toEqual([]);expect(await page.evaluate(()=>Object.hasOwn(window,'__badPaste'))).toBe(false);
+  const output=trace.getByLabel('Recorded output');await output.evaluate(node=>{node.scrollTop=node.scrollHeight;});await expect.poll(async()=>Number(await output.getAttribute('data-scroll-top'))).toBeGreaterThan(0);const scroll=Number(await output.getAttribute('data-scroll-top'));
+  await page.screenshot({path:path.join(evidence,'monitor-pov-local-draft.png')});const focused=await pose(page);
+  await page.keyboard.press('Escape');await expect(page.locator('main')).toHaveAttribute('data-mode','overview');await expect(trace).toHaveCount(0);
+  await expect.poll(async()=>{const actual=await pose(page);return Math.max(...office.position.map((n:number,i:number)=>Math.abs(n-actual.position[i])),...office.target.map((n:number,i:number)=>Math.abs(n-actual.target[i])));}).toBeLessThan(.01);
+  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await expect(input).toHaveValue('Keep this draft. Plain\n<script>literal</script>');await expect(composer.getByRole('img',{name:'Preview of clipboard.png'})).toBeVisible();await expect.poll(async()=>Number(await output.getAttribute('data-scroll-top'))).toBeGreaterThan(0);
+  await page.getByRole('button',{name:'Files',exact:true}).click();await expect(page.getByTestId('diff-editor')).toHaveCount(1);await page.getByRole('button',{name:'Trace',exact:true}).click();await expect(page.getByTestId('diff-editor')).toHaveCount(0);await expect(input).toHaveValue('Keep this draft. Plain\n<script>literal</script>');
+  await page.getByRole('button',{name:'Expand',exact:true}).click();await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await expect.poll(async()=>Number(await output.getAttribute('data-scroll-top'))).toBeGreaterThan(0);
+  await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await page.keyboard.press('Escape');await expect.poll(async()=>{const actual=await pose(page);return Math.max(...office.position.map((n:number,i:number)=>Math.abs(n-actual.position[i])));}).toBeLessThan(.01);await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');
+  await composer.getByRole('button',{name:'Remove notes.txt'}).click();await expect(composer.getByRole('button',{name:'Remove notes.txt'})).toHaveCount(0);
+  await page.setViewportSize({width:390,height:780});await expect(input).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:path.join(evidence,'monitor-local-draft-390.png')});const axe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();expect(axe.violations.map(v=>({id:v.id,impact:v.impact}))).toEqual([]);
+  await writeFile(path.join(evidence,'monitor-ui-browser.json'),JSON.stringify({scope:'Real local Git inspection trace; native dispatch and OS clipboard are not established',station:'parent_019',runId,office,focused,physicalMonitorClick:click,traceScroll:scroll,returnCameraRestored:true,localAttachmentPaths:['synthetic clipboard event','browser file picker','browser drag/drop'],retainedAcrossEscapeAndTabs:true,noSilentUpload:true,mutations,errors,axe:axe.violations.map(v=>v.id)},null,2));
+  expect(errors).toEqual([]);
+  state=await read();expect((await request.post('/__sidequest/runtime/clearSession',{data:['parent_019',state.revision],headers:origin})).ok()).toBe(true);
+});
+
+test('explicit read-only fixture shows distinct notifications and one badge per primary figure',async({page,request})=>{
+  test.setTimeout(120_000);test.skip(process.env.SIDEQUEST_TEST_INSPECTION!=='1','Uses actual record identities in an explicitly labeled read-only fixture.');
+  const actual=await (await request.post('/__sidequest/runtime/snapshot',{data:[],headers:origin})).json();const jobs=actual.jobs.filter((j:{execution_profile:string;run_ids:string[]})=>j.execution_profile==='local_git_inspection'&&j.run_ids?.length).slice(0,2);expect(jobs).toHaveLength(2);
+  const owners=[];for(const [i,job] of jobs.entries()){const run=(await (await request.post('/__sidequest/runtime/runInfo',{data:[job.run_ids.at(-1)],headers:origin})).json()).run;owners.push({station_id:i===0?'parent_019':'parent_020',job_id:job.id,project_id:job.project_id,run_id:run.id,worker_id:run.worker_id,assigned_at:new Date().toISOString()});}
+  const fixture={...actual,mode:'fixture',jobs:jobs.map((job:any,i:number)=>({...job,state:i===0?'completed':'failed',title:`Test fixture · ${i===0?'Completed task':'Attention task'}`,blocked_reason:i===0?null:'Test fixture failure, no execution performed',tasks:job.tasks.map((task:any)=>({...task,state:i===0?'completed':'failed'})),checks:job.checks.map((check:any)=>({...check,state:i===0?'pass':'fail'}))})),office_sessions:owners};
+  const mutations:string[]=[];page.on('request',r=>{if(/__sidequest\/runtime\/(submitCoding|runCoding|enableCoding|assignSession|clearSession)$/.test(r.url()))mutations.push(r.url());});
+  await page.route('**/__sidequest/runtime/snapshot',route=>route.fulfill({json:fixture}));await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await expect(page.locator('.app-footer')).toContainText('Test fixture');
+  const canvas=page.locator('.office-canvas canvas');await expect.poll(async()=>JSON.parse(await canvas.getAttribute('data-agent-badges')??'[]').length).toBe(2);
+  const badges=JSON.parse((await canvas.getAttribute('data-agent-badges'))!);expect(badges).toEqual(expect.arrayContaining([{sceneId:'worker_parent_019',stationId:'parent_019',kind:'completed',jobId:jobs[0].id},{sceneId:'worker_parent_020',stationId:'parent_020',kind:'attention',jobId:jobs[1].id}]));expect(badges.some((b:{sceneId:string})=>b.sceneId==='child_019_01')).toBe(false);
+  await page.getByRole('button',{name:/^Notifications/}).click();const tray=page.getByRole('region',{name:'Notifications',exact:true});await expect(tray.locator('[data-notification-kind=completed]')).toHaveCount(1);await expect(tray.locator('[data-notification-kind=attention]')).toHaveCount(1);await expect(tray).toContainText('Test fixture');
+  await page.screenshot({path:path.join(evidence,'notifications-badges-fixture.png')});const axe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();expect(axe.violations.map(v=>({id:v.id,impact:v.impact}))).toEqual([]);
+  await tray.getByRole('button',{name:/Completed task/}).click();await expect(page.locator('main')).toHaveAttribute('data-station','parent_019');await expect(page.getByRole('region',{name:'Session execution trace'})).toHaveAttribute('data-session-run',owners[0].run_id);expect(mutations).toEqual([]);
+  await writeFile(path.join(evidence,'notifications-browser.json'),JSON.stringify({scope:'Explicit read-only fixture of completion/attention; not real successful worker dispatch',fixture:true,badges,duplicateChildBadge:false,mutations,axe:axe.violations.map(v=>v.id)},null,2));
+});

@@ -13,7 +13,7 @@ const boundedString = (value: unknown, limit = 200): value is string => typeof v
 const nullableString = (value: unknown): value is string | null => value === null || boundedString(value);
 const tokenCount = (value: unknown): value is number | null => value === null || (typeof value === 'number' && Number.isSafeInteger(value) && value >= 0);
 
-function requireRun(value: unknown, job: RuntimeJob, runId: string): RuntimeRun {
+export function requireRun(value: unknown, job: RuntimeJob, runId: string): RuntimeRun {
   const reply = value as { v?: number; run?: RuntimeRun } | null;
   const run = reply?.run;
   if (reply?.v !== 1 || !run || run.id !== runId || run.job_id !== job.id || !boundedString(run.task_id)
@@ -29,7 +29,7 @@ function requireRun(value: unknown, job: RuntimeJob, runId: string): RuntimeRun 
   return run;
 }
 
-function requireEvents(value: unknown, run: RuntimeRun, afterSeq: number): RunEventPage {
+export function requireEvents(value: unknown, run: RuntimeRun, afterSeq: number): RunEventPage {
   const page = value as RunEventPage | null;
   if (!page || page.v !== 1 || page.run_id !== run.id || !Array.isArray(page.items) || page.items.length > 200
     || typeof page.has_more !== 'boolean' || !Number.isSafeInteger(page.next_after_seq)) {

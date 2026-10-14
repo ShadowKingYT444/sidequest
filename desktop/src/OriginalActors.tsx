@@ -1,10 +1,12 @@
 import { Component, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { AnimationMixer, Bone, Group, Matrix4, Mesh, MeshStandardMaterial, Skeleton, SkinnedMesh, TextureLoader, type AnimationClip, type Material, type Object3D } from "three";
+import { AnimationMixer, Bone, Group, Matrix4, Mesh, MeshStandardMaterial, Skeleton, SkinnedMesh, TextureLoader, Vector3, type AnimationClip, type Material, type Object3D } from "three";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import type { GLTF, GLTFLoader, GLTFParser } from "three-stdlib";
 import { validateOfficeResourceUrl } from "./office-bindings";
+import AgentBadge from './AgentBadge';
+import type {OfficeNotification} from './notifications';
 
 const ACTORS_URL = "/office/actors.json";
 const PROFILES_URL = "/office/caps/attachment-profiles.json";
@@ -53,6 +55,8 @@ export interface OriginalActorsProps {
   onState?: (state: OriginalActorState) => void;
   onError?: (error: Error) => void;
   onSelectActor?: (stationId: string, sceneId?: string) => void;
+  stationBadges?: ReadonlyMap<string,OfficeNotification>;
+  onNotification?: (notification:OfficeNotification)=>void;
 }
 
 function record(value: unknown, field: string): Record<string, unknown> {
@@ -310,19 +314,22 @@ interface StaticActorProps {
   instance: OriginalActorInstance;
   headRestInverse?: Matrix4;
   onLoaded: (id: string) => void;
+  badge?:OfficeNotification;
+  onNotification?: (notification:OfficeNotification)=>void;
 }
 
-function ActorPrimitive({ instance, headRestInverse, onLoaded, human, fit, identity }: StaticActorProps & {
+function ActorPrimitive({ instance, headRestInverse, onLoaded, human, fit, identity, badge, onNotification }: StaticActorProps & {
   human: Pick<GLTF, "scene" | "animations">; fit?: Pick<GLTF, "scene">; identity?: Pick<GLTF, "scene">;
 }) {
   const assembly = useMemo(() => assembleOriginalActor(instance, human, headRestInverse, fit, identity), [instance, human, headRestInverse, fit, identity]);
+  const badgePosition=useMemo(()=>{const point=new Vector3();assembly.object.getObjectByName('head')!.getWorldPosition(point);point.y+=.4;return point.toArray() as [number,number,number];},[assembly]);
   const invalidate = useThree(state => state.invalidate);
   useLayoutEffect(() => {
     // React's development remount also resamples after cleanup restored bind poses.
     assembly.sample(); invalidate(); onLoaded(instance.sceneId);
     return assembly.dispose;
   }, [assembly, instance.sceneId, onLoaded, invalidate]);
-  return <primitive object={assembly.object} dispose={null} />;
+  return <><primitive object={assembly.object} dispose={null} />{badge&&<AgentBadge kind={badge.kind} label={`${badge.fixture?'Test fixture · ':''}${badge.label}: ${badge.title} · recorded status at ${instance.stationId}`} position={badgePosition} onClick={()=>onNotification?.(badge)}/>}</>;
 }
 
 function CappedActor(props: StaticActorProps & { human: Pick<GLTF, "scene" | "animations"> }) {
@@ -369,7 +376,7 @@ async function localJson(url: string, signal: AbortSignal): Promise<unknown> {
 }
 
 /** Static original artwork only. Status and refresh never invoke an agent or animate a typing loop. */
-export default function OriginalActors({ active, onState, onError, onSelectActor }: OriginalActorsProps) {
+export default function OriginalActors({ active, onState, onError, onSelectActor, stationBadges, onNotification }: OriginalActorsProps) {
   const gl = useThree(state => state.gl);
   const [resources, setResources] = useState<{ manifest: OriginalActorsManifest; inverses: Map<string, Matrix4> } | null>(null);
   const [loaded, setLoaded] = useState<Set<string>>(() => new Set());
@@ -398,11 +405,17 @@ export default function OriginalActors({ active, onState, onError, onSelectActor
     if (error) callbacks.current.onError?.(error);
   }, [resources, loaded, error]);
   useEffect(() => { if (active) invalidate(); }, [active, resources, loaded, invalidate]);
+  useEffect(()=>{
+    // Only the explicitly named primary workstation figure displays recorded status.
+    // Decorative children sharing that station never imply another worker association.
+    const badges=resources?.manifest.instances.filter(instance=>instance.sceneId===`worker_${instance.stationId}`&&loaded.has(instance.sceneId)&&stationBadges?.has(instance.stationId)).map(instance=>({sceneId:instance.sceneId,stationId:instance.stationId,kind:stationBadges!.get(instance.stationId)!.kind,jobId:stationBadges!.get(instance.stationId)!.jobId}))??[];
+    gl.domElement.dataset.agentBadges=JSON.stringify(badges);if(active)invalidate();
+  },[active,resources,loaded,stationBadges,gl,invalidate]);
   if (!resources || error) return null;
   return <group name="original-staged-artwork" visible={active} userData={{ artworkOnly: true, runtimeConnected: false }}>
     <ActorBoundary onError={handlers.error}>
       <Suspense fallback={null}>
-        {resources.manifest.instances.map(instance => <group key={instance.sceneId} userData={{actorReferenceStation:instance.stationId}} onClick={event=>{event.stopPropagation();onSelectActor?.(instance.stationId,instance.sceneId);}} onPointerOver={event=>{event.stopPropagation();gl.domElement.style.cursor='pointer';}} onPointerOut={()=>{gl.domElement.style.cursor='default';}}><StaticActor instance={instance} headRestInverse={instance.headAccessory ? resources.inverses.get(instance.headAccessory.variant) : undefined} onLoaded={handlers.loaded} /></group>)}
+        {resources.manifest.instances.map(instance => <group key={instance.sceneId} userData={{actorReferenceStation:instance.stationId}} onClick={event=>{event.stopPropagation();onSelectActor?.(instance.stationId,instance.sceneId);}} onPointerOver={event=>{event.stopPropagation();gl.domElement.style.cursor='pointer';}} onPointerOut={()=>{gl.domElement.style.cursor='default';}}><StaticActor instance={instance} headRestInverse={instance.headAccessory ? resources.inverses.get(instance.headAccessory.variant) : undefined} onLoaded={handlers.loaded} badge={instance.sceneId===`worker_${instance.stationId}`?stationBadges?.get(instance.stationId):undefined} onNotification={onNotification}/></group>)}
       </Suspense>
     </ActorBoundary>
   </group>;

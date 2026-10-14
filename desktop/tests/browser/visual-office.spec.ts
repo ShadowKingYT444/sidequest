@@ -65,8 +65,9 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('work:parent_019');
   const launcher=page.getByRole('dialog',{name:'New task'});
   await expect(launcher).toBeVisible();
-  await expect(launcher.getByRole('combobox',{name:'Agent',exact:true})).toHaveValue('codex');
-  await expect(launcher.getByRole('combobox',{name:'Agent',exact:true}).locator('option')).toHaveCount(2);
+  const tiles=launcher.getByRole('group',{name:'Agent providers'}).getByRole('button');
+  await expect(tiles).toHaveCount(6);for(const tile of await tiles.all())await expect(tile).toBeDisabled();
+  await expect(launcher.getByText('Connected',{exact:true})).toHaveCount(0);
   await expect(launcher.getByLabel('Prompt',{exact:true})).toHaveValue('');
   await launcher.getByLabel('Prompt',{exact:true}).fill('Test-only draft prompt. No coding task will be submitted.');
   await launcher.getByText('Scope and spending',{exact:false}).click();

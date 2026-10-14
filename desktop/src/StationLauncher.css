@@ -7,32 +7,34 @@
 .station-launcher button { min-height: 34px; padding: 7px 12px; border: 1px solid var(--launcher-border); border-radius: 8px; background: transparent; color: #e5e5e5; cursor: pointer; }
 .station-launcher button:hover:not(:disabled) { background: rgb(255 255 255 / 5%); }
 .station-launcher button:disabled { opacity: .45; cursor: default; }
-.station-launcher-header { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px 16px; }
+.station-launcher-header { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px 12px; }
 .station-launcher-header h2 { margin: 0 0 2px; font-size: 16px; font-weight: 550; }
 .station-launcher-header span { color: var(--launcher-muted); font-size: 12px; }
 .station-launcher .station-launcher-close { flex: none; width: 32px; min-height: 32px; padding: 0; border: 0; color: var(--launcher-muted); font-size: 23px; font-weight: 300; line-height: 1; }
 .station-launcher-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 20px 20px; scrollbar-width: thin; }
-.station-launcher-status { display: flex; align-items: flex-start; gap: 12px; padding: 0 0 16px; }
+.station-launcher-status { display: flex; align-items: flex-start; gap: 12px; padding: 0 0 12px; }
 .station-launcher-status p { flex: 1; margin: 0; color: var(--launcher-muted); font-size: 12px; }
 .station-launcher .station-launcher-status button { flex: none; min-height: 0; padding: 0; border: 0; background: transparent; color: #90b5ff; font-size: 12px; }
-.station-launcher form { display: grid; gap: 16px; }
+.station-launcher form { display: grid; gap: 12px; }
 .station-launcher label { display: grid; min-width: 0; gap: 6px; color: #d4d4d4; font-size: 12px; font-weight: 500; }
 .station-launcher :is(input,select,textarea) { width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid var(--launcher-border); border-radius: 8px; outline: none; background: #171717; color: #f5f5f5; font-size: 13px; font-weight: 400; }
 .station-launcher :is(input,select) { height: 38px; }
-.station-launcher textarea { min-height: 106px; max-height: 200px; resize: vertical; }
+.station-launcher textarea { min-height: 64px; max-height: 160px; resize: vertical; }
 .station-launcher :is(input,textarea)::placeholder { color: #858585; }
 .station-launcher :is(input,select,textarea):disabled { opacity: .6; }
-.station-launcher-pickers { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 12px; }
+.station-launcher-pickers { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .station-launcher-scope { display: grid; grid-template-columns: minmax(0, 1fr) 108px; gap: 12px; }
 .station-launcher-options { border-top: 1px solid var(--launcher-border); }
 .station-launcher-options summary { padding: 10px 0; color: #d4d4d4; font-size: 12px; cursor: pointer; }
 .station-launcher-options summary > span { float: right; color: var(--launcher-muted); font-size: 11px; }
 .station-launcher-options[open] > .station-launcher-scope { margin-top: 4px; }
-.station-launcher-setup { margin-bottom: 16px; }
+.station-launcher-setup { margin-bottom: 0; }
 .station-launcher-setup dl { display: grid; gap: 8px; margin: 2px 0 12px; font-size: 12px; }
-.station-launcher-setup dl > div { display: flex; justify-content: space-between; gap: 12px; }
+.station-launcher-setup dl > div { display: grid; grid-template-columns: 76px minmax(0,1fr); gap: 12px; }
 .station-launcher-setup dt { color: var(--launcher-muted); }
-.station-launcher-setup dd { margin: 0; color: #d4d4d4; }
+.station-launcher-setup dd { margin: 0; color: #d4d4d4; overflow-wrap: anywhere; }
+.station-launcher-setup dd small { display:block; margin-top:3px; color:var(--launcher-muted); font-size:11px; }
+.station-launcher-setup > button { margin:0 0 12px; }
 .station-launcher-permission { display: grid; gap: 8px; }
 .station-launcher-permission > span { color: var(--launcher-muted); font-size: 12px; }
 .station-launcher-permission button { justify-self: start; font-size: 12px; }

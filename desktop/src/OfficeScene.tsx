@@ -15,6 +15,7 @@ import OriginalActors, { type OriginalActorState } from "./OriginalActors";
 import type { GLTFLoader, OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { validateOfficeResourceUrl } from "./office-bindings";
 import type { OfficeBindings, OfficeStationBinding, Vector3 } from "./office-bindings";
+import type {OfficeNotification} from './notifications';
 
 export interface OfficeSceneProps {
   bindings: OfficeBindings;
@@ -30,6 +31,8 @@ export interface OfficeSceneProps {
   active: boolean;
   onError?: (error: Error) => void;
   onActorState?: (state: OriginalActorState) => void;
+  stationBadges?: ReadonlyMap<string,OfficeNotification>;
+  onNotification?: (notification:OfficeNotification)=>void;
 }
 
 interface OfficeModelProps {
@@ -180,6 +183,15 @@ function asThreeVector(value: Vector3) {
   return new ThreeVector3(value[0], value[1], value[2]);
 }
 
+function monitorPose(station:OfficeStationBinding,aspect:number){
+  const target=asThreeVector(station.focus.target);
+  const direction=asThreeVector(station.focus.position).sub(target);
+  // Fit the supplied screen in both dimensions, retaining its authored viewing side.
+  const tangent=Math.tan(MathUtils.degToRad(35)/2);
+  const distance=Math.max(direction.length(),1.12*Math.max(station.screenSize[1]/(2*tangent),station.screenSize[0]/(2*tangent*Math.max(.1,aspect))));
+  return {position:target.clone().add(direction.normalize().multiplyScalar(distance)),target};
+}
+
 // Keep the selected application UI in its original React root. The world scene
 // supplies only projection math; secondary HTML roots never own a full editor.
 export function MonitorProjection({station,element,active}:{station?:OfficeStationBinding;element?:React.RefObject<HTMLDivElement|null>;active:boolean}){
@@ -187,7 +199,7 @@ export function MonitorProjection({station,element,active}:{station?:OfficeStati
   useEffect(()=>{invalidate();},[station,element,active,invalidate]);
   useFrame(()=>{
     const node=element?.current;if(!node||!station||!active)return;
-    const ready=camera.position.distanceTo(asThreeVector(station.focus.position))<.15;
+    const ready=camera.position.distanceTo(monitorPose(station,size.width/size.height).position)<.015;
     const corners=[[-1,-1],[1,-1],[-1,1],[1,1]].map(([x,y])=>new ThreeVector3(x*station.screenSize[0]/2,y*station.screenSize[1]/2,.01).applyEuler(new Euler(...station.rotation)).add(asThreeVector(station.anchor)).project(camera));
     const xs=corners.map(point=>(point.x+1)*size.width/2),ys=corners.map(point=>(1-point.y)*size.height/2);
     const left=Math.min(...xs),top=Math.min(...ys),width=Math.max(...xs)-left,height=Math.max(...ys)-top;
@@ -234,16 +246,27 @@ export function CameraRig({
   active,
   controlsRef,
 }: CameraRigProps) {
-  const { camera, invalidate } = useThree();
+  const { camera, invalidate, size, gl } = useThree();
   const transition = useRef<CameraTransition | null>(null);
+  const previousStation=useRef<string|null>(null),initialized=useRef(false);
+  const returningToOffice=useRef(false);
+  const officePose=useRef({position:asThreeVector(bindings.overview.position),target:asThreeVector(bindings.overview.target)});
   const selectedStation = bindings.stations.find((item) => item.id === selectedStationId);
-  const pose = selectedStation?.focus ?? bindings.overview;
+  const pose=useMemo(()=>selectedStation?monitorPose(selectedStation,size.width/size.height):null,[selectedStation,size.width,size.height]);
+  useEffect(()=>{
+    const controls=controlsRef.current;const publish=()=>{gl.domElement.dataset.cameraPosition=JSON.stringify(camera.position.toArray());gl.domElement.dataset.cameraTarget=JSON.stringify((controls?.target??officePose.current.target).toArray());};
+    controls?.addEventListener('change',publish);publish();return()=>controls?.removeEventListener('change',publish);
+  },[camera,controlsRef,gl]);
 
   useEffect(() => {
     if (!active) return;
     const controls = controlsRef.current;
-    const toPosition = asThreeVector(pose.position);
-    const toTarget = asThreeVector(pose.target);
+    if(selectedStation&&!previousStation.current&&initialized.current&&!returningToOffice.current){officePose.current={position:camera.position.clone(),target:controls?.target.clone()??asThreeVector(bindings.overview.target)};}
+    if(!selectedStation&&!previousStation.current&&initialized.current)return;
+    returningToOffice.current=!selectedStation&&!!previousStation.current;
+    const toPosition=(pose??officePose.current).position.clone();
+    const toTarget=(pose??officePose.current).target.clone();
+    previousStation.current=selectedStation?.id??null;initialized.current=true;
 
     if (reducedMotion) {
       camera.position.copy(toPosition);
@@ -253,6 +276,7 @@ export function CameraRig({
         controls.update();
       }
       transition.current = null;
+      returningToOffice.current=false;
       invalidate();
       return;
     }
@@ -266,11 +290,12 @@ export function CameraRig({
       elapsed: 0,
     };
     invalidate();
-  }, [active, camera, controlsRef, invalidate, pose, reducedMotion]);
+  }, [active, camera, controlsRef, invalidate, pose, reducedMotion, selectedStation, bindings.overview.target]);
 
   useFrame((_, delta) => {
     const current = transition.current;
-    if (!active || !current) return;
+    if (!active) return;
+    if(current){
 
     current.elapsed = Math.min(current.elapsed + delta, 0.55);
     const amount = MathUtils.smoothstep(current.elapsed / 0.55, 0, 1);
@@ -284,7 +309,10 @@ export function CameraRig({
     }
 
     if (current.elapsed < 0.55) invalidate();
-    else transition.current = null;
+    else {transition.current = null;returningToOffice.current=false;}
+    }
+    gl.domElement.dataset.cameraPosition=JSON.stringify(camera.position.toArray());
+    gl.domElement.dataset.cameraTarget=JSON.stringify((controlsRef.current?.target??officePose.current.target).toArray());
   });
 
   return null;
@@ -305,6 +333,8 @@ export function OfficeScene({
   active,
   onError,
   onActorState,
+  stationBadges,
+  onNotification,
 }: OfficeSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const viewBindings=useMemo(()=>({...bindings,overview:{target:[1,-.3,-3.8] as Vector3,position:[11.5,8.5,12] as Vector3}}),[bindings]);
@@ -313,7 +343,7 @@ export function OfficeScene({
     <Canvas className="office-canvas"
       frameloop={active ? "demand" : "never"}
       dpr={[1, 1.5]}
-      camera={{ position: viewBindings.overview.position, fov: 40, near: 0.05, far: 1000 }}
+      camera={{ position: viewBindings.overview.position, fov: 35, near: 0.05, far: 1000 }}
       gl={{ antialias: true, alpha: false, toneMapping:ACESFilmicToneMapping, toneMappingExposure:1.2 }}
       shadows="percentage"
     >
@@ -325,7 +355,7 @@ export function OfficeScene({
           <OfficeModel url={bindings.modelUrl} onSelectWorkstation={onSelectWorkstation} />
         </Suspense>
       </LoaderErrorBoundary>
-      <OriginalActors active={active} onState={onActorState} onSelectActor={onSelectActor} />
+      <OriginalActors active={active} onState={onActorState} onSelectActor={onSelectActor} stationBadges={stationBadges} onNotification={onNotification}/>
       {bindings.stations.map((station) => (
         <StationMonitor
           key={station.id}

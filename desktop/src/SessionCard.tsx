@@ -1,13 +1,12 @@
 import {useEffect,useRef,useState} from 'react';
 import {bridge} from './bridge';
-import RunActivity from './RunActivity';
 import {requireOfficeSessions} from './runtime-identity';
 import type {RuntimeJob,RuntimeSnapshot} from './types';
 
 const id=(value:unknown):value is string=>typeof value==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/.test(value);
 interface Props {stationId:string;active:boolean;onFiles:(assignment:{jobId:string;projectId:string})=>void;onCount:(count:number)=>void;onBrowse:()=>void;onProvider:()=>void}
 export default function SessionCard({stationId,active,onFiles,onCount,onBrowse,onProvider}:Props){
-  const [state,setState]=useState<RuntimeSnapshot|null>(null),[job,setJob]=useState<RuntimeJob|null>(null),[jobId,setJobId]=useState(''),[runId,setRunId]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[revision,setRevision]=useState(0),[activityOpen,setActivityOpen]=useState(false);
+  const [state,setState]=useState<RuntimeSnapshot|null>(null),[job,setJob]=useState<RuntimeJob|null>(null),[jobId,setJobId]=useState(''),[runId,setRunId]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[revision,setRevision]=useState(0);
   const generation=useRef(0),mounted=useRef(false),locked=useRef(false);
   const owner=state?.office_sessions?.find(row=>row.station_id===stationId);
   useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;generation.current++;};},[]);
@@ -44,11 +43,10 @@ export default function SessionCard({stationId,active,onFiles,onCount,onBrowse,o
     {state?.mode==='fixture'&&<p className="session-note">Test fixture session state</p>}
     {busy&&!state&&<p role="status">Reading session state…</p>}
     {error&&<p role="alert" className="session-error">{error}</p>}
-    <p className="session-status">{owner?(job?.execution_profile==='local_git_inspection'?'Recorded local inspection':'Recorded runtime session'):'No live session attached'}</p>
-    <p className="session-note">{owner?'Persisted worker ownership · original staged figure':'Staged original figure'}</p>
-    {owner&&<><dl className="session-facts"><div><dt>Task</dt><dd>{job?.title??'Reading task…'}</dd></div><div><dt>Worker</dt><dd title={owner.worker_id}>{owner.worker_id.slice(0,8)}</dd></div><div><dt>Run</dt><dd title={owner.run_id}>{owner.run_id.slice(0,8)}</dd></div><div><dt>State</dt><dd>{job?.state.replaceAll('_',' ')??'Unknown'}</dd></div></dl>{job&&typeof (job as RuntimeJob & {source?:{text?:string}}).source?.text==='string'&&<details><summary>Task request</summary><pre className="session-request">{(job as RuntimeJob & {source:{text:string}}).source.text.slice(0,2000)}</pre></details>}{job&&<details className="session-conversation" open={activityOpen} onToggle={event=>setActivityOpen(event.currentTarget.open)}><summary>Conversation &amp; events</summary><RunActivity job={job} active={active&&!busy&&activityOpen} selectedRunId={owner.run_id} expectedWorkerId={owner.worker_id} contextual/></details>}<div className="object-actions"><button disabled={!job} onClick={()=>onFiles({jobId:owner.job_id,projectId:owner.project_id})}>Open results</button><button disabled={busy||!active} onClick={()=>void change(true)}>Detach session</button></div></>}
+    <p className="session-status">{owner?(job?.execution_profile==='local_git_inspection'?'Recorded local inspection':'Recorded session'):'No live session attached'}</p>
+    {owner&&<><h3 className="session-task-title">{job?.title??'Reading task…'}</h3><p className="session-compact-state">{job?.state==='verifying'?'Checking':job?.state.replaceAll('_',' ')??'State unavailable'}</p><div className="object-actions"><button onClick={onBrowse}>Open monitor</button><button disabled={!job} onClick={()=>onFiles({jobId:owner.job_id,projectId:owner.project_id})}>Open results</button></div><details className="session-ownership"><summary>Session details</summary><p className="session-note">Recorded display ownership · original staged figure</p><p className="session-note">Run {owner.run_id}<br/>Worker {owner.worker_id}</p><button disabled={busy||!active} onClick={()=>void change(true)}>Detach session</button></details></>}
     {!owner&&<details className="session-assign"><summary>Attach recorded session</summary><p className="session-note">Assign an existing run to this figure. This does not start or move worker execution.</p><label>Recorded task<select value={jobId} disabled={busy||!active} onChange={event=>{setError('');setJobId(event.target.value);}}><option value="">Choose a task</option>{state?.jobs.filter(job=>job.run_ids?.length).map(job=><option key={job.id} value={job.id}>{job.title}</option>)}</select></label><label>Recorded run<select value={runId} disabled={busy||!job||!active} onChange={event=>setRunId(event.target.value)}><option value="">Choose a run</option>{job?.run_ids?.map((run,index)=><option key={run} value={run}>Run {index+1} · {run.slice(0,8)}</option>)}</select></label><button disabled={busy||!!error||!job||!runId||!active} onClick={()=>void change(false)}>Assign session</button></details>}
-    {!owner&&<div className="object-actions"><button onClick={onBrowse}>Open files</button><button onClick={onProvider}>Choose provider</button></div>}
+    {!owner&&<div className="object-actions"><button onClick={onBrowse}>Open monitor</button><button onClick={onProvider}>Choose provider</button></div>}
     <button className="session-read-refresh" disabled={busy||!active} onClick={()=>setRevision(value=>value+1)}>Refresh session</button>
   </div>;
 }
