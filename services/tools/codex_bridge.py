@@ -1036,4 +1036,3 @@ def execute_agent(
             app.close()
         for signum, handler in previous_handlers.items():
             signal.signal(signum, handler)
-
