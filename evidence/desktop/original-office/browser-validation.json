@@ -1,19 +1,20 @@
 {
-  "testedAt": "2026-10-14T06:34:16.655Z",
+  "testedAt": "2026-10-14T07:48:19.823Z",
   "baseCommit": "1e4b7440cb526f09203a7351af1abe8b69dd922f",
   "viewport": {
     "width": 1440,
     "height": 1000
   },
   "stationCount": 24,
+  "stagedActorCount": 26,
+  "actorsAreArtworkOnly": true,
   "overviewRendered": true,
   "measuredMonitorSelected": "parent_019",
   "actualGitDiffMounted": true,
   "expandedViewerVisible": true,
   "escapeReturnedToOverview": true,
-  "pageErrors": [
-    "WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self'\"."
-  ],
+  "pageErrors": [],
+  "consoleErrors": [],
   "requestFailures": [],
   "assetResponses": [
     {
@@ -25,7 +26,55 @@
       "status": 200
     },
     {
+      "path": "/office/caps/attachment-profiles.json",
+      "status": 200
+    },
+    {
+      "path": "/office/actors.json",
+      "status": 200
+    },
+    {
+      "path": "/office/actors/SQ_HUMAN_01_INK_HOODIE.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/caps/SQ_CAP_BASE_01_INK_HOODIE.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/actors/SQ_HUMAN_02_CLAY_CARDIGAN.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/actors/SQ_HUMAN_03_SAGE_OVERSHIRT.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/actors/SQ_HUMAN_05_OAT_HEADPHONES.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/actors/SQ_HUMAN_04_SLATE_BEANIE__CAP_READY.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/actors/SQ_HUMAN_06_PLUM_WAVE.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/actors/SQ_HUMAN_04_SLATE_BEANIE.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/caps/SQ_CAP_CODEX.glb",
+      "status": 200
+    },
+    {
       "path": "/office/textures/001-e3f0f809bf28.png",
+      "status": 200
+    },
+    {
+      "path": "/office/caps/SQ_CAP_BASE_02_CLAY_CARDIGAN.glb",
       "status": 200
     },
     {
@@ -34,6 +83,18 @@
     },
     {
       "path": "/office/textures/003-42a6cb087d1a.png",
+      "status": 200
+    },
+    {
+      "path": "/office/caps/SQ_CAP_BASE_05_OAT_HEADPHONES.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/caps/SQ_CAP_BASE_04_SLATE_BEANIE.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/caps/SQ_CAP_BASE_06_PLUM_WAVE.glb",
       "status": 200
     },
     {
@@ -57,6 +118,10 @@
       "status": 200
     },
     {
+      "path": "/office/caps/SQ_CAP_BASE_03_SAGE_OVERSHIRT.glb",
+      "status": 200
+    },
+    {
       "path": "/office/textures/009-5ec1531a7774.png",
       "status": 200
     },
@@ -73,11 +138,15 @@
       "status": 200
     },
     {
-      "path": "/office/textures/012-5fb6a195a6d0.png",
+      "path": "/office/caps/SQ_CAP_CLAUDE_CODE.glb",
       "status": 200
     },
     {
       "path": "/office/textures/013-030bbd3c246a.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/012-5fb6a195a6d0.png",
       "status": 200
     },
     {
@@ -93,11 +162,11 @@
       "status": 200
     },
     {
-      "path": "/office/textures/019-6cc42254870a.png",
+      "path": "/office/textures/017-cf079bee7cc0.png",
       "status": 200
     },
     {
-      "path": "/office/textures/017-cf079bee7cc0.png",
+      "path": "/office/textures/019-6cc42254870a.png",
       "status": 200
     },
     {
@@ -137,11 +206,11 @@
       "status": 200
     },
     {
-      "path": "/office/textures/029-bc9ae9cc5f4e.png",
+      "path": "/office/textures/028-57a4d2641279.png",
       "status": 200
     },
     {
-      "path": "/office/textures/028-57a4d2641279.png",
+      "path": "/office/textures/029-bc9ae9cc5f4e.png",
       "status": 200
     },
     {
@@ -149,19 +218,19 @@
       "status": 200
     },
     {
-      "path": "/office/textures/030-1c956c3052dc.png",
-      "status": 200
-    },
-    {
       "path": "/office/textures/033-913df5ba81b4.png",
       "status": 200
     },
     {
-      "path": "/office/textures/032-0deb2c916372.png",
+      "path": "/office/textures/030-1c956c3052dc.png",
       "status": 200
     },
     {
       "path": "/office/textures/035-b8835794a99b.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/032-0deb2c916372.png",
       "status": 200
     },
     {
@@ -181,11 +250,11 @@
       "status": 200
     },
     {
-      "path": "/office/textures/038-a3948a0a97a4.png",
+      "path": "/office/textures/041-402697d1f0d9.png",
       "status": 200
     },
     {
-      "path": "/office/textures/041-402697d1f0d9.png",
+      "path": "/office/textures/038-a3948a0a97a4.png",
       "status": 200
     },
     {
@@ -217,7 +286,7 @@
       "status": 200
     },
     {
-      "path": "/office/textures/050-e5c6e6efd949.png",
+      "path": "/office/textures/049-0429fe89e120.png",
       "status": 200
     },
     {
@@ -225,19 +294,19 @@
       "status": 200
     },
     {
-      "path": "/office/textures/049-0429fe89e120.png",
-      "status": 200
-    },
-    {
       "path": "/office/textures/051-f7c99779e3e3.png",
       "status": 200
     },
     {
-      "path": "/office/textures/052-abfa3f18fc21.png",
+      "path": "/office/textures/050-e5c6e6efd949.png",
       "status": 200
     },
     {
       "path": "/office/textures/053-d8f017bee59e.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/052-abfa3f18fc21.png",
       "status": 200
     },
     {
@@ -253,19 +322,19 @@
       "status": 200
     },
     {
-      "path": "/office/textures/058-53815d7064c5.png",
-      "status": 200
-    },
-    {
       "path": "/office/textures/057-683e62491afd.png",
       "status": 200
     },
     {
-      "path": "/office/textures/060-b129cc854ff7.png",
+      "path": "/office/textures/058-53815d7064c5.png",
       "status": 200
     },
     {
       "path": "/office/textures/059-465b8243feca.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/060-b129cc854ff7.png",
       "status": 200
     },
     {
@@ -277,11 +346,11 @@
       "status": 200
     },
     {
-      "path": "/office/textures/063-3275357c4515.png",
+      "path": "/office/textures/064-d96f787276fc.png",
       "status": 200
     },
     {
-      "path": "/office/textures/064-d96f787276fc.png",
+      "path": "/office/textures/063-3275357c4515.png",
       "status": 200
     },
     {
@@ -297,11 +366,11 @@
       "status": 200
     },
     {
-      "path": "/office/textures/068-02ecefed9c39.png",
+      "path": "/office/textures/069-557863d8cbcb.png",
       "status": 200
     },
     {
-      "path": "/office/textures/069-557863d8cbcb.png",
+      "path": "/office/textures/068-02ecefed9c39.png",
       "status": 200
     },
     {
@@ -337,11 +406,11 @@
       "status": 200
     },
     {
-      "path": "/office/textures/078-67a486543e20.png",
+      "path": "/office/textures/080-368504af228e.png",
       "status": 200
     },
     {
-      "path": "/office/textures/080-368504af228e.png",
+      "path": "/office/textures/078-67a486543e20.png",
       "status": 200
     },
     {
@@ -373,11 +442,11 @@
       "status": 200
     },
     {
-      "path": "/office/textures/087-83d4a5392a03.png",
+      "path": "/office/textures/089-add7c0a1e4fc.png",
       "status": 200
     },
     {
-      "path": "/office/textures/089-add7c0a1e4fc.png",
+      "path": "/office/textures/087-83d4a5392a03.png",
       "status": 200
     },
     {

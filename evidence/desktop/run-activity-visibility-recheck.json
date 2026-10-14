@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "scope": "Isolated read-only visibility recheck after source freeze. Test-only response reports the actual completed run as running with ended_at null; persisted runtime remains unchanged. No mutation, coding, provider, native or art checks.",
+  "actual_run_id": "a0995f83-cbbb-4bc6-80e7-585a3f18e0d6",
+  "checks": [
+    "Actual completed run loads from runInfo/runEvents",
+    "Test-only unfinished selected run polls after 5.5 seconds (runInfo count 2 to 3)",
+    "Test-only hidden document pauses refresh for 5.5 seconds (runInfo count stays 3)",
+    "Visibility restored causes new read (runInfo count 4), clears paused label and enables Refresh",
+    "Removing fixture and explicit Refresh returns actual completed state"
+  ],
+  "run_info_requests": 5,
+  "run_event_requests": 5,
+  "response_statuses": [
+    200
+  ],
+  "original_failure_retained": "/tmp/sidequest-run-activity-qa.json",
+  "original_failure_status": "FAIL after nine passed checks; simulated visibility resume timed out during concurrent HMR. No source fix was made; cause was not conclusively assigned.",
+  "source_sha256": {
+    "desktop/src/RunActivity.tsx": "5878122a94e2e97c6449f15e814e3bf2ecff587cfde030a2035662fad6449cbf",
+    "desktop/src/RunActivity.css": "d02a0bf40a6c4f35f7123b69fab93999ae9b065ee62050962b1ba53a18c54bed"
+  }
+}

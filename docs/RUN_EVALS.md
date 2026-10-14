@@ -10,7 +10,7 @@ Python 3.12, Git and Node 24 are required. Use an isolated Python environment an
 python3 -m venv .venv
 .venv/bin/python -m pip install -r services/runtime/requirements.lock
 .venv/bin/python -m pip install -r services/workshops/requirements.lock
-npm --prefix desktop ci
+npm_config_cache=/tmp/sidequest-npm npm --prefix desktop ci
 ```
 
 Browser checks require Chromium. This VM has `/usr/bin/chromium`. On another host, set `CHROMIUM_PATH` for the desktop browser suite or install the Playwright Chromium runtime separately. Native Electron also requires a desktop session and a working OS sandbox.
@@ -39,15 +39,28 @@ Expected: the deliberately bad signup fixture fails `SIGNUP_DESTINATION_MISMATCH
 
 ## Viewer interaction and accessibility evaluation
 
-The configured repository must contain a long committed text change (over 120 added lines so scroll restoration is meaningfully tested) between its base and HEAD:
+The original runtime assets in `desktop/public/office/` are tracked and required for these interaction tests. The configured repository must contain a long committed text change (over 120 added lines so scroll restoration is meaningfully tested) between its base and HEAD. For this feature branch, `SIDEQUEST_BASE=69bf066` includes the real `dev/luna.py` change; `HEAD~1` may be too small for this scroll test:
 
 ```sh
 cd desktop
-SIDEQUEST_REPO=/absolute/path/to/repository SIDEQUEST_BASE=HEAD~1 \
+SIDEQUEST_REPO=/absolute/path/to/repository SIDEQUEST_BASE=69bf066 \
 CHROMIUM_PATH=/usr/bin/chromium CI=1 npm run test:browser
 ```
 
-Expected: six viewer tests pass; settings tests are undergoing the T3 Code redesign; the live inspection test skips unless explicitly enabled below. The suite reads genuine local committed Git data, verifies one lazy editor, Expand/Escape selection and scroll retention, hostile text, origin restrictions, reduced motion, responsive layouts and automated accessibility checks. Real screenshots go to `evidence/desktop/`. Original assets are mandatory for office acceptance. The rejected temporary office has been removed from the default experience; its prior captures are historical only. Settings visual acceptance must use the revised T3 Code view, not the rejected warm version.
+Expected: six viewer and two revised T3 Code settings tests pass; the two live inspection tests skip unless explicitly enabled below. The suite reads genuine local committed Git data, verifies one lazy editor, Expand/Escape selection and scroll retention, hostile text, origin restrictions, reduced motion, responsive layouts and automated accessibility checks. Real screenshots go to `evidence/desktop/`. The tests wait for all 26 original staged figures before interaction. The slim footer selector is the keyboard alternative to the scene objects. Original assets are mandatory for office acceptance. The rejected temporary office has been removed from the default experience; its prior captures are historical only. The revised settings tests cover automatic CLI metadata, provider selection, Cost/Tokens/Limits, unknown telemetry, modal ownership and accessibility at 1440/390px. Use these current captures for visual review; the rejected warm version is historical only.
+
+## Original asset and scene evaluations
+
+With the development server already running, execute the existing probes from the repository root:
+
+```sh
+node evidence/desktop/original-office/validate-assets.mjs
+node evidence/desktop/original-office/capture-browser.mjs
+node evidence/desktop/original-office/check-browser-bindings.mjs
+node evidence/desktop/original-office/check-browser-actors.mjs
+```
+
+The deterministic validator compares all 24 measured monitor surfaces and verifies every copied image/actor hash and local path. The integrated probes capture the actual office, one selected Git editor, Expand/Escape and board targeting. Actor clips are retained compatibility evidence; sampled typing poses are staged artwork, never a live agent. Browser captures use software WebGL on this VM and do not establish owner-device performance or native Electron acceptance.
 
 ## Native Electron smoke evaluation
 
@@ -84,7 +97,7 @@ In terminal 2, stop your existing Vite development server so the test can own po
 
 ```sh
 cd desktop
-SIDEQUEST_REPO=/tmp/sidequest-eval-source SIDEQUEST_BASE=HEAD~1 \
+SIDEQUEST_REPO=/tmp/sidequest-eval-source SIDEQUEST_BASE=69bf066 \
 SIDEQUEST_RUNTIME_URL=http://127.0.0.1:4317 \
 SIDEQUEST_API_TOKEN_FILE=/tmp/sidequest-eval-config/session.token \
 SIDEQUEST_TEST_INSPECTION=1 CHROMIUM_PATH=/usr/bin/chromium CI=1 \

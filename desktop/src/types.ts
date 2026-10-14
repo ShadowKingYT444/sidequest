@@ -22,7 +22,7 @@ export interface DiffPage {v:1;artifact_id:string;candidate_id:string;base_revis
 export interface TextPage {v:1;artifact_id:string;file_id:string;sha256:string;immutable:boolean;lines:{number:number;text:string;clipped?:boolean}[];next_line:number|null}
 export interface CommandReply {v:1;accepted:boolean;command_id:string;revision:number;result?:{job_id?:string;project_id?:string}}
 export interface StationAssignment {jobId:string;projectId:string}
-export interface ProviderDiscovery {v:1;observedAt:string;providers:{id:string;name:string;installed:boolean;binaryPath:string|null;version:string|null;homePath:string|null;runtime:'local'}[]}
+export interface ProviderDiscovery {v:1;observedAt:string;providers:{id:string;name:string;installed:boolean;binaryPath:string|null;version:string|null;homePath:string|null;runtime:'local';discoverySource?:'path'|'known-install'|'host-setting'|null;authentication?:'unknown';reachability?:'unknown'}[]}
 export interface JobView {artifactId:string;fileId:string;tab:'text'|'diff';startLine:number;scrollTop:number;artifactCursors?:string[];artifactPage?:number;fileCursors?:string[];filePage?:number;diffCursors?:string[];diffPage?:number}
 export interface RuntimeBridge {
   snapshot():Promise<RuntimeSnapshot>;capabilities():Promise<RuntimeCapabilities>;job(id:string):Promise<{v:1;job:RuntimeJob}>;

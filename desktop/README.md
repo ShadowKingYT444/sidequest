@@ -2,9 +2,11 @@
 
 Electron hosts React/TypeScript. React Three Fiber/Drei binds the supplied office GLB, and a selected computer opens one lazy read-only Monaco diff editor. Expand moves that selection into a flat reading panel; Escape returns to the office and retains the selected file, cursor/selection and editor scroll state. Non-selected monitors use small previews. The office renders on demand and stops rendering while hidden; decorative animation is not started.
 
-**Current verified functionality:** the browser reads real local Git and immutable inspection artifacts. Original office assets are pending; the default does not render the rejected generated office. The abandoned office/settings source is archived under `archive/rejected-2026-10-14/`. Settings are being aligned to the pinned official T3 Code source; see THIRD_PARTY_NOTICES.md. Only selected work hosts a full lazy Git editor. The browser can inspect real committed Git changes, expand, scroll, return and reopen. Provider Settings discovers fixed local executable paths without reading credentials or changing configuration. Usage, tokens, cost, account and reset telemetry are explicitly unknown. The persistent runtime, authenticated artifact API, independent Git clones and trusted frozen-candidate checks are implemented. The jobs board has completed a genuine UI/HTTP/Git/check inspection and displayed its immutable files and check report. That fixed profile makes zero model calls, spends zero provider dollars and performs no source delivery. The Codex app-server adapter and persisted task/session lifecycle are implemented and tested with a fake transport; native coding execution remains blocked. The repository originally contained specifications and development tooling only; these services implement the specified boundaries.
+**Current scope:** the original office and all 26 staged reference figures are imported, with 24 measured monitors. Materials, local textures, original geometry and authored transforms are preserved. The original 131 MB embedded environment was made Git-compatible by relocating its 90 image payloads byte-for-byte into local files; no art was replaced or recompressed. Seven human GLBs retain all 28 original clips, and 20 staged caps use the supplied fit/identity resources. Reference poses are sampled once and explicitly remain disconnected artwork.
 
-**Unverified:** the actual office assets are located in the owner's Drive archive but have not transferred into this VM. Its proxy returns 403 for authenticated transfer URLs. No real office render, texture/material match, animation playback or monitor alignment has passed. Native Electron startup is blocked by the VM's unusable Linux sandbox helper/user namespace support. Browser screenshots are real captures; temporary-office/warm-settings images are rejected historical work and cannot establish current visual acceptance or supplied-GLB/native desktop proof.
+The office uses a closer camera, restrained brighter lighting and slim bars. Click a monitor for committed Git/files/results, the actual board for jobs, a figure for its truthful session view, or the original workstation pick bounds for the compact detected-provider/prompt layer. The footer selector is a keyboard alternative. Settings follow pinned T3 Code source and remain a transient screen. Provider discovery checks metadata only; launch is restricted to installed Codex because that is the implemented runtime adapter. Submit and Launch remain distinct, explicit, backend-gated actions; no demonstration coding job is launched.
+
+The browser has performed a genuine local Git inspection/check job and read its immutable files/report/activity through the existing Python/SQLite runtime. That profile has zero model calls and no source delivery. Native Codex lifecycle tests use a fake transport. **Native Electron remains blocked by the VM OS sandbox, and native Codex by protected runtime-state operations plus unverified USD enforcement.** Browser captures establish browser rendering and interactions only. Original office compatibility is recorded separately from native acceptance in `../evidence/desktop/original-office/`.
 
 ## Run in a browser
 
@@ -21,7 +23,7 @@ Open `http://127.0.0.1:5173`. The development adapter binds only that loopback a
 
 The host pins `SIDEQUEST_BASE` and `HEAD` when it starts. Refresh re-reads that pinned manifest/diff; it does not switch candidates mid-review. Restart the host to inspect a newly committed candidate. Dirty working files are not displayed. An initial repository without a parent commit needs an explicit valid base commit. Empty, binary, withheld, oversized and unavailable reads have explicit states.
 
-When assets are absent, an explicit original-office-pending state offers **Inspect local Git diff** and the existing Jobs panel. A repository viewer can display actual selected results while original desk bindings are pending. No fallback geometry is presented. Settings offers six provider views; selection and refresh are functional, paths are read-only, and no provider process or model turn is launched. The tank represents fraction USED, with unknown/stale/demo states and no fabricated usage.
+When assets are absent, an explicit original-office-pending state offers **Inspect local Git diff** and the existing Jobs panel. A repository viewer can display actual selected results while original desk bindings are pending. No fallback geometry is presented. Settings offers six provider views plus focused Cost/Tokens/Limits screens; selection and refresh are functional, paths are read-only, and no provider process or model turn is launched. Installed means only executable metadata was found; authentication and service reachability are shown separately as unknown. The detector checks bounded PATH and documented install locations, including current Cursor `agent` and Antigravity `agy`, without scanning directories or reading config/credentials/sessions. If automatic discovery fails, an operator can supply `SIDEQUEST_CODEX_EXECUTABLE`, `SIDEQUEST_CLAUDE_EXECUTABLE`, `SIDEQUEST_CURSOR_EXECUTABLE`, `SIDEQUEST_GROK_EXECUTABLE`, `SIDEQUEST_OPENCODE_EXECUTABLE` or `SIDEQUEST_ANTIGRAVITY_EXECUTABLE` as an absolute executable locator when starting the host. This fallback validates metadata only and grants no execution or account permission. The independent tank component represents fraction USED; T3-style quota rows represent REMAINING. Missing telemetry shows unknown, with no fabricated fill or chart. The tank is not mounted into a substitute office.
 
 ## Run Electron
 
@@ -48,35 +50,15 @@ NODE_USE_ENV_PROXY=1 electron_config_cache=/tmp/sidequest-electron npm run insta
 
 A desktop session and supported OS sandbox are required. This VM's direct native launch aborted because `chrome-sandbox` is not root-owned mode 4755 and unprivileged namespaces do not provide a usable alternative. Do not disable the sandbox to make the smoke check pass. No root ownership, system permissions or account configuration was changed.
 
-## Bind the actual office
+## Original office provenance and bindings
 
-Protected source: [the owner's October 7 art kit](https://drive.google.com/drive/folders/1J69rRCIT03-AFo9A0WqwEc7CQswM4rlY). Eight archive parts concatenate, in numerical order, to 535,951,540 bytes. Expected archive SHA-256:
+The approved October 7 Drive archive was recovered in the separate authorized asset environment. All eight parts reconstruct **535,951,540 bytes**, SHA-256 `f7159fbda50771486d65e1a5bd2a42d265120a422d88a686471a9bbb6fb60a95`. Originals, native `Sidequest_Office_Master.blend` and the original embedded runtime export remain outside Git in that environment. No bundled archive scripts ran. The imported runtime assets are tracked in `public/office/` and copied to `dist/office/` during build.
 
-```text
-f7159fbda50771486d65e1a5bd2a42d265120a422d88a686471a9bbb6fb60a95
-```
+See [original-office evidence](../evidence/desktop/original-office/README.md) and `public/office/provenance.json` for archive/source/output hashes. All 24 monitor surfaces match the original runtime geometry within 0.00000154 metres. `bindings.json` retains stable `parent_001`–`parent_024` IDs, measured screen dimensions/focus cameras and the actual board surface. The closer overview is a presentation adjustment derived from the supplied overview; desk focus poses remain unchanged. Desk picking uses the original `PickBounds` metadata, not replacement furniture.
 
-Retain the archive and `scene/Sidequest_Office_Master.blend` outside Git. Do not run bundled scripts automatically. The runtime GLB is `scene/Sidequest_Runtime_Environment_Batched.glb`; copy only a validated runtime export and its required local resources into `desktop/public/office/`. These local art inputs and built `dist/` are ignored by Git. Preserve the asset bytes and record source/copy hashes.
+Both Draco and Meshopt loading are disabled: the imported assets require neither decoder. Embedded actor/cap images use Three TextureLoader under the existing `img-src blob:` permission; CSP is unchanged. Only UI previews are drawn onto small monitor textures. The original room materials/textures are intact, no blur/postprocessing is used, and only the selected work mounts a full editor. Actors and status refresh never imply working agents. Assigning a job as a result display stores station/job/project IDs only, without assigning an actual worker or starting a model.
 
-```sh
-cd desktop
-python3 scripts/install-office.py --parts-directory /absolute/path/to/parts
-npm run inspect:office
-```
-
-The safe installer checks archive identity and paths before copying art. The inspector reports the actual SHA, material/texture metadata, clips, local resources and transformed bounds. This metadata is not proof of visual compatibility. Draco loading is disabled to prevent the default decoder CDN request; if the inspected GLB requires Draco, bundle and validate a local decoder before enabling it.
-
-Create `public/office/bindings.json` using measured anchors from the real scene, with this shape (the strings/vectors below describe fields, not a runnable or fabricated layout):
-
-```text
-modelUrl: /office/office.glb
-overview: { position: [x,y,z], target: [x,y,z] }
-stations: [{ id, label, workerId?, anchor: [x,y,z], rotation: [x,y,z],
-             screenSize: [width,height], focus: { position, target } }]
-board?: { anchor, rotation, size }
-```
-
-IDs must be stable and unique; camera/anchor vectors finite; screen sizes positive. Bind roles to existing monitor surfaces; do not add desks or rebuild the room. Computers currently expose the host-configured committed repository and state that agent execution is unavailable. A worker label alone must never imply a live assignment. The bound board opens the existing jobs panel. Rebuild after installing assets for Electron, then verify actual object selection, focus-camera movement, in-world diff readability, board targeting and the expanded view. Jobs can be assigned to a computer as a read-only result display. This stores only a validated station/job/project mapping and does not dispatch or attach an agent. Actual worker/session assignment and screenshots/capture remain future work.
+For a future manual asset recovery, `scripts/install-office.py` and `scripts/inspect-assets.mjs` remain available. Do not overwrite the tracked measured imports with a new unverified export or fabricate anchors.
 
 ## Run the local jobs board
 
@@ -120,4 +102,4 @@ Git uses argv with `shell: false`, disabled external diff/textconv/hooks/fsmonit
 
 Codex host setup, readiness refresh and persisted task lifecycle are described in [services/runtime/README.md](../services/runtime/README.md). Status refresh reads cached state and launches no model process or turn. The installed CLI reports an existing ChatGPT login, but its native app-server fails before initialization because protected runtime state is read-only; no catalog/model/effort or account response has been verified. Its protocol also lacks a verified enforceable USD ceiling, so production coding execution is blocked before thread/turn creation. Synthetic lifecycle tests are explicitly fixture evidence.
 
-Next steps are: obtain the actual art through an authorized working transfer route, inspect original/copy hashes and visually bind monitors/camera/materials; run Electron on a sandbox-capable host; resolve native Codex runtime-state and enforceable budget readiness before seeking authorization for a tiny real turn; then connect actual worker/session ownership and usage telemetry, and add screenshots/workshops/capture and exact delivery approval flows. No merge or deployment is requested.
+Next steps are: run Electron on a sandbox-capable host; resolve native Codex runtime-state and enforceable budget readiness before seeking authorization for a tiny real turn; then connect actual worker/session ownership and usage telemetry, and add screenshots/workshops/capture and exact delivery approval flows. No merge or deployment is requested.

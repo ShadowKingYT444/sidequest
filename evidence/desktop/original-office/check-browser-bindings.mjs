@@ -13,10 +13,10 @@ await page.emulateMedia({reducedMotion:'reduce'});
 await page.goto('http://127.0.0.1:5173/');
 await expect(page.locator('.office-canvas canvas')).toBeVisible({timeout:120000});
 await page.waitForLoadState('networkidle',{timeout:120000});
-await page.waitForTimeout(3000);
+await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:120000});
 const samples=[];
 for(const label of ['Computer 01','Computer 03','Computer 19','Computer 24']){
-  await page.getByRole('navigation',{name:'Office computers'}).getByRole('button',{name:'Open '+label,exact:true}).click();
+  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_'+label.slice(-2).padStart(3,'0'));
   await expect(page.getByTestId('diff-editor')).toHaveCount(1);
   const element=page.locator('.projected-work');
   await expect(element).toBeVisible();
@@ -29,7 +29,7 @@ for(const label of ['Computer 01','Computer 03','Computer 19','Computer 24']){
 const bindings=JSON.parse(await readFile(path.join(root,'desktop/public/office/bindings.json'),'utf8'));
 const canvas=await page.locator('.office-canvas canvas').boundingBox();
 const camera=new PerspectiveCamera(40,canvas.width/canvas.height,.05,1000);
-camera.position.set(...bindings.overview.position);camera.lookAt(new Vector3(...bindings.overview.target));camera.updateMatrixWorld();
+camera.position.set(...bindings.overview.position.map((n,i)=>bindings.overview.target[i]+(n-bindings.overview.target[i])*(i===1?.62:.72)));camera.lookAt(new Vector3(...bindings.overview.target));camera.updateMatrixWorld();
 const point=new Vector3(...bindings.board.anchor).project(camera);
 await page.mouse.click(canvas.x+(point.x+1)*canvas.width/2,canvas.y+(1-point.y)*canvas.height/2);
 await expect(page.getByRole('region',{name:'Local jobs board'})).toBeVisible({timeout:15000});

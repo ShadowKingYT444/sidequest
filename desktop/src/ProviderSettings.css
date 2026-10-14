@@ -115,11 +115,9 @@
 .provider-empty-note { margin: 24px 0 0; color: var(--provider-muted); font-size: 12px; }
 
 @media (max-width: 1000px) {
-  .provider-editor-group { grid-template-columns: 15rem minmax(0, 1fr); }
   .provider-settings-row { flex-wrap: wrap; gap: 8px; }
   .provider-settings .provider-field__value { width: 100%; }
   .provider-row-copy { flex-basis: 100%; }
-  .provider-usage-summary { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); }
 }
 @media (max-width: 767px) {
   .provider-topbar, .provider-viewbar { padding-inline: 16px; }

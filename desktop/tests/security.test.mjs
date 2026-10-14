@@ -140,3 +140,35 @@ test('app protocol serves dist assets and root office URLs from copied public as
   assert.equal((await serve({ method: 'POST', url: 'app://sidequest/' })).status, 405);
   assert.equal(existsSync(path.join(dist, 'outside.txt')), false);
 });
+
+
+test('provider discovery uses fixed executable metadata and never infers authentication', async t => {
+  const temporaryRoot=mkdtempSync(path.join(os.tmpdir(),'sidequest-provider-metadata-'));t.after(()=>rmSync(temporaryRoot,{recursive:true,force:true}));
+  const binaryDirectory=path.join(temporaryRoot,'bin'),fixtureHome=path.join(temporaryRoot,'host');
+  mkdirSync(binaryDirectory);mkdirSync(path.join(fixtureHome,'.local','bin'),{recursive:true});mkdirSync(path.join(fixtureHome,'.opencode','bin'),{recursive:true});
+  writeFileSync(path.join(binaryDirectory,'agent'),'This executable fixture must never run.',{mode:0o755});
+  writeFileSync(path.join(binaryDirectory,'antigravity'),'IDE launcher fixture',{mode:0o755});
+  mkdirSync(path.join(binaryDirectory,'codex'));symlinkSync(path.join(temporaryRoot,'missing'),path.join(binaryDirectory,'claude'));
+  writeFileSync(path.join(fixtureHome,'.local','bin','claude'),'metadata only',{mode:0o755});
+  writeFileSync(path.join(fixtureHome,'.opencode','bin','opencode'),'metadata only',{mode:0o755});
+  const inspected=[];const realFs=require('node:fs/promises');const module={exports:{}};
+  const fakeEnvironment={PATH:['.',binaryDirectory,binaryDirectory,'/invalid\nentry'].join(path.delimiter),HOME:fixtureHome,CODEX_HOME:path.join(fixtureHome,'.codex')};
+  vm.runInNewContext(readFileSync(new URL('../electron/provider-discovery.cjs',import.meta.url),'utf8'),{module,process:{platform:'linux',env:fakeEnvironment},require:name=>{
+    if(name==='node:path')return path;if(name==='node:fs')return {constants:require('node:fs').constants};
+    if(name==='node:fs/promises')return {access:async(file,mode)=>{inspected.push(file);return realFs.access(file,mode);},stat:realFs.stat};
+    throw new Error('Discovery must not import process execution or credential-reading tools.');
+  }});
+  const result=JSON.parse(JSON.stringify(await module.exports.discoverProviders()));
+  const find=id=>result.providers.find(provider=>provider.id===id);
+  assert.equal(find('codex').installed,false,'an executable directory is not a CLI');
+  assert.equal(find('cursor').binaryPath,path.join(binaryDirectory,'agent'));assert.equal(find('cursor').discoverySource,'path');
+  assert.equal(find('claude').binaryPath,path.join(fixtureHome,'.local','bin','claude'));assert.equal(find('claude').discoverySource,'known-install');
+  assert.equal(find('opencode').installed,true);assert.equal(find('antigravity').installed,false,'IDE launcher is not the coding CLI');
+  assert.equal(result.providers.every(provider=>provider.authentication==='unknown'&&provider.reachability==='unknown'&&provider.version===null),true);
+  assert.equal(inspected.every(file=>['codex','claude','cursor-agent','agent','grok','opencode','agy'].includes(path.basename(file))),true);
+  const directories=Array.from({length:65},(_,index)=>path.join(temporaryRoot,'path-'+index));directories.forEach(directory=>mkdirSync(directory));
+  writeFileSync(path.join(directories[64],'codex'),'out of bounded search',{mode:0o755});fakeEnvironment.PATH=directories.join(path.delimiter);
+  assert.equal((await module.exports.discoverProviders()).providers.find(provider=>provider.id==='codex').installed,false,'PATH search is capped at 64 directories');
+  const configuredExecutable=path.join(temporaryRoot,'configured-codex');writeFileSync(configuredExecutable,'metadata-only explicit host locator',{mode:0o755});fakeEnvironment.SIDEQUEST_CODEX_EXECUTABLE=configuredExecutable;
+  const configured=(await module.exports.discoverProviders()).providers.find(provider=>provider.id==='codex');assert.equal(configured.binaryPath,configuredExecutable);assert.equal(configured.discoverySource,'host-setting');assert.equal(configured.authentication,'unknown');assert.equal(configured.reachability,'unknown');
+});

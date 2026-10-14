@@ -67,8 +67,8 @@ function LimitsView({ selected }: { selected: ProviderChoice }) {
     <div className="provider-limits-heading"><ProviderMark provider={selected} /><h2>{selected.name}</h2><span>Usage unknown</span></div>
     <div className="provider-limit-windows">
       {['Session', 'Weekly'].map((label) => <div className="provider-limit-window" key={label}>
-        <div className="provider-limit-label"><span>{label}</span><strong>— used</strong></div>
-        <div className="provider-limit-track" aria-label={label + ' usage unknown'} />
+        <div className="provider-limit-label"><span>{label}</span><strong>— remaining</strong></div>
+        <div className="provider-limit-track" role="img" aria-label={label + ' usage unknown'} />
         <span className="provider-limit-reset">Reset unknown</span>
       </div>)}
     </div>
@@ -113,7 +113,7 @@ export default function ProviderSettings({ discovery, capabilities, onClose, onR
   const detail = discovery?.providers.find((provider) => provider.id === selected.id) ?? null;
   const scanned = discovery !== null;
   const installed = detail?.installed === true;
-  const statusText = !scanned ? 'Not scanned' : installed ? 'Binary detected · Account unknown' : 'Not detected';
+  const statusText = !scanned ? 'Not scanned' : installed ? detail?.discoverySource==='host-setting'?'Configured by host':detail?.discoverySource==='known-install'?'Located in default install directory':'Located in PATH' : 'Not detected';
   const homeLabel = selected.id === 'codex' ? 'CODEX_HOME' : 'Host home';
   const worker = selected.id === 'codex' ? capabilities?.worker_model : null;
 
@@ -152,7 +152,7 @@ export default function ProviderSettings({ discovery, capabilities, onClose, onR
             <aside className="provider-sidebar"><nav className="provider-list" aria-label="Providers">{PROVIDERS.map((provider) => {
               const item = discovery?.providers.find((entry) => entry.id === provider.id);
               return <button key={provider.id} className={'provider-list__item' + (selected.id === provider.id ? ' is-selected' : '')} onClick={() => chooseProvider(provider.id)} aria-current={selected.id === provider.id ? 'page' : undefined}>
-                <ProviderMark provider={provider} /><span className="provider-list__copy"><strong>{provider.name}</strong><small>{!scanned ? 'Not scanned' : item?.installed ? 'Binary detected' : 'Not detected'}</small></span>
+                <ProviderMark provider={provider} /><span className="provider-list__copy"><strong>{provider.name}</strong><small>{!scanned ? 'Not scanned' : item?.installed ? 'Executable found' : 'Not detected'}</small></span>
               </button>;
             })}</nav></aside>
             <div className="provider-editor">
@@ -160,7 +160,7 @@ export default function ProviderSettings({ discovery, capabilities, onClose, onR
               <div className="provider-editor-content" key={selected.id}>
                 <SettingsSection title={<span className="provider-section-title"><ProviderMark provider={selected} /><span>{selected.name}</span></span>}>
                   <ReadOnlyField label="Display name" value={selected.name} description={statusText} />
-                  <StatusRow label="Account status" value="Unknown" />
+                  <StatusRow label="Authentication" value="Unknown" /><StatusRow label="Service reachability" value="Unknown" />
                 </SettingsSection>
                 <SettingsSection title="Runtime">
                   <ReadOnlyField label="Runtime" value={detail?.runtime === 'local' ? 'Local process' : null} />
@@ -168,7 +168,7 @@ export default function ProviderSettings({ discovery, capabilities, onClose, onR
                   <ReadOnlyField label={homeLabel} value={detail?.homePath ?? null} mono />
                 </SettingsSection>
                 <SettingsSection title="Environment"><ReadOnlyField label="Environment" value={scanned ? 'Host process' : null} /><StatusRow label="Launch arguments" value="Not inspected" /></SettingsSection>
-                <SettingsSection title="Models">{worker ? <><StatusRow label="Configured worker" value={worker.id + ' · ' + worker.effort} /><StatusRow label="Model catalog" value={worker.verified ? 'Verified' : 'Not verified'} /></> : <StatusRow label="Model catalog" value="Not reported" />}</SettingsSection>
+                <SettingsSection title="Models">{worker ? <><StatusRow label="Configured worker" value={worker.id==='none'?'Not configured':worker.id + ' · ' + worker.effort} /><StatusRow label="Model catalog" value={worker.verified ? 'Verified' : 'Not verified'} /></> : <StatusRow label="Model catalog" value="Not reported" />}</SettingsSection>
               </div>
             </div>
           </div>

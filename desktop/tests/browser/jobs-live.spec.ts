@@ -9,7 +9,7 @@ test('genuine local inspection job produces immutable files and a check report',
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   const calls:{method:string;args:unknown[]}[]=[];
   page.on('request',req=>{if(req.url().includes('/__sidequest/runtime/'))calls.push({method:req.url().split('/').at(-1)!,args:req.postDataJSON()});});
-  await page.goto('/');await page.getByRole('button',{name:'Jobs',exact:true}).click();
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('button',{name:'Jobs',exact:true}).click();
   const board=page.getByRole('region',{name:'Local jobs board'});
   await expect(board).toBeVisible();await expect(board).toContainText('Local Git inspection');
   await expect(page.getByTestId('diff-editor')).toHaveCount(0);
@@ -40,6 +40,13 @@ test('genuine local inspection job produces immutable files and a check report',
   await expect.poll(async()=>JSON.parse(await board.locator('.artifact-text').textContent()??'{}').inference_calls).toBe(0);
   const report=JSON.parse(await board.locator('.artifact-text').textContent()??'{}');
   await page.screenshot({path:path.resolve('../evidence/desktop/job-check-report.png')});
+  await board.locator('.job-activity > summary').click();
+  const activity=board.getByRole('region',{name:'Run activity'});
+  await expect(activity).toContainText('No model call');
+  await expect(activity.locator('.run-activity-state')).toHaveText('completed');
+  await expect.poll(()=>activity.locator('.run-activity-timeline>li').count()).toBeGreaterThan(0);
+  await page.screenshot({path:path.resolve('../evidence/desktop/run-activity-actual.png')});
+  await board.locator('.job-activity > summary').click();
   await board.locator('.coding-readiness summary').click();
   await expect(board.locator('.coding-readiness')).toContainText('Coding tasks remain blocked.');
   const refreshStart=calls.length;
@@ -84,7 +91,7 @@ test('real jobs clear stale notices, recover reads and preserve assigned compute
   const response=await request.post('/__sidequest/runtime/snapshot',{data:[],headers:{Origin:'http://127.0.0.1:5173'}});expect(response.ok()).toBe(true);const state=await response.json();
   const completed=state.jobs.find((job:{execution_profile:string;checks:{state:string}[];tasks:{state:string}[]})=>job.execution_profile==='local_git_inspection'&&job.tasks.every(t=>t.state==='completed')&&job.checks.length&&job.checks.every(c=>c.state==='pass'));
   expect(completed).toBeTruthy();
-  await page.goto('/');await page.getByRole('button',{name:'Jobs',exact:true}).click();
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('button',{name:'Jobs',exact:true}).click();
   const board=page.getByRole('region',{name:'Local jobs board'});
   await board.getByRole('button',{name:new RegExp(completed.title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))}).click();
   await expect(board).toContainText('Inspection results ready.');
@@ -104,7 +111,7 @@ test('real jobs clear stale notices, recover reads and preserve assigned compute
   disconnected=false;await board.getByRole('button',{name:'Refresh status',exact:true}).click();
   await expect(board.getByRole('button',{name:'Submit inspection',exact:true})).toBeEnabled();
   await expect(board.getByRole('alert')).toHaveCount(0);
-  await board.getByLabel('Show results on').selectOption('repository');
+  await board.getByLabel('Show results on').selectOption('parent_019');
   await board.getByRole('button',{name:'Assign result display',exact:true}).click();
   const result=page.getByRole('region',{name:'Computer job results'});
   await expect(result).toBeVisible();await expect(result.locator('.job-summary')).toContainText(completed.title);
@@ -120,8 +127,9 @@ test('real jobs clear stale notices, recover reads and preserve assigned compute
   await expect(page.getByRole('dialog',{name:'Provider settings dialog'})).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog',{name:'Computer job viewer'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Settings',exact:true})).toBeFocused();
   await page.keyboard.press('Escape');await expect(result).toHaveCount(0);
-  await page.locator('.station-nav').getByRole('button',{name:/Open Repository viewer/}).click();
+  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
   await expect(result).toBeVisible();
   await expect(result.locator('.artifact-files button[aria-pressed="true"]')).toHaveAttribute('title',selectedFile!);
   await expect.poll(()=>result.locator('.artifact-text').evaluate(node=>node.scrollTop)).toBeGreaterThan(100);

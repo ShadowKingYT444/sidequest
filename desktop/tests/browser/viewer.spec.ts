@@ -13,11 +13,11 @@ test('real Git diff, lazy single editor, expanded state, Escape and keyboard', a
   const source = snapshot.files.find((file: {path:string}) => file.path === 'dev/luna.py') ?? snapshot.files.find((file: { additions?:number; path:string }) => (file.additions ?? 0) > 120 && /\.(tsx?|py|md)$/.test(file.path)) ?? snapshot.files[0];
   const diff = await (await request.get(`/__sidequest/diff/${source.id}`)).json();
   expect(diff.readOnly).toBe(true); expect(diff.modified.length).toBeGreaterThan(100);
-  await page.goto('/');
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});
   await expect(page.getByTestId('diff-editor')).toHaveCount(0);
-  await expect(page.getByRole('button', {name:'Inspect local Git diff'})).toBeEnabled();
+  await expect(page.getByRole('combobox',{name:'Office navigation'})).toBeEnabled();
   await page.screenshot({path:path.join(evidence,'setup-desktop.png')});
-  await page.getByRole('button', {name:'Inspect local Git diff'}).click();
+  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
   await page.locator(`.file-list button[data-file-id="${source.id}"]`).click();
   const editor = page.getByTestId('diff-editor');
   await expect(editor).toHaveCount(1);
@@ -34,8 +34,8 @@ test('real Git diff, lazy single editor, expanded state, Escape and keyboard', a
   await page.screenshot({path:path.join(evidence,'expanded-diff.png')});
   await page.keyboard.press('Escape');
   await expect(editor).toHaveCount(0);
-  await expect(page.getByRole('button',{name:'Inspect local Git diff'})).toBeFocused();
-  await page.keyboard.press('Enter');
+  await expect(page.getByRole('combobox',{name:'Office navigation'})).toBeFocused();
+  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
   await expect(editor).toHaveAttribute('data-file-id',source.id);
   await expect.poll(async () => Number(await editor.getAttribute('data-scroll-top'))).toBeGreaterThan(100);
   expect(errors).toEqual([]);
@@ -48,7 +48,7 @@ test('read API rejects outside origins and mutations',async ({request})=>{
 for (const width of [960,390]) test(`viewer reflows at ${width}px with reduced motion`,async ({page})=>{
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   await page.setViewportSize({width,height:780});await page.emulateMedia({reducedMotion:'reduce'});
-  await page.goto('/');await page.getByRole('button',{name:'Inspect local Git diff'}).click();
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
   await expect(page.getByTestId('diff-editor')).toHaveCount(1);
   await page.getByRole('button',{name:'Expand',exact:true}).click();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -58,7 +58,7 @@ for (const width of [960,390]) test(`viewer reflows at ${width}px with reduced m
 });
 
 test('keyboard-accessible viewer has no automated WCAG A/AA violations',async({page})=>{
-  await page.goto('/'); await page.getByRole('button',{name:'Inspect local Git diff'}).click();
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000}); await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
   await page.getByRole('button',{name:'Expand',exact:true}).click();
   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
@@ -76,7 +76,7 @@ test('hostile source stays literal and a failed read can retry',async({page})=>{
     const response=await route.fetch();const data=await response.json();
     await route.fulfill({json:{...data,original:'',modified:'<script>window.__executed=true</script>\n<img src=x onerror="window.__executed=true">',language:'plaintext'}});
   });
-  await page.goto('/');await page.getByRole('button',{name:'Inspect local Git diff'}).click();
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
   await expect(page.getByRole('alert')).toContainText('Local Git read failed');
   fail=false;await page.getByRole('button',{name:'Refresh repository'}).click();
   await expect(page.getByTestId('diff-editor')).toHaveCount(1);

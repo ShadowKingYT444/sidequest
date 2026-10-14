@@ -38,11 +38,6 @@
     }
   ],
   "boardHitOpenedExistingJobsDialog": true,
-  "errors": [
-    {
-      "message": "WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self'\".",
-      "stack": "CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self'\".\n    at MeshoptDecoder (http://127.0.0.1:5173/node_modules/.vite/deps/@react-three_drei.js?v=4b3e71e3:26745:30)\n    at http://127.0.0.1:5173/node_modules/.vite/deps/@react-three_drei.js?v=4b3e71e3:35326:83\n    at http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=3bf37c25:1289:19\n    at query (http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=3bf37c25:230:34)\n    at suspend (http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=3bf37c25:238:37)\n    at useLoader (http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=3bf37c25:1304:18)\n    at useGLTF (http://127.0.0.1:5173/node_modules/.vite/deps/@react-three_drei.js?v=4b3e71e3:35329:61)\n    at OfficeModel (http://127.0.0.1:5173/src/OfficeScene.tsx:11:15)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=3bf37c25:8346:13)\n    at ap (http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=3bf37c25:4053:13)"
-    }
-  ],
-  "cleanConsolePassed": false
+  "errors": [],
+  "cleanConsolePassed": true
 }

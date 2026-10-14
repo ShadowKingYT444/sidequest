@@ -2,16 +2,15 @@ import React, {
   Component,
   Suspense,
   useEffect,
-  useCallback,
   useRef,
   useMemo,
   type ErrorInfo,
-  type MouseEvent,
   type ReactNode,
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Html, OrbitControls, useGLTF } from "@react-three/drei";
-import { Box3, DirectionalLight, DoubleSide, Euler, MathUtils, Mesh, Vector3 as ThreeVector3 } from "three";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+import { Box3, CanvasTexture, DirectionalLight, DoubleSide, Euler, LinearFilter, MathUtils, Mesh, SRGBColorSpace, Vector3 as ThreeVector3, type Object3D } from "three";
+import OriginalActors, { type OriginalActorState } from "./OriginalActors";
 import type { GLTFLoader, OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { validateOfficeResourceUrl } from "./office-bindings";
 import type { OfficeBindings, OfficeStationBinding, Vector3 } from "./office-bindings";
@@ -21,30 +20,44 @@ export interface OfficeSceneProps {
   selectedStationId: string | null;
   onSelectStation: (id: string) => void;
   onSelectBoard?: () => void;
-  childrenForStation?: (id: string) => ReactNode;
-  onMonitorContainer?:(id:string,node:HTMLDivElement|null)=>void;
+  onSelectWorkstation?: (id: string) => void;
+  onSelectActor?: (id: string) => void;
   workElement?:React.RefObject<HTMLDivElement|null>;
   reducedMotion: boolean;
   active: boolean;
   onError?: (error: Error) => void;
+  onActorState?: (state: OriginalActorState) => void;
 }
 
 interface OfficeModelProps {
   url: OfficeBindings["modelUrl"];
+  onSelectWorkstation?: (id: string) => void;
 }
 
-function OfficeModel({ url }: OfficeModelProps) {
-  const gltf = useGLTF(url, false, true, configureOfficeAssetLoader);
+function OfficeModel({ url, onSelectWorkstation }: OfficeModelProps) {
+  const gltf = useGLTF(url, false, false, configureOfficeAssetLoader);
   const light=useRef<DirectionalLight>(null);
   const bounds=useMemo(()=>new Box3().setFromObject(gltf.scene),[gltf.scene]);
   const center=bounds.getCenter(new ThreeVector3());
   const radius=Math.max(1,bounds.getSize(new ThreeVector3()).length()/2);
+  const pickBounds=useMemo(()=>{
+    const result:{id:string;object:Object3D;size:Vector3}[]=[];
+    gltf.scene.updateMatrixWorld(true);
+    gltf.scene.traverse(object=>{
+      const data=object.userData;
+      if(data.anchor_only===true&&data.proxy_shape==='box'&&/^parent_0(?:0[1-9]|1[0-9]|2[0-4])$/.test(data.scene_owner_id)&&Array.isArray(data.proxy_local_size)&&data.proxy_local_size.length===3&&data.proxy_local_size.every((n:unknown)=>typeof n==='number'&&Number.isFinite(n)&&n>0&&n<=4))result.push({id:data.scene_owner_id,object,size:data.proxy_local_size as Vector3});
+    });
+    return result;
+  },[gltf.scene]);
   useEffect(()=>{
     gltf.scene.traverse(object=>{if(object instanceof Mesh){object.castShadow=true;object.receiveShadow=true;}});
     if(light.current){light.current.target.position.copy(center);light.current.target.updateMatrixWorld();}
   },[gltf.scene,bounds]);
   // Keep the imported scene intact: bindings add interaction surfaces around it.
-  return <><primitive object={gltf.scene} dispose={null}/><directionalLight ref={light} position={[center.x+radius*.6,center.y+radius*1.4,center.z+radius*.8]} intensity={0.9} castShadow shadow-mapSize={[1024,1024]} shadow-camera-left={-radius} shadow-camera-right={radius} shadow-camera-top={radius} shadow-camera-bottom={-radius} shadow-camera-near={.1} shadow-camera-far={radius*5} shadow-normalBias={.02}/></>;
+  return <><primitive object={gltf.scene} dispose={null}/>{onSelectWorkstation&&pickBounds.map(pick=><mesh key={pick.id} matrixAutoUpdate={false} matrix={pick.object.matrixWorld.clone()} userData={{workstationPicker:pick.id}} onClick={event=>{
+    const specific=event.intersections.some(hit=>{let node:Object3D|null=hit.object;while(node){if(node.userData.monitorStation||node.userData.actorReferenceStation)return true;node=node.parent;}return false;});
+    if(specific)return;event.stopPropagation();onSelectWorkstation(pick.id);
+  }}><boxGeometry args={pick.size}/><meshBasicMaterial transparent opacity={0} depthWrite={false}/></mesh>)}<directionalLight ref={light} position={[center.x+radius*.6,center.y+radius*1.4,center.z+radius*.8]} intensity={1.4} castShadow shadow-mapSize={[1024,1024]} shadow-camera-left={-radius} shadow-camera-right={radius} shadow-camera-top={radius} shadow-camera-bottom={-radius} shadow-camera-near={.1} shadow-camera-far={radius*5} shadow-normalBias={.02}/></>;
 }
 
 function configureOfficeAssetLoader(loader: GLTFLoader) {
@@ -80,8 +93,6 @@ interface StationMonitorProps {
   station: OfficeStationBinding;
   selected: boolean;
   onSelectStation: (id: string) => void;
-  childrenForStation?: (id: string) => ReactNode;
-  onMonitorContainer?:(id:string,node:HTMLDivElement|null)=>void;
 }
 
 const HTML_SCREEN_PIXELS = { width: 640, height: 360 } as const;
@@ -90,10 +101,25 @@ export function StationMonitor({
   station,
   selected,
   onSelectStation,
-  childrenForStation,
-  onMonitorContainer,
 }: StationMonitorProps) {
-  const slotRef=useCallback((node:HTMLDivElement|null)=>onMonitorContainer?.(station.id,node),[station.id,onMonitorContainer]);
+  const preview = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = HTML_SCREEN_PIXELS.width;
+    canvas.height = HTML_SCREEN_PIXELS.height;
+    const context = canvas.getContext('2d');
+    if (context) {
+      context.fillStyle = '#15191f'; context.fillRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = '#e7eaee'; context.font = '500 40px system-ui, sans-serif';
+      context.textAlign = 'center'; context.fillText(station.label, 320, 166);
+      context.fillStyle = '#aeb6c0'; context.font = '24px system-ui, sans-serif';
+      context.fillText('Read-only files and results', 320, 218);
+    }
+    const texture = new CanvasTexture(canvas);
+    texture.colorSpace = SRGBColorSpace;
+    texture.minFilter = LinearFilter;
+    return texture;
+  }, [station.label]);
+  useEffect(() => { preview.needsUpdate = true; return () => preview.dispose(); }, [preview]);
   const { gl } = useThree();
   const handlePointerEnter = (event: { stopPropagation: () => void }) => {
     event.stopPropagation();
@@ -104,13 +130,8 @@ export function StationMonitor({
     gl.domElement.style.cursor = "default";
   };
 
-  const previewClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    onSelectStation(station.id);
-  };
-
   return (
-    <group position={station.anchor} rotation={station.rotation}>
+    <group position={station.anchor} rotation={station.rotation} userData={{monitorStation:station.id}}>
       <mesh
         position={[0, 0, 0.002]}
         onClick={(event) => {
@@ -128,50 +149,10 @@ export function StationMonitor({
           side={DoubleSide}
         />
       </mesh>
-      <group
-        position={[0, 0, 0.004]}
-        scale={[
-          station.screenSize[0] / HTML_SCREEN_PIXELS.width,
-          station.screenSize[1] / HTML_SCREEN_PIXELS.height,
-          1,
-        ]}
-      >
-        <Html transform center distanceFactor={400} zIndexRange={[1, 1]} occlude style={{ pointerEvents: "auto" }}>
-          <div data-monitor-id={station.id} data-selected={selected}
-            style={{
-              width: `${HTML_SCREEN_PIXELS.width}px`,
-              height: `${HTML_SCREEN_PIXELS.height}px`,
-              boxSizing: "border-box",
-              overflow: "hidden",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              pointerEvents: "auto",
-            }}
-          >
-            {selected ? (
-              onMonitorContainer?<div ref={slotRef} data-work-slot={station.id} style={{width:'100%',height:'100%'}}/>:childrenForStation?.(station.id) ?? null
-            ) : (
-              <button
-                type="button"
-                aria-label={`Open ${station.label}`}
-                onClick={previewClick}
-                style={{
-                  border: "1px solid rgba(255,255,255,.24)",
-                  borderRadius: 5,
-                  padding: "10px 15px",
-                  color: "#eef2f5",
-                  background: "rgba(19,26,34,.82)",
-                  font: "500 24px/1.25 system-ui, sans-serif",
-                  cursor: "pointer",
-                }}
-              >
-                {station.label}
-              </button>
-            )}
-          </div>
-        </Html>
-      </group>
+      {!selected && <mesh position={[0, 0, 0.004]} onClick={event => { event.stopPropagation(); onSelectStation(station.id); }} onPointerOver={handlePointerEnter} onPointerOut={handlePointerLeave}>
+        <planeGeometry args={station.screenSize} />
+        <meshBasicMaterial map={preview} side={DoubleSide} toneMapped={false} />
+      </mesh>}
     </group>
   );
 }
@@ -282,38 +263,39 @@ export function OfficeScene({
   selectedStationId,
   onSelectStation,
   onSelectBoard,
-  childrenForStation,
-  onMonitorContainer,
+  onSelectWorkstation,
+  onSelectActor,
   workElement,
   reducedMotion,
   active,
   onError,
+  onActorState,
 }: OfficeSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
+  const viewBindings=useMemo(()=>({...bindings,overview:{target:bindings.overview.target,position:bindings.overview.position.map((n,i)=>bindings.overview.target[i]+(n-bindings.overview.target[i])*(i===1?.62:.72)) as Vector3}}),[bindings]);
 
   return (
     <Canvas className="office-canvas"
       frameloop={active ? "demand" : "never"}
       dpr={[1, 1.5]}
-      camera={{ position: bindings.overview.position, fov: 40, near: 0.05, far: 1000 }}
+      camera={{ position: viewBindings.overview.position, fov: 40, near: 0.05, far: 1000 }}
       gl={{ antialias: true, alpha: false }}
-      shadows="soft"
+      shadows="percentage"
     >
       <color attach="background" args={["#111820"]} />
-      <ambientLight intensity={0.72} />
+      <ambientLight intensity={0.95} />
       <LoaderErrorBoundary onError={onError}>
         <Suspense fallback={null}>
-          <OfficeModel url={bindings.modelUrl} />
+          <OfficeModel url={bindings.modelUrl} onSelectWorkstation={onSelectWorkstation} />
         </Suspense>
       </LoaderErrorBoundary>
+      <OriginalActors active={active} onState={onActorState} onSelectActor={onSelectActor} />
       {bindings.stations.map((station) => (
         <StationMonitor
           key={station.id}
           station={station}
           selected={selectedStationId === station.id}
           onSelectStation={onSelectStation}
-          childrenForStation={childrenForStation}
-          onMonitorContainer={onMonitorContainer}
         />
       ))}
       {bindings.board&&onSelectBoard&&<group position={bindings.board.anchor} rotation={bindings.board.rotation}><mesh onClick={event=>{event.stopPropagation();onSelectBoard();}}><planeGeometry args={bindings.board.size}/><meshBasicMaterial transparent opacity={0} depthWrite={false} side={DoubleSide}/></mesh></group>}
@@ -326,7 +308,7 @@ export function OfficeScene({
         maxDistance={100}
       />
       <CameraRig
-        bindings={bindings}
+        bindings={viewBindings}
         selectedStationId={selectedStationId}
         reducedMotion={reducedMotion}
         active={active}

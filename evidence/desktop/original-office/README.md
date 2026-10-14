@@ -1,3 +1,9 @@
+# Integrated UI update
+
+Root cherry-picked the asset source commit as `6b4db20` and mounts all 26 supplied reference figures with 20 original caps. Typing/Point/Walk poses are sampled once and labeled staged/unconnected. The integrated UI disables unnecessary Meshopt, keeps CSP unchanged, loads embedded original textures through TextureLoader and replaces secondary monitor HTML roots with lightweight canvas UI textures. The final overview uses a closer/brighter presentation without changing imported geometry/material bytes. Original workstation pick metadata and measured monitor/board bindings drive object interactions.
+
+The asset-task failure is retained as `asset-import-browser-validation.json`, `browser-capture.log` and `browser-binding-first-attempt.log`; current browser-validation.json belongs to root integration. The source report below describes the asset-only checkpoint and its then-current failure. See the parent directory verification.json for final UI source hashes and acceptance scope.
+
 # Original office recovery and integration
 
 This branch is based on `1e4b7440cb526f09203a7351af1abe8b69dd922f` and owns only `desktop/public/office/` and this evidence directory. It imports the owner's October 7 art kit. No UI, backend, Unity, authentication, or security files changed.

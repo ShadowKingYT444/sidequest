@@ -7,12 +7,11 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   await page.setViewportSize({width,height:width===390?780:1000});
   await page.emulateMedia({reducedMotion:'reduce'});
-  await page.goto('/');await expect(page.getByRole('button',{name:'Inspect local Git diff'})).toBeEnabled();
-  await expect(page.getByRole('region',{name:'Office asset pending'})).toBeVisible();
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await expect(page.getByRole('combobox',{name:'Office navigation'})).toBeEnabled();
+  await expect(page.locator('.office-canvas canvas')).toBeVisible();
 
-  await page.waitForTimeout(1000);
-  if(width===1440)await page.screenshot({path:path.join(evidence,'original-office-pending.png')});
-  await page.getByRole('button',{name:'Inspect local Git diff'}).click();
+
+  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
   await expect(page.getByTestId('diff-editor')).toHaveCount(1);
   await expect(page.getByRole('button',{name:'Expand',exact:true})).toBeVisible();
 
@@ -22,18 +21,19 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   const selected=await page.getByTestId('diff-editor').getAttribute('data-file-id');
   await page.getByRole('button',{name:'Settings',exact:true}).click();
   const settings=page.getByRole('dialog',{name:'Provider settings dialog'});
-  await expect(settings).toBeVisible();await expect(settings.getByRole('heading',{name:'Codex',exact:true})).toBeVisible();
+  await expect(settings).toBeVisible();await expect(settings.getByRole('heading',{name:/Codex$/})).toBeVisible();
   await expect(settings.getByLabel('Binary path')).toHaveValue(/codex/);
-  await expect(settings.getByText('Account status',{exact:true})).toBeVisible();
+  await expect(settings.getByText('Authentication',{exact:true})).toBeVisible();
+  await expect(settings.getByText('Service reachability',{exact:true})).toBeVisible();
 
   if(width===1440){
     await settings.getByRole('button',{name:/Claude/}).click();
-    await expect(settings.getByRole('heading',{name:'Claude',exact:true})).toBeVisible();
+    await expect(settings.getByRole('heading',{name:/Claude$/})).toBeVisible();
     await settings.getByRole('button',{name:/Codex/}).click();
   }else{
     await settings.locator('.provider-mobile-picker__button').click();
     await settings.getByRole('navigation',{name:'Choose provider'}).getByRole('button',{name:'Claude',exact:true}).click();
-    await expect(settings.getByRole('heading',{name:'Claude',exact:true})).toBeVisible();
+    await expect(settings.getByRole('heading',{name:/Claude$/})).toBeVisible();
     await settings.locator('.provider-mobile-picker__button').click();
     await settings.getByRole('navigation',{name:'Choose provider'}).getByRole('button',{name:'Codex',exact:true}).click();
   }
@@ -41,7 +41,17 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   await expect(settings.getByRole('button',{name:'Refresh provider discovery'})).toBeEnabled();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:path.join(evidence,`provider-settings${width===1440?'':'-390'}.png`)});
-  if(width===1440){await settings.locator('.provider-scroll').evaluate(node=>{node.scrollTop=node.scrollHeight;});await page.screenshot({path:path.join(evidence,'provider-settings-analytics.png')});await settings.locator('.provider-scroll').evaluate(node=>{node.scrollTop=0;});}
+  await settings.getByRole('navigation',{name:'Settings view'}).getByRole('button',{name:'Usage',exact:true}).click();
+  await expect(settings.getByText('No usage data reported',{exact:true})).toBeVisible();
+  await settings.getByRole('group',{name:'Usage metric'}).getByRole('button',{name:'Tokens',exact:true}).click();
+  await expect(settings.getByText('Processed tokens unavailable',{exact:true})).toBeVisible();
+  await settings.getByRole('group',{name:'Usage breakdown'}).getByRole('button',{name:'Day',exact:true}).click();
+  await expect(settings.getByText('No daily usage data reported',{exact:true})).toBeVisible();
+  await page.screenshot({path:path.join(evidence,`provider-settings-analytics${width===1440?'':'-390'}.png`)});
+  await settings.getByRole('group',{name:'Usage metric'}).getByRole('button',{name:'Limits',exact:true}).click();
+  await expect(settings.getByText('— remaining',{exact:true})).toHaveCount(2);
+  await expect(settings.getByText('Reset unknown',{exact:true})).toHaveCount(2);
+  await page.screenshot({path:path.join(evidence,`provider-settings-limits${width===1440?'':'-390'}.png`)});
   const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
   await writeFile(path.join(evidence,`provider-accessibility-${width}.json`),JSON.stringify(result.violations,null,2));
   expect(result.violations.map(v=>({id:v.id,impact:v.impact}))).toEqual([]);
@@ -51,5 +61,30 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   await expect(page.getByRole('dialog',{name:'Computer work viewer'})).toBeVisible();
   await expect(page.getByTestId('diff-editor')).toHaveAttribute('data-file-id',selected!);
   await page.keyboard.press('Escape');await expect(page.getByTestId('diff-editor')).toHaveCount(0);
+  const mutations:string[]=[];page.on('request',request=>{if(/__sidequest\/runtime\/(submitCoding|runCoding|enableCoding)$/.test(request.url()))mutations.push(request.url());});
+  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('work:parent_019');
+  const launcher=page.getByRole('dialog',{name:'New task'});
+  await expect(launcher).toBeVisible();
+  await expect(launcher.getByLabel('Agent',{exact:true})).toHaveValue('codex');
+  await expect(launcher.getByLabel('Agent',{exact:true}).locator('option')).toHaveCount(2);
+  await expect(launcher.getByLabel('Prompt',{exact:true})).toHaveValue('');
+  await launcher.getByLabel('Prompt',{exact:true}).fill('Test-only draft prompt. No coding task will be submitted.');
+  await launcher.locator('details').first().locator('summary').click();
+  await expect(launcher.getByLabel('Allowed folder',{exact:true})).toHaveValue('');
+  await expect(launcher.getByLabel('USD limit',{exact:true})).toHaveValue('');
+  await launcher.getByLabel('Allowed folder',{exact:true}).fill('desktop/src');
+  await launcher.getByLabel('USD limit',{exact:true}).fill('0.01');
+  await expect(launcher.getByRole('button',{name:'Submit task',exact:true})).toBeDisabled();
+  await launcher.getByRole('button',{name:'Refresh setup',exact:true}).click();
+  await expect(launcher.getByRole('button',{name:'Submit task',exact:true})).toBeDisabled();
+  const launcherAxe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
+  expect(launcherAxe.violations.map(v=>({id:v.id,impact:v.impact}))).toEqual([]);
+  await page.screenshot({path:path.join(evidence,`workstation-launcher${width===1440?'':'-390'}.png`)});
+  await page.keyboard.press('Escape');await expect(launcher).toHaveCount(0);
+  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');
+  const session=page.getByRole('dialog',{name:'Agent session'});await expect(session).toContainText('No live session attached');
+  await page.screenshot({path:path.join(evidence,`agent-session${width===1440?'':'-390'}.png`)});
+  await page.keyboard.press('Escape');await expect(session).toHaveCount(0);
+  expect(mutations).toEqual([]);
   expect(errors).toEqual([]);
 });

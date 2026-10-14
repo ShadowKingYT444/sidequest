@@ -21,6 +21,7 @@ export default function JobsBoard({onClose,active,open,embedded=false,onExpand,r
   const [connectionError,setConnectionError]=useState('');
   const [busy,setBusy]=useState(false);
   const [notice,setNotice]=useState('');
+  const [activityOpen,setActivityOpen]=useState(false);
   const [title,setTitle]=useState('Inspect current repository');
   const [jobKind,setJobKind]=useState<'inspection'|'coding'>('inspection');
   const [objective,setObjective]=useState('');
@@ -53,6 +54,7 @@ export default function JobsBoard({onClose,active,open,embedded=false,onExpand,r
   const request = useRef(0);
   const snapshotRequest=useRef(0);
   const root = useRef<HTMLDivElement>(null);
+  const openedOnce=useRef(false);
   const requested=useRef(requestedJob);requested.current=requestedJob;
   const appliedRequest=useRef('');
   const connectionLost=useRef(false);
@@ -106,11 +108,11 @@ export default function JobsBoard({onClose,active,open,embedded=false,onExpand,r
     return()=>clearInterval(timer);
   },[refresh,active,open]);
   useEffect(()=>{
-    if(!open)return;
+    if(!open){if(!embedded)openedOnce.current=false;return;}
     const close=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();onClose();}};
-    document.addEventListener('keydown',close);root.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    document.addEventListener('keydown',close);if(!openedOnce.current){openedOnce.current=true;root.current?.querySelector<HTMLButtonElement>('button')?.focus();}
     return()=>document.removeEventListener('keydown',close);
-  },[onClose,open]);
+  },[onClose,open,embedded]);
   async function mutate(action:()=>Promise<CommandReply>,message:string) {
     setBusy(true);setError('');setNotice('');
     try {const reply=await action();if(reply.result?.job_id)setJobId(reply.result.job_id);if(reply.result?.project_id)setProjectId(reply.result.project_id);setNotice(message);await refresh();}
@@ -155,19 +157,19 @@ export default function JobsBoard({onClose,active,open,embedded=false,onExpand,r
   const currentView=(scrollTop:number):JobView=>({artifactId,fileId,tab,startLine,scrollTop,artifactCursors:[...artifactCursors],artifactPage,fileCursors:[...fileCursors],filePage,diffCursors:[...diffCursors],diffPage});
   const contentReady=loadedContentKey===contentKey&&artifact?.job_id===jobId&&(!manifest||files?.files.some(file=>file.file_id===fileId));
   useEffect(()=>{
-    if(!contentReady||!viewMemory||pendingRestore.current?.jobId===jobId)return;
+    if(!open||!active||!contentReady||!viewMemory||pendingRestore.current?.jobId===jobId)return;
     const previous=viewMemory.current.get(jobId);
     const samePage=previous?.artifactId===artifactId&&previous.fileId===fileId&&previous.tab===tab&&previous.startLine===startLine&&(previous.diffPage??0)===diffPage;
     viewMemory.current.set(jobId,currentView(samePage?previous.scrollTop:0));
-  },[contentReady,artifactId,fileId,tab,startLine,jobId,viewMemory,artifactCursors,artifactPage,fileCursors,filePage,diffCursors,diffPage]);
+  },[open,active,contentReady,artifactId,fileId,tab,startLine,jobId,viewMemory,artifactCursors,artifactPage,fileCursors,filePage,diffCursors,diffPage]);
   useEffect(()=>{
-    if(!contentReady)return;
+    if(!open||!active||!contentReady)return;
     const pending=pendingRestore.current?.jobId===jobId?pendingRestore.current:null;
     const saved=pending?.view??viewMemory?.current.get(jobId);
     const frame=requestAnimationFrame(()=>{const area=root.current?.querySelector<HTMLElement>('.artifact-text');if(area){area.scrollTop=saved?.artifactId===artifactId&&saved.fileId===fileId&&saved.tab===tab?saved.scrollTop:0;if(viewMemory)viewMemory.current.set(jobId,currentView(area.scrollTop));}if(pendingRestore.current===pending)pendingRestore.current=null;});
     return()=>cancelAnimationFrame(frame);
-  },[loadedContentKey,contentReady]);
-  function rememberScroll(event:React.UIEvent<HTMLDivElement>){const target=event.target as HTMLElement;if(!target.classList.contains('artifact-text')||!viewMemory||!contentReady||pendingRestore.current?.jobId===jobId)return;viewMemory.current.set(jobId,currentView(target.scrollTop));}
+  },[loadedContentKey,contentReady,open,active]);
+  function rememberScroll(event:React.UIEvent<HTMLDivElement>){const target=event.target as HTMLElement;if(!open||!active||!target.classList.contains('artifact-text')||!viewMemory||!contentReady||pendingRestore.current?.jobId===jobId)return;viewMemory.current.set(jobId,currentView(target.scrollTop));}
   function chooseArtifact(id:string){pendingRestore.current=null;setArtifactId(id);}
   function chooseFile(id:string){pendingRestore.current=null;setFileId(id);}
   function chooseView(action:()=>void){pendingRestore.current=null;action();}
@@ -193,7 +195,7 @@ export default function JobsBoard({onClose,active,open,embedded=false,onExpand,r
         {resultsReady&&<p className="jobs-notice" role="status">Inspection results ready. Source delivery is disabled; the backend retains the verifying state.</p>}
         {job.blocked_reason&&<p className="jobs-alert">{job.blocked_reason}</p>}
         <div className="job-checks" aria-label="Job checks">{job.checks.map(check=><span key={check.id}>{check.id} <strong>{check.state}</strong></span>)}</div>
-        <RunActivity job={job} active={active&&open&&connected}/>
+        <details className="job-events job-activity" open={activityOpen} onToggle={event=>setActivityOpen(event.currentTarget.open)}><summary>Run activity ({job.run_ids?.length??0})</summary>{activityOpen&&<RunActivity job={job} active={active&&open&&connected}/>}</details>
         <div className="artifact-toolbar"><label htmlFor="job-artifact">Artifact</label><select id="job-artifact" value={artifactId} onChange={event=>chooseArtifact(event.target.value)}>{artifacts.map(item=><option key={item.id} value={item.id}>{item.display_name??item.kind} · {item.kind}</option>)}{!artifacts.length&&<option value="">No result artifacts yet</option>}</select><button disabled={artifactPage===0} onClick={()=>chooseView(()=>setArtifactPage(page=>page-1))}>Previous artifacts</button><button disabled={!nextArtifact} onClick={()=>chooseView(()=>{if(nextArtifact){setArtifactCursors(values=>[...values.slice(0,artifactPage+1),nextArtifact]);setArtifactPage(page=>page+1);}})}>More artifacts</button>{artifact&&<small title={artifact.sha256}>SHA256 {artifact.sha256.slice(0,12)} · {artifact.immutable?'immutable':'unavailable'}</small>}</div>
         <div className="artifact-body">{manifest&&<nav className="artifact-files" aria-label="Result files">{files?.files.map(file=><button key={file.file_id} aria-pressed={fileId===file.file_id} className={fileId===file.file_id?'selected':''} onClick={()=>chooseFile(file.file_id)} title={file.path}>{file.path}<small>{file.status}{file.binary?' · binary':''}</small></button>)}<div className="page-controls"><button disabled={filePage===0} onClick={()=>chooseView(()=>setFilePage(page=>page-1))}>Previous files</button><button disabled={!files?.next_cursor} onClick={()=>chooseView(()=>{if(files?.next_cursor){setFileCursors(values=>[...values.slice(0,filePage+1),files.next_cursor!]);setFilePage(page=>page+1);}})}>More files</button></div></nav>}
           <section className="artifact-content" aria-label="Artifact content">{manifest&&<div className="artifact-tabs"><button aria-pressed={tab==='text'} onClick={()=>chooseView(()=>setTab('text'))}>File text</button><button aria-pressed={tab==='diff'} onClick={()=>chooseView(()=>setTab('diff'))}>Git diff</button><span>{files?.files.find(file=>file.file_id===fileId)?.path}</span></div>}

@@ -23,3 +23,13 @@ button:hover { background:rgb(255 255 255 / 4%); border-color:rgb(255 255 255 / 
 .panel-header { padding:12px 16px; }.eyebrow { color:var(--muted); letter-spacing:0; }
 .settings-layer { inset:0; border:0; border-radius:0; box-shadow:none; }
 .asset-gate h1 { letter-spacing:-.02em; }.gate-marker { color:var(--muted); }
+
+.jobs-profile strong,.job-state,.artifact-tabs button[aria-pressed=true] { color:#60a5fa; }
+.job-activity { flex:none; max-height:380px; overflow:auto; }
+.artifact-body { min-height:240px; }
+
+.station-nav { left:50%; right:auto; transform:translateX(-50%); width:min(90%,1000px); max-height:48px; flex-wrap:nowrap; justify-content:flex-start; overflow:auto; padding:5px; background:rgb(10 10 10 / 90%); border:1px solid var(--line); border-radius:10px; scrollbar-width:thin; }
+.station-nav button { flex:none; background:transparent; border-color:rgb(255 255 255 / 8%); }
+
+/* Object controls and a compact keyboard alternative remain in the bars. */
+.app-header{height:42px;padding:0 18px;gap:12px}.brand{font-size:18px;letter-spacing:-.6px}.brand span,.project-label span{display:none}.project-label{font-size:11px;color:var(--muted)}.app-header button{min-height:28px;padding:4px 9px;border:0;font-size:11px}.app-footer{height:32px;padding:0 16px;gap:14px;font-size:10px}.computer-picker{min-height:24px;max-width:160px;padding:2px 6px;border:0;background:transparent;font-size:10px}.stage-status{color:var(--muted)}.object-modal-layer{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:rgb(0 0 0 / 18%);padding:16px}.object-modal{width:min(100%,480px);max-height:calc(100% - 32px);overflow:auto;background:#111113;border:1px solid rgb(255 255 255 / 10%);border-radius:14px;padding:20px;box-shadow:0 12px 36px #0004}.object-modal header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}.object-modal h2{font-size:16px;font-weight:500}.object-modal header button{min-height:28px;padding:3px 8px;font-size:18px}.session-status{font-size:14px;margin-bottom:8px}.session-note{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}.object-actions{display:flex;gap:8px;margin-top:20px}.session-modal .run-activity{max-height:360px;overflow:auto}@media(max-width:600px){.app-header{height:40px;padding:0 10px;gap:6px}.app-header button{font-size:10px;padding:4px 6px}.app-footer{height:30px;padding:0 8px;gap:8px}.stage-status{font-size:9px}.computer-picker{max-width:120px;font-size:10px}.object-modal{padding:16px}}
