@@ -19,3 +19,12 @@ TDD and validation:
 - `py_compile`, CLI `--help` and `git diff --check` pass.
 
 The installed schema was generated offline; the relevant input and quota descriptions/hashes are preserved in `installed-schema.json`. `ordinaryUsageAllowed` is backend permission for included usage; null is unknown and cannot be recovered from percentages or reset times. Included-usage permission, a 10% reserve snapshot, purchased-credit availability and USD spending enforcement are separate authorities. The schema does not prove a no-credit-fallback policy or enforceable 10% stop. No spending guard was relaxed. No real account/quota read, model turn, auth grant, credential copy, permission/sandbox change, protected asset change, merge, push or deployment occurred in this lane.
+
+## Terminal follow-up without a new tree change
+
+The second checkpoint returns explicit `status:"completed"` for a terminal follow-up whose checked final tree matches the initial tree. For a clean original clone, the final worktree must remain clean; for a restored candidate, its final mode/path/size/byte digest must equal `initial_tree_sha256`. The response contains the durable message ID, provider thread/turn, verified model/effort, safe summary and unchanged unknown-USD usage. It records completion in the progress trace and returns no candidate or artifacts. Runtime retains the prior candidate. An original task that makes no Git change remains blocked.
+
+- `no-change-red.log`: 12 transport tests, exactly two failures; clean follow-up was blocked and unchanged restored candidate was redundantly frozen.
+- `no-change-green.log`: all 12 transport tests pass in 4.466 seconds.
+- `no-change-full-tools.log`: all 56 tools tests pass in 21.793 seconds, including the stronger recorded-trace assertion.
+- Compile and diff checks pass. This remains protocol-fake evidence; the production USD guard is unchanged.

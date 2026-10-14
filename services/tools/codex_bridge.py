@@ -1131,11 +1131,29 @@ def execute_agent(
                 reason = "Codex task did not complete within the host-configured time limit."
             return _blocked_data(app, "blocked", reason=reason, verified=verified) + (usage,)
 
-        # Never interpret the agent's narrative as proof of output. Re-scan and
-        # freeze the exact Git tree only after a completed provider turn.
+        # Never interpret the agent's narrative as proof of output. Re-scan
+        # the exact Git tree only after a completed provider turn.
         ensure_safe_clone(repo, settings)
-        _, _, still_clean = inspect_worktree(repo, base, settings)
-        if still_clean:
+        _, final_files, still_clean = inspect_worktree(repo, base, settings)
+        followup_unchanged = followup is not None and still_clean and initial_tree is None
+        if followup is not None and initial_tree is not None:
+            current_tree = tree_digest([{"path": path, "mode": file.mode, "size_bytes": len(file.data), "sha256": hashlib.sha256(file.data).hexdigest()} for path, file in final_files.items()])
+            followup_unchanged = current_tree == initial_tree
+        if followup_unchanged:
+            progress.append("status", "Codex follow-up completed without changing the workspace tree.")
+            return {
+                "status": "completed",
+                "summary": app.public_summary(),
+                "message_id": followup["message_id"],
+                "provider_thread_id": thread_id,
+                "provider_turn_id": turn_id,
+                "model": verified["catalog_model"],
+                "effort": verified["effort"],
+                "model_verified": True,
+                "effort_verified": True,
+                "usage": usage,
+            }, [], usage
+        if still_clean and followup is None:
             return _blocked_data(app, "blocked", reason="Codex completed without producing a Git change.", verified=verified) + (usage,)
         freeze_request = dict(request)
         freeze_request["op"] = "artifacts.freeze"

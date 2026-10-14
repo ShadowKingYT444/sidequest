@@ -1,0 +1,33 @@
+{
+  "baseline": "30bc4857e07643aca07042ecaf9d7c2dc4db92d7",
+  "verification_kind": "protocol-fake-only",
+  "live_provider_turns": 0,
+  "production_usd_guard_changed": false,
+  "red": {
+    "tests": 12,
+    "failures": 2,
+    "errors": 0
+  },
+  "green": {
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 4.466
+  },
+  "full_tools": {
+    "tests": 56,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 21.793
+  },
+  "source_sha256": {
+    "services/tools/codex_bridge.py": "3122c4cbeae9fa1ab0c3a860454a7fe57b3eca9c996bec9874f9cf15554cdf95",
+    "services/tools/tests/test_codex_bridge.py": "a1806d516e5cb6a0d8a6005768e58e60730610a51a4797b9d802a005972ff4d5",
+    "services/tools/tests/test_provider_transport.py": "d47d23f015ddae4f737928acafc151bdb45d629796be8857d3818e67d1591a09"
+  },
+  "log_sha256": {
+    "no-change-red.log": "6fadea3e2eae3d2f43e31624230a49495929dc9b48740681642f5ab34d2f5cb4",
+    "no-change-green.log": "d79abf789c7858602a6f6fa27ff57517dd9e2ba5414eb1afc7cd32c15ce35a93",
+    "no-change-full-tools.log": "d2a6c82feece4eb95d1338f9ccf41d3b65b64c8d63a5578899638b091833c6c6"
+  }
+}

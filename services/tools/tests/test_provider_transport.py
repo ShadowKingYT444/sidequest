@@ -191,3 +191,53 @@ class ProviderTransportTests(GitFixture):
                 elif case == "malformed": request["context"]["initial_tree_sha256"] = "bad"
                 with self.assertRaises(AdapterError): self.run_fake(request, settings)
                 self.assertFalse(log_path.exists())
+
+    def assert_trace_completion(self, data, artifacts, usage):
+        self.assertEqual(data["status"], "completed")
+        self.assertEqual(data["message_id"], "message-fixture")
+        self.assertEqual(data["provider_thread_id"], "host-persisted-thread")
+        self.assertEqual(data["provider_turn_id"], "fixture-turn")
+        self.assertEqual(data["model"], self.model)
+        self.assertEqual(data["effort"], self.effort)
+        self.assertTrue(data["model_verified"])
+        self.assertTrue(data["effort_verified"])
+        self.assertEqual(data["usage"], usage)
+        self.assertIsNone(usage["cost_usd"])
+        self.assertTrue(usage["uncertain"])
+        self.assertEqual(usage["input_tokens"], 10)
+        self.assertTrue(data["summary"])
+        self.assertEqual(artifacts, [])
+        self.assertNotIn("candidate", data)
+        self.assertNotIn("manifest_artifact_id", data)
+        self.assertEqual(list(self.artifacts.iterdir()), [])
+
+    def test_followup_without_git_mutation_completes_trace_without_fabricated_candidate(self):
+        request, settings, log_path = self.request_fixture("followup_no_change", followup=True)
+        before = self.initial_tree(request, settings)
+        progress_path = self.staging / "completed-followup.jsonl"
+        data, artifacts, usage = execute_agent(request, settings, ProgressLog(progress_path, request["request_id"], settings.staging_roots), _test_only_allow_unmetered=True)
+        self.assert_trace_completion(data, artifacts, usage)
+        self.assertEqual(self.initial_tree(request, settings), before)
+        self.assertEqual(sum(row.get("method") == "turn/start" for row in self._rpc_log(log_path)), 1)
+        trace = [json.loads(line) for line in progress_path.read_text().splitlines()]
+        self.assertTrue(any(row["type"] == "status" and "follow-up completed" in row["message"] for row in trace))
+
+    def test_followup_unchanged_restored_candidate_completes_trace_and_retains_exact_tree(self):
+        request, settings, log_path = self.request_fixture("followup_no_change", followup=True)
+        Path(request["workspace"], "src/edit.txt").write_text("prior frozen candidate\n")
+        before = self.initial_tree(request, settings)
+        request["context"]["initial_tree_sha256"] = before
+        data, artifacts, usage = self.run_fake(request, settings)
+        self.assert_trace_completion(data, artifacts, usage)
+        self.assertEqual(self.initial_tree(request, settings), before)
+        self.assertEqual(sum(row.get("method") == "turn/start" for row in self._rpc_log(log_path)), 1)
+
+    def test_original_task_without_git_mutation_remains_blocked(self):
+        request, settings, _log_path = self.request_fixture("no_change")
+        data, artifacts, usage = self.run_fake(request, settings)
+        self.assertEqual(data["status"], "blocked")
+        self.assertIn("without producing a Git change", data["summary"])
+        self.assertNotIn("candidate", data)
+        self.assertEqual(artifacts, [])
+        self.assertIsNone(usage["cost_usd"])
+        self.assertTrue(usage["uncertain"])

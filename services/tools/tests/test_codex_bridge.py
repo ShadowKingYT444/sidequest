@@ -140,7 +140,8 @@ for raw in sys.stdin:
     elif method == "turn/start":
         workspace = pathlib.Path(params["cwd"])
         target = workspace / "src" / "edit.txt"
-        target.write_text("changed by disposable fake transport\\n", encoding="utf-8")
+        if MODE not in ("no_change", "followup_no_change"):
+            target.write_text("changed by disposable fake transport\\n", encoding="utf-8")
         response(request, {{"turn": {{"id": "fixture-turn", "status": "inProgress"}}}})
         emit({{"jsonrpc": "2.0", "method": "turn/started", "params": {{"threadId": params.get("threadId"), "turn": {{"id": "fixture-turn", "status": "inProgress"}}}}}})
         if MODE == "action":
@@ -157,7 +158,7 @@ for raw in sys.stdin:
             total = 40 if MODE == "token_budget" else 15
             usage = {{"inputTokens": 10, "cachedInputTokens": 1, "outputTokens": 5, "reasoningOutputTokens": 0, "totalTokens": total}}
             emit({{"jsonrpc": "2.0", "method": "thread/tokenUsage/updated", "params": {{"threadId": params.get("threadId"), "turnId": "fixture-turn", "tokenUsage": {{"last": usage, "total": usage}}}}}})
-            if MODE in ("success", "token_budget", "resume", "native_marker_free") or MODE.startswith("followup"):
+            if MODE in ("success", "token_budget", "resume", "native_marker_free", "no_change") or MODE.startswith("followup"):
                 emit({{"jsonrpc": "2.0", "method": "turn/completed", "params": {{"threadId": params.get("threadId"), "turn": {{"id": "fixture-turn", "status": "completed"}}}}}})
     elif method == "turn/interrupt":
         response(request, {{}})
