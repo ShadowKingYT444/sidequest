@@ -542,4 +542,3 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(fake.calls, ["B.repo.inspect", "B.repo.prepare", "B.agent.execute"])
         finally:
             await scheduler.stop()
-
