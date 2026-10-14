@@ -6,5 +6,8 @@
   "sha256": "31b2c441294ca781cb3f71e6d6eae65293ef6de9fbe56f1c1fcc961ff8e3bb1b",
   "bytes": 68627,
   "savedToLibrary": true,
-  "imageShows": "Actual T3-style settings; executable found separately from unknown auth/reachability"
+  "imageShows": "Actual T3-style settings; executable found separately from unknown auth/reachability",
+  "current_local_capture_sha256": "8c051f21cbb2821e005b72b5a2e6682e293dda9040ece7d6cf75f71970ad1c69",
+  "library_version_represents_previous_capture": true,
+  "note": "Final browser rerun overwrote the local capture; retained Library identity/version is the previously saved image. No Library mutation was attempted in this verification-only task."
 }

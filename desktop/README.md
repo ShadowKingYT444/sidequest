@@ -117,3 +117,9 @@ Codex host setup, readiness refresh and persisted task lifecycle are described i
 Next steps are: run Electron on a sandbox-capable host; resolve native Codex runtime-state and enforceable budget readiness before seeking authorization for a tiny real turn; then connect actual worker/session ownership and usage telemetry, and add screenshots/workshops/capture and exact delivery approval flows. No merge or deployment is requested.
 
 The session continuation passes 30 desktop and 48 runtime tests with a current production build. The extended browser run passed the existing 10 tests and exposed one mobile disclosure target-size failure in the new session test. The target was enlarged without weakening the check; session-browser.log and verification.json record the focused repaired rerun separately.
+
+## Final complete browser run — 10:13 UTC
+
+Ran the full 11-test suite exactly once on repaired source `cc9d70a71825d5434ad0d7c8a2330395c08a1da5`, with retries disabled and all 94 source hashes unchanged before/after. Terminal result: **exit 1; 10 passed, 1 failed in 8.9 minutes**. The recorded-session ownership test and mobile accessibility pass. The viewer test fails at `viewer.spec.ts:39`: after Escape/reopening Computer 19, the expected Monaco `diff-editor` is absent at 15 seconds; the page snapshot contains original/modified read-only fallback textboxes. Cause remains unconfirmed. No fix, retry, model/native run or feature change was performed.
+
+Exact command, source identity, terminal counts, failure context and log hashes are in `evidence/desktop/final-11-run.json`; full output is `final-11-browser.log`; assertion snapshot is `final-11-viewer-error-context.md`. Previous target-size failure and focused repair proof remain separate. This result leaves full-suite acceptance unresolved; it does not certify native orchestration.

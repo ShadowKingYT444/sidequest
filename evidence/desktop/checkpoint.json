@@ -1,6 +1,6 @@
 {
-  "at": "2026-10-14T09:58:52.936313+00:00",
-  "status": "Recorded session ownership and contextual request/events/usage verified; native and interactive conversation incomplete",
+  "at": "2026-10-14T10:14:28.785709+00:00",
+  "status": "Final full browser regression failed (10 passed, 1 failed); recorded-session test passed; native and interactive conversation incomplete",
   "branch": "feat/electron-office-diff",
   "tested_source_base_commit": "8a1ea251677a705b5cff58457234e310d27ca346",
   "source_files_sha256": "34f3d1ba9c7f8b74ead697324f2dc3495b2078f913b9fc970aa8c7dd74165aad",
@@ -15,5 +15,17 @@
   "full_suite_failure_preserved": "one target-size failure, repaired and focused rerun passed; no single full 11-test green run claim",
   "native_gates": "unchanged blocked; no supported remedy found",
   "new_session_library_upload": "network failure before preparation; captures committed",
-  "model_calls": 0
+  "model_calls": 0,
+  "published_tested_source_commit": "cc9d70a71825d5434ad0d7c8a2330395c08a1da5",
+  "final_full_browser": {
+    "exit_code": 1,
+    "passed": 10,
+    "failed": 1,
+    "minutes": 8.9,
+    "retries": 0,
+    "record": "evidence/desktop/final-11-run.json"
+  },
+  "source_unchanged": true,
+  "features_added": false,
+  "native_or_model_runs": 0
 }

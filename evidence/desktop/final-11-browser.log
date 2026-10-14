@@ -1,0 +1,57 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0
+
+
+Running 11 tests using 1 worker
+
+(node:191609) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/jobs-live.spec.ts:6:1 › genuine local inspection job produces immutable files and a check report (43.0s)
+  ✓   2 tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results (1.2m)
+  ✓   3 tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events (1.7m)
+  ✘   4 tests/browser/viewer.spec.ts:6:1 › real Git diff, lazy single editor, expanded state, Escape and keyboard (1.2m)
+(node:192484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 tests/browser/viewer.spec.ts:43:1 › read API rejects outside origins and mutations (59ms)
+  ✓   6 tests/browser/viewer.spec.ts:48:32 › viewer reflows at 960px with reduced motion (33.2s)
+  ✓   7 tests/browser/viewer.spec.ts:48:32 › viewer reflows at 390px with reduced motion (21.7s)
+  ✓   8 tests/browser/viewer.spec.ts:60:1 › keyboard-accessible viewer has no automated WCAG A/AA violations (46.3s)
+  ✓   9 tests/browser/viewer.spec.ts:72:1 › hostile source stays literal and a failed read can retry (39.7s)
+  ✓  10 tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 1440px (1.1m)
+  ✓  11 tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 390px (33.8s)
+
+
+  1) tests/browser/viewer.spec.ts:6:1 › real Git diff, lazy single editor, expanded state, Escape and keyboard 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator: getByTestId('diff-editor')
+    Expected: "f_03d72050ecef630081601cb44a0cec9a"
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('diff-editor') with timeout 15000ms
+      - waiting for getByTestId('diff-editor')
+
+
+      37 |   await expect(page.getByRole('combobox',{name:'Office navigation'})).toBeFocused();
+      38 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
+    > 39 |   await expect(editor).toHaveAttribute('data-file-id',source.id);
+         |                        ^
+      40 |   await expect.poll(async () => Number(await editor.getAttribute('data-scroll-top'))).toBeGreaterThan(100);
+      41 |   expect(errors).toEqual([]);
+      42 | });
+        at /workspace/sidequest/desktop/tests/browser/viewer.spec.ts:39:24
+
+    Error Context: test-results/viewer-real-Git-diff-lazy--f5b01-d-state-Escape-and-keyboard/error-context.md
+
+  1 failed
+    tests/browser/viewer.spec.ts:6:1 › real Git diff, lazy single editor, expanded state, Escape and keyboard 
+  10 passed (8.9m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

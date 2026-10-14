@@ -1,9 +1,9 @@
 {
-  "status": "Recorded session ownership and contextual request/events/usage verified; native and interactive conversation incomplete",
-  "recorded_at": "2026-10-14T09:58:52.936313+00:00",
+  "status": "Final full browser regression failed (10 passed, 1 failed); recorded-session test passed; native and interactive conversation incomplete",
+  "recorded_at": "2026-10-14T10:14:28.785709+00:00",
   "feature_branch": "feat/electron-office-diff",
   "tested_source_base_commit": "8a1ea251677a705b5cff58457234e310d27ca346",
-  "tested_source_identity": "Base commit plus final current-source hashes below; browser capture verifies the same UI hashes. Source clone for inspected Git is intentionally separate.",
+  "tested_source_identity": "All 94 source file hashes match cc9d70a before and after one full run. Subsequent commit changes evidence/docs only.",
   "source_file_hashes": {
     "desktop/electron/git-reader.cjs": "d562534168ddd5b3238f4940192ef6184d357b3eb6a0979349c6091b94ce11be",
     "desktop/electron/main.cjs": "6bb5c771f6b24378749d112c845da2b8b90277706301653170e6ce51560db3bc",
@@ -119,15 +119,15 @@
     }
   },
   "genuine_local_job": {
-    "id": "40807b2a-bb7c-494a-92d5-52972ef9ccc7",
+    "id": "dd7f180e-8d35-461e-a693-23728a3e29a5",
     "run_ids": [
-      "dcf89046-3fc8-43f1-a76d-f41b07504919"
+      "9825384f-bf7d-4e92-94db-a6f6c3aef495"
     ],
     "inference_calls": 0,
     "spent_usd": 0,
     "candidate": {
-      "id": "cand_11f37a2a608946f6a27cf137f3732f43",
-      "manifest_artifact_id": "art_29be562a56f348769b811605f29e998d",
+      "id": "cand_a7e001851ae24595b9e078d59b195db2",
+      "manifest_artifact_id": "art_526d278e77fa4714bfb0d0dbfd816c8e",
       "tree_sha256": "5b6e550a3da5f44fc8b66b9393012fad38abdd4fb6a8e997aa7cba513fb9d2ff"
     },
     "record": "evidence/desktop/job-browser.json"
@@ -141,7 +141,8 @@
       "failed": 1,
       "failure": "Mobile disclosure target-size; repaired with min-height 32px",
       "record": "evidence/desktop/session-full-browser.log",
-      "candidate": "8a1ea251677a705b5cff58457234e310d27ca346"
+      "candidate": "8a1ea251677a705b5cff58457234e310d27ca346",
+      "historical": true
     },
     "final_focused_session_browser": {
       "passed": 1,
@@ -149,21 +150,55 @@
       "record": "evidence/desktop/session-browser.log",
       "scope": "Full ownership/results/reload/events/usage/wrong-worker/board/detach flow after scoped CSS repair"
     },
-    "single_full_11_test_green_run_claimed": false
+    "single_full_11_test_green_run_claimed": false,
+    "final_full_browser": {
+      "status": "failed",
+      "started_at": "2026-10-14T10:04:11.364311+00:00",
+      "tested_source_commit": "cc9d70a71825d5434ad0d7c8a2330395c08a1da5",
+      "source_files_sha256": "34f3d1ba9c7f8b74ead697324f2dc3495b2078f913b9fc970aa8c7dd74165aad",
+      "source_file_count": 94,
+      "command": "SIDEQUEST_TEST_INSPECTION=1 CHROMIUM_PATH=/usr/bin/chromium npm run test:browser -- --retries=0",
+      "cwd": "desktop",
+      "scope": "One full 11-test browser run; actual zero-model local inspections and metadata assignments; no feature edits, native launch or model/provider run",
+      "log": "evidence/desktop/final-11-browser.log",
+      "source_hashes_verified_before_run": true,
+      "exit_code": 1,
+      "finished_at": "2026-10-14T10:13:04.643897+00:00",
+      "passed": 10,
+      "failed": 1,
+      "skipped": 0,
+      "retries": 0,
+      "minutes": 8.9,
+      "source_hashes_verified_after_run": true,
+      "source_files_unchanged": true,
+      "environment_blocked_execution": false,
+      "failure": {
+        "test": "real Git diff, lazy single editor, expanded state, Escape and keyboard",
+        "location": "desktop/tests/browser/viewer.spec.ts:39",
+        "action": "Escape to office, reopen Computer 19, verify selected Monaco editor",
+        "assertion": "diff-editor data-file-id equals f_03d72050ecef630081601cb44a0cec9a",
+        "timeout_ms": 15000,
+        "observed": "diff-editor element absent; snapshot contains original/modified read-only fallback textboxes",
+        "underlying_cause": "unconfirmed; no code change or retry authorized",
+        "context": "evidence/desktop/final-11-viewer-error-context.md"
+      },
+      "log_sha256": "46476159ff70bb5bc01cd7ea761fde85eaa04a1d3389df29fddf46261a16f5a9",
+      "failure_context_sha256": "fd6c64b032ac8370c5e0264aafa765900fccc71d3f0bd2a27b0e69f0daa6f49f"
+    }
   },
   "browser": {
-    "source_identity": "Final source hashes include the scoped CSS touch-target repair and accessibility evidence write; baseline 10 pass at prior checkpoint, focused session passes after repair",
+    "source_identity": "All 94 source file hashes match cc9d70a before and after one full run. Subsequent commit changes evidence/docs only.",
     "automated_session_wcag_violations": 0,
     "session_record": "evidence/desktop/session-browser.json",
     "session_evidence": {
       "scope": "Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation",
       "owner": {
         "station_id": "parent_019",
-        "job_id": "40807b2a-bb7c-494a-92d5-52972ef9ccc7",
-        "run_id": "dcf89046-3fc8-43f1-a76d-f41b07504919",
+        "job_id": "dd7f180e-8d35-461e-a693-23728a3e29a5",
+        "run_id": "9825384f-bf7d-4e92-94db-a6f6c3aef495",
         "worker_id": "316ba303-4fbd-4a1b-ba4c-7dc080e8a478",
         "project_id": "2a79639a-8823-49cf-ba6a-da0b8108c6ed",
-        "assigned_at": "2026-10-14T09:54:41.353Z"
+        "assigned_at": "2026-10-14T10:06:37.111Z"
       },
       "reload_restored": true,
       "board_links_same_session": true,
@@ -177,39 +212,40 @@
       "axe_violations": []
     },
     "real_screenshots": {
-      "evidence/desktop/run-activity-actual.png": "52c520c046b0daa82ab319df01cc89dad1e2273ca61e2cb4cda0e904bf495cc8",
-      "evidence/desktop/assigned-result.png": "b7f4b1fdc23a3055fd29e9da25683bf426e46e7af7f50f0e998af8788ef0b52e",
-      "evidence/desktop/recorded-session-390.png": "0ec43cf11c781f4d15f0396cc6a4e6eae3f5b5b594333717f6c21022cd427535",
-      "evidence/desktop/expanded-diff.png": "986330494644e0b9a0d9cb47d899be00f948e1c8f93f9b29b0246522e51c965c",
-      "evidence/desktop/provider-settings-analytics.png": "072ee3c3105979d64284a439b166cd13644a2103cfa9877d36cf248ee03ea245",
-      "evidence/desktop/workstation-launcher-390.png": "fca928ee074f943832566133938cb20c63473d4f0a3bddf0ac514ebc2a67fb19",
+      "evidence/desktop/run-activity-actual.png": "b0511d1890d4601f8a745da4facf1d2041a99a3861569f483e766c7009b1c8d5",
+      "evidence/desktop/assigned-result.png": "7cd2a7acf8defdd95323f91defa227daec3a4946689716ded63c2f37efa97a81",
+      "evidence/desktop/recorded-session-390.png": "dd1c86a890bbc8e6e06d3f0579498e35e54a744df881f39585bf4b0757524f99",
+      "evidence/desktop/expanded-diff.png": "3a1a7dfe796b5e1f86fb3a2a35ad2c01c4bfbe1a92876aaa75ab3b893a1971f7",
+      "evidence/desktop/provider-settings-analytics.png": "200bd7a9d0d76b63e213349402103346de67a472d4a04158aa81f4583e78bb83",
+      "evidence/desktop/workstation-launcher-390.png": "e925f99819c5bbf425cc8748e4fa4f6fe2c69493eb8ce5d140031ff90ded1e65",
       "evidence/desktop/office-temporary.png": "7575bbc03f1be767b647713f9bf9e8bb36983f61bec3faae71f0e02413f52261",
       "evidence/desktop/office-desk.png": "3765b3de92ee8ef986ab58068f2bfd96139c50357451bad4761ebce783b0207c",
-      "evidence/desktop/provider-settings.png": "54c724682b5500d9c30786d215d0cd9bab7986d3346c10b4b6683745c7363e9e",
-      "evidence/desktop/job-result.png": "fef287ef1eaafe86b992e2247571cb8f206adb6c5b4012568ab22416d684fd6a",
-      "evidence/desktop/recorded-session.png": "fe77ade451ec08965350ebbf75f5685ba0d928209f48dff991415ca4c54f32d7",
-      "evidence/desktop/provider-settings-limits-390.png": "854fbba723791641cedbd391bf554d415a433efd9be1f6648962405e185c05b8",
-      "evidence/desktop/job-check-report.png": "e10c16a3615acc0af86a8186c4f7726da92d13d39595335432f9b35d5e3d5383",
+      "evidence/desktop/provider-settings.png": "8c051f21cbb2821e005b72b5a2e6682e293dda9040ece7d6cf75f71970ad1c69",
+      "evidence/desktop/job-result.png": "6a5a4e9af9e708b1490ee90a05e9a81049cf29547eede8691767662ff200e520",
+      "evidence/desktop/recorded-session.png": "2c159576b92407b0de092d35dea9eb54f6c3b9116abccf2cf4d0edda5c595744",
+      "evidence/desktop/provider-settings-limits-390.png": "e7e55fd60df1bfe8f85c92a72b07c58d076397e8719eb70a26c0acd3af3e83c9",
+      "evidence/desktop/job-check-report.png": "aba24346e913cc3ff550db5761a5734325ad1239dbcaa133f0423ab11ffe9797",
       "evidence/desktop/office-expanded.png": "50aea66c4e8c346d314faaa97fd94f223c696416e5df819faff5e2dc23042544",
       "evidence/desktop/office-desk-debug.png": "a1462dfd550f384f71890766e1892cc16bfda65d1116e128bdee3e482b67b431",
-      "evidence/desktop/provider-settings-limits.png": "db8bd3de0da1adfbd709661a8cc5cccea7835b4599ad2273eb645bf7c86a7a8a",
-      "evidence/desktop/agent-session-390.png": "55d6ad3b83c534504dcdc2e485d1a187c005809906c6bc8834e350887b740115",
-      "evidence/desktop/viewer-960.png": "3d0231b138195f13d902de9523c48a008f60495db0a8c3ed95a4f620d9005de4",
-      "evidence/desktop/workstation-launcher.png": "643ddcc04fda9eee833d0b8eaafc6e548dda17e246bf3438743976fb86383559",
-      "evidence/desktop/job-readiness.png": "e1f40625279830a7a88500ad3b395b69dae7b3544f419afc05c564b2b1b4288e",
-      "evidence/desktop/setup-desktop.png": "de53917a15481ace372c99d7166ffdfa4c97201230df212d1f87e176c2d1f78c",
-      "evidence/desktop/viewer-390.png": "4bec7ca9f9e35134fca320327df267cd1e4c62cc51de19ecfce7551b5c947dc5",
-      "evidence/desktop/job-960.png": "080d82a079eb41b73ad4688d42bc491c09c3a44ac0a016e1189364f2c947d159",
-      "evidence/desktop/job-diff.png": "ec4c806585c5877e55a10889b0d658565af7e3fcad0d3772530eb682fe87ddaa",
+      "evidence/desktop/provider-settings-limits.png": "d8d98cffc9a2fced2f1590b0084d002574b32267dad48e4b26ace39e438bc64f",
+      "evidence/desktop/agent-session-390.png": "8654023d46a91796434934141a64a102e5ea06af4e48cdb59d7ea252caf119f2",
+      "evidence/desktop/viewer-960.png": "e8c4ea294022597c977759709601816129d7e80e6cd6771b68437d3d456d6b90",
+      "evidence/desktop/workstation-launcher.png": "812ea1528aa3faada3dd3c6fae22fde493ac2c603290389b95cc6bd994ce5482",
+      "evidence/desktop/job-readiness.png": "eb48d9b3eed29b4f0c2ecb0d443f3002b2a4afde3cf09070a5a1f08d7a3e4dbd",
+      "evidence/desktop/setup-desktop.png": "7d2d1b213309059b085f1f9805af0ab93f4dbe52513c4fb4c7f8a9c963df9b8f",
+      "evidence/desktop/viewer-390.png": "ae9a71c3dfe96df164168b132ae62c180d9d5f06b90285f3eb28cfc1635e2a8c",
+      "evidence/desktop/job-960.png": "9ba6cff34ce4a066bd07a12f804deb4bda397b16850783a0efbd25a900fece2a",
+      "evidence/desktop/job-diff.png": "8a59360e372df25d804192fc9d5c27fbd8e52143fe98851ac0c0373216101939",
       "evidence/desktop/original-office-pending.png": "7865b4c4fe9ad1943df909e8a16aa4d68d02ab57b8cde7fdd95eb49a6b5d28e8",
-      "evidence/desktop/git-diff.png": "50809bc8b17e924171c586c6f25a8812e4731eb182ee653f7bee23b9729b0e60",
-      "evidence/desktop/provider-settings-analytics-390.png": "977f43e0376442100a255e993b2f3537bc4025b5dac266e68138764cc8cde0db",
-      "evidence/desktop/provider-settings-390.png": "5d74833f8136923d0ca6eb4ee4009d43960b301ca026d565d9b4bf0b795a0e50",
-      "evidence/desktop/job-390.png": "d5e12c808b8f21da0fc938d4e57c1264217094f3d0c5434030addc921b618e65",
-      "evidence/desktop/job-queued.png": "5f217d307e06539848dc258d8b457e8a67f538e48572a05661a6e941fdd23216",
-      "evidence/desktop/agent-session.png": "49abadfde9a26562cdc75901a2638c34a15da66a30212d683eb9805b99e1c348"
+      "evidence/desktop/git-diff.png": "4baffd178e5ff093cbbf305154853b3bdb61ec092749a4dd0f9ad4af7fbfa4cd",
+      "evidence/desktop/provider-settings-analytics-390.png": "8137ea1a03ac15aa7dde554b29d8c0edebdca84242b3aa57c91244cdd5d9f08f",
+      "evidence/desktop/provider-settings-390.png": "ef37ca9fa285cf5d538e69a339000542e8b5489b087f542938e8f4038b80a562",
+      "evidence/desktop/job-390.png": "3407b7e032a5148c5eccbd491c79d92c231fd5dc8b03b075fbc560d5b4aab1df",
+      "evidence/desktop/job-queued.png": "0a8e214713a717c12035f218f85160a783ac3385e8a588ec691df25fac33ecb7",
+      "evidence/desktop/agent-session.png": "3f1ec4534f47f8b8756244c402be4e45f9d90583d0f647b2da7bb4b1c362b70a"
     },
-    "earlier_original_office_capture": "evidence/desktop/prior-office-verification.json"
+    "earlier_original_office_capture": "evidence/desktop/prior-office-verification.json",
+    "current_full_run": "evidence/desktop/final-11-run.json"
   },
   "original_assets": {
     "archive_sha256": "f7159fbda50771486d65e1a5bd2a42d265120a422d88a686471a9bbb6fb60a95",
@@ -346,5 +382,6 @@
     ],
     "existing_six_library_screenshots": "Prior six uploads remain available; these two new captures are committed in Git",
     "retry": "No fallback direct upload after required prepared-flow failure; no auth or permissions changed"
-  }
+  },
+  "published_tested_source_commit": "cc9d70a71825d5434ad0d7c8a2330395c08a1da5"
 }
