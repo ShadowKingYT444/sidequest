@@ -120,3 +120,11 @@ Focused TDD follow-up from `2717752`: a saved accepted command whose exact messa
 Red evidence reproduced two unsafe clears. All 12 store regressions and 68 desktop tests pass; TypeScript/build passes. Four explicitly protocol-fake browser tests passed, retries 0, 16.6s, using separate port 5175 while the integrator's full office suite remained frozen. New screenshots are archived separately; earlier captures/logs and all 126 protected asset hashes remain intact. Evidence: `evidence/desktop/transport/rejected-receipt-verification.json` and adjacent red/green/browser logs.
 
 No root workspace writes, native probes, provider/model calls, paid spending or authentication/security changes. Next: integrator cherry-pick and backend rejection-state integration checks.
+
+## Integrated transport repair — October 14, 2026
+
+Execution recovered after the 20:53 UTC disconnect; verified recovery checkpoint `e492321` was normally pushed to the existing PR branch. Durable staged files, exact command/receipt reconciliation, anchored follow-ups with original goal/scope/worker, prior-candidate restoration, trace-only completion and older assigned/active notifications are implemented. Subscription observations remain separate from USD authority. TDD evidence preserves missing paths and real defects: unsafe uncertain Resume, directory replacement restoration, pre-claim stranded receipt and unsafe draft clearing.
+
+Final integrated checks: 75 desktop, 65 runtime, 56 provider tests; TypeScript/production build; production audit zero advisories. Frozen `e492321` browser suite: 24/24, retries 0, 12.4 minutes, all 318 hashes unchanged. All 126 protected asset hashes and previous failed logs match. The first 22/23 failure and empty-database fixture repair proof remain archived. Exact results/screenshots: `evidence/desktop/transport-final/README.md`. Only documentation/evidence followed this tested source.
+
+Native/live acceptance remains blocked by sandbox/display, protected Codex state and unverifiable enforceable USD/reserve authority. No repeated native probe, model/paid turn, new auth, credential/security change, merge/deployment or force push. Deadline missed. Next: supported host and verified execution authority, then native/live validation; no independently actionable transport implementation remains pending.

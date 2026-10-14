@@ -1,0 +1,73 @@
+{
+  "status": "passed_protocol_and_local_git_native_live_blocked",
+  "tested_source_commit": "e4923218e57c0af3e8757bfc8530471d7277fd30",
+  "verified_at": "2026-10-14T21:12:25.032316+00:00",
+  "deadline": "2026-10-14T19:54:00Z",
+  "deadline_met": false,
+  "browser": {
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "elapsed_minutes": 12.4,
+    "source_file_count": 318,
+    "source_unchanged": true,
+    "log_sha256": "f5297c59e198311530f3e30125a9e7b7ac42ea1b9cfc5b0b30c119ce0fdb8736",
+    "protocol_fake_composer_tests": 4,
+    "native_attempts": 0,
+    "live_model_turns": 0
+  },
+  "checks": {
+    "desktop_passed": 75,
+    "runtime_passed": 65,
+    "provider_tools_passed": 56,
+    "typecheck_build": "passed",
+    "production_advisories": 0
+  },
+  "preservation": {
+    "protected_assets": 126,
+    "protected_hashes_unchanged": true,
+    "old_failed_logs_unchanged": true,
+    "first_integrated_failure_preserved": "../transport-integrated",
+    "source_changes_after_suite": [
+      "desktop/README.md",
+      "journals/A.md",
+      "journals/C.md",
+      "services/runtime/README.md"
+    ],
+    "only_documentation_after_suite": true
+  },
+  "blockers": [
+    {
+      "action": "Native Electron startup",
+      "target": "desktop Electron host",
+      "outcome": "blocked",
+      "reason": "Preserved SIGTRAP -5; unsupported sandbox helper and absent display; not repeated"
+    },
+    {
+      "action": "Read-only Codex app-server initialize",
+      "target": "Existing original auth and protected native runtime layout",
+      "outcome": "blocked",
+      "reason": "Preserved EROFS os error 30; zero responses; not repeated"
+    },
+    {
+      "action": "Live coding/follow-up dispatch",
+      "target": "Production Codex provider adapter",
+      "outcome": "denied_by_product_policy",
+      "reason": "No enforceable verified USD ceiling; account quota and hard 10% reserve unverified; no live attempt"
+    }
+  ],
+  "pending_independent_implementation": [],
+  "remaining_validation": [
+    "native Electron IPC/clipboard/window",
+    "real approved provider session/follow-up with supported attachment bytes",
+    "real account quota/reserve and spend enforcement"
+  ],
+  "scope": "Implemented transport verified with protocol fakes and real zero-model Git/browser checks; whole live product remains unaccepted.",
+  "inspection_project": {
+    "head": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+    "base": "69bf066",
+    "scope": "Pinned small real Git evaluation project; full PR checkout exceeds unchanged repository/output guards",
+    "guards_unchanged": true
+  }
+}

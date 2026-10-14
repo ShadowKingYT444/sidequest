@@ -1,0 +1,25 @@
+{
+  "scope": "Explicit read-only fixture of completion/attention; not real successful worker dispatch",
+  "fixture": true,
+  "zeroBudgetSetupJobs": [
+    "fad27730-d9e9-4113-88cf-52b690be3906",
+    "97334b05-f26e-40f2-be09-230a11a49837"
+  ],
+  "badges": [
+    {
+      "sceneId": "worker_parent_019",
+      "stationId": "parent_019",
+      "kind": "completed",
+      "jobId": "97334b05-f26e-40f2-be09-230a11a49837"
+    },
+    {
+      "sceneId": "worker_parent_020",
+      "stationId": "parent_020",
+      "kind": "attention",
+      "jobId": "fad27730-d9e9-4113-88cf-52b690be3906"
+    }
+  ],
+  "duplicateChildBadge": false,
+  "mutations": [],
+  "axe": []
+}
