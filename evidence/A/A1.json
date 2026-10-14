@@ -1,12 +1,16 @@
 {
   "goal": "A1 persistent project/job/task state",
-  "status": "ready_for_review",
+  "status": "ready_for_review_attempt_2",
   "scope": "A1 only; no API, scheduler, adapter, workshop, or delivery execution added",
   "implementation": [
     "Initial SQLite migration follows contracts/STORAGE.md, including fixed tables, indexes, constraints, and immutable candidate/approval identity triggers.",
     "Project registration resolves an allowlisted canonical Git repository root and persists the requested ref's resolved commit ID.",
     "Jobs, task plans, attempts, events, candidate identity, approvals, command outcomes, and budget reservations persist across reload.",
     "BEGIN IMMEDIATE serializes writes; task claims record dispatch intent and reserve capacity/budget atomically.",
+    "Build/research claims require positive reservations; zero-cost claims require a trusted verify task and verifier worker.",
+    "Per-call capacity may lower, but cannot raise, the configured maximum.",
+    "Approval decisions refresh the registered Git ref and invalidate approvals after a source revision change.",
+    "Artifact candidate linkage uses a NULL-safe immutable trigger.",
     "Money is stored in integer micro-dollars; unknown usage fields remain NULL and uncertain reservations remain budgeted.",
     "Pinned runtime dependencies are in services/runtime/requirements.lock."
   ],
@@ -15,12 +19,15 @@
     "exit_code": 0,
     "python_observed": "3.12.14",
     "python_compatibility_target": "3.11",
-    "tests_run": 10,
-    "passed": 10,
+    "tests_run": 13,
+    "passed": 13,
     "failed": 0,
     "test_names": [
+      "test_call_cannot_raise_capacity_above_runtime_configuration",
       "test_concurrent_claims_never_exceed_worker_capacity",
+      "test_call_cannot_raise_capacity_above_runtime_configuration",
       "test_concurrent_reservations_cannot_overspend_one_job",
+      "test_approval_decision_detects_unrefreshed_git_source_change",
       "test_new_command_rejects_a_stale_global_revision",
       "test_rejects_cycles_and_unsafe_scopes",
       "test_rejects_denied_action_and_missing_project",
@@ -28,9 +35,10 @@
       "test_rejects_project_root_outside_the_approved_roots",
       "test_rejects_stale_approval_identity",
       "test_initial_migration_reload_source_task_metadata_and_candidate_linkage",
-      "test_unknown_usage_remains_null_and_keeps_budget_reservation"
+      "test_unknown_usage_remains_null_and_keeps_budget_reservation",
+      "test_zero_reservation_is_limited_to_trusted_deterministic_verify_work"
     ],
-    "output": "Ran 10 tests in 0.255s\nOK"
+    "output": "Ran 13 tests in 0.374s\nOK"
   },
   "fixtures": "Tests create temporary Git repositories with fixture commits and temporary SQLite databases.",
   "external_calls": {

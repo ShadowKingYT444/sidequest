@@ -195,17 +195,10 @@ class RuntimeStore:
             not isinstance(expected_revision, int) or isinstance(expected_revision, bool) or expected_revision < 0
         ):
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "expected_revision must be a non-negative integer")
-        try:
-            request_json = canonical_json(
-                {"type": command_type, "expected_revision": expected_revision, "payload": payload}
-            )
-        except (TypeError, ValueError):
-            raise RuntimeFault(ErrorCode.INVALID_INPUT, "command payload is not valid JSON") from None
-        if len(request_json.encode("utf-8")) > 4 * 1024 * 1024:
-            raise RuntimeFault(ErrorCode.INVALID_INPUT, "command payload exceeds 4 MiB")
-        request_sha = canonical_sha256(
-            {"type": command_type, "expected_revision": expected_revision, "payload": payload}
-        )
+        request_sha = self._command_request_sha(command_type, payload, expected_revision)
+        replay = self._read_command_result(normalized_id, request_sha)
+        if replay is not None:
+            return replay
         with self.transaction() as connection:
             prior = connection.execute(
                 "SELECT request_sha256, response_json FROM command_results WHERE command_id = ?",
@@ -246,6 +239,32 @@ class RuntimeStore:
             )
             return response
 
+    @staticmethod
+    def _command_request_sha(command_type: str, payload: dict[str, Any], expected_revision: int | None) -> str:
+        try:
+            request_json = canonical_json(
+                {"type": command_type, "expected_revision": expected_revision, "payload": payload}
+            )
+        except (TypeError, ValueError):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "command payload is not valid JSON") from None
+        if len(request_json.encode("utf-8")) > 4 * 1024 * 1024:
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "command payload exceeds 4 MiB")
+        return canonical_sha256(
+            {"type": command_type, "expected_revision": expected_revision, "payload": payload}
+        )
+
+    def _read_command_result(self, command_id: str, request_sha: str) -> dict[str, Any] | None:
+        with self.read_connection() as connection:
+            prior = connection.execute(
+                "SELECT request_sha256, response_json FROM command_results WHERE command_id = ?",
+                (command_id,),
+            ).fetchone()
+            if not prior:
+                return None
+            if prior["request_sha256"] != request_sha:
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "command_id was already used with a different request")
+            return _json_load(prior["response_json"])
+
     def register_project(
         self,
         command_id: str | UUID,
@@ -254,13 +273,28 @@ class RuntimeStore:
     ) -> dict[str, Any]:
         if not isinstance(registration, ProjectRegistration):
             registration = ProjectRegistration.model_validate(registration)
-        project_id = str(uuid4())
+        normalized_command_id = _require_uuid(str(command_id), "command_id")
+        if (
+            not isinstance(expected_revision, int)
+            or isinstance(expected_revision, bool)
+            or expected_revision < 0
+        ):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "expected_revision must be a non-negative integer")
         payload = registration.model_dump(mode="python")
+        request_sha = self._command_request_sha("project.register", payload, expected_revision)
+        replay = self._read_command_result(normalized_command_id, request_sha)
+        if replay is not None:
+            return replay
+        with self.read_connection() as connection:
+            current_revision = self._revision(connection)
+        if expected_revision != current_revision:
+            raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "state changed; review the current project state")
+        canonical_root = PolicyEngine.canonical_project_root(registration.repo_path, self.config.allowed_roots)
+        base_revision = self._resolve_project_revision(canonical_root, registration.base_ref)
+        policy_json = canonical_json(registration.policy.model_dump(mode="python"))
+        project_id = str(uuid4())
 
         def write(connection: sqlite3.Connection) -> dict[str, Any]:
-            canonical_root = PolicyEngine.canonical_project_root(registration.repo_path, self.config.allowed_roots)
-            base_revision = self._resolve_project_revision(canonical_root, registration.base_ref)
-            policy_json = canonical_json(registration.policy.model_dump(mode="python"))
             connection.execute(
                 "INSERT INTO projects(id, name, canonical_root, base_ref, base_revision, policy_json, status, created_at) "
                 "VALUES (?, ?, ?, ?, ?, ?, 'active', ?)",
@@ -277,7 +311,7 @@ class RuntimeStore:
             return {"project_id": project_id}
 
         return self.execute_command(
-            command_id,
+            normalized_command_id,
             "project.register",
             payload,
             expected_revision,
@@ -307,15 +341,32 @@ class RuntimeStore:
 
     def refresh_project_revision(self, project_id: str) -> str:
         project_id = _require_uuid(project_id, "project_id")
-        with self.transaction() as connection:
+        with self.read_connection() as connection:
             project = connection.execute(
                 "SELECT canonical_root, base_ref, base_revision FROM projects WHERE id = ?", (project_id,)
             ).fetchone()
             if not project:
                 raise RuntimeFault(ErrorCode.NOT_FOUND, "project was not found")
-            canonical_root = PolicyEngine.canonical_project_root(project["canonical_root"], self.config.allowed_roots)
-            base_revision = self._resolve_project_revision(canonical_root, project["base_ref"])
-            if base_revision == project["base_revision"]:
+            project_root = project["canonical_root"]
+            base_ref = project["base_ref"]
+            previous_revision = project["base_revision"]
+        canonical_root = PolicyEngine.canonical_project_root(project_root, self.config.allowed_roots)
+        if str(canonical_root) != project_root:
+            raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "registered project path changed")
+        base_revision = self._resolve_project_revision(canonical_root, base_ref)
+        if base_revision == previous_revision:
+            return base_revision
+        with self.transaction() as connection:
+            current = connection.execute(
+                "SELECT canonical_root, base_ref, base_revision FROM projects WHERE id = ?", (project_id,)
+            ).fetchone()
+            if not current:
+                raise RuntimeFault(ErrorCode.NOT_FOUND, "project was not found")
+            if current["canonical_root"] != project_root or current["base_ref"] != base_ref:
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "project registration changed during Git inspection")
+            if current["base_revision"] != previous_revision:
+                raise RuntimeFault(ErrorCode.VERSION_CONFLICT, "project revision changed during Git inspection")
+            if base_revision == current["base_revision"]:
                 return base_revision
             connection.execute(
                 "UPDATE projects SET base_revision = ? WHERE id = ?",
@@ -647,6 +698,27 @@ class RuntimeStore:
         if not isinstance(identity, CandidateIdentity):
             identity = CandidateIdentity.model_validate(identity)
         payload = {"approval_id": approval_id, "approve": approve, "identity": identity.model_dump(mode="python")}
+        normalized_command_id = _require_uuid(str(command_id), "command_id")
+        if (
+            not isinstance(expected_revision, int)
+            or isinstance(expected_revision, bool)
+            or expected_revision < 0
+        ):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "expected_revision must be a non-negative integer")
+        request_sha = self._command_request_sha("approval.decide", payload, expected_revision)
+        replay = self._read_command_result(normalized_command_id, request_sha)
+        if replay is not None:
+            return replay
+        with self.read_connection() as connection:
+            target = connection.execute(
+                "SELECT j.project_id FROM approvals ap JOIN jobs j ON j.id = ap.job_id WHERE ap.id = ?",
+                (approval_id,),
+            ).fetchone()
+        if target:
+            # A fresh local ref check invalidates approvals after an unobserved
+            # Git change. A changed revision bumps global state, so the caller
+            # must re-read and review before any approval can be accepted.
+            self.refresh_project_revision(target["project_id"])
 
         def write(connection: sqlite3.Connection) -> dict[str, Any]:
             row = connection.execute(
@@ -698,7 +770,7 @@ class RuntimeStore:
             )
             return {"approval_id": approval_id, "state": state}
 
-        return self.execute_command(command_id, "approval.decide", payload, expected_revision, write)
+        return self.execute_command(normalized_command_id, "approval.decide", payload, expected_revision, write)
 
     def claim_ready_task(
         self,
@@ -711,11 +783,13 @@ class RuntimeStore:
         worker_id = _require_uuid(worker_id, "worker_id")
         if not isinstance(reservation_micro, int) or isinstance(reservation_micro, bool) or reservation_micro < 0:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "reservation must be a non-negative integer micro-dollar amount")
-        capacity = self.config.max_parallel if max_parallel is None else max_parallel
-        if not isinstance(capacity, int) or isinstance(capacity, bool) or not 1 <= capacity <= 4:
+        if max_parallel is not None and (
+            not isinstance(max_parallel, int) or isinstance(max_parallel, bool) or not 1 <= max_parallel <= 4
+        ):
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "worker capacity must be between 1 and 4")
+        capacity = self.config.max_parallel if max_parallel is None else min(self.config.max_parallel, max_parallel)
         with self.transaction() as connection:
-            worker = connection.execute("SELECT state FROM workers WHERE id = ?", (worker_id,)).fetchone()
+            worker = connection.execute("SELECT state, role FROM workers WHERE id = ?", (worker_id,)).fetchone()
             if not worker:
                 raise RuntimeFault(ErrorCode.NOT_FOUND, "worker was not found")
             if worker["state"] != "idle":
@@ -753,6 +827,11 @@ class RuntimeStore:
                     if any(state_by_id.get(dep) != "completed" for dep in deps):
                         continue
                 has_ready = True
+                if reservation_micro == 0 and not (
+                    task["kind"] == "verify" and worker["role"] == "verifier"
+                ):
+                    budget_blocked = True
+                    continue
                 if reservation_micro > task["budget_micro"]:
                     budget_blocked = True
                     continue

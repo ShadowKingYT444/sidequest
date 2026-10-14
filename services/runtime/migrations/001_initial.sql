@@ -221,7 +221,7 @@ END;
 
 CREATE TRIGGER artifact_candidate_link_is_immutable
 BEFORE UPDATE OF candidate_id ON artifacts
-WHEN OLD.candidate_id IS NOT NULL AND NEW.candidate_id != OLD.candidate_id
+WHEN OLD.candidate_id IS NOT NULL AND NEW.candidate_id IS NOT OLD.candidate_id
 BEGIN
     SELECT RAISE(ABORT, 'artifact candidate link is immutable');
 END;

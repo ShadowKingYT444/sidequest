@@ -88,3 +88,34 @@ class ClaimConcurrencyTests(unittest.TestCase):
         budget = self.store.get_budget(job_id)
         self.assertEqual(budget["reserved_micro"], 60)
         self.assertLessEqual(budget["reserved_micro"], budget["budget_micro"])
+
+    def test_call_cannot_raise_capacity_above_runtime_configuration(self) -> None:
+        single_root = self.root / "single-capacity"
+        store, config, project_id = open_fixture(single_root, max_parallel=1)
+        extra_stores: list[RuntimeStore] = []
+        try:
+            for index in range(3):
+                store.create_job(
+                    str(uuid4()),
+                    None,
+                    make_job(project_id, title=f"Capacity {index}", scopes=(f"src/{index}",)),
+                )
+            workers = [store.create_worker("builder") for _ in range(3)]
+            extra_stores = [RuntimeStore(config) for _ in workers]
+            with ThreadPoolExecutor(max_workers=3) as pool:
+                results = list(
+                    pool.map(
+                        lambda pair: pair[0].claim_ready_task(pair[1], 10, max_parallel=4),
+                        zip(extra_stores, workers),
+                    )
+                )
+            self.assertEqual(sum(result is not None for result in results), 1)
+            with store.read_connection() as connection:
+                active = connection.execute(
+                    "SELECT COUNT(*) FROM budget_reservations WHERE state = 'active'"
+                ).fetchone()[0]
+            self.assertEqual(active, 1)
+        finally:
+            for extra in extra_stores:
+                extra.close()
+            store.close()

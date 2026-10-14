@@ -60,19 +60,7 @@ class PolicyTests(unittest.TestCase):
         )
         return job_id, candidate_id, identity
 
-    def test_rejects_stale_approval_identity(self) -> None:
-        job_id, candidate_id, identity = self._candidate()
-        response = self.store.request_approval(
-            str(uuid4()),
-            self.store.revision,
-            ApprovalCreate(
-                **identity.model_dump(),
-                job_id=job_id,
-                action="local_deliver",
-                destination="local:test-target",
-            ),
-        )
-        approval_id = response["result"]["approval_id"]
+    def _advance_project_git(self) -> str:
         project_root = self.store.get_project(self.project_id)["canonical_root"]
         Path(project_root, "README.md").write_text("Updated trusted temporary fixture.\n", encoding="utf-8")
         subprocess.run(["git", "-C", project_root, "add", "README.md"], check=True, shell=False)
@@ -93,10 +81,46 @@ class PolicyTests(unittest.TestCase):
             check=True,
             shell=False,
         )
-        new_revision = subprocess.check_output(
+        return subprocess.check_output(
             ["git", "-C", project_root, "rev-parse", "HEAD"], text=True, shell=False
         ).strip()
+
+    def test_rejects_stale_approval_identity(self) -> None:
+        job_id, candidate_id, identity = self._candidate()
+        response = self.store.request_approval(
+            str(uuid4()),
+            self.store.revision,
+            ApprovalCreate(
+                **identity.model_dump(),
+                job_id=job_id,
+                action="local_deliver",
+                destination="local:test-target",
+            ),
+        )
+        approval_id = response["result"]["approval_id"]
+        new_revision = self._advance_project_git()
         self.assertEqual(self.store.refresh_project_revision(self.project_id), new_revision)
+        with self.assertRaises(RuntimeFault) as caught:
+            self.store.decide_approval(str(uuid4()), self.store.revision, approval_id, True, identity)
+        self.assertEqual(caught.exception.code, ErrorCode.VERSION_CONFLICT)
+        with self.store.read_connection() as connection:
+            state = connection.execute("SELECT state FROM approvals WHERE id = ?", (approval_id,)).fetchone()[0]
+        self.assertEqual(state, "stale")
+
+    def test_approval_decision_detects_unrefreshed_git_source_change(self) -> None:
+        job_id, _, identity = self._candidate()
+        response = self.store.request_approval(
+            str(uuid4()),
+            self.store.revision,
+            ApprovalCreate(
+                **identity.model_dump(),
+                job_id=job_id,
+                action="local_deliver",
+                destination="local:test-target",
+            ),
+        )
+        approval_id = response["result"]["approval_id"]
+        self.assertNotEqual(self._advance_project_git(), identity.source_revision)
         with self.assertRaises(RuntimeFault) as caught:
             self.store.decide_approval(str(uuid4()), self.store.revision, approval_id, True, identity)
         self.assertEqual(caught.exception.code, ErrorCode.VERSION_CONFLICT)

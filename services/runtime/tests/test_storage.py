@@ -7,6 +7,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from services.runtime.models import CandidateCreate
+from services.runtime.policy import ErrorCode, RuntimeFault
 from services.runtime.store import RuntimeStore
 from services.runtime.tests.test_support import make_job, open_fixture
 
@@ -85,6 +86,9 @@ class StorageTests(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             with self.store.transaction() as connection:
                 connection.execute("UPDATE candidates SET tree_sha256 = ? WHERE id = ?", ("d" * 64, candidate_id))
+        with self.assertRaises(sqlite3.IntegrityError):
+            with self.store.transaction() as connection:
+                connection.execute("UPDATE artifacts SET candidate_id = NULL WHERE id = ?", (artifact_id,))
 
         self.store.close()
         self.store = RuntimeStore(self.config)
@@ -119,3 +123,24 @@ class StorageTests(unittest.TestCase):
         self.assertIsNone(budget["spent_micro"])
         self.assertEqual(budget["reserved_micro"], 60)
         self.assertEqual(budget["uncertain"], 1)
+        with self.assertRaises(RuntimeFault) as caught:
+            self.store.claim_ready_task(worker, 50)
+        self.assertEqual(caught.exception.code, ErrorCode.BUDGET_LIMIT)
+
+    def test_zero_reservation_is_limited_to_trusted_deterministic_verify_work(self) -> None:
+        response = self.store.create_job(
+            str(uuid4()), None, make_job(self.project_id, budget="0.000001", scopes=("src/check",))
+        )
+        job_id = response["result"]["job_id"]
+        task_id = self.store.list_tasks(job_id)[0]["id"]
+        builder = self.store.create_worker("builder")
+        with self.assertRaises(RuntimeFault) as caught:
+            self.store.claim_ready_task(builder, 0)
+        self.assertEqual(caught.exception.code, ErrorCode.BUDGET_LIMIT)
+        self.assertEqual(self.store.list_tasks(job_id)[0]["state"], "queued")
+        with self.store.transaction() as connection:
+            connection.execute("UPDATE tasks SET kind = 'verify' WHERE id = ?", (task_id,))
+        verifier = self.store.create_worker("verifier")
+        claim = self.store.claim_ready_task(verifier, 0)
+        self.assertIsNotNone(claim)
+        self.assertEqual(claim["reserved_micro"], 0)

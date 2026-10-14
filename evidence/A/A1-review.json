@@ -1,0 +1,42 @@
+{
+  "candidate_sha": "7ba3c3ee85efbf7f00e5fb6c9f2bfb9d212194b4",
+  "verdict": "FAIL",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "10 passed, 0 failed"
+    },
+    {
+      "command": "Focused inline Python probes using temporary Git repositories and SQLite databases",
+      "result": "Reproduced candidate-link clearing, zero-reservation dispatch after unknown usage, capacity override, stale approval after Git HEAD change without refresh, symlink escape rejection, and non-root repository rejection."
+    }
+  ],
+  "findings": [
+    {
+      "area": "A1-1",
+      "severity": "high",
+      "evidence": "services/runtime/migrations/001_initial.sql:222-226 allows UPDATE artifacts SET candidate_id=NULL because SQLite NEW.candidate_id != OLD.candidate_id evaluates NULL.",
+      "impact": "A registered candidate's manifest link can be cleared, violating immutable candidate linkage."
+    },
+    {
+      "area": "A1-3",
+      "severity": "high",
+      "evidence": "claim_ready_task accepts reservation_micro=0 for build tasks. Probe settled unknown usage with reserved_micro=0, then successfully claimed another task under a $0.000010 job budget.",
+      "impact": "Unknown usage remains NULL, but model-backed work can proceed without reserving any budget."
+    },
+    {
+      "area": "A1-3",
+      "severity": "medium",
+      "evidence": "With RuntimeConfig.max_parallel=1, a second claim succeeded using max_parallel=4; the override is not checked against persisted settings or an authorization decision.",
+      "impact": "The store can exceed its configured worker limit."
+    },
+    {
+      "area": "A1-2",
+      "severity": "medium",
+      "evidence": "After Git HEAD advanced, decide_approval approved the old candidate unless refresh_project_revision was called first.",
+      "impact": "Stale-source rejection depends on every caller refreshing immediately before approval."
+    }
+  ],
+  "fixture_live_distinction": "The suite and probes used fixture Git repositories and temporary databases. No live product job, provider/model call, or external delivery was run."
+}
