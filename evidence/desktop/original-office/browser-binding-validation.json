@@ -3,41 +3,53 @@
     {
       "label": "Computer 01",
       "projectedMonitorBox": {
-        "x": 98.48283386230469,
-        "y": 169.72479248046875,
-        "width": 1243.0343780517578,
-        "height": 668.8777465820312
+        "x": 93.71764373779297,
+        "y": 164.62738037109375,
+        "width": 1252.5647048950195,
+        "height": 674.0060424804688
       }
     },
     {
       "label": "Computer 03",
       "projectedMonitorBox": {
-        "x": 98.48283386230469,
-        "y": 169.72479248046875,
-        "width": 1243.0343780517578,
-        "height": 668.8777465820312
+        "x": 93.71764373779297,
+        "y": 164.62738037109375,
+        "width": 1252.5647048950195,
+        "height": 674.0060424804688
       }
     },
     {
       "label": "Computer 19",
       "projectedMonitorBox": {
-        "x": 98.48283386230469,
-        "y": 169.72479248046875,
-        "width": 1243.0343780517578,
-        "height": 668.8777465820312
+        "x": 93.71764373779297,
+        "y": 164.62738037109375,
+        "width": 1252.5647048950195,
+        "height": 674.0060424804688
       }
     },
     {
       "label": "Computer 24",
       "projectedMonitorBox": {
-        "x": 98.48283386230469,
-        "y": 169.72479248046875,
-        "width": 1243.0343780517578,
-        "height": 668.8777465820312
+        "x": 93.71764373779297,
+        "y": 164.62738037109375,
+        "width": 1252.5647048950195,
+        "height": 674.0060424804688
       }
     }
   ],
-  "boardHitOpenedExistingJobsDialog": true,
+  "physicalMonitorClick": {
+    "stationId": "parent_017",
+    "screenOffset": [
+      0.3,
+      0.1
+    ]
+  },
+  "physicalActorClick": true,
+  "physicalWorkstationClick": {
+    "clicked": true,
+    "stationId": "parent_018"
+  },
+  "boardHitOpenedTaskDetail": true,
   "errors": [],
   "cleanConsolePassed": true
 }

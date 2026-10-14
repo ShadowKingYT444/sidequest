@@ -52,7 +52,7 @@ export interface OriginalActorsProps {
   active: boolean;
   onState?: (state: OriginalActorState) => void;
   onError?: (error: Error) => void;
-  onSelectActor?: (stationId: string) => void;
+  onSelectActor?: (stationId: string, sceneId?: string) => void;
 }
 
 function record(value: unknown, field: string): Record<string, unknown> {
@@ -402,7 +402,7 @@ export default function OriginalActors({ active, onState, onError, onSelectActor
   return <group name="original-staged-artwork" visible={active} userData={{ artworkOnly: true, runtimeConnected: false }}>
     <ActorBoundary onError={handlers.error}>
       <Suspense fallback={null}>
-        {resources.manifest.instances.map(instance => <group key={instance.sceneId} userData={{actorReferenceStation:instance.stationId}} onClick={event=>{event.stopPropagation();onSelectActor?.(instance.stationId);}} onPointerOver={event=>{event.stopPropagation();gl.domElement.style.cursor='pointer';}} onPointerOut={()=>{gl.domElement.style.cursor='default';}}><StaticActor instance={instance} headRestInverse={instance.headAccessory ? resources.inverses.get(instance.headAccessory.variant) : undefined} onLoaded={handlers.loaded} /></group>)}
+        {resources.manifest.instances.map(instance => <group key={instance.sceneId} userData={{actorReferenceStation:instance.stationId}} onClick={event=>{event.stopPropagation();onSelectActor?.(instance.stationId,instance.sceneId);}} onPointerOver={event=>{event.stopPropagation();gl.domElement.style.cursor='pointer';}} onPointerOut={()=>{gl.domElement.style.cursor='default';}}><StaticActor instance={instance} headRestInverse={instance.headAccessory ? resources.inverses.get(instance.headAccessory.variant) : undefined} onLoaded={handlers.loaded} /></group>)}
       </Suspense>
     </ActorBoundary>
   </group>;

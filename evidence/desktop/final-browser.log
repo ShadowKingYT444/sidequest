@@ -1,0 +1,21 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test
+
+
+Running 10 tests using 1 worker
+
+(node:180536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/jobs-live.spec.ts:6:1 › genuine local inspection job produces immutable files and a check report (40.1s)
+  ✓   2 tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results (1.2m)
+  ✓   3 tests/browser/viewer.spec.ts:6:1 › real Git diff, lazy single editor, expanded state, Escape and keyboard (1.2m)
+  ✓   4 tests/browser/viewer.spec.ts:43:1 › read API rejects outside origins and mutations (21ms)
+  ✓   5 tests/browser/viewer.spec.ts:48:32 › viewer reflows at 960px with reduced motion (33.7s)
+  ✓   6 tests/browser/viewer.spec.ts:48:32 › viewer reflows at 390px with reduced motion (21.3s)
+  ✓   7 tests/browser/viewer.spec.ts:60:1 › keyboard-accessible viewer has no automated WCAG A/AA violations (50.5s)
+  ✓   8 tests/browser/viewer.spec.ts:72:1 › hostile source stays literal and a failed read can retry (40.2s)
+  ✓   9 tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 1440px (1.2m)
+  ✓  10 tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 390px (34.2s)
+
+  10 passed (7.3m)

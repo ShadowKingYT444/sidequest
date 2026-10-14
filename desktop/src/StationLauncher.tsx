@@ -5,6 +5,8 @@ import './StationLauncher.css';
 
 export interface StationLauncherProps {
   stationLabel: string;
+  memory?: LauncherMemory;
+  onUncertaintyChange?: (uncertain:boolean) => void;
   projectId?: string;
   onClose: () => void;
   onSettings: () => void;
@@ -13,7 +15,10 @@ export interface StationLauncherProps {
 }
 
 interface Setup { snapshot: RuntimeSnapshot; capabilities: RuntimeCapabilities; providers: ProviderDiscovery }
+export interface LauncherMemory { inFlight:boolean; submissionUncertain:boolean; pendingTask:Omit<QueuedTask,'job'>|null; queued:QueuedTask|null; launchAccepted:boolean }
 interface QueuedTask { assignment: StationAssignment; job: RuntimeJob; writePrefix: string; budget: string }
+const jobStates=new Set(['queued','running','verifying','needs_approval','accepted','blocked','failed','paused','cancelled']);
+const validJobText=(job:RuntimeJob)=>typeof job.title==='string'&&job.title.trim().length>0&&job.title.length<=200&&typeof job.state==='string'&&jobStates.has(job.state);
 const validId = (value: unknown): value is string => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/.test(value);
 const hasAction = (project: RuntimeProject | undefined, action: string) => Array.isArray(project?.policy?.allowed_actions) && project.policy.allowed_actions.includes(action);
 const modelVerified = (caps: RuntimeCapabilities) => caps.worker_model?.verified === true &&
@@ -32,7 +37,7 @@ function assertSetup(setup: Setup) {
 
 function requireProject(setup: Setup, id: string, proposals: boolean) {
   const project = setup.snapshot.projects.find(item => item.id === id);
-  if (!validId(id) || !project || !hasAction(project, 'read_repo') || !hasAction(project, 'run_checks') || (proposals && !hasAction(project, 'propose_patch'))) {
+  if (!validId(id) || !project || project.status !== 'active' || !hasAction(project, 'read_repo') || !hasAction(project, 'run_checks') || (proposals && !hasAction(project, 'propose_patch'))) {
     throw new Error('The registered repository does not permit this task.');
   }
   return project;
@@ -43,7 +48,7 @@ function requireReady(setup: Setup, provider: string) {
 }
 
 function acceptReply(reply: CommandReply) {
-  if (reply.v !== 1 || reply.accepted !== true || !Number.isSafeInteger(reply.revision) || reply.revision < 0) throw new Error('The runtime did not accept this action.');
+  if (reply.v !== 1 || reply.accepted !== true || !validId(reply.command_id) || !Number.isSafeInteger(reply.revision) || reply.revision < 0) throw new Error('The runtime did not accept this action.');
 }
 
 function validateFields(prompt: string, writePrefix: string, budget: string) {
@@ -57,7 +62,7 @@ function validateFields(prompt: string, writePrefix: string, budget: string) {
 async function verifiedJob(id: string, projectId: string, budget: string): Promise<RuntimeJob> {
   if (!validId(id) || !validId(projectId)) throw new Error('Task identity was not confirmed.');
   const result = await bridge.runtime.job(id);
-  if (result.v !== 1 || result.job?.id !== id || result.job.project_id !== projectId || result.job.execution_profile !== 'codex_session' ||
+  if (result.v !== 1 || result.job?.id !== id || result.job.project_id !== projectId || result.job.execution_profile !== 'codex_session' || !validJobText(result.job) ||
       typeof result.job.budget_usd !== 'number' || !Number.isFinite(result.job.budget_usd) || result.job.budget_usd <= 0 || result.job.budget_usd !== Number(budget)) {
     throw new Error('Task identity, execution profile or budget was not confirmed.');
   }
@@ -72,6 +77,7 @@ function setupMessage(setup: Setup | null, project: RuntimeProject | undefined, 
   if (!modelVerified(setup.capabilities) || setup.capabilities.codex?.usd_cost_enforced !== true) return 'Codex cannot launch tasks on this host.';
   if (!codingReady(setup)) return 'Codex execution is unavailable on this host.';
   if (!project) return 'Register a repository in Jobs before submitting a task.';
+  if (project.status !== 'active') return 'This repository is inactive.';
   if (!hasAction(project, 'read_repo') || !hasAction(project, 'run_checks')) return 'This repository does not permit scoped coding tasks.';
   if (!provider) return 'Choose an installed coding agent.';
   if (!hasAction(project, 'propose_patch')) return 'Allow candidate proposals for this repository to continue.';
@@ -79,8 +85,9 @@ function setupMessage(setup: Setup | null, project: RuntimeProject | undefined, 
 }
 
 /** A desk queues one scoped task. Every grant and launch is a separate user action. */
-export default function StationLauncher({ stationLabel, projectId: initialProjectId, onClose, onSettings, onQueued, onLaunched }: StationLauncherProps) {
+export default function StationLauncher({ stationLabel, memory, onUncertaintyChange, projectId: initialProjectId, onClose, onSettings, onQueued, onLaunched }: StationLauncherProps) {
   const id = useId();
+  const retained=useRef<LauncherMemory>(memory??{inFlight:false,submissionUncertain:false,pendingTask:null,queued:null,launchAccepted:false}).current;
   const dialog = useRef<HTMLElement>(null);
   const mounted = useRef(false);
   const locked = useRef(false);
@@ -91,10 +98,10 @@ export default function StationLauncher({ stationLabel, projectId: initialProjec
   const [prompt, setPrompt] = useState('');
   const [writePrefix, setWritePrefix] = useState('');
   const [budget, setBudget] = useState('');
-  const [queued, setQueued] = useState<QueuedTask | null>(null);
-  const [pendingTask, setPendingTask] = useState<Omit<QueuedTask, 'job'> | null>(null);
-  const [submissionUncertain, setSubmissionUncertain] = useState(false);
-  const [launchAccepted, setLaunchAccepted] = useState(false);
+  const [queued, setQueued] = useState<QueuedTask | null>(retained.queued);
+  const [pendingTask, setPendingTask] = useState<Omit<QueuedTask, 'job'> | null>(retained.pendingTask);
+  const [submissionUncertain, setSubmissionUncertain] = useState(retained.submissionUncertain);
+  const [launchAccepted, setLaunchAccepted] = useState(retained.launchAccepted);
   const [busy, setBusy] = useState(true);
   const [connectionFailed, setConnectionFailed] = useState(false);
   const [error, setError] = useState('');
@@ -103,14 +110,15 @@ export default function StationLauncher({ stationLabel, projectId: initialProjec
     const [snapshot, capabilities, providers] = await Promise.all([bridge.runtime.snapshot(), bridge.runtime.capabilities(), bridge.providers()]);
     const current = { snapshot, capabilities, providers }; assertSetup(current);
     if (mounted.current) {
-      setSetup(current); setConnectionFailed(false);
+      setSetup(current); setConnectionFailed(false);setPendingTask(retained.pendingTask);setSubmissionUncertain(retained.submissionUncertain);setLaunchAccepted(retained.launchAccepted);
       setProjectId(previous => current.snapshot.projects.some(project => project.id === previous) ? previous : current.snapshot.projects[0]?.id ?? '');
       const supported = installedCodex(current);
       setProvider(previous => supported.some(item => item.id === previous) ? previous : supported.length === 1 ? supported[0].id : '');
       setQueued(previous => {
+        previous=retained.queued??previous;
         if (!previous) return previous;
         const job = current.snapshot.jobs.find(item => item.id === previous.assignment.jobId && item.project_id === previous.assignment.projectId &&
-          item.execution_profile === 'codex_session' && item.budget_usd === Number(previous.budget));
+          item.execution_profile === 'codex_session' && validJobText(item) && item.budget_usd === Number(previous.budget));
         return job ? { ...previous, job } : previous;
       });
     }
@@ -156,41 +164,62 @@ export default function StationLauncher({ stationLabel, projectId: initialProjec
   const project = setup?.snapshot.projects.find(item => item.id === selectedProjectId);
   const ready = !!setup && !connectionFailed && codingReady(setup) && provider === 'codex' && installedCodex(setup).length > 0;
   const canPropose = hasAction(project, 'propose_patch');
-  const basePolicy = hasAction(project, 'read_repo') && hasAction(project, 'run_checks');
+  const basePolicy = project?.status === 'active' && hasAction(project, 'read_repo') && hasAction(project, 'run_checks');
   const fieldError = validateFields(prompt, writePrefix, budget);
   const scopeError = validateFields('Task', writePrefix, budget);
   const message = setupMessage(setup, project, provider, connectionFailed);
 
+  const rememberUncertainty=(value:boolean)=>{
+    retained.submissionUncertain=value;
+    onUncertaintyChange?.(value);
+    if(mounted.current)setSubmissionUncertain(value);
+  };
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (!ready || !basePolicy || !canPropose || !projectId || fieldError || queued || pendingTask || submissionUncertain) return;
+    if (locked.current || retained.inFlight || retained.submissionUncertain || retained.pendingTask || retained.queued ||
+        !ready || !basePolicy || !canPropose || !projectId || fieldError || queued || pendingTask || submissionUncertain) return;
+    // Reserve the shared attempt before the first await, including close/reopen.
+    retained.inFlight=true;
+    rememberUncertainty(true);
     const attempt = { projectId, provider, prompt, writePrefix, budget };
     const queuedCallback = onQueued;
     void act(async () => {
-      const current = await readSetup(); requireReady(current, attempt.provider); requireProject(current, attempt.projectId, true);
-      const title = attempt.prompt.trim().split(/[\r\n]/, 1)[0].replaceAll('\t', ' ').slice(0, 120);
-      let reply: CommandReply;
-      try { reply = await bridge.runtime.submitCoding(attempt.projectId, title, attempt.prompt, attempt.writePrefix, attempt.budget, current.snapshot.revision); }
-      catch (failure) { if (mounted.current) setSubmissionUncertain(true); throw failure; }
-      try { acceptReply(reply); }
-      catch (failure) { if (mounted.current && reply?.accepted !== false) setSubmissionUncertain(true); throw failure; }
-      const jobId = reply.result?.job_id;
-      if (!validId(jobId)) { if (mounted.current) setSubmissionUncertain(true); throw new Error('Submission accepted, but its task identity is unavailable. Review Jobs.'); }
-      if (mounted.current) setPendingTask({ assignment: { jobId, projectId: attempt.projectId }, writePrefix: attempt.writePrefix, budget: attempt.budget });
-      await readSetup();
-      const job = await verifiedJob(jobId, attempt.projectId, attempt.budget);
-      const assignment = { jobId, projectId: attempt.projectId };
-      if (mounted.current) setQueued({ assignment, job, writePrefix: attempt.writePrefix, budget: attempt.budget });
-      queuedCallback?.(assignment);
+      let transportStarted=false;
+      try {
+        const current = await readSetup();
+        requireReady(current, attempt.provider);
+        requireProject(current, attempt.projectId, true);
+        if(retained.pendingTask || retained.queued)throw new Error('Review the existing submitted task in Jobs.');
+        const title = attempt.prompt.trim().split(/[\r\n]/, 1)[0].replaceAll('\t', ' ').slice(0, 120);
+        transportStarted=true;
+        const reply = await bridge.runtime.submitCoding(attempt.projectId, title, attempt.prompt, attempt.writePrefix, attempt.budget, current.snapshot.revision);
+        if(reply?.v===1&&reply.accepted===false&&validId(reply.command_id)&&Number.isSafeInteger(reply.revision)&&reply.revision>=0)rememberUncertainty(false);
+        acceptReply(reply);
+        const jobId = reply.result?.job_id;
+        if (!validId(jobId)) throw new Error('Submission accepted, but its task identity is unavailable. Review Jobs.');
+        retained.pendingTask={assignment:{jobId,projectId:attempt.projectId},writePrefix:attempt.writePrefix,budget:attempt.budget};
+        if(mounted.current)setPendingTask(retained.pendingTask);
+        await readSetup();
+        const job = await verifiedJob(jobId, attempt.projectId, attempt.budget);
+        const assignment = { jobId, projectId: attempt.projectId };
+        retained.queued={assignment,job,writePrefix:attempt.writePrefix,budget:attempt.budget};
+        rememberUncertainty(false);
+        if(mounted.current)setQueued(retained.queued);
+        queuedCallback?.(assignment);
+      } finally {
+        retained.inFlight=false;
+        if(!transportStarted)rememberUncertainty(false);
+      }
     });
   };
 
   const refresh = () => void act(async () => {
     await readSetup();
-    if (pendingTask && !queued) {
-      const job = await verifiedJob(pendingTask.assignment.jobId, pendingTask.assignment.projectId, pendingTask.budget);
-      if (mounted.current) setQueued({ ...pendingTask, job });
-      onQueued?.(pendingTask.assignment);
+    const pending=retained.pendingTask??pendingTask;
+    if (pending && !queued) {
+      const job = await verifiedJob(pending.assignment.jobId, pending.assignment.projectId, pending.budget);
+      retained.queued={...pending,job};rememberUncertainty(false);if(mounted.current){setQueued(retained.queued);setSubmissionUncertain(false);}
+      onQueued?.(pending.assignment);
     } else if (queued) {
       const job = await verifiedJob(queued.assignment.jobId, queued.assignment.projectId, queued.budget);
       if (mounted.current) setQueued({ ...queued, job });
@@ -205,7 +234,7 @@ export default function StationLauncher({ stationLabel, projectId: initialProjec
       const job = await verifiedJob(task.assignment.jobId, task.assignment.projectId, task.budget);
       if (job.state !== 'queued') { if (mounted.current) setQueued({ ...task, job }); throw new Error('This task is no longer queued.'); }
       const reply = await bridge.runtime.runCoding(job.id, current.snapshot.revision); acceptReply(reply);
-      if (mounted.current) setLaunchAccepted(true);
+      retained.launchAccepted=true;if(mounted.current)setLaunchAccepted(true);
       launchedCallback?.(task.assignment);
       await readSetup();
       const updated = await verifiedJob(job.id, task.assignment.projectId, task.budget);

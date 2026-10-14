@@ -49,3 +49,6 @@
 .station-launcher .station-launcher-primary { border-color: transparent; background: oklch(.571 .21 264); color: white; font-weight: 500; }
 .station-launcher .station-launcher-primary:hover:not(:disabled) { background: oklch(.62 .21 264); }
 @media (max-width: 440px) { .station-launcher-backdrop { padding: 12px; } .station-launcher { max-height: calc(100dvh - 24px); border-radius: 14px; } .station-launcher-header { padding: 16px; } .station-launcher-content { padding: 0 16px 16px; } .station-launcher-footer { padding: 12px 16px; } .station-launcher-status { flex-direction: column; gap: 6px; } }
+
+/* Place one task card beside its selected original workstation. */
+.station-launcher-backdrop{position:absolute;inset:0;display:block;padding:0;background:none;pointer-events:none;z-index:6}.station-launcher{position:absolute;left:calc(50% - 240px);top:10%;pointer-events:auto;max-height:min(620px,calc(100dvh - 110px))}@media(max-width:440px){.station-launcher-backdrop{padding:0}.station-launcher{max-height:calc(100dvh - 110px)}}

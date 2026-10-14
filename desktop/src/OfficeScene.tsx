@@ -2,6 +2,7 @@ import React, {
   Component,
   Suspense,
   useEffect,
+  useLayoutEffect,
   useRef,
   useMemo,
   type ErrorInfo,
@@ -9,7 +10,7 @@ import React, {
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { Box3, CanvasTexture, DirectionalLight, DoubleSide, Euler, LinearFilter, MathUtils, Mesh, SRGBColorSpace, Vector3 as ThreeVector3, type Object3D } from "three";
+import { ACESFilmicToneMapping, Box3, CanvasTexture, DirectionalLight, DoubleSide, Euler, LinearFilter, MathUtils, Mesh, SRGBColorSpace, Vector3 as ThreeVector3, type Object3D } from "three";
 import OriginalActors, { type OriginalActorState } from "./OriginalActors";
 import type { GLTFLoader, OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { validateOfficeResourceUrl } from "./office-bindings";
@@ -21,7 +22,9 @@ export interface OfficeSceneProps {
   onSelectStation: (id: string) => void;
   onSelectBoard?: () => void;
   onSelectWorkstation?: (id: string) => void;
-  onSelectActor?: (id: string) => void;
+  onSelectActor?: (id: string, sceneId?: string) => void;
+  contextualCard?: {stationId:string;kind:'actor'|'workstation';sceneId?:string|null;element:React.RefObject<HTMLDivElement|null>};
+  boardSelected?: boolean;
   workElement?:React.RefObject<HTMLDivElement|null>;
   reducedMotion: boolean;
   active: boolean;
@@ -50,14 +53,14 @@ function OfficeModel({ url, onSelectWorkstation }: OfficeModelProps) {
     return result;
   },[gltf.scene]);
   useEffect(()=>{
-    gltf.scene.traverse(object=>{if(object instanceof Mesh){object.castShadow=true;object.receiveShadow=true;}});
-    if(light.current){light.current.target.position.copy(center);light.current.target.updateMatrixWorld();}
+    gltf.scene.traverse(object=>{if(object instanceof Mesh){const materials=Array.isArray(object.material)?object.material:[object.material];object.castShadow=!materials.some(material=>material.name==='Architectural clear glass');object.receiveShadow=true;}});
+    if(light.current){light.current.target.position.set(0,1,-2);light.current.target.updateMatrixWorld();}
   },[gltf.scene,bounds]);
   // Keep the imported scene intact: bindings add interaction surfaces around it.
   return <><primitive object={gltf.scene} dispose={null}/>{onSelectWorkstation&&pickBounds.map(pick=><mesh key={pick.id} matrixAutoUpdate={false} matrix={pick.object.matrixWorld.clone()} userData={{workstationPicker:pick.id}} onClick={event=>{
     const specific=event.intersections.some(hit=>{let node:Object3D|null=hit.object;while(node){if(node.userData.monitorStation||node.userData.actorReferenceStation)return true;node=node.parent;}return false;});
     if(specific)return;event.stopPropagation();onSelectWorkstation(pick.id);
-  }}><boxGeometry args={pick.size}/><meshBasicMaterial transparent opacity={0} depthWrite={false}/></mesh>)}<directionalLight ref={light} position={[center.x+radius*.6,center.y+radius*1.4,center.z+radius*.8]} intensity={1.4} castShadow shadow-mapSize={[1024,1024]} shadow-camera-left={-radius} shadow-camera-right={radius} shadow-camera-top={radius} shadow-camera-bottom={-radius} shadow-camera-near={.1} shadow-camera-far={radius*5} shadow-normalBias={.02}/></>;
+  }}><boxGeometry args={pick.size}/><meshBasicMaterial transparent opacity={0} depthWrite={false}/></mesh>)}<directionalLight ref={light} position={[-24,10,14]} color="#ffe1b5" intensity={2.2} castShadow shadow-mapSize={[2048,2048]} shadow-camera-left={-radius} shadow-camera-right={radius} shadow-camera-top={radius} shadow-camera-bottom={-radius} shadow-camera-near={.1} shadow-camera-far={radius*5} shadow-normalBias={.006}/></>;
 }
 
 function configureOfficeAssetLoader(loader: GLTFLoader) {
@@ -194,6 +197,36 @@ export function MonitorProjection({station,element,active}:{station?:OfficeStati
   return null;
 }
 
+function ContextCardProjection({card,bindings}:{card?:OfficeSceneProps['contextualCard'];bindings:OfficeBindings}){
+  const {camera,size,scene}=useThree();
+  useLayoutEffect(()=>{
+    if(!card?.element.current)return;
+    const host=card.element.current;
+    let watched:HTMLElement|null=null;
+    const resize=new ResizeObserver(()=>position());
+    const position=()=>{
+      const node=host.matches('.object-modal')?host:host.querySelector<HTMLElement>('.station-launcher');
+      if(!node)return;
+      if(watched!==node){resize.disconnect();resize.observe(node);watched=node;}
+      const station=bindings.stations.find(item=>item.id===card.stationId);
+      if(!station)return;
+      const point=asThreeVector(station.anchor);
+      let object=card.kind==='workstation'?scene.getObjectByName(`Desk_${card.stationId}__PickBounds.001`):card.sceneId?scene.getObjectByName(card.sceneId):undefined;
+      if(!object&&card.kind==='actor')scene.traverse(candidate=>{if(!object&&candidate.userData.actorReferenceStation===card.stationId)object=candidate.children[0];});
+      if(object){object.getWorldPosition(point);if(card.kind==='actor')point.y+=1.1;}
+      point.project(camera);
+      const width=node.offsetWidth,height=node.offsetHeight;
+      const left=size.width<600?(size.width-width)/2:Math.max(12,Math.min(size.width-width-12,(point.x+1)*size.width/2+24));
+      const top=size.width<600?Math.max(12,size.height-height-12):Math.max(12,Math.min(size.height-height-12,(1-point.y)*size.height/2-height*.3));
+      node.style.left=`${left}px`;node.style.top=`${top}px`;
+    };
+    const mutation=new MutationObserver(position);mutation.observe(host,{childList:true,subtree:true});
+    position();
+    return()=>{mutation.disconnect();resize.disconnect();};
+  },[card,camera,scene,size.width,size.height,bindings]);
+  return null;
+}
+
 export function CameraRig({
   bindings,
   selectedStationId,
@@ -265,6 +298,8 @@ export function OfficeScene({
   onSelectBoard,
   onSelectWorkstation,
   onSelectActor,
+  contextualCard,
+  boardSelected=false,
   workElement,
   reducedMotion,
   active,
@@ -272,18 +307,19 @@ export function OfficeScene({
   onActorState,
 }: OfficeSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
-  const viewBindings=useMemo(()=>({...bindings,overview:{target:bindings.overview.target,position:bindings.overview.position.map((n,i)=>bindings.overview.target[i]+(n-bindings.overview.target[i])*(i===1?.62:.72)) as Vector3}}),[bindings]);
+  const viewBindings=useMemo(()=>({...bindings,overview:{target:[1,-.3,-3.8] as Vector3,position:[11.5,8.5,12] as Vector3}}),[bindings]);
 
   return (
     <Canvas className="office-canvas"
       frameloop={active ? "demand" : "never"}
       dpr={[1, 1.5]}
       camera={{ position: viewBindings.overview.position, fov: 40, near: 0.05, far: 1000 }}
-      gl={{ antialias: true, alpha: false }}
+      gl={{ antialias: true, alpha: false, toneMapping:ACESFilmicToneMapping, toneMappingExposure:1.2 }}
       shadows="percentage"
     >
-      <color attach="background" args={["#111820"]} />
-      <ambientLight intensity={0.95} />
+      <color attach="background" args={["#d8e1e7"]} />
+      <ambientLight intensity={0.25} />
+      <hemisphereLight args={['#cfe3fa','#8a6342',1.25]}/>
       <LoaderErrorBoundary onError={onError}>
         <Suspense fallback={null}>
           <OfficeModel url={bindings.modelUrl} onSelectWorkstation={onSelectWorkstation} />
@@ -298,11 +334,11 @@ export function OfficeScene({
           onSelectStation={onSelectStation}
         />
       ))}
-      {bindings.board&&onSelectBoard&&<group position={bindings.board.anchor} rotation={bindings.board.rotation}><mesh onClick={event=>{event.stopPropagation();onSelectBoard();}}><planeGeometry args={bindings.board.size}/><meshBasicMaterial transparent opacity={0} depthWrite={false} side={DoubleSide}/></mesh></group>}
+      {bindings.board&&onSelectBoard&&<group position={bindings.board.anchor} rotation={bindings.board.rotation}><mesh onClick={event=>{event.stopPropagation();onSelectBoard();}}><planeGeometry args={bindings.board.size}/><meshBasicMaterial transparent opacity={boardSelected?.12:0} color="#699eff" depthWrite={false} side={DoubleSide}/></mesh></group>}
       <OrbitControls
         ref={controlsRef}
         makeDefault
-        enabled={active && !selectedStationId}
+        enabled={active && !selectedStationId && !contextualCard && !boardSelected}
         enableDamping={false}
         minDistance={0.25}
         maxDistance={100}
@@ -315,6 +351,7 @@ export function OfficeScene({
         controlsRef={controlsRef}
       />
       <MonitorProjection station={bindings.stations.find(item=>item.id===selectedStationId)} element={workElement} active={active}/>
+      <ContextCardProjection card={contextualCard} bindings={bindings}/>
     </Canvas>
   );
 }

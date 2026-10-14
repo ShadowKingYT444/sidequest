@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import RunActivity from './RunActivity';
 import { bridge } from './bridge';
 import type { CommandReply, DiffPage, FilePage, JobView, RuntimeArtifact, RuntimeCapabilities, RuntimeSnapshot, StationAssignment, TextPage } from './types';
@@ -142,7 +142,7 @@ export default function JobsBoard({onClose,active,open,embedded=false,onExpand,r
     setStartLine(1);setDiffCursors(['']);setDiffPage(0);
   },[fileId,artifactId,jobId]);
   useEffect(()=>{
-    const generation=++request.current;setText(null);setDiff(null);setContentError('');
+    const generation=++request.current;setText(null);setDiff(null);setLoadedContentKey('');setContentError('');
     if(!manifest||!fileId||!files?.files.some(file=>file.file_id===fileId))return;
     if(tab==='diff'&&!diffArtifact){setContentError('A frozen Git diff artifact is unavailable on this artifact page.');return;}
     const read=tab==='text'?bridge.runtime.text(artifactId,fileId,startLine):bridge.runtime.diff(diffArtifact!.id,fileId,diffCursors[diffPage]??'');
@@ -155,21 +155,32 @@ export default function JobsBoard({onClose,active,open,embedded=false,onExpand,r
     return()=>{++request.current;};
   },[artifactId,artifact?.candidate_id,fileId,files,manifest,tab,startLine,diffPage,diffCursors,diffArtifact?.id]);
   const currentView=(scrollTop:number):JobView=>({artifactId,fileId,tab,startLine,scrollTop,artifactCursors:[...artifactCursors],artifactPage,fileCursors:[...fileCursors],filePage,diffCursors:[...diffCursors],diffPage});
-  const contentReady=loadedContentKey===contentKey&&artifact?.job_id===jobId&&(!manifest||files?.files.some(file=>file.file_id===fileId));
+  const bodyReady=manifest?(tab==='text'?text!==null:diff!==null):preview!==null;
+  const contentReady=bodyReady&&loadedContentKey===contentKey&&artifact?.job_id===jobId&&(!manifest||files?.files.some(file=>file.file_id===fileId));
   useEffect(()=>{
     if(!open||!active||!contentReady||!viewMemory||pendingRestore.current?.jobId===jobId)return;
     const previous=viewMemory.current.get(jobId);
     const samePage=previous?.artifactId===artifactId&&previous.fileId===fileId&&previous.tab===tab&&previous.startLine===startLine&&(previous.diffPage??0)===diffPage;
     viewMemory.current.set(jobId,currentView(samePage?previous.scrollTop:0));
   },[open,active,contentReady,artifactId,fileId,tab,startLine,jobId,viewMemory,artifactCursors,artifactPage,fileCursors,filePage,diffCursors,diffPage]);
-  useEffect(()=>{
+  useLayoutEffect(()=>{
     if(!open||!active||!contentReady)return;
     const pending=pendingRestore.current?.jobId===jobId?pendingRestore.current:null;
     const saved=pending?.view??viewMemory?.current.get(jobId);
-    const frame=requestAnimationFrame(()=>{const area=root.current?.querySelector<HTMLElement>('.artifact-text');if(area){area.scrollTop=saved?.artifactId===artifactId&&saved.fileId===fileId&&saved.tab===tab?saved.scrollTop:0;if(viewMemory)viewMemory.current.set(jobId,currentView(area.scrollTop));}if(pendingRestore.current===pending)pendingRestore.current=null;});
-    return()=>cancelAnimationFrame(frame);
+    const area=root.current?.querySelector<HTMLElement>('.artifact-text');
+    if(area){const desired=saved?.artifactId===artifactId&&saved.fileId===fileId&&saved.tab===tab?saved.scrollTop:0;area.scrollTop=desired;if(viewMemory)viewMemory.current.set(jobId,currentView(desired));}
+    if(pendingRestore.current===pending)pendingRestore.current=null;
   },[loadedContentKey,contentReady,open,active]);
-  function rememberScroll(event:React.UIEvent<HTMLDivElement>){const target=event.target as HTMLElement;if(!open||!active||!target.classList.contains('artifact-text')||!viewMemory||!contentReady||pendingRestore.current?.jobId===jobId)return;viewMemory.current.set(jobId,currentView(target.scrollTop));}
+  function rememberScroll(event:React.UIEvent<HTMLDivElement>){
+    const target=event.target as HTMLElement;
+    if(!open||!active||!target.classList.contains('artifact-text')||!viewMemory||!contentReady||pendingRestore.current?.jobId===jobId)return;
+    const previous=viewMemory.current.get(jobId);
+    const maximum=Math.max(0,target.scrollHeight-target.clientHeight);
+    // Expanding a short file can clamp its DOM scroll to zero. Retain the
+    // requested position for returning to the smaller in-world monitor.
+    if(previous?.artifactId===artifactId&&previous.fileId===fileId&&previous.tab===tab&&previous.startLine===startLine&&previous.scrollTop>maximum&&Math.abs(target.scrollTop-maximum)<1)return;
+    viewMemory.current.set(jobId,currentView(target.scrollTop));
+  }
   function chooseArtifact(id:string){pendingRestore.current=null;setArtifactId(id);}
   function chooseFile(id:string){pendingRestore.current=null;setFileId(id);}
   function chooseView(action:()=>void){pendingRestore.current=null;action();}

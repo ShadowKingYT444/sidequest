@@ -47,7 +47,7 @@ SIDEQUEST_REPO=/absolute/path/to/repository SIDEQUEST_BASE=69bf066 \
 CHROMIUM_PATH=/usr/bin/chromium CI=1 npm run test:browser
 ```
 
-Expected: six viewer and two revised T3 Code settings tests pass; the two live inspection tests skip unless explicitly enabled below. The suite reads genuine local committed Git data, verifies one lazy editor, Expand/Escape selection and scroll retention, hostile text, origin restrictions, reduced motion, responsive layouts and automated accessibility checks. Real screenshots go to `evidence/desktop/`. The tests wait for all 26 original staged figures before interaction. The slim footer selector is the keyboard alternative to the scene objects. Original assets are mandatory for office acceptance. The rejected temporary office has been removed from the default experience; its prior captures are historical only. The revised settings tests cover automatic CLI metadata, provider selection, Cost/Tokens/Limits, unknown telemetry, modal ownership and accessibility at 1440/390px. Use these current captures for visual review; the rejected warm version is historical only.
+Expected: six viewer and two revised T3 Code settings tests pass; the two live inspection tests skip unless explicitly enabled below. The suite reads genuine local committed Git data, verifies one lazy editor, Expand/Escape selection and scroll retention, hostile text, origin restrictions, reduced motion, responsive layouts and automated accessibility checks. Real screenshots go to `evidence/desktop/`. The tests wait for all 26 original staged figures before interaction. The slim footer selector is the keyboard alternative to the scene objects. Original assets are mandatory for office acceptance. The rejected temporary office has been removed from the default experience; its prior captures are historical only. The settings tests cover automatic CLI metadata, provider selection, Cost/Tokens/Limits, unknown telemetry, modal ownership and accessibility at 1440/390px. They fill a test-only prompt, scope and budget, verify Submit remains disabled, and assert that setup refresh sends no grant, coding submission or coding launch request. They also open the truthful disconnected figure view. Use these current captures for visual review; the rejected warm version is historical only.
 
 ## Original asset and scene evaluations
 
@@ -60,7 +60,7 @@ node evidence/desktop/original-office/check-browser-bindings.mjs
 node evidence/desktop/original-office/check-browser-actors.mjs
 ```
 
-The deterministic validator compares all 24 measured monitor surfaces and verifies every copied image/actor hash and local path. The integrated probes capture the actual office, one selected Git editor, Expand/Escape and board targeting. Actor clips are retained compatibility evidence; sampled typing poses are staged artwork, never a live agent. Browser captures use software WebGL on this VM and do not establish owner-device performance or native Electron acceptance.
+The deterministic validator compares all 24 measured monitor surfaces and verifies every copied image/actor hash and local path. The integrated capture verifies 26 loaded figures, successful local asset responses, a selected real Git editor and Expand/Escape. The bindings probe physically clicks a visible original monitor, actor, workstation pick bounds and board; it records the actual selected station where scene geometry overlaps, verifies the compact cards and captures screenshots. Four additional monitor focus poses are checked through keyboard navigation. Actor clips are retained compatibility evidence; sampled typing poses are staged artwork, never a live agent. Browser captures use software WebGL on this VM and do not establish owner-device performance or native Electron acceptance.
 
 ## Native Electron smoke evaluation
 
@@ -104,6 +104,18 @@ SIDEQUEST_TEST_INSPECTION=1 CHROMIUM_PATH=/usr/bin/chromium CI=1 \
 npm run test:browser -- tests/browser/jobs-live.spec.ts
 ```
 
-Expected: two tests pass. It explicitly registers the configured repository, submits an inspection, clicks Run, reads real frozen files and the identity-check report, verifies zero inference calls in that report, checks cached readiness refresh, reflows at 960/390px, and returns with Escape while preserving artifact selection. A second test checks repeated submissions, clearing stale notices, controlled read disconnection/recovery, read-only result assignment and Expand/Escape view continuity. Its extra submitted inspection remains queued and makes no model call. The tests write `evidence/desktop/job-*.png`, `job-browser.json` and `job-accessibility.json`. The inspection clones the registered revision unchanged, so its candidate diff is empty; the separate viewer suite proves a nonempty committed Git diff. The backend retains `verifying` because delivery/acceptance is disabled; the UI separately reports ready results after completed tasks and passed checks. Stop terminal 1 with Ctrl-C when finished.
+Expected: two tests pass. It explicitly registers the configured repository, submits an inspection, clicks Run, reads real frozen files and the identity-check report, verifies zero inference calls in that report, checks cached readiness refresh, reflows at 960/390px, and returns with Escape while preserving artifact selection. A second test checks repeated submissions, clearing stale notices, controlled read disconnection/recovery, read-only result assignment and 180px scroll restoration through Expand, Settings, Escape and reopening. Its extra submitted inspection remains queued and makes no model call. The tests write `evidence/desktop/job-*.png`, `job-browser.json` and `job-accessibility.json`. The inspection clones the registered revision unchanged, so its candidate diff is empty; the separate viewer suite proves a nonempty committed Git diff. The backend retains `verifying` because delivery/acceptance is disabled; the UI separately reports ready results after completed tasks and passed checks.
+
+To run the complete verified **10-test suite**, use the same terminal 1 host and terminal 2 environment above, removing the final file filter:
+
+```sh
+SIDEQUEST_REPO=/tmp/sidequest-eval-source SIDEQUEST_BASE=69bf066 \
+SIDEQUEST_RUNTIME_URL=http://127.0.0.1:4317 \
+SIDEQUEST_API_TOKEN_FILE=/tmp/sidequest-eval-config/session.token \
+SIDEQUEST_TEST_INSPECTION=1 CHROMIUM_PATH=/usr/bin/chromium CI=1 \
+npm run test:browser
+```
+
+Run one browser suite/probe at a time on software WebGL hosts. The final complete run passed 10/10 in 7.3 minutes. Stop terminal 1 with Ctrl-C when finished.
 
 Codex lifecycle tests use a fake app-server process only. Native startup in this VM is blocked before initialization by read-only protected runtime state, and the installed protocol has no verified enforceable USD ceiling. Native execution is denied before thread/turn creation. These tests establish neither a live agent run nor subscription/model readiness. Follow [MVP_ACCEPTANCE.md](MVP_ACCEPTANCE.md) for the acceptance limits.

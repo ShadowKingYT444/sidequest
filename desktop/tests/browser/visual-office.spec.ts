@@ -65,11 +65,11 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('work:parent_019');
   const launcher=page.getByRole('dialog',{name:'New task'});
   await expect(launcher).toBeVisible();
-  await expect(launcher.getByLabel('Agent',{exact:true})).toHaveValue('codex');
-  await expect(launcher.getByLabel('Agent',{exact:true}).locator('option')).toHaveCount(2);
+  await expect(launcher.getByRole('combobox',{name:'Agent',exact:true})).toHaveValue('codex');
+  await expect(launcher.getByRole('combobox',{name:'Agent',exact:true}).locator('option')).toHaveCount(2);
   await expect(launcher.getByLabel('Prompt',{exact:true})).toHaveValue('');
   await launcher.getByLabel('Prompt',{exact:true}).fill('Test-only draft prompt. No coding task will be submitted.');
-  await launcher.locator('details').first().locator('summary').click();
+  await launcher.getByText('Scope and spending',{exact:false}).click();
   await expect(launcher.getByLabel('Allowed folder',{exact:true})).toHaveValue('');
   await expect(launcher.getByLabel('USD limit',{exact:true})).toHaveValue('');
   await launcher.getByLabel('Allowed folder',{exact:true}).fill('desktop/src');

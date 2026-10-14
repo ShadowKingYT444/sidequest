@@ -1,4 +1,6 @@
 import {createRequire} from 'node:module';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
@@ -32,7 +34,9 @@ await page.screenshot({path:path.join(evidence,'original-office-expanded.png')})
 await page.keyboard.press('Escape');
 await expect(page.getByTestId('diff-editor')).toHaveCount(0);
 const allBindings=JSON.parse(await readFile(path.join(root,'desktop/public/office/bindings.json'),'utf8'));
-const result={testedAt:new Date().toISOString(),baseCommit:'1e4b7440cb526f09203a7351af1abe8b69dd922f',viewport:{width:1440,height:1000},stationCount:allBindings.stations.length,stagedActorCount:26,actorsAreArtworkOnly:true,overviewRendered:true,measuredMonitorSelected:'parent_019',actualGitDiffMounted:true,expandedViewerVisible:true,escapeReturnedToOverview:true,pageErrors:errors,consoleErrors,requestFailures:failures,assetResponses:resources};
+const sourceFiles=['desktop/src/App.tsx','desktop/src/OfficeScene.tsx','desktop/src/OriginalActors.tsx','desktop/src/StationLauncher.tsx','desktop/src/StationLauncher.css','desktop/src/style.css','desktop/src/JobsBoard.tsx','desktop/src/DiffEditor.tsx','desktop/index.html'];
+const sourceFileHashes=Object.fromEntries(await Promise.all(sourceFiles.map(async file=>[file,createHash('sha256').update(await readFile(path.join(root,file))).digest('hex')])));
+const result={testedAt:new Date().toISOString(),baseCommit:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),sourceFileHashes,viewport:{width:1440,height:1000},stationCount:allBindings.stations.length,stagedActorCount:26,actorsAreArtworkOnly:true,overviewRendered:true,measuredMonitorSelected:'parent_019',actualGitDiffMounted:true,expandedViewerVisible:true,escapeReturnedToOverview:true,pageErrors:errors,consoleErrors,requestFailures:failures,assetResponses:resources};
 await writeFile(path.join(evidence,'browser-validation.json'),JSON.stringify(result,null,2)+'\n');
 await browser.close();
 expect(errors).toEqual([]);expect(consoleErrors).toEqual([]);expect(failures).toEqual([]);expect(resources.every(r=>r.status===200)).toBe(true);
