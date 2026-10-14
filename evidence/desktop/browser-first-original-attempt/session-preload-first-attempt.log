@@ -47,7 +47,7 @@ test at tests/security.test.mjs:16:1
 ✖ preload exposes fixed read and validated local-runtime capabilities without shell or credentials (8.063604ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
   + actual - expected
-  
+
     [
       'snapshot',
       'capabilities',
@@ -60,7 +60,7 @@ test at tests/security.test.mjs:16:1
       'artifacts',
       'files',
       'text',
-  
+
       at TestContext.<anonymous> (file:///workspace/sidequest/desktop/tests/security.test.mjs:36:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)

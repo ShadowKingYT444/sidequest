@@ -81,7 +81,7 @@ Call log:
   84  |   await writeFile(path.resolve('../evidence/desktop/job-browser.json'),JSON.stringify({title,source:{base:git.baseRevision,candidate:git.candidateRevision},registered_project:registeredProject,job:completedJob,frozen_check_report:report,browser_requests:calls,model_calls:report.inference_calls,scope:'Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run',page_errors:errors},null,2));
   85  |   expect(errors).toEqual([]);
   86  | });
-  87  | 
+  87  |
   88  | test('real jobs clear stale notices, recover reads and preserve assigned computer results',async({page,request})=>{
   89  |   test.setTimeout(90_000);
   90  |   test.skip(process.env.SIDEQUEST_TEST_INSPECTION!=='1','Requires actual local inspection records; never launches coding.');
@@ -133,7 +133,7 @@ Call log:
   136 |   await page.screenshot({path:path.resolve('../evidence/desktop/assigned-result.png')});
   137 |   await writeFile(path.resolve('../evidence/desktop/result-display-browser.json'),JSON.stringify({job_id:completed.id,queued_test_title:queuedTitle,queued_test_executed:false,selected_file:selectedFile,temporary_network_failure:true,recovered:true,scope:'Actual local inspection artifacts; display assignment only; zero coding/model launches'},null,2));
   138 | });
-  139 | 
+  139 |
   140 | test('recorded session ownership persists at a figure and renders real contextual events',async({page,request})=>{
   141 |  test.setTimeout(120_000);test.skip(process.env.SIDEQUEST_TEST_INSPECTION!=='1','Requires actual deterministic inspection records; no model calls.');
   142 |  const origin={Origin:'http://127.0.0.1:5173'};
@@ -162,5 +162,5 @@ Call log:
   164 |  await session.getByRole('button',{name:'Detach session',exact:true}).click();await expect(session).toContainText('No live session attached');expect((await read()).office_sessions.some((row:{station_id:string})=>row.station_id==='parent_019')).toBe(false);expect(coding).toEqual([]);
   165 |  await writeFile(path.resolve('../evidence/desktop/session-browser.json'),JSON.stringify({scope:'Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation',owner,reload_restored:true,board_links_same_session:true,explicit_detach:true,coding_requests:coding,axe_violations:axe.violations.map(v=>v.id)},null,2));
   166 | });
-  167 | 
+  167 |
 ```

@@ -1,16 +1,19 @@
 {
-  "at": "2026-10-14T09:46:53.956842+00:00",
-  "status": "Recorded session integration implemented; final extended 11-test regression running; native gates blocked",
+  "at": "2026-10-14T09:58:52.936313+00:00",
+  "status": "Recorded session ownership and contextual request/events/usage verified; native and interactive conversation incomplete",
   "branch": "feat/electron-office-diff",
-  "tested_source_base_commit": "7e867a22f5653f93f912c718b5678d8f06b23d87",
-  "source_files_sha256": "28f2c003e56ccc895ece350c3a684f71620179e07179504c859255d167b362ad",
+  "tested_source_base_commit": "8a1ea251677a705b5cff58457234e310d27ca346",
+  "source_files_sha256": "34f3d1ba9c7f8b74ead697324f2dc3495b2078f913b9fc970aa8c7dd74165aad",
   "verified": {
     "desktop": 30,
     "runtime": 48,
     "typecheck_build": "pass",
-    "focused_recorded_session_browser": "pass; extended final regression running"
+    "browser_baseline": 10,
+    "final_focused_session": 1,
+    "session_accessibility_violations": 0
   },
-  "native_gates": "unchanged blocked; supported-path investigation found no available remedy",
-  "coding_runs": 0,
+  "full_suite_failure_preserved": "one target-size failure, repaired and focused rerun passed; no single full 11-test green run claim",
+  "native_gates": "unchanged blocked; no supported remedy found",
+  "new_session_library_upload": "network failure before preparation; captures committed",
   "model_calls": 0
 }

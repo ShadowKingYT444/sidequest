@@ -10,7 +10,7 @@ Running 1 test using 1 worker
   ✘  1 tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events (39.7s)
 
 
-  1) tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+  1) tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events
 
     Error: expect(locator).toHaveAttribute(expected) failed
 
@@ -38,7 +38,7 @@ Running 1 test using 1 worker
     Error Context: test-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md
 
   1 failed
-    tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+    tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events
 npm notice
 npm notice New major version of npm available! 11.9.0 -> 12.2.0
 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0

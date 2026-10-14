@@ -39,3 +39,5 @@ button:hover { background:rgb(255 255 255 / 4%); border-color:rgb(255 255 255 / 
 .session-assign{margin:12px 0;font-size:12px}.session-assign summary{cursor:pointer;padding:8px 0;color:#d4d4d4}.session-assign label{display:grid;gap:5px;margin:10px 0}.session-assign select{width:100%;min-width:0;font-size:11px}.session-error{color:#fca5a5;font-size:12px;overflow-wrap:anywhere}.session-read-refresh{font-size:10px;min-height:28px;padding:4px 6px;margin-top:12px;background:transparent;border:0;color:#a3a3a3}.session-records .run-activity{max-height:none}.session-request{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:120px;overflow:auto}
 
 .session-conversation>summary{font-size:12px;cursor:pointer;padding:10px 0;color:#d4d4d4}.session-records>details>summary:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+
+.session-records>details>summary{min-height:32px;padding:6px 0;font-size:12px;line-height:20px}

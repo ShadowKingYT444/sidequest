@@ -1,8 +1,8 @@
 {
-  "status": "Recorded session integration implemented; final extended 11-test regression running; native gates blocked",
-  "recorded_at": "2026-10-14T09:46:53.908445+00:00",
+  "status": "Recorded session ownership and contextual request/events/usage verified; native and interactive conversation incomplete",
+  "recorded_at": "2026-10-14T09:58:52.936313+00:00",
   "feature_branch": "feat/electron-office-diff",
-  "tested_source_base_commit": "7e867a22f5653f93f912c718b5678d8f06b23d87",
+  "tested_source_base_commit": "8a1ea251677a705b5cff58457234e310d27ca346",
   "tested_source_identity": "Base commit plus final current-source hashes below; browser capture verifies the same UI hashes. Source clone for inspected Git is intentionally separate.",
   "source_file_hashes": {
     "desktop/electron/git-reader.cjs": "d562534168ddd5b3238f4940192ef6184d357b3eb6a0979349c6091b94ce11be",
@@ -37,11 +37,11 @@
     "desktop/src/main.tsx": "7254a29d506487188f48b2a7f33912401fe8510fcdc3306f0efad67ff25df159",
     "desktop/src/office-bindings.ts": "24d4a2cfa599fd029bb05a1dc5bf65f25f42e7d01b6b019baf8ec4c18401d129",
     "desktop/src/runtime-identity.ts": "bde67f3662946a11773d75705096bad5d1e1d760140b1d5ba7f67faffe0bd5d2",
-    "desktop/src/style.css": "e21c561cb0d6829f99ffd355c90b74e857e50cd9f2dce1466bf6678c30324b12",
+    "desktop/src/style.css": "4702840374546fa6ceb50f7350807152d0c8cb7f8a4de0fbb49d7886b4ae82db",
     "desktop/src/types.ts": "85b0909680899471e2d4804f488dbf56c2ba8a9d0b91a5b51ed773bb7147668f",
     "desktop/tests/assets.test.mjs": "18dc4e55302163b88c50d86a14909a5e7cfc024ceb6e951833b0a43b0826c6df",
     "desktop/tests/bindings.test.mjs": "e45fed67722babe6dec1f26766f7ab5d9315bd22365c721429f16f6a58a99364",
-    "desktop/tests/browser/jobs-live.spec.ts": "d8ba254db7f616bceb22f33f97d31bf49df578d923297f280941e24c8ebeffff",
+    "desktop/tests/browser/jobs-live.spec.ts": "b9adf3c4f056139af82520a378a229135b1c45730bfa38a25a78f528e1729a4c",
     "desktop/tests/browser/viewer.spec.ts": "8e1f8047a6616bc19af850065797f195b84076d51bbb3f0014c76c44e7f6f3a8",
     "desktop/tests/browser/visual-office.spec.ts": "8aed976e7a68db525f8cbf9f67f18509b95dd6f9b9a1f4298d2b08bd1a54438f",
     "desktop/tests/git.test.mjs": "280aa079b5a405ef76e485932df0db82b089fcb8e787534b5978579e4d386aef",
@@ -100,7 +100,7 @@
     "services/workshops/trust.lock.json": "d04860cbc7fd56e447a0af9c8093c555d15400b6ec11dbf15e95e5358733ab37",
     "services/workshops/trusted_checks.json": "bbac3ebdccf1094fe7ee7cfba97fe409504a53943f2ed4723c20b774fc6c0d07"
   },
-  "source_files_sha256": "28f2c003e56ccc895ece350c3a684f71620179e07179504c859255d167b362ad",
+  "source_files_sha256": "34f3d1ba9c7f8b74ead697324f2dc3495b2078f913b9fc970aa8c7dd74165aad",
   "source_hash_algorithm": "SHA256 of UTF-8 compact JSON source_file_hashes sorted by path (sort_keys=True,separators=(comma,colon))",
   "git_evidence": {
     "base": "69bf06696a93c9f58eee2d088e84404d4f6563d6",
@@ -119,37 +119,97 @@
     }
   },
   "genuine_local_job": {
-    "id": "c22a50d8-531b-4bae-a741-62eaa69855a0",
+    "id": "40807b2a-bb7c-494a-92d5-52972ef9ccc7",
     "run_ids": [
-      "848d6ab2-035b-401b-be1f-8456c43134e0"
+      "dcf89046-3fc8-43f1-a76d-f41b07504919"
     ],
-    "candidate_id": "cand_435614ff2baf4ff29c49f75fc07342c2",
-    "tree_sha256": "5b6e550a3da5f44fc8b66b9393012fad38abdd4fb6a8e997aa7cba513fb9d2ff",
-    "frozen_candidate_source_revision": "f7a9ebe0585956fdc557742a46b81f5a157be3d2",
-    "state": "verifying",
-    "check_states": [
-      "pass"
-    ],
-    "spent_usd": 0,
     "inference_calls": 0,
-    "worker_id": null,
-    "record": "evidence/desktop/job-browser.json",
-    "kind": "Explicit deterministic local Git inspection/check; no coding model, real-agent claim or source delivery"
+    "spent_usd": 0,
+    "candidate": {
+      "id": "cand_11f37a2a608946f6a27cf137f3732f43",
+      "manifest_artifact_id": "art_29be562a56f348769b811605f29e998d",
+      "tree_sha256": "5b6e550a3da5f44fc8b66b9393012fad38abdd4fb6a8e997aa7cba513fb9d2ff"
+    },
+    "record": "evidence/desktop/job-browser.json"
   },
   "tests": {
     "runtime": 48,
     "tools_unchanged_prior": 42,
     "desktop_component_security_asset": 30,
-    "full_browser": "11-test regression in progress",
-    "focused_recorded_session_browser": "1 passed before final conversation disclosure and results/mismatch additions; extended regression follows",
-    "logs": [
-      "evidence/desktop/session-runtime-tests.log",
-      "evidence/desktop/session-desktop-tests.log",
-      "evidence/desktop/session-full-browser.log"
-    ]
+    "extended_full_browser": {
+      "passed": 10,
+      "failed": 1,
+      "failure": "Mobile disclosure target-size; repaired with min-height 32px",
+      "record": "evidence/desktop/session-full-browser.log",
+      "candidate": "8a1ea251677a705b5cff58457234e310d27ca346"
+    },
+    "final_focused_session_browser": {
+      "passed": 1,
+      "minutes": 1.7,
+      "record": "evidence/desktop/session-browser.log",
+      "scope": "Full ownership/results/reload/events/usage/wrong-worker/board/detach flow after scoped CSS repair"
+    },
+    "single_full_11_test_green_run_claimed": false
   },
   "browser": {
-    "current_full_acceptance": "pending extended suite; previous complete office acceptance is in prior-office-verification.json"
+    "source_identity": "Final source hashes include the scoped CSS touch-target repair and accessibility evidence write; baseline 10 pass at prior checkpoint, focused session passes after repair",
+    "automated_session_wcag_violations": 0,
+    "session_record": "evidence/desktop/session-browser.json",
+    "session_evidence": {
+      "scope": "Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation",
+      "owner": {
+        "station_id": "parent_019",
+        "job_id": "40807b2a-bb7c-494a-92d5-52972ef9ccc7",
+        "run_id": "dcf89046-3fc8-43f1-a76d-f41b07504919",
+        "worker_id": "316ba303-4fbd-4a1b-ba4c-7dc080e8a478",
+        "project_id": "2a79639a-8823-49cf-ba6a-da0b8108c6ed",
+        "assigned_at": "2026-10-14T09:54:41.353Z"
+      },
+      "reload_restored": true,
+      "board_links_same_session": true,
+      "open_results_same_job": true,
+      "wrong_worker_rejected": true,
+      "fixtures": [
+        "Read-only runInfo response with explicitly fixture-wrong-worker; no persisted state changed"
+      ],
+      "explicit_detach": true,
+      "coding_requests": [],
+      "axe_violations": []
+    },
+    "real_screenshots": {
+      "evidence/desktop/run-activity-actual.png": "52c520c046b0daa82ab319df01cc89dad1e2273ca61e2cb4cda0e904bf495cc8",
+      "evidence/desktop/assigned-result.png": "b7f4b1fdc23a3055fd29e9da25683bf426e46e7af7f50f0e998af8788ef0b52e",
+      "evidence/desktop/recorded-session-390.png": "0ec43cf11c781f4d15f0396cc6a4e6eae3f5b5b594333717f6c21022cd427535",
+      "evidence/desktop/expanded-diff.png": "986330494644e0b9a0d9cb47d899be00f948e1c8f93f9b29b0246522e51c965c",
+      "evidence/desktop/provider-settings-analytics.png": "072ee3c3105979d64284a439b166cd13644a2103cfa9877d36cf248ee03ea245",
+      "evidence/desktop/workstation-launcher-390.png": "fca928ee074f943832566133938cb20c63473d4f0a3bddf0ac514ebc2a67fb19",
+      "evidence/desktop/office-temporary.png": "7575bbc03f1be767b647713f9bf9e8bb36983f61bec3faae71f0e02413f52261",
+      "evidence/desktop/office-desk.png": "3765b3de92ee8ef986ab58068f2bfd96139c50357451bad4761ebce783b0207c",
+      "evidence/desktop/provider-settings.png": "54c724682b5500d9c30786d215d0cd9bab7986d3346c10b4b6683745c7363e9e",
+      "evidence/desktop/job-result.png": "fef287ef1eaafe86b992e2247571cb8f206adb6c5b4012568ab22416d684fd6a",
+      "evidence/desktop/recorded-session.png": "fe77ade451ec08965350ebbf75f5685ba0d928209f48dff991415ca4c54f32d7",
+      "evidence/desktop/provider-settings-limits-390.png": "854fbba723791641cedbd391bf554d415a433efd9be1f6648962405e185c05b8",
+      "evidence/desktop/job-check-report.png": "e10c16a3615acc0af86a8186c4f7726da92d13d39595335432f9b35d5e3d5383",
+      "evidence/desktop/office-expanded.png": "50aea66c4e8c346d314faaa97fd94f223c696416e5df819faff5e2dc23042544",
+      "evidence/desktop/office-desk-debug.png": "a1462dfd550f384f71890766e1892cc16bfda65d1116e128bdee3e482b67b431",
+      "evidence/desktop/provider-settings-limits.png": "db8bd3de0da1adfbd709661a8cc5cccea7835b4599ad2273eb645bf7c86a7a8a",
+      "evidence/desktop/agent-session-390.png": "55d6ad3b83c534504dcdc2e485d1a187c005809906c6bc8834e350887b740115",
+      "evidence/desktop/viewer-960.png": "3d0231b138195f13d902de9523c48a008f60495db0a8c3ed95a4f620d9005de4",
+      "evidence/desktop/workstation-launcher.png": "643ddcc04fda9eee833d0b8eaafc6e548dda17e246bf3438743976fb86383559",
+      "evidence/desktop/job-readiness.png": "e1f40625279830a7a88500ad3b395b69dae7b3544f419afc05c564b2b1b4288e",
+      "evidence/desktop/setup-desktop.png": "de53917a15481ace372c99d7166ffdfa4c97201230df212d1f87e176c2d1f78c",
+      "evidence/desktop/viewer-390.png": "4bec7ca9f9e35134fca320327df267cd1e4c62cc51de19ecfce7551b5c947dc5",
+      "evidence/desktop/job-960.png": "080d82a079eb41b73ad4688d42bc491c09c3a44ac0a016e1189364f2c947d159",
+      "evidence/desktop/job-diff.png": "ec4c806585c5877e55a10889b0d658565af7e3fcad0d3772530eb682fe87ddaa",
+      "evidence/desktop/original-office-pending.png": "7865b4c4fe9ad1943df909e8a16aa4d68d02ab57b8cde7fdd95eb49a6b5d28e8",
+      "evidence/desktop/git-diff.png": "50809bc8b17e924171c586c6f25a8812e4731eb182ee653f7bee23b9729b0e60",
+      "evidence/desktop/provider-settings-analytics-390.png": "977f43e0376442100a255e993b2f3537bc4025b5dac266e68138764cc8cde0db",
+      "evidence/desktop/provider-settings-390.png": "5d74833f8136923d0ca6eb4ee4009d43960b301ca026d565d9b4bf0b795a0e50",
+      "evidence/desktop/job-390.png": "d5e12c808b8f21da0fc938d4e57c1264217094f3d0c5434030addc921b618e65",
+      "evidence/desktop/job-queued.png": "5f217d307e06539848dc258d8b457e8a67f538e48572a05661a6e941fdd23216",
+      "evidence/desktop/agent-session.png": "49abadfde9a26562cdc75901a2638c34a15da66a30212d683eb9805b99e1c348"
+    },
+    "earlier_original_office_capture": "evidence/desktop/prior-office-verification.json"
   },
   "original_assets": {
     "archive_sha256": "f7159fbda50771486d65e1a5bd2a42d265120a422d88a686471a9bbb6fb60a95",
@@ -200,11 +260,11 @@
   "typecheck": "passed",
   "production_build": "passed; evidence/desktop/session-build.log",
   "production_bundle_sanitizer": {
-    "built_editor": "desktop/dist/assets/DiffEditor-DzRuyfdb.js",
-    "sha256": "158928191108840c124f2cd170f44afd2869e3983dfb2106e150659fe4e384ec",
+    "built_editor": "desktop/dist/assets/DiffEditor-xXDZkCFS.js",
+    "sha256": "dde605f2533b720b1cc6266200047c0fe9f5df512999a945ea3df43317c3e147",
     "dompurify_version": "3.4.17",
     "old_vendored_version_absent": true,
-    "scope": "Actual session-integration production bundle",
+    "scope": "Actual final production bundle",
     "npm_audit": "evidence/desktop/security-audit.json"
   },
   "npm_audit_all_advisories": 0,
@@ -269,5 +329,22 @@
     "provider_launches": 0,
     "interactive_conversation_turns": "not implemented; native and USD gates remain blocked",
     "native_supported_paths": "docs/NATIVE_HOST_STATUS.md"
+  },
+  "session_library_upload": {
+    "status": "failed before upload preparation; no Library mutation",
+    "action": "Save recorded-session.png and recorded-session-390.png to Library using current prepared upload helper",
+    "reason": "hosted apps tools/list request failed: network",
+    "files": [
+      {
+        "path": "evidence/desktop/recorded-session.png",
+        "sha256": "fe77ade451ec08965350ebbf75f5685ba0d928209f48dff991415ca4c54f32d7"
+      },
+      {
+        "path": "evidence/desktop/recorded-session-390.png",
+        "sha256": "0ec43cf11c781f4d15f0396cc6a4e6eae3f5b5b594333717f6c21022cd427535"
+      }
+    ],
+    "existing_six_library_screenshots": "Prior six uploads remain available; these two new captures are committed in Git",
+    "retry": "No fallback direct upload after required prepared-flow failure; no auth or permissions changed"
   }
 }
