@@ -98,6 +98,20 @@ def _fault_body(code: str, message: str, retryable: bool = False) -> dict[str, A
     return {"v": 1, "error": {"code": code, "message": message[:512], "retryable": retryable}}
 
 
+def _serialized_json_size(value: Any) -> int:
+    """Measure the exact compact UTF-8 JSON representation returned by JSONResponse."""
+    return len(JSONResponse(content=value).body)
+
+
+def _utf8_prefix(value: str, max_bytes: int) -> str:
+    raw = value.encode("utf-8")[:max_bytes]
+    while True:
+        try:
+            return raw.decode("utf-8", "strict")
+        except UnicodeDecodeError:
+            raw = raw[:-1]
+
+
 def _json_error(status: int, code: str, message: str, retryable: bool = False) -> JSONResponse:
     return JSONResponse(_fault_body(code, message, retryable), status_code=status)
 
@@ -608,16 +622,50 @@ def create_app(
             candidate_id,
             [item.get("path") for item in page if isinstance(item, dict) and item.get("status") != "deleted" and isinstance(item.get("path"), str)],
         )
-        files = []
+        files: list[dict[str, Any]] = []
         for item in page:
             if not isinstance(item, dict) or not isinstance(item.get("file_id"), str):
                 raise RuntimeFault(ErrorCode.INVALID_INPUT, "manifest file entry is invalid")
             public = {key: item.get(key) for key in ("file_id", "path", "old_path", "status", "media_type", "size_bytes", "sha256", "added_lines", "deleted_lines", "binary")}
             linked = by_path.get(item.get("path")) if item.get("status") != "deleted" else None
             public["artifact_id"] = linked["id"] if linked else None
+
+            candidate_files = [*files, public]
+            consumed = offset + len(candidate_files)
+            next_cursor = (
+                _make_cursor(secret, {"scope": "manifest-files", "sha256": raw["sha256"]}, consumed)
+                if consumed < len(entries)
+                else None
+            )
+            candidate_body = {
+                "v": 1,
+                "artifact_id": artifact_id,
+                "candidate_id": candidate_id,
+                "files": candidate_files,
+                "next_cursor": next_cursor,
+            }
+            if _serialized_json_size(candidate_body) > _MAX_PAGE_BYTES:
+                if not files:
+                    raise RuntimeFault(ErrorCode.INVALID_INPUT, "manifest entry exceeds the bounded response page")
+                break
             files.append(public)
-        next_cursor = _make_cursor(secret, {"scope": "manifest-files", "sha256": raw["sha256"]}, offset + limit) if more else None
-        return {"v": 1, "artifact_id": artifact_id, "candidate_id": candidate_id, "files": files, "next_cursor": next_cursor}
+
+        consumed = offset + len(files)
+        next_cursor = (
+            _make_cursor(secret, {"scope": "manifest-files", "sha256": raw["sha256"]}, consumed)
+            if consumed < len(entries)
+            else None
+        )
+        response = {
+            "v": 1,
+            "artifact_id": artifact_id,
+            "candidate_id": candidate_id,
+            "files": files,
+            "next_cursor": next_cursor,
+        }
+        if _serialized_json_size(response) > _MAX_PAGE_BYTES:
+            raise RuntimeFault(ErrorCode.INTERNAL, "manifest response exceeded its bounded page size")
+        return response
 
     @app.get("/v1/artifacts/{artifact_id}/text", dependencies=[Depends(authenticate)])
     async def artifact_text(
@@ -647,8 +695,7 @@ def create_app(
         source_lines = decoded.splitlines(keepends=True)
         if not source_lines and decoded == "":
             source_lines = []
-        selected = []
-        used = 0
+        selected: list[dict[str, Any]] = []
         index = start_line - 1
         while index < len(source_lines) and len(selected) < limit:
             original = source_lines[index]
@@ -656,36 +703,57 @@ def create_app(
             raw_bytes = content.encode("utf-8")
             clipped = False
             if len(raw_bytes) > _MAX_TEXT_LINE_BYTES:
-                raw_bytes = raw_bytes[:_MAX_TEXT_LINE_BYTES]
-                while True:
-                    try:
-                        content = raw_bytes.decode("utf-8", "strict")
-                        break
-                    except UnicodeDecodeError:
-                        raw_bytes = raw_bytes[:-1]
+                content = _utf8_prefix(content, _MAX_TEXT_LINE_BYTES)
                 clipped = True
-            encoded_len = len(content.encode("utf-8"))
-            if selected and used + encoded_len > _MAX_PAGE_BYTES:
+
+            line = {"number": index + 1, "text": _CONTROL.sub("", content), "clipped": clipped}
+
+            def text_page(lines: list[dict[str, Any]], consumed: int) -> dict[str, Any]:
+                return {
+                    "v": 1,
+                    "artifact_id": artifact_id,
+                    "file_id": file_id,
+                    "sha256": source_artifact["sha256"],
+                    "start_line": start_line,
+                    "lines": lines,
+                    "next_line": consumed + 1 if consumed < len(source_lines) else None,
+                    "encoding": "utf-8",
+                    "immutable": bool(source_artifact["immutable"]),
+                }
+
+            candidate_lines = [*selected, line]
+            if _serialized_json_size(text_page(candidate_lines, index + 1)) <= _MAX_PAGE_BYTES:
+                selected.append(line)
+                index += 1
+                if clipped:
+                    break
+                continue
+
+            # If earlier rows fill this page, leave this line for the next page
+            # so its text remains complete. Only clip when it cannot fit alone.
+            if selected:
                 break
-            if not selected and encoded_len > _MAX_PAGE_BYTES:
-                raise RuntimeFault(ErrorCode.INTERNAL, "text page exceeded its bounded line size")
-            selected.append({"number": index + 1, "text": _CONTROL.sub("", content), "clipped": clipped})
-            used += encoded_len
+
+            low, high = 0, len(line["text"])
+            best: dict[str, Any] | None = None
+            while low <= high:
+                middle = (low + high) // 2
+                clipped_line = {"number": index + 1, "text": line["text"][:middle], "clipped": True}
+                if _serialized_json_size(text_page([clipped_line], index + 1)) <= _MAX_PAGE_BYTES:
+                    best = clipped_line
+                    low = middle + 1
+                else:
+                    high = middle - 1
+            if best is None:
+                raise RuntimeFault(ErrorCode.INTERNAL, "text line metadata exceeds the bounded response page")
+            selected.append(best)
             index += 1
-            if clipped:
-                break
-        next_line = index + 1 if index < len(source_lines) else None
-        return {
-            "v": 1,
-            "artifact_id": artifact_id,
-            "file_id": file_id,
-            "sha256": source_artifact["sha256"],
-            "start_line": start_line,
-            "lines": selected,
-            "next_line": next_line,
-            "encoding": "utf-8",
-            "immutable": bool(source_artifact["immutable"]),
-        }
+            break
+
+        response = text_page(selected, index)
+        if _serialized_json_size(response) > _MAX_PAGE_BYTES:
+            raise RuntimeFault(ErrorCode.INTERNAL, "text response exceeded its bounded page size")
+        return response
 
     @app.get("/v1/artifacts/{artifact_id}/diff", dependencies=[Depends(authenticate)])
     async def artifact_diff(
@@ -708,33 +776,50 @@ def create_app(
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "diff exceeds the bounded row parser limit")
         rows = _diff_rows_for_file(artifact_store.read_artifact(raw), entry)
         page: list[dict[str, Any]] = []
-        size = 0
-        for row in rows[offset:offset + limit]:
-            encoded_size = len(row["text"].encode("utf-8"))
-            if page and size + encoded_size > _MAX_PAGE_BYTES:
+
+        def diff_page(page_rows: list[dict[str, Any]], consumed: int) -> dict[str, Any]:
+            return {
+                "v": 1,
+                "artifact_id": artifact_id,
+                "candidate_id": candidate["id"],
+                "base_revision": candidate["base_revision"],
+                "candidate_revision": candidate["candidate_revision"],
+                "rows": page_rows,
+                "next_cursor": _make_cursor(secret, scope, consumed) if consumed < len(rows) else None,
+            }
+
+        index = offset
+        while index < min(len(rows), offset + limit):
+            row = {**rows[index], "text": _CONTROL.sub("", rows[index]["text"])}
+            candidate_rows = [*page, row]
+            if _serialized_json_size(diff_page(candidate_rows, index + 1)) <= _MAX_PAGE_BYTES:
+                page.append(row)
+                index += 1
+                continue
+
+            if page:
                 break
-            if encoded_size > _MAX_PAGE_BYTES:
-                raw_text = row["text"].encode("utf-8")[:_MAX_PAGE_BYTES]
-                while True:
-                    try:
-                        row["text"] = raw_text.decode("utf-8", "strict")
-                        break
-                    except UnicodeDecodeError:
-                        raw_text = raw_text[:-1]
-            row["text"] = _CONTROL.sub("", row["text"])
-            page.append(row)
-            size += len(row["text"].encode("utf-8"))
-        next_offset = offset + len(page)
-        has_more = next_offset < len(rows)
-        return {
-            "v": 1,
-            "artifact_id": artifact_id,
-            "candidate_id": candidate["id"],
-            "base_revision": candidate["base_revision"],
-            "candidate_revision": candidate["candidate_revision"],
-            "rows": page,
-            "next_cursor": _make_cursor(secret, scope, next_offset) if has_more else None,
-        }
+
+            low, high = 0, len(row["text"])
+            best: dict[str, Any] | None = None
+            while low <= high:
+                middle = (low + high) // 2
+                clipped_row = {**row, "text": row["text"][:middle], "clipped": True}
+                if _serialized_json_size(diff_page([clipped_row], index + 1)) <= _MAX_PAGE_BYTES:
+                    best = clipped_row
+                    low = middle + 1
+                else:
+                    high = middle - 1
+            if best is None:
+                raise RuntimeFault(ErrorCode.INTERNAL, "diff row metadata exceeds the bounded response page")
+            page.append(best)
+            index += 1
+            break
+
+        response = diff_page(page, index)
+        if _serialized_json_size(response) > _MAX_PAGE_BYTES:
+            raise RuntimeFault(ErrorCode.INTERNAL, "diff response exceeded its bounded page size")
+        return response
 
     @app.get("/v1/artifacts/{artifact_id}/content", dependencies=[Depends(authenticate)])
     async def artifact_content(artifact_id: str) -> Response:

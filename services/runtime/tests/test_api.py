@@ -58,10 +58,20 @@ class RuntimeApiTests(unittest.IsolatedAsyncioTestCase):
         self.store.close()
         self.temporary.cleanup()
 
-    def _register_bytes(self, *, artifact_id: str, job_id: str, run_id: str, kind: str, name: str, data: bytes) -> str:
+    def _register_bytes(
+        self,
+        *,
+        artifact_id: str,
+        job_id: str,
+        run_id: str,
+        kind: str,
+        name: str,
+        data: bytes,
+        candidate_id: str | None = None,
+    ) -> str:
         digest = hashlib.sha256(data).hexdigest()
         key = self.artifacts._write_content(data, digest)
-        return self.store.create_artifact(
+        created = self.store.create_artifact(
             artifact_id=artifact_id,
             job_id=job_id,
             run_id=run_id,
@@ -73,6 +83,9 @@ class RuntimeApiTests(unittest.IsolatedAsyncioTestCase):
             storage_key=key,
             immutable=True,
         )
+        if candidate_id is not None:
+            self.store.attach_artifacts_to_candidate(candidate_id, [created])
+        return created
 
     def _seed_inspection(self) -> tuple[str, str, str, str, str, dict[str, str]]:
         response = self.store.create_job(
@@ -252,8 +265,9 @@ class RuntimeApiTests(unittest.IsolatedAsyncioTestCase):
             f"/v1/artifacts/{self.manifest_id}/files?cursor=not-a-signed-cursor", headers=self.auth
         )
         self.assertEqual(bad.status_code, 400)
+        forged_cursor = ("A" if page["next_cursor"][0] != "A" else "B") + page["next_cursor"][1:]
         cross_scope = await self.http.get(
-            f"/v1/artifacts/{self.manifest_id}/files?cursor={page['next_cursor'][:-1]}A", headers=self.auth
+            f"/v1/artifacts/{self.manifest_id}/files?cursor={forged_cursor}", headers=self.auth
         )
         self.assertEqual(cross_scope.status_code, 400)
 
@@ -347,6 +361,118 @@ class RuntimeApiTests(unittest.IsolatedAsyncioTestCase):
         })
         self.assertEqual(denied.status_code, 403)
         self.assertEqual(self.scheduler.enqueued, [job_id])
+
+    async def test_serialized_text_diff_and_manifest_pages_stay_within_byte_limit(self) -> None:
+        special_line = ('"\\\t雪' * 50_000) + "\nTAIL\n"
+        special_bytes = special_line.encode("utf-8")
+        special_sha = hashlib.sha256(special_bytes).hexdigest()
+        original_manifest = json.loads(self.artifacts.read_artifact(self.store.get_artifact(self.manifest_id)))
+        candidate = original_manifest["candidate"]
+
+        hostile_entry = {
+            "file_id": "f_hostile",
+            "path": "hostile.txt",
+            "old_path": None,
+            "status": "modified",
+            "media_type": "text/plain",
+            "size_bytes": len(special_bytes),
+            "sha256": special_sha,
+            "added_lines": 1,
+            "deleted_lines": 0,
+            "binary": False,
+        }
+        manifest_entries = [hostile_entry]
+        for index in range(100):
+            path = f"dir_{index}/" + ("a" * 2500) + f"_{index}.txt"
+            manifest_entries.append({
+                "file_id": f"f_path_{index}",
+                "path": path,
+                "old_path": None,
+                "status": "unchanged",
+                "media_type": "text/plain",
+                "size_bytes": 0,
+                "sha256": hashlib.sha256(b"").hexdigest(),
+                "added_lines": 0,
+                "deleted_lines": 0,
+                "binary": False,
+            })
+        large_manifest = (canonical_json({"v": 1, "candidate": candidate, "files": manifest_entries}) + "\n").encode("utf-8")
+        large_manifest_id = self._register_bytes(
+            artifact_id="art_api_large_manifest",
+            job_id=self.job_id,
+            run_id=self.run_id,
+            kind="file_manifest",
+            name="Large fixture manifest",
+            data=large_manifest,
+            candidate_id=self.candidate_id,
+        )
+        self._register_bytes(
+            artifact_id="art_api_hostile_source",
+            job_id=self.job_id,
+            run_id=self.run_id,
+            kind="source_file",
+            name="hostile.txt",
+            data=special_bytes,
+            candidate_id=self.candidate_id,
+        )
+
+        text_response = await self.http.get(
+            f"/v1/artifacts/{large_manifest_id}/text?file_id=f_hostile&limit=1", headers=self.auth
+        )
+        self.assertEqual(text_response.status_code, 200, text_response.text[:200])
+        self.assertLessEqual(len(text_response.content), 256 * 1024)
+        text_page = text_response.json()
+        self.assertTrue(text_page["lines"][0]["clipped"])
+        self.assertLess(len(text_page["lines"][0]["text"]), len(special_line.splitlines()[0]))
+        self.assertEqual(text_page["next_line"], 2)
+        second_line = await self.http.get(
+            f"/v1/artifacts/{large_manifest_id}/text?file_id=f_hostile&start_line={text_page['next_line']}&limit=1",
+            headers=self.auth,
+        )
+        self.assertEqual(second_line.status_code, 200)
+        self.assertLessEqual(len(second_line.content), 256 * 1024)
+        self.assertEqual(second_line.json()["lines"][0]["text"], "TAIL")
+
+        long_diff = (
+            b"diff --git a/alpha.txt b/alpha.txt\nindex 1111111..2222222 100644\n"
+            b"--- a/alpha.txt\n+++ b/alpha.txt\n@@ -1 +1 @@\n+"
+            + (('"\\\t雪' * 50_000) + "\n").encode("utf-8")
+        )
+        diff_id = self._register_bytes(
+            artifact_id="art_api_large_diff",
+            job_id=self.job_id,
+            run_id=self.run_id,
+            kind="diff",
+            name="Large fixture diff",
+            data=long_diff,
+            candidate_id=self.candidate_id,
+        )
+        diff_head = await self.http.get(f"/v1/artifacts/{diff_id}/diff?file_id=f_alpha&limit=200", headers=self.auth)
+        self.assertEqual(diff_head.status_code, 200, diff_head.text[:200])
+        self.assertLessEqual(len(diff_head.content), 256 * 1024)
+        self.assertTrue(diff_head.json()["next_cursor"])
+        diff_tail = await self.http.get(
+            f"/v1/artifacts/{diff_id}/diff?file_id=f_alpha&limit=200&cursor={diff_head.json()['next_cursor']}",
+            headers=self.auth,
+        )
+        self.assertEqual(diff_tail.status_code, 200, diff_tail.text[:200])
+        self.assertLessEqual(len(diff_tail.content), 256 * 1024)
+        self.assertTrue(diff_tail.json()["rows"][0]["clipped"])
+        self.assertIsNone(diff_tail.json()["next_cursor"])
+
+        file_page = await self.http.get(f"/v1/artifacts/{large_manifest_id}/files?limit=100", headers=self.auth)
+        self.assertEqual(file_page.status_code, 200, file_page.text[:200])
+        self.assertLessEqual(len(file_page.content), 256 * 1024)
+        page_data = file_page.json()
+        self.assertLess(len(page_data["files"]), 100)
+        self.assertTrue(page_data["next_cursor"])
+        count = len(page_data["files"])
+        following = await self.http.get(
+            f"/v1/artifacts/{large_manifest_id}/files?limit=100&cursor={page_data['next_cursor']}", headers=self.auth
+        )
+        self.assertEqual(following.status_code, 200, following.text[:200])
+        self.assertLessEqual(len(following.content), 256 * 1024)
+        self.assertEqual(following.json()["files"][0]["file_id"], manifest_entries[count]["file_id"])
 
 
 if __name__ == "__main__":

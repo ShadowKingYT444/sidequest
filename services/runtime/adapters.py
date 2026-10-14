@@ -22,6 +22,8 @@ _MAX_PROGRESS_BYTES = 10 * 1024 * 1024
 _MAX_PROGRESS_RECORD_BYTES = 4 * 1024
 _MAX_PROGRESS_PER_SECOND = 10
 _SAFE_REQUEST_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
+_PROCESS_TERM_GRACE_SECONDS = 0.25
+_PROCESS_REAP_TIMEOUT_SECONDS = 1.0
 
 ProgressCallback = Callable[[dict[str, Any]], Awaitable[None]]
 
@@ -106,20 +108,31 @@ class AdapterRunner:
         return b"".join(chunks)
 
     async def _terminate(self, process: asyncio.subprocess.Process) -> None:
-        if process.returncode is not None:
-            return
+        # The adapter may have exited while a descendant still owns its pipes
+        # or workspace. Signal its process group even when the direct child has
+        # a return code, then escalate after a bounded grace period.
         try:
             os.killpg(process.pid, signal.SIGTERM)
         except ProcessLookupError:
-            return
+            pass
+        except OSError:
+            pass
         try:
-            await asyncio.wait_for(process.wait(), timeout=1.0)
+            await asyncio.wait_for(asyncio.shield(process.wait()), timeout=_PROCESS_TERM_GRACE_SECONDS)
         except asyncio.TimeoutError:
-            try:
-                os.killpg(process.pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
-            await process.wait()
+            pass
+        # Always escalate the group, including the case where wait() observed
+        # the parent exit but one of its children kept inherited pipes open.
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        except OSError:
+            pass
+        try:
+            await asyncio.wait_for(asyncio.shield(process.wait()), timeout=_PROCESS_REAP_TIMEOUT_SECONDS)
+        except asyncio.TimeoutError:
+            pass
 
     async def _tail_progress(
         self,
@@ -239,59 +252,61 @@ class AdapterRunner:
         except OSError:
             raise RuntimeFault(ErrorCode.UNAVAILABLE, f"{adapter} adapter could not be started") from None
         assert process.stdin and process.stdout and process.stderr
-        process.stdin.write(encoded)
-        await process.stdin.drain()
-        process.stdin.close()
         stdout_task = asyncio.create_task(self._read_bounded(process.stdout, _MAX_PROTOCOL_BYTES))
         stderr_task = asyncio.create_task(self._read_bounded(process.stderr, _MAX_STDERR_BYTES))
         progress_task = asyncio.create_task(self._tail_progress(progress_path, request_id, process, progress_callback))
+        child_tasks = (stdout_task, stderr_task, progress_task)
         try:
-            await asyncio.wait_for(process.wait(), timeout=self.config.adapter_timeout_seconds)
-            stdout, stderr = await asyncio.gather(stdout_task, stderr_task)
-            await progress_task
+            process.stdin.write(encoded)
+            await asyncio.wait_for(process.stdin.drain(), timeout=self.config.adapter_timeout_seconds)
+            process.stdin.close()
+            _, stdout, stderr, _ = await asyncio.wait_for(
+                asyncio.gather(process.wait(), stdout_task, stderr_task, progress_task),
+                timeout=self.config.adapter_timeout_seconds,
+            )
+            if process.returncode != 0:
+                raise RuntimeFault(ErrorCode.UNAVAILABLE, f"{adapter} adapter exited unsuccessfully")
+            if not stdout.endswith(b"\n") or stdout.count(b"\n") != 1:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{adapter} adapter returned an invalid response envelope")
+            try:
+                response = json.loads(stdout[:-1].decode("utf-8", "strict"), object_pairs_hook=_unique_object)
+            except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{adapter} adapter returned malformed JSON") from None
+            if (
+                not isinstance(response, dict)
+                or response.get("v") != 1
+                or response.get("request_id") != request_id
+                or not isinstance(response.get("ok"), bool)
+                or not isinstance(response.get("data"), dict)
+                or not isinstance(response.get("artifacts"), list)
+            ):
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{adapter} adapter returned an unexpected envelope")
+            if not response["ok"]:
+                error = response.get("error", {})
+                code = error.get("code") if isinstance(error, dict) else None
+                message = error.get("message") if isinstance(error, dict) else None
+                allowed_codes = {ErrorCode.INVALID_INPUT, ErrorCode.NOT_FOUND, ErrorCode.VERSION_CONFLICT, ErrorCode.POLICY_DENIED, ErrorCode.DEPENDENCY_FAILED, ErrorCode.UNAVAILABLE, ErrorCode.BUDGET_LIMIT}
+                if code not in allowed_codes or not isinstance(message, str):
+                    raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{adapter} adapter returned an invalid error envelope")
+                raise RuntimeFault(code, _safe_message(message)[:512])
+            response["_request_id"] = request_id
+            response["_stderr"] = _safe_message(stderr.decode("utf-8", "replace"))[:1024]
+            response["_progress_path"] = str(progress_path)
+            return response
         except asyncio.TimeoutError:
-            await self._terminate(process)
             raise RuntimeFault(ErrorCode.UNAVAILABLE, f"{adapter} adapter timed out", retryable=True) from None
-        except asyncio.CancelledError:
-            await self._terminate(process)
-            raise
-        except Exception:
-            await self._terminate(process)
-            raise
         finally:
-            for task in (stdout_task, stderr_task, progress_task):
+            if process.stdin and not process.stdin.is_closing():
+                process.stdin.close()
+            await self._terminate(process)
+            for task in child_tasks:
                 if not task.done():
                     task.cancel()
+            try:
+                await asyncio.wait_for(asyncio.gather(*child_tasks, return_exceptions=True), timeout=_PROCESS_REAP_TIMEOUT_SECONDS)
+            except asyncio.TimeoutError:
+                pass
             try:
                 progress_path.unlink()
             except OSError:
                 pass
-        if process.returncode != 0:
-            raise RuntimeFault(ErrorCode.UNAVAILABLE, f"{adapter} adapter exited unsuccessfully")
-        if not stdout.endswith(b"\n") or stdout.count(b"\n") != 1:
-            raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{adapter} adapter returned an invalid response envelope")
-        try:
-            response = json.loads(stdout[:-1].decode("utf-8", "strict"), object_pairs_hook=_unique_object)
-        except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
-            raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{adapter} adapter returned malformed JSON") from None
-        if (
-            not isinstance(response, dict)
-            or response.get("v") != 1
-            or response.get("request_id") != request_id
-            or not isinstance(response.get("ok"), bool)
-            or not isinstance(response.get("data"), dict)
-            or not isinstance(response.get("artifacts"), list)
-        ):
-            raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{adapter} adapter returned an unexpected envelope")
-        if not response["ok"]:
-            error = response.get("error", {})
-            code = error.get("code") if isinstance(error, dict) else None
-            message = error.get("message") if isinstance(error, dict) else None
-            allowed_codes = {ErrorCode.INVALID_INPUT, ErrorCode.NOT_FOUND, ErrorCode.VERSION_CONFLICT, ErrorCode.POLICY_DENIED, ErrorCode.DEPENDENCY_FAILED, ErrorCode.UNAVAILABLE, ErrorCode.BUDGET_LIMIT}
-            if code not in allowed_codes or not isinstance(message, str):
-                raise RuntimeFault(ErrorCode.INVALID_INPUT, f"{adapter} adapter returned an invalid error envelope")
-            raise RuntimeFault(code, _safe_message(message)[:512])
-        response["_request_id"] = request_id
-        response["_stderr"] = _safe_message(stderr.decode("utf-8", "replace"))[:1024]
-        response["_progress_path"] = str(progress_path)
-        return response

@@ -229,6 +229,77 @@ class SchedulerPipelineTests(unittest.IsolatedAsyncioTestCase):
         finally:
             await scheduler.stop()
 
+    async def test_malformed_b_response_kills_descendant_and_stops_pipeline(self) -> None:
+        pid_path = self.root / "malformed-descendant.pid"
+        calls_path = self.root / "malformed-calls.log"
+        adapter_path = self.root / "malformed-adapter.py"
+        adapter_path.write_text(r'''import json, subprocess, sys
+from pathlib import Path
+
+lane = sys.argv[1]
+pid_path = Path(sys.argv[2])
+calls_path = Path(sys.argv[3])
+request = json.loads(sys.stdin.buffer.readline())
+with calls_path.open("a", encoding="utf-8") as stream:
+    stream.write(lane + " " + request["op"] + "\n")
+child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+pid_path.write_text(str(child.pid), encoding="ascii")
+response = {"v":1,"request_id":"wrong-request-id","ok":True,"data":{},"artifacts":[]}
+sys.stdout.write(json.dumps(response, separators=(",",":")) + "\n")
+sys.stdout.flush()
+''', encoding="utf-8")
+        config = replace(
+            self.config,
+            b_argv=(sys.executable, str(adapter_path), "B", str(pid_path), str(calls_path)),
+            d_argv=(sys.executable, str(adapter_path), "D", str(pid_path), str(calls_path)),
+            adapter_timeout_seconds=5,
+        )
+        scheduler = Scheduler(
+            self.store,
+            config,
+            AdapterRunner(config),
+            ArtifactStore(config.artifacts_dir, self.store),
+        )
+        scheduler.start()
+        try:
+            created = self.store.create_job(
+                str(uuid4()),
+                self.store.revision,
+                JobCreate(
+                    project_id=self.project_id,
+                    title="Malformed adapter boundary fixture",
+                    source=Source(kind="typed", uri="sidequest:malformed-adapter", text="Inspect the fixture."),
+                    checks=["candidate.frozen_identity"],
+                    budget_usd=0,
+                    allowed_actions=["read_repo", "run_checks"],
+                ),
+            )
+            job_id = created["result"]["job_id"]
+            self.store.set_job_command(str(uuid4()), self.store.revision, "job.run", job_id)
+            scheduler.enqueue(job_id)
+            for _ in range(300):
+                current = self.store.get_job(job_id)
+                if current["state"] not in {"queued", "running"}:
+                    break
+                await asyncio.sleep(0.01)
+            self.assertEqual(current["state"], "blocked", current)
+            self.assertEqual(calls_path.read_text(encoding="utf-8").splitlines(), ["B repo.inspect"])
+            for _ in range(300):
+                pid = int(pid_path.read_text(encoding="ascii")) if pid_path.exists() else None
+                if pid is not None:
+                    try:
+                        os.kill(pid, 0)
+                        proc_stat = Path(f"/proc/{pid}/stat")
+                        if proc_stat.exists() and proc_stat.read_text(encoding="ascii").rsplit(")", 1)[1].strip().split()[0] == "Z":
+                            break
+                    except ProcessLookupError:
+                        break
+                await asyncio.sleep(0.01)
+            else:
+                self.fail("malformed adapter descendant remained alive")
+        finally:
+            await scheduler.stop()
+
 
 if __name__ == "__main__":
     unittest.main()

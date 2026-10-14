@@ -1,19 +1,20 @@
 {
   "goal": "A2 authenticated local runtime API and deterministic inspection pipeline",
-  "status": "ready_for_coordinator_review",
+  "status": "ready_for_fresh_coordinator_review_after_repair_attempt_2",
   "scope": "A2 only; A3/Codex execution, provider calls, delivery, workshops, and screen capture are not enabled",
   "implementation": [
     "FastAPI exposes authenticated loopback computer routes with constant-time bearer-token comparison; /health is public, CORS is disabled, command bodies and response pages are bounded.",
     "Host configuration controls private data/config/runtime directories, allowed roots, token file, worker limit, adapter argv, timeout, and loopback port. Session tokens are generated or loaded privately and never returned by the API.",
     "Only canonical stored local_git_inspection jobs can run: typed source, candidate.frozen_identity, read_repo/run_checks, no plan, and zero budget. Coding/model capability reports unavailable and unverified.",
     "Scheduler calls B repo.inspect, repo.prepare, and artifacts.freeze, imports and re-hashes immutable manifest/files, then calls D check.run on the exact frozen snapshot and host-staged manifest. Child environments are scrubbed and subprocesses use host-configured argv without a shell.",
-    "Status, run events, summary-first artifact metadata, manifest files, UTF-8 text, diff rows, and exact inert attachment content are exposed through bounded authenticated reads. Signed cursors are identity-scoped and reject noncanonical Base64 encodings."
+    "Status, run events, summary-first artifact metadata, manifest files, UTF-8 text, diff rows, and exact inert attachment content are exposed through bounded authenticated reads. Text, diff, and manifest-file limits are measured against the exact serialized UTF-8 JSON body, including metadata, cursors and JSON escaping; overlong text/diff lines are clipped and marked, and cursors advance only past consumed rows.",
+    "Adapter execution and its complete stdout/stderr/progress drain share a timeout. Cleanup signals the adapter process group even after the direct child exits, escalates to SIGKILL, and boundedly cancels/drains local tasks on timeout, cancellation, malformed envelopes, and successful exit."
   ],
   "response_shapes": {
     "job_artifacts": "{v:1,job_id,items:[Artifact],next_cursor}",
     "manifest_files": "{v:1,artifact_id,candidate_id,files:[{file_id,path,old_path,status,media_type,size_bytes,sha256,added_lines,deleted_lines,binary,artifact_id}],next_cursor}",
     "text": "{v:1,artifact_id,file_id,sha256,start_line,lines:[{number,text,clipped}],next_line,encoding,immutable}",
-    "diff": "{v:1,artifact_id,candidate_id,base_revision,candidate_revision,rows:[{kind,old_line,new_line,text}],next_cursor}",
+    "diff": "{v:1,artifact_id,candidate_id,base_revision,candidate_revision,rows:[{kind,old_line,new_line,text,clipped?}],next_cursor}; clipped is present and true only for a truncated row",
     "artifact_metadata": "{id,kind,sha256,job_id,source_revision,relative_path,run_id,media_type,size_bytes,candidate_id,immutable,display_name}"
   },
   "host_configuration": {
@@ -30,14 +31,18 @@
     "commands": [
       {"command": "python3 -m services.runtime.main --help", "exit_code": 0},
       {"command": "python3 -m py_compile services/runtime/*.py", "exit_code": 0},
-      {"command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v", "exit_code": 0, "tests_run": 21, "passed": 21, "failed": 0, "result": "Ran 21 tests in 2.095s; OK"},
+      {"command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v", "exit_code": 0, "tests_run": 26, "passed": 26, "failed": 0, "result": "Ran 26 tests in 3.159s; OK"},
       {"command": "Temporary loopback server smoke: health, unauthenticated rejection, authenticated capabilities, project.register, job.create, job.run, status, and first-page artifact metadata", "exit_code": 0, "result": "Job reached verifying under local_git_inspection, spent_usd=0.0; first artifact page included file_manifest, diff, patch, source_file, and test_report."}
     ],
     "test_names": [
       "test_auth_capabilities_and_paged_job_summary",
       "test_content_is_exact_attachment_and_job_run_events_are_scoped",
       "test_manifest_text_diff_and_cursor_scope",
+      "test_serialized_text_diff_and_manifest_pages_stay_within_byte_limit",
       "test_only_zero_budget_inspection_can_run",
+      "test_cancellation_kills_adapter_group_and_descendant",
+      "test_malformed_response_kills_descendant_even_after_parent_exit",
+      "test_timeout_kills_descendant_after_parent_exit_with_inherited_pipes",
       "test_call_cannot_raise_capacity_above_runtime_configuration",
       "test_concurrent_claims_never_exceed_worker_capacity",
       "test_concurrent_reservations_cannot_overspend_one_job",
@@ -52,6 +57,7 @@
       "test_rejects_stale_approval_identity",
       "test_actual_b_and_d_modules_on_temporary_git_fixture",
       "test_job_runs_real_bounded_pipeline_with_fake_host_adapters",
+      "test_malformed_b_response_kills_descendant_and_stops_pipeline",
       "test_initial_migration_reload_source_task_metadata_and_candidate_linkage",
       "test_unknown_usage_remains_null_and_keeps_budget_reservation",
       "test_zero_reservation_is_limited_to_trusted_deterministic_verify_work"
