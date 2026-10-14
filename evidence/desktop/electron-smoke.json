@@ -1,0 +1,6 @@
+{
+  "status": "blocked",
+  "startedAt": "2026-10-14T01:26:29.756Z",
+  "reason": "Native Electron exited (SIGTRAP). [7167:1014/012629.901151:FATAL:sandbox/linux/suid/client/setuid_sandbox_host.cc:166] The SUID sandbox helper binary was found, but is not configured correctly. Rather than run without sandboxing I'm aborting now. You need to make sure that /workspace/sidequest/desktop/node_modules/electron/dist/chrome-sandbox is owned by root and has mode 4755.\n",
+  "sandboxDisabled": false
+}

@@ -1,3 +1,11 @@
+# Sidequest — Electron presentation work
+
+Start the current Electron + React + TypeScript client with [desktop/README.md](desktop/README.md). It replaces the Unity presentation decision and provides a read-only local Git diff viewer with lazy Monaco, expandable reading and Escape/state restoration. The office loader expects the owner’s actual GLB and explicit monitor bindings; no replacement art is generated.
+
+The Python runtime, scheduling, persistence and Codex integration remain specified, not implemented. Desktop agent state says unavailable. Browser preview evidence does not certify Electron or actual office compatibility. Current blockers and exact verification are recorded in [evidence/desktop/README.md](evidence/desktop/README.md).
+
+The original launch-kit instructions below are retained for context. Its unchanged Unity C lane is not the current frontend build path; do not start the legacy model controller to run this viewer.
+
 # Sidequest
 
 A calm Unity office for real agent swarms. Inspect artifacts and diffs directly on the main worker's computer. Use existing coding agents; do not build another agent framework.

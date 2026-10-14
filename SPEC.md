@@ -1,3 +1,7 @@
+# Current presentation decision — 2026-10-14
+
+The owner superseded the Unity presentation choice with Electron + React + TypeScript + React Three Fiber and Drei. The existing office GLB and Blender originals are protected inputs. The active implementation and run instructions are in [desktop/README.md](desktop/README.md). The Python scheduling, persistence, Codex session and permission architecture below remains the intended backend boundary; it is not implemented yet. The current desktop slice is read-only local Git and must not be described as working agent execution. The original baseline follows for backend context and historical acceptance scope.
+
 # Sidequest — implementation baseline 0.3
 
 Decision date: 2026-10-07. Status: specified, not implemented. The owner reports that the office assets are complete. Preserve them; build behavior around them. The inspected main branch contains the launch kit, not the asset project. No Unity editor version or prefab identifier has been invented.

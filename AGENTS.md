@@ -1,3 +1,9 @@
+# Active presentation override — 2026-10-14
+
+The owner now requires Electron + React + TypeScript + React Three Fiber/Drei, replacing Unity presentation. `desktop/` implements the first read-only Git viewer slice. See `desktop/README.md` for exact setup, limits and evidence. Preserve the Python runtime/Codex/Git/permission design and existing art; do not launch agent jobs to demonstrate the UI. Office/status/file operations make zero model calls. No Unity installation or replacement art.
+
+The legacy lane/controller rules below remain for the original managed development workflow. This coordinated feature branch is outside that runner; the owner explicitly authorized orthogonal implementation/review, branch publication and a reviewable PR. Do not use the unchanged legacy C Unity goals for the Electron work. No merge or deployment is authorized.
+
 # Sidequest implementation rules
 
 Implement the active goal, not a new architecture. Scope is fixed in SPEC.md. Start with your goal document and only its Read list. Do not automatically load the archive, all sources, other lane journals, or every screenshot. Do not conduct a fresh framework comparison.

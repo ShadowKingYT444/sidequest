@@ -1,0 +1,79 @@
+{
+  "status": "verified_browser_viewer_with_blocked_office_and_native_electron",
+  "source_files_sha256": "249e8e11215e126b0a01b2cde66a4770d4b9aa0927b0288270234698bf4fd9c5",
+  "source_files": [
+    "desktop/electron/git-reader.cjs",
+    "desktop/electron/main.cjs",
+    "desktop/electron/preload.cjs",
+    "desktop/electron/security.cjs",
+    "desktop/electron/static-server.cjs",
+    "desktop/package-lock.json",
+    "desktop/package.json",
+    "desktop/scripts/electron-smoke.mjs",
+    "desktop/scripts/inspect-assets.mjs",
+    "desktop/scripts/install-office.py",
+    "desktop/src/App.tsx",
+    "desktop/src/DiffEditor.tsx",
+    "desktop/src/OfficeScene.tsx",
+    "desktop/src/bridge.ts",
+    "desktop/src/main.tsx",
+    "desktop/src/office-bindings.ts",
+    "desktop/src/style.css",
+    "desktop/src/types.ts",
+    "desktop/vite.config.ts"
+  ],
+  "git_evidence_base": "69bf06696a93c9f58eee2d088e84404d4f6563d6",
+  "git_evidence_candidate": "674f1477efb7327fe46fbe3aa6f5d622766c1723",
+  "desktop_unit_security_asset_tests": {
+    "command": "cd desktop && npm test",
+    "passed": 21,
+    "fixture_art": "synthetic unit-test-only"
+  },
+  "browser_tests": {
+    "command": "cd desktop && CI=1 npm run test:browser",
+    "passed": 6,
+    "viewports": [
+      [
+        1440,
+        900
+      ],
+      [
+        960,
+        780
+      ],
+      [
+        390,
+        780
+      ]
+    ],
+    "automated_wcag_a_aa_violations": 0,
+    "page_exceptions": 0,
+    "scope": [
+      "real Git revision data",
+      "one selected lazy editor",
+      "Expand and Escape selection/scroll/focus",
+      "reduced motion and reflow",
+      "same-origin/read-only API",
+      "literal hostile source and error retry"
+    ]
+  },
+  "legacy_launch_kit_tests": {
+    "command": "python3 -m unittest discover -s dev -p 'test_*.py' -q",
+    "passed": 31,
+    "model_transport": "test doubles only"
+  },
+  "typecheck": "passed",
+  "production_build": "passed",
+  "build_warning": "large lazy chunks: Monaco ~695kB gzip, OfficeScene ~271kB gzip",
+  "native_electron": "blocked: sandbox host capability; see electron-smoke.json",
+  "actual_office": "blocked: authenticated transfer URLs denied by VM proxy; see asset-transfer.json",
+  "ui_model_calls": 0,
+  "agent_demo_jobs_launched": 0,
+  "capture_permission": "denied; no capture feature implemented",
+  "limitations": [
+    "No actual GLB material/texture/animation or camera/monitor validation",
+    "No native Electron runtime pass",
+    "No backend/worker/Codex integration",
+    "Credential exclusion is heuristic; not a full secret scanner"
+  ]
+}

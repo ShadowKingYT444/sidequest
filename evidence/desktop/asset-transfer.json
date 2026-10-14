@@ -1,0 +1,15 @@
+{
+  "status": "blocked",
+  "source": "https://drive.google.com/drive/folders/1J69rRCIT03-AFo9A0WqwEc7CQswM4rlY",
+  "archive": "Sidequest_Complete_Art_Kit_2026-10-07.tar.xz",
+  "parts": 8,
+  "expected_bytes": 535951540,
+  "expected_sha256": "f7159fbda50771486d65e1a5bd2a42d265120a422d88a686471a9bbb6fb60a95",
+  "connector_reads": "all eight raw stream references returned",
+  "vm_transfer": "Tunnel connection failed: 403 Forbidden",
+  "additional_network_and_escalated_transfer": "same proxy failure",
+  "direct_transfer": "Temporary failure in name resolution",
+  "archive_bytes_obtained": 0,
+  "actual_glb_verified": false,
+  "original_assets_changed": false
+}
