@@ -99,7 +99,12 @@ for raw in sys.stdin:
         account_type = "apiKey" if MODE == "api_key" else "chatgpt"
         response(request, {{"account": {{"type": account_type, "email": "fixture-private@example.invalid"}}}})
     elif method == "account/rateLimits/read":
-        if MODE == "quota_missing":
+        if MODE == "quota_numeric":
+            response(request, {{"ordinaryUsageAllowed": True, "rateLimits": {{
+                "primary": {{"usedPercent": 15}}, "secondary": {{"usedPercent": 25}},
+                "credits": {{"hasCredits": False}},
+            }}}})
+        elif MODE == "quota_missing":
             response(request, {{"rateLimits": {{"credits": {{"hasCredits": 1, "unlimited": False, "balance": "fixture-private-balance"}}}}}})
         else:
             quota_value = MODE in ("quota_true", "success")
@@ -275,6 +280,66 @@ for raw in sys.stdin:
                 self.assertNotIn("thread/start", methods)
                 self.assertNotIn("thread/resume", methods)
                 self.assertNotIn("turn/start", methods)
+
+    def test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows(self) -> None:
+        app = AppServer.__new__(AppServer)
+        cases = [
+            (0, 40.5, 59.5, True),
+            (89, 89.9, 10.1, True),
+            (90, 20, 10, False),
+            (100, 0, 0, False),
+            (None, 0, None, None),
+            (True, 0, None, None),
+            ("20", 0, None, None),
+            (-1, 0, None, None),
+            (101, 0, None, None),
+            (float("nan"), 0, None, None),
+            (float("inf"), 0, None, None),
+        ]
+        for primary, secondary, remaining, ready in cases:
+            with self.subTest(primary=primary, secondary=secondary):
+                reply = {"ordinaryUsageAllowed": True, "rateLimits": {
+                    "primary": {"usedPercent": primary},
+                    "secondary": {"usedPercent": secondary},
+                    "credits": {"hasCredits": False},
+                }}
+                with mock.patch.object(app, "request", return_value=reply) as request:
+                    quota, reserve = app.read_subscription_readiness(1)
+                request.assert_called_once_with("account/rateLimits/read", {}, 1)
+                self.assertEqual(quota, {"ordinary_usage_allowed": True, "purchased_credits_available": False})
+                if remaining is None:
+                    self.assertIsNone(reserve["remaining_percent"])
+                else:
+                    self.assertAlmostEqual(reserve["remaining_percent"], remaining)
+                self.assertEqual(reserve["ready"], ready)
+                self.assertEqual(reserve["required_percent"], 10)
+                if remaining is None:
+                    self.assertIsNone(reserve["primary_used_percent"])
+        for reply in ({}, {"rateLimits": []}, {"rateLimits": {"primary": [], "secondary": None}}):
+            with mock.patch.object(app, "request", return_value=reply):
+                quota, reserve = app.read_subscription_readiness(1)
+            self.assertIsNone(reserve["ready"])
+            self.assertIsNone(reserve["remaining_percent"])
+
+    def test_capabilities_numeric_reserve_is_readiness_only_and_never_authorizes_execution(self) -> None:
+        settings, _executable, log_path = self._settings("quota_numeric")
+        request = {
+            "v": 1, "request_id": "reserve-fixture", "op": "agent.capabilities",
+            "job_id": "reserve-fixture-job", "workspace": str(self.staging),
+            "payload": {}, "context": {},
+        }
+        data, artifacts, usage = dispatch(request, settings)
+        self.assertEqual(data["subscription_reserve"], {
+            "primary_used_percent": 15, "secondary_used_percent": 25,
+            "remaining_percent": 75, "required_percent": 10, "ready": True,
+        })
+        self.assertEqual(data["state"], "unavailable")
+        self.assertFalse(data["usd_cost_enforced"])
+        self.assertIn("USD spend ceiling", data["reason"])
+        self.assertEqual(artifacts, [])
+        self.assertIsNone(usage)
+        methods = [row.get("method") for row in self._rpc_log(log_path) if row["kind"] == "rpc"]
+        self.assertEqual(methods, ["initialize", "initialized", "model/list", "account/read", "account/rateLimits/read"])
 
     def test_capabilities_probe_reads_catalog_account_and_subscription_quota_without_consent(self) -> None:
         settings, _executable, log_path = self._settings("success")

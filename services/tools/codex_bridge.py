@@ -176,6 +176,29 @@ def _safe_codex_environment(state_dir: Path) -> dict[str, str]:
     return env
 
 
+def _subscription_reserve(rate_limits: Any) -> dict[str, Any]:
+    """Snapshot readiness only; percentages cannot authorize or cap spend."""
+    def percentage(window: str) -> int | float | None:
+        value = rate_limits.get(window) if isinstance(rate_limits, dict) else None
+        value = value.get("usedPercent") if isinstance(value, dict) else None
+        if type(value) not in (int, float) or not 0 <= value <= 100:
+            return None
+        if not math.isfinite(value):
+            return None
+        return value
+
+    primary = percentage("primary")
+    secondary = percentage("secondary")
+    remaining = None if primary is None or secondary is None else 100 - max(primary, secondary)
+    return {
+        "primary_used_percent": primary,
+        "secondary_used_percent": secondary,
+        "remaining_percent": remaining,
+        "required_percent": 10,
+        "ready": None if remaining is None else remaining > 10,
+    }
+
+
 def _has_existing_auth_locator() -> bool:
     return any(os.environ.get(name) for name in ("HOME", "CODEX_HOME"))
 
@@ -572,20 +595,26 @@ class AppServer:
         return catalog, account_type
 
     def read_subscription_quota(self, timeout: float) -> dict[str, bool | None]:
-        """Return only strict ChatGPT subscription/quota booleans.
+        """Preserve the original strict nullable quota flags API."""
+        quota, _reserve = self.read_subscription_readiness(timeout)
+        return quota
 
-        This is a read-only account/rateLimits/read call. Do not expose account
-        IDs, balance strings, or derived claims about dollar spend enforcement.
+    def read_subscription_readiness(self, timeout: float) -> tuple[dict[str, bool | None], dict[str, Any]]:
+        """Read safe quota flags and a 10% reserve snapshot without execution.
+
+        No account IDs, credit balances, or USD enforcement claims are exposed.
+        Missing or invalid primary/secondary usage leaves reserve unknown.
         """
         result = self.request("account/rateLimits/read", {}, min(timeout, 15.0))
         ordinary_usage = result.get("ordinaryUsageAllowed")
         rate_limits = result.get("rateLimits")
         credits = rate_limits.get("credits") if isinstance(rate_limits, dict) else None
         has_credits = credits.get("hasCredits") if isinstance(credits, dict) else None
-        return {
+        quota = {
             "ordinary_usage_allowed": ordinary_usage if type(ordinary_usage) is bool else None,
             "purchased_credits_available": has_credits if type(has_credits) is bool else None,
         }
+        return quota, _subscription_reserve(rate_limits)
 
     def verify_account_and_catalog(self, model_id: str, effort: str, timeout: float) -> dict[str, Any]:
         catalog, account_type = self.read_catalog_and_account(timeout)
@@ -903,6 +932,7 @@ def probe_capabilities(settings: Settings, progress: ProgressLog) -> dict[str, A
             "ordinary_usage_allowed": None,
             "purchased_credits_available": None,
         },
+        "subscription_reserve": _subscription_reserve(None),
         "reason": None,
     }
     if not settings.codex_enabled:
@@ -923,7 +953,7 @@ def probe_capabilities(settings: Settings, progress: ProgressLog) -> dict[str, A
         result["account_type"] = account_type
         if account_type == "chatgpt":
             try:
-                result["subscription_quota"] = app.read_subscription_quota(15.0)
+                result["subscription_quota"], result["subscription_reserve"] = app.read_subscription_readiness(15.0)
             except AppServerFailure:
                 # Quota telemetry is optional readiness context. Keep unknown
                 # as null and do not change the independent USD spending gate.
