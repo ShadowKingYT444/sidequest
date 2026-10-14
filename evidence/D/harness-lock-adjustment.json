@@ -1,0 +1,47 @@
+{
+  "scope": "trusted harness byte lock update after EOF normalization, no expected checks changed",
+  "changes": [
+    {
+      "path": "services/workshops/__init__.py",
+      "old": "46240e4e05b8dc31a5b2d8f5cbb36aa737c6c5ea792f6434c5b1f081655a21f7",
+      "new": "0d9c462f863a8c749cc435ad1681206a0c6da946a3dbd4488493394a8f2bc907",
+      "reason": "coordinator normalized extra EOF blank line before freezing; semantics unchanged"
+    },
+    {
+      "path": "services/workshops/browser_checks.py",
+      "old": "5704e5e2a8f5a399d5757d6176614d2a3c952dfc5e2c92207c6429c4df21b611",
+      "new": "871096f376a3cabe5c3e1d494aab884dd828e31078deb51ad8fda3ff49ff9b82",
+      "reason": "coordinator normalized extra EOF blank line before freezing; semantics unchanged"
+    },
+    {
+      "path": "services/workshops/checks.py",
+      "old": "bf53c67bdf0e44da00c4522a20e26a30c4e0d0961bb995ae4a3b8b00ee5e2486",
+      "new": "6b9929ad7ac49dc007a0b19e4742b81848149c8406ba703628d45671437afab2",
+      "reason": "coordinator normalized extra EOF blank line before freezing; semantics unchanged"
+    },
+    {
+      "path": "services/workshops/config.py",
+      "old": "0fcc4580a57f298d53751721546d4f4536b196fa9ecc8a189229033cd3464980",
+      "new": "6ad63c49e1307e5ac0c8bb1bc9efdc72d206ccd76a2f19dd3c739c3c88c613b0",
+      "reason": "coordinator normalized extra EOF blank line before freezing; semantics unchanged"
+    },
+    {
+      "path": "services/workshops/identity.py",
+      "old": "b4d6731f0e1bb4b33cc39686d1c1bed62948b681ab9af2c46813a3f417d8da06",
+      "new": "974b90ad7cc103af5554a1bf3ce9b2708b87a3f1eeeba02d87696cf12a84f38a",
+      "reason": "coordinator normalized extra EOF blank line before freezing; semantics unchanged"
+    },
+    {
+      "path": "services/workshops/main.py",
+      "old": "ee4dc181135b95dcdb6ed0a9b6cc80184011772b5dcb3a7de2e9b0013bd982c8",
+      "new": "ffbdb6b8003c3d227374efcc34cc093e34a924b1a8801f820a07ffefde1414b7",
+      "reason": "coordinator normalized extra EOF blank line before freezing; semantics unchanged"
+    },
+    {
+      "path": "services/workshops/reports.py",
+      "old": "d2f1716e7f4321dfeb2fbb4dbe77df1431998bd9278aa91605a6500a9b5aaa9b",
+      "new": "5f5fa83873d5c337a3c876536725d44b753465a3af95db8f41f21cc8d346f76a",
+      "reason": "coordinator normalized extra EOF blank line before freezing; semantics unchanged"
+    }
+  ]
+}
