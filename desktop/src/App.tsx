@@ -13,6 +13,7 @@ const ProviderSettings=lazy(()=>import('./ProviderSettings'));
 const StationLauncher=lazy(()=>import('./StationLauncher'));
 const SessionCard=lazy(()=>import('./SessionCard'));
 type Mode = 'overview' | 'desk' | 'expanded';
+interface DiffRead {key:string;value:GitDiff}
 class SceneBoundary extends Component<{ children: ReactNode; onError: (error: Error) => void }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
@@ -42,7 +43,10 @@ export default function App() {
   const updateActorState = useCallback((state: OriginalActorState) => setActorState(state), []);
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [diff, setDiff] = useState<GitDiff | null>(null);
+  const diffReadKey=snapshot&&selectedFile?JSON.stringify([readVersion,snapshot.baseRevision,snapshot.candidateRevision,selectedFile]):'';
+  const [diffRead,setDiffRead]=useState<DiffRead|null>(null);
+  const lastDiffRead=useRef<DiffRead|null>(null);
+  const diff=diffRead?.key===diffReadKey?diffRead.value:null;
   const [diffError, setDiffError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>('overview');
   const [jobsOpen,setJobsOpen]=useState(false);
@@ -100,13 +104,18 @@ export default function App() {
     return () => { alive = false; };
   }, []);
   useEffect(() => {
-    if (!selectedFile || mode === 'overview') return;
-    const generation = ++requestId.current; setDiff(null); setDiffError(null);
-    bridge.diff(selectedFile).then(data => { if (generation === requestId.current) setDiff(data); }).catch(error => {
+    if (!selectedFile || !diffReadKey || mode === 'overview') return;
+    // Reopening the same pinned read must not mount, clear, then mount Monaco.
+    // Explicit refresh, either revision, or file selection invalidates this single entry.
+    if(lastDiffRead.current?.key===diffReadKey){setDiffRead(lastDiffRead.current);setDiffError(null);return;}
+    const generation = ++requestId.current; setDiffRead(null); setDiffError(null);
+    bridge.diff(selectedFile).then(data => { if (generation === requestId.current) {
+      const read={key:diffReadKey,value:data};lastDiffRead.current=read;setDiffRead(read);
+    } }).catch(error => {
       if (generation === requestId.current) setDiffError(error instanceof Error ? error.message : 'Could not load this diff.');
     });
     return () => { ++requestId.current; };
-  }, [selectedFile, readVersion, snapshot?.candidateRevision, mode === 'overview']);
+  }, [selectedFile, diffReadKey, mode === 'overview']);
   const close = useCallback(() => { setMode('overview'); requestAnimationFrame(() => computerPicker.current?.focus()); }, []);
   const closeJobs=useCallback(()=>{setJobsOpen(false);requestAnimationFrame(()=>jobsButton.current?.focus());},[]);
   const openJobs=useCallback(()=>{setBoardOpen(false);setLauncherStation(null);setActorStation(null);setSettingsOpen(false);setMode('overview');setJobsMounted(true);setJobsOpen(true);},[]);

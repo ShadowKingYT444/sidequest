@@ -1,0 +1,3 @@
+Preserved terminal excerpt from the first targeted regression setup, before any application fix:
+Expected >300 scroll, received250 after five wheel events; expect.poll timed out after15000ms at viewer.spec.ts:69.
+The new test now uses the same ten wheel events as the existing viewer test, preserving the >300 precondition.

@@ -1,0 +1,38 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/viewer.spec.ts -g Escape/reopen mounts --retries=0
+
+
+Running 1 test using 1 worker
+
+(node:193983) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/viewer.spec.ts:57:1 › Escape/reopen mounts one selected Monaco editor and keeps its saved scroll (51.9s)
+
+
+  1) tests/browser/viewer.spec.ts:57:1 › Escape/reopen mounts one selected Monaco editor and keeps its saved scroll
+
+    Error: expect(received).toHaveLength(expected)
+
+    Expected length: 1
+    Received length: 2
+    Received array:  [{"at": 41677.10000000149, "children": 1, "connected": true, "fileId": "f_03d72050ecef630081601cb44a0cec9a", "phase": "added", "scrollTop": "479", "testId": "diff-editor"}, {"at": 48333.5, "children": 1, "connected": true, "fileId": "f_03d72050ecef630081601cb44a0cec9a", "phase": "added", "scrollTop": "479", "testId": "diff-editor"}]
+
+      77 |   const trace=await page.evaluate(()=>(window as unknown as {__editorLifecycle:{phase:string;fileId:string}[]}).__editorLifecycle);
+      78 |   await writeFile(path.join(evidence,'monaco-single-reopen.json'),JSON.stringify({sourceId:source.id,trace},null,2));
+    > 79 |   expect(trace.filter(event=>event.phase==='added'&&event.fileId===source.id)).toHaveLength(1);
+         |                                                                                ^
+      80 | });
+      81 | test('read API rejects outside origins and mutations',async ({request})=>{
+      82 |   expect((await request.get('/__sidequest/snapshot',{headers:{Origin:'https://example.com'}})).status()).toBe(403);
+        at /workspace/sidequest/desktop/tests/browser/viewer.spec.ts:79:80
+
+    Error Context: test-results/viewer-Escape-reopen-mount-828d0--and-keeps-its-saved-scroll/error-context.md
+
+  1 failed
+    tests/browser/viewer.spec.ts:57:1 › Escape/reopen mounts one selected Monaco editor and keeps its saved scroll
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

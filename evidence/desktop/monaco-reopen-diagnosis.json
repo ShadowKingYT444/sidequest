@@ -1,0 +1,43 @@
+{
+  "errors": [],
+  "consoleErrors": [],
+  "trace": [
+    {
+      "phase": "added",
+      "at": 40709,
+      "testId": "diff-editor",
+      "fileId": "f_03d72050ecef630081601cb44a0cec9a",
+      "connected": true,
+      "children": 1
+    },
+    {
+      "phase": "removed",
+      "at": 51143,
+      "testId": "diff-editor",
+      "fileId": "f_03d72050ecef630081601cb44a0cec9a",
+      "scrollTop": "437",
+      "connected": false,
+      "children": 0
+    },
+    {
+      "phase": "added",
+      "at": 61330.60000000149,
+      "testId": "diff-editor",
+      "fileId": "f_03d72050ecef630081601cb44a0cec9a",
+      "scrollTop": "458",
+      "connected": true,
+      "children": 1
+    }
+  ],
+  "editors": [
+    {
+      "testId": "diff-editor",
+      "fileId": "f_03d72050ecef630081601cb44a0cec9a",
+      "scrollTop": "479",
+      "children": 1,
+      "htmlPrefix": "<div class=\"diff-editor\" data-testid=\"diff-editor\" data-file-id=\"f_03d72050ecef630081601cb44a0cec9a\" data-keybinding-context=\"4\" data-scroll-top=\"479\"><div class=\"monaco-diff-editor has-diff-overview\" style=\"position: relative; height: 100%;\"><div class=\"gutter monaco-editor\" style=\"position: absolute; height: 100%; width: 35px; display: none; left: 0px;\"><div class=\"scroll-decoration\" role=\"prese"
+    }
+  ],
+  "modifiedInputs": 1,
+  "mode": "desk"
+}

@@ -1,0 +1,14 @@
+{
+  "sourceId": "f_03d72050ecef630081601cb44a0cec9a",
+  "trace": [
+    {
+      "phase": "added",
+      "at": 44477.5,
+      "testId": "diff-editor",
+      "fileId": "f_03d72050ecef630081601cb44a0cec9a",
+      "scrollTop": "479",
+      "connected": true,
+      "children": 1
+    }
+  ]
+}

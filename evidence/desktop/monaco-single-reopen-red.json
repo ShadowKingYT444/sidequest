@@ -1,0 +1,32 @@
+{
+  "sourceId": "f_03d72050ecef630081601cb44a0cec9a",
+  "trace": [
+    {
+      "phase": "added",
+      "at": 41677.10000000149,
+      "testId": "diff-editor",
+      "fileId": "f_03d72050ecef630081601cb44a0cec9a",
+      "scrollTop": "479",
+      "connected": true,
+      "children": 1
+    },
+    {
+      "phase": "removed",
+      "at": 45000.5,
+      "testId": "diff-editor",
+      "fileId": "f_03d72050ecef630081601cb44a0cec9a",
+      "scrollTop": "500",
+      "connected": false,
+      "children": 0
+    },
+    {
+      "phase": "added",
+      "at": 48333.5,
+      "testId": "diff-editor",
+      "fileId": "f_03d72050ecef630081601cb44a0cec9a",
+      "scrollTop": "479",
+      "connected": true,
+      "children": 1
+    }
+  ]
+}

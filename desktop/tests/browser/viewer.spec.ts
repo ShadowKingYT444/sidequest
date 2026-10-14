@@ -1,10 +1,20 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import path from 'node:path';
 import { writeFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 const evidence = path.resolve('../evidence/desktop');
+async function traceEditorMounts(page:Page){
+  await page.addInitScript(()=>{
+    const trace:unknown[]=[];(window as unknown as {__editorLifecycle:unknown[]}).__editorLifecycle=trace;
+    const record=(phase:string,node:HTMLElement)=>{if(trace.length<100)trace.push({phase,at:performance.now(),testId:node.dataset.testid,fileId:node.dataset.fileId,scrollTop:node.dataset.scrollTop,connected:node.isConnected,children:node.childElementCount});};
+    new MutationObserver(records=>{for(const entry of records){for(const node of entry.addedNodes)if(node instanceof HTMLElement){if(node.matches('.diff-editor'))record('added',node);node.querySelectorAll<HTMLElement>('.diff-editor').forEach(child=>record('added',child));}for(const node of entry.removedNodes)if(node instanceof HTMLElement){if(node.matches('.diff-editor'))record('removed',node);node.querySelectorAll<HTMLElement>('.diff-editor').forEach(child=>record('removed',child));}}}).observe(document,{childList:true,subtree:true});
+  });
+}
 test('real Git diff, lazy single editor, expanded state, Escape and keyboard', async ({ page, request }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  const consoleErrors:string[]=[];page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text());});
+  await traceEditorMounts(page);
+  try {
   const snapshotResponse = await request.get('/__sidequest/snapshot');
   expect(snapshotResponse.ok()).toBeTruthy();
   const snapshot = await snapshotResponse.json();
@@ -39,6 +49,41 @@ test('real Git diff, lazy single editor, expanded state, Escape and keyboard', a
   await expect(editor).toHaveAttribute('data-file-id',source.id);
   await expect.poll(async () => Number(await editor.getAttribute('data-scroll-top'))).toBeGreaterThan(100);
   expect(errors).toEqual([]);
+  } finally {
+    const dom=await page.evaluate(()=>({trace:(window as unknown as {__editorLifecycle:unknown[]}).__editorLifecycle,editors:Array.from(document.querySelectorAll<HTMLElement>('.diff-editor')).map(node=>({testId:node.dataset.testid,fileId:node.dataset.fileId,scrollTop:node.dataset.scrollTop,children:node.childElementCount,htmlPrefix:node.outerHTML.slice(0,400)})),modifiedInputs:document.querySelectorAll('[aria-label="Modified committed file, read-only"]').length,mode:document.querySelector('main')?.getAttribute('data-mode')}));
+    await writeFile(path.join(evidence,'monaco-reopen-diagnosis.json'),JSON.stringify({errors,consoleErrors,...dom},null,2));
+  }
+});
+test('Escape/reopen mounts one selected Monaco editor and keeps its saved scroll',async({page,request})=>{
+  const reads:string[]=[];page.on('request',read=>{if(read.url().includes('/__sidequest/diff/'))reads.push(read.url());});
+  await traceEditorMounts(page);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  const snapshot=await (await request.get('/__sidequest/snapshot')).json();
+  const source=snapshot.files.find((file:{path:string})=>file.path==='dev/luna.py')??snapshot.files.find((file:{additions:number})=>file.additions>120);
+  expect(source).toBeTruthy();
+  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});
+  const nav=page.getByRole('combobox',{name:'Office navigation'}),editor=page.getByTestId('diff-editor');
+  await nav.selectOption('parent_019');await page.locator(`.file-list button[data-file-id="${source.id}"]`).click();
+  await expect(editor.locator('.view-lines').last()).toBeVisible();
+  await editor.locator('.monaco-editor').last().hover();
+  for(let index=0;index<10;index++){await page.mouse.wheel(0,800);await page.waitForTimeout(80);}
+  await expect.poll(async()=>Number(await editor.getAttribute('data-scroll-top'))).toBeGreaterThan(300);
+  await page.keyboard.press('Escape');await expect(editor).toHaveCount(0);
+  await page.evaluate(()=>{(window as unknown as {__editorLifecycle:unknown[]}).__editorLifecycle.length=0;});
+  await nav.selectOption('parent_019');
+  await expect(editor).toHaveAttribute('data-file-id',source.id);
+  await page.waitForLoadState('networkidle');
+  await expect(editor).toHaveCount(1);
+  await expect.poll(async()=>Number(await editor.getAttribute('data-scroll-top'))).toBeGreaterThan(100);
+  const trace=await page.evaluate(()=>(window as unknown as {__editorLifecycle:{phase:string;fileId:string}[]}).__editorLifecycle);
+  await writeFile(path.join(evidence,'monaco-single-reopen.json'),JSON.stringify({sourceId:source.id,trace},null,2));
+  expect(trace.filter(event=>event.phase==='added'&&event.fileId===source.id)).toHaveLength(1);
+  const beforeRefresh=reads.filter(url=>url.endsWith(source.id)).length;
+  await page.getByRole('button',{name:'Refresh Git',exact:true}).click();
+  await expect.poll(()=>reads.filter(url=>url.endsWith(source.id)).length).toBeGreaterThan(beforeRefresh);
+  await expect(editor).toHaveAttribute('data-file-id',source.id);
+  await expect(editor.locator('.view-lines').last()).toBeVisible();
+  await writeFile(path.join(evidence,'monaco-single-reopen.json'),JSON.stringify({sourceId:source.id,trace,reopenMounts:trace.filter(event=>event.phase==='added'&&event.fileId===source.id).length,readsBeforeRefresh:beforeRefresh,readsAfterRefresh:reads.filter(url=>url.endsWith(source.id)).length,refreshRereadVerified:true},null,2));
 });
 test('read API rejects outside origins and mutations',async ({request})=>{
   expect((await request.get('/__sidequest/snapshot',{headers:{Origin:'https://example.com'}})).status()).toBe(403);

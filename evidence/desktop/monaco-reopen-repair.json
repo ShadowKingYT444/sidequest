@@ -1,0 +1,23 @@
+{
+  "status": "cause reproduced and scoped repair passes targeted tests; full suite pending",
+  "baseline_commit": "4b36c71fe07cf577b45981081e3c081c0b394006",
+  "cause": "On desk reopen, the retained diff renders immediately; the mode-dependent read effect then clears it and rereads the same pinned Git data. This destroys the first reopened editor and creates a second after the response, causing a missing-editor interval and needless initialization.",
+  "red_reopen_mounts": 2,
+  "green_reopen_mounts": 1,
+  "red_trace": "evidence/desktop/monaco-single-reopen-red.json",
+  "green_trace": "evidence/desktop/monaco-single-reopen.json",
+  "red_log": "evidence/desktop/monaco-single-reopen-red.log",
+  "targeted_green_log": "evidence/desktop/monaco-reopen-green.log",
+  "targeted_tests_passed": 2,
+  "fix": "A single successful diff read is paired with its refresh generation, pinned base/candidate revisions and file ID. Reopen reuses it; refresh/identity changes invalidate it. Mismatched reads never render.",
+  "fallback_finding": "The captured read-only textboxes also exist in normal Monaco accessibility DOM. No separate application fallback branch or Monaco initialization exception was found in the diagnostic run. DiffEditor.tsx and accessibility/read-only options are unchanged.",
+  "original_assertions_and_timeouts_unchanged": true,
+  "desktop_tests": 30,
+  "typecheck_build": "pass",
+  "model_or_native_runs": 0,
+  "source_file_hashes": {
+    "desktop/src/App.tsx": "06d705f7e274c69e7a6763703b7ea6e6527a0f6eb209a77626fcefd02f210988",
+    "desktop/tests/browser/viewer.spec.ts": "0570e1869e9b20b7bc8067947203558f04344398d5624e1ba257b7ab89eac3f6",
+    "desktop/src/DiffEditor.tsx": "7c559df44ebaf06bed74a42f7fe79392812b6093f4522603edea8534a321795e"
+  }
+}
