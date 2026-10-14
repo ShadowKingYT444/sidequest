@@ -6,8 +6,9 @@
     "operations": ["agent.capabilities", "agent.execute"],
     "transport": "Codex app-server over private stdio JSON-RPC",
     "host_defaults": "disabled; execution also requires explicit host consent",
-    "capability_probe": "initialize, model/list, account/read(refreshToken:false), close; no thread or turn",
-    "execution": "catalog/account verification, explicit model and effort, persistent goal and token budget, cancellation interrupt, changed-tree freeze",
+    "capability_probe": "initialize, model/list, account/read(refreshToken:false), close; no thread or turn; reports usd_cost_enforced:false",
+    "execution": "wire agent.execute rejects before app-server startup because USD cost enforcement is unsupported; internal fake-only lifecycle tests cover catalog/account verification, explicit model/effort, persistent goals, interruption and changed-tree freeze",
+    "usd_cost_enforced": false,
     "repository_codex_config": "project-local .codex configuration is rejected before app-server startup",
     "output": "bounded progress, complete-message secret scan, hidden reasoning/tool output omitted; cost remains null and uncertain",
     "session_recovery": "agent.execute writes typed host-only session progress after thread and turn acknowledgements; no session rows are emitted by capabilities"
@@ -15,16 +16,19 @@
   "deterministic_validation": {
     "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
     "result": "PASS",
-    "tests": 39,
+    "tests": 41,
     "compile_command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
     "compile_result": "PASS",
     "help_command": "python3 -m services.tools.main --help",
     "help_result": "PASS",
     "fake_transport_only": true,
+    "schema_compatibility": "Installed JSONRPCResponse, JSONRPCError and JSONRPCRequest schemas do not define or require jsonrpc; marker-free messages are accepted and an explicitly incorrect marker is rejected.",
     "covered": [
       "catalog/model/effort gates",
       "read-only capability response shape and no-thread/no-turn behavior",
       "provider errors and malformed/truncated JSON-RPC",
+      "installed-schema marker-free JSON-RPC replies, explicit wrong-marker rejection, and integer response ID checks",
+      "wire dollar-bound execution rejection before app-server launch",
       "host cancellation, token ceiling and timeout interrupt",
       "host-owned resume identity and persistent goal",
       "typed thread-only and turn session progress; API-key account mode blocked before thread start",
@@ -57,8 +61,8 @@
   },
   "remaining_limits": [
     "No live model catalog or authenticated account read was completed; gpt-6-luna/max are not verified.",
-    "No real Codex turn was authorized or run. Fake transport results are tests only.",
-    "max_cost_usd is required and positive-validated but not used as a spend limiter. The app-server exposes no independently verified USD cost; responses report cost_usd:null and uncertain:true. Time and token ceilings are enforced, but the USD ceiling is not.",
+    "No real Codex turn was authorized or run. The production wire operation rejects execution before provider startup; fake transport results are internal lifecycle tests only.",
+    "max_cost_usd is required and positive-validated in internal lifecycle tests but is not a spend limiter. The app-server exposes no independently verified USD cost; responses report cost_usd:null and uncertain:true. Time and token ceilings do not establish a USD ceiling.",
     "Codex workspace-write is not an OS/container security boundary; execution remains for explicitly trusted repositories."
   ]
 }

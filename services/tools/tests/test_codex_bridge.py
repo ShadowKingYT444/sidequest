@@ -51,6 +51,8 @@ def response(request, result=None, error=None):
         value["error"] = error
     else:
         value["result"] = result or {{}}
+    if MODE == "native_marker_free":
+        value.pop("jsonrpc", None)
     emit(value)
 
 log({{"kind": "startup", "argv": sys.argv[1:], "home": os.environ.get("HOME"), "codex_home": os.environ.get("CODEX_HOME"), "env_names": sorted(os.environ)}})
@@ -71,6 +73,12 @@ for raw in sys.stdin:
             sys.stdout.write('{{"jsonrpc":"2.0","id":')
             sys.stdout.flush()
             break
+        if MODE == "boolean_response_id":
+            emit({{"jsonrpc": "2.0", "id": True, "result": {{"serverInfo": {{"name": "fixture", "version": "1"}}}}}})
+            continue
+        if MODE == "wrong_jsonrpc":
+            emit({{"jsonrpc": "1.0", "id": request.get("id"), "result": {{"serverInfo": {{"name": "fixture", "version": "1"}}}}}})
+            continue
         response(request, {{"serverInfo": {{"name": "fixture-app-server", "version": "1"}}}})
     elif method == "initialized":
         continue
@@ -115,7 +123,7 @@ for raw in sys.stdin:
             total = 40 if MODE == "token_budget" else 15
             usage = {{"inputTokens": 10, "cachedInputTokens": 1, "outputTokens": 5, "reasoningOutputTokens": 0, "totalTokens": total}}
             emit({{"jsonrpc": "2.0", "method": "thread/tokenUsage/updated", "params": {{"threadId": params.get("threadId"), "turnId": "fixture-turn", "tokenUsage": {{"last": usage, "total": usage}}}}}})
-            if MODE in ("success", "token_budget", "resume"):
+            if MODE in ("success", "token_budget", "resume", "native_marker_free"):
                 emit({{"jsonrpc": "2.0", "method": "turn/completed", "params": {{"threadId": params.get("threadId"), "turn": {{"id": "fixture-turn", "status": "completed"}}}}}})
     elif method == "turn/interrupt":
         response(request, {{}})
@@ -173,7 +181,9 @@ for raw in sys.stdin:
         request = self._request(workspace, objective=objective, max_seconds=max_seconds, provider_thread_id=provider_thread_id)
         progress_path = self.staging / f"codex-progress-{uuid.uuid4().hex}.jsonl"
         progress = ProgressLog(progress_path, request["request_id"], self.settings.staging_roots)
-        response = execute_agent(request, settings, progress, cancel_event=cancel_event)
+        # This private test-only opt-in exercises the unmetered lifecycle using
+        # a deterministic fake app-server; production dispatch never passes it.
+        response = execute_agent(request, settings, progress, cancel_event=cancel_event, _test_only_allow_unmetered=True)
         return response, log_path, progress_path, executable
 
     def _rpc_log(self, path: Path) -> list[dict[str, object]]:
@@ -221,6 +231,20 @@ for raw in sys.stdin:
         self.assertNotIn("provider_thread_id", session_rows[0]["message"])
         self.assertNotIn("provider_turn_id", session_rows[1]["message"])
 
+    def test_native_marker_free_app_server_replies_follow_installed_schema(self) -> None:
+        (data, artifacts, usage), log_path, _progress_path, _executable = self._run("native_marker_free")
+        self.assertEqual(data["status"], "candidate")
+        self.assertEqual(data["provider_thread_id"], "fixture-thread")
+        self.assertEqual(data["provider_turn_id"], "fixture-turn")
+        self.assertTrue(artifacts)
+        self.assertTrue(usage["uncertain"])
+        records = self._rpc_log(log_path)
+        methods = [row.get("method") for row in records if row["kind"] == "rpc"]
+        self.assertIn("model/list", methods)
+        self.assertIn("account/read", methods)
+        self.assertIn("thread/start", methods)
+        self.assertIn("turn/start", methods)
+
     def test_catalog_gates_unsupported_model_and_effort_before_any_thread_or_turn(self) -> None:
         for mode in ("unsupported_model", "unsupported_effort", "provider_error", "api_key"):
             with self.subTest(mode=mode):
@@ -228,7 +252,7 @@ for raw in sys.stdin:
                 settings, _, log_path = self._settings(mode)
                 request = self._request(workspace)
                 with self.assertRaises(AdapterError):
-                    execute_agent(request, settings, ProgressLog(None, request["request_id"]))
+                    execute_agent(request, settings, ProgressLog(None, request["request_id"]), _test_only_allow_unmetered=True)
                 methods = [row.get("method") for row in self._rpc_log(log_path) if row["kind"] == "rpc"]
                 self.assertNotIn("thread/start", methods)
                 self.assertNotIn("thread/resume", methods)
@@ -247,12 +271,13 @@ for raw in sys.stdin:
             "context": {},
         }
         data, artifacts, usage = dispatch(request, settings)
-        self.assertEqual(data["state"], "available")
+        self.assertEqual(data["state"], "unavailable")
         self.assertEqual(data["provider"], "codex-app-server")
         self.assertEqual(data["model"], {"id": self.model, "verified": True})
         self.assertEqual(data["effort"], {"id": self.effort, "verified": True})
         self.assertEqual(data["account_type"], "chatgpt")
-        self.assertIsNone(data["reason"])
+        self.assertFalse(data["usd_cost_enforced"])
+        self.assertIn("USD spend ceiling", data["reason"])
         self.assertEqual(artifacts, [])
         self.assertTrue(usage is None)
         records = self._rpc_log(log_path)
@@ -280,6 +305,7 @@ for raw in sys.stdin:
                 }
                 data, _artifacts, _usage = dispatch(request, settings)
                 self.assertEqual(data["state"], "unavailable")
+                self.assertFalse(data["usd_cost_enforced"])
                 if mode == "unsupported_model":
                     self.assertFalse(data["model"]["verified"])
                     self.assertEqual(data["account_type"], "chatgpt")
@@ -308,7 +334,20 @@ for raw in sys.stdin:
             data, _artifacts, _usage = dispatch(request, settings)
         self.assertEqual(data["state"], "unavailable")
         self.assertEqual(data["account_type"], "unknown")
+        self.assertFalse(data["usd_cost_enforced"])
         self.assertIn("authentication location", data["reason"])
+        self.assertFalse(log_path.exists())
+
+    def test_public_execute_rejects_unknown_usd_cost_before_starting_app_server(self) -> None:
+        workspace = self.prepare("codex-unmetered-wire-" + uuid.uuid4().hex)
+        settings, _executable, log_path = self._settings("success")
+        request = self._request(workspace)
+        with self.assertRaisesRegex(AdapterError, "cannot enforce a verified USD spend ceiling") as caught:
+            dispatch(request, settings)
+        self.assertEqual(caught.exception.code, "POLICY_DENIED")
+        self.assertFalse(log_path.exists())
+        with self.assertRaisesRegex(AdapterError, "cannot enforce a verified USD spend ceiling"):
+            execute_agent(request, settings, ProgressLog(None, request["request_id"]))
         self.assertFalse(log_path.exists())
 
     def test_unknown_provider_action_is_never_answered_and_turn_is_interrupted(self) -> None:
@@ -370,13 +409,18 @@ for raw in sys.stdin:
         self.assertIn("unrecognized activity event", records)
 
     def test_malformed_and_truncated_app_server_output_fail_closed(self) -> None:
-        for mode, expected in (("malformed", "malformed JSON-RPC"), ("truncated", "truncated event")):
+        for mode, expected in (
+            ("malformed", "malformed JSON-RPC"),
+            ("truncated", "truncated event"),
+            ("boolean_response_id", "invalid JSON-RPC identifier"),
+            ("wrong_jsonrpc", "invalid JSON-RPC message"),
+        ):
             with self.subTest(mode=mode):
                 workspace = self.prepare("codex-bad-wire-" + uuid.uuid4().hex)
                 settings, _executable, _log = self._settings(mode)
                 request = self._request(workspace)
                 with self.assertRaises(AdapterError) as caught:
-                    execute_agent(request, settings, ProgressLog(None, request["request_id"]))
+                    execute_agent(request, settings, ProgressLog(None, request["request_id"]), _test_only_allow_unmetered=True)
                 self.assertIn(expected, caught.exception.message)
 
     def test_host_environment_is_allowlisted_and_persisted_settings_cannot_come_from_job_payload(self) -> None:
@@ -390,7 +434,7 @@ for raw in sys.stdin:
         env_secret_name = "API_" + "".join(("TO", "KEN"))
         env_secret_value = "".join(("fi", "xt", "ur", "e", "-env-token-never-forward"))
         with mock.patch.dict(os.environ, {"HOME": str(test_home), "CODEX_HOME": str(test_codex_home), env_secret_name: env_secret_value}, clear=False):
-            execute_agent(request, settings, ProgressLog(None, request["request_id"]))
+            execute_agent(request, settings, ProgressLog(None, request["request_id"]), _test_only_allow_unmetered=True)
         startup = next(row for row in self._rpc_log(log_path) if row["kind"] == "startup")
         self.assertEqual(startup["home"], str(test_home))
         self.assertEqual(startup["codex_home"], str(test_codex_home))
@@ -401,7 +445,7 @@ for raw in sys.stdin:
         malformed["payload"]["provider_thread_id"] = "attacker-selected"
         settings, _executable, _log = self._settings("success")
         with self.assertRaises(AdapterError):
-            execute_agent(malformed, settings, ProgressLog(None, malformed["request_id"]))
+            execute_agent(malformed, settings, ProgressLog(None, malformed["request_id"]), _test_only_allow_unmetered=True)
 
     def test_runtime_state_must_not_overlap_host_auth_or_protected_roots(self) -> None:
         workspace = self.prepare("codex-state-overlap-" + uuid.uuid4().hex)
@@ -409,7 +453,7 @@ for raw in sys.stdin:
         bad_settings = Settings(**{**settings.__dict__, "codex_state_dir": self.source / ".codex-state"})
         request = self._request(workspace)
         with self.assertRaises(AdapterError) as caught:
-            execute_agent(request, bad_settings, ProgressLog(None, request["request_id"]))
+            execute_agent(request, bad_settings, ProgressLog(None, request["request_id"]), _test_only_allow_unmetered=True)
         self.assertEqual(caught.exception.code, "POLICY_DENIED")
 
     def test_repository_codex_config_hooks_and_mcp_are_rejected_before_server_start(self) -> None:
@@ -420,7 +464,7 @@ for raw in sys.stdin:
         settings, _executable, log_path = self._settings("success")
         request = self._request(workspace)
         with self.assertRaises(AdapterError) as caught:
-            execute_agent(request, settings, ProgressLog(None, request["request_id"]))
+            execute_agent(request, settings, ProgressLog(None, request["request_id"]), _test_only_allow_unmetered=True)
         self.assertEqual(caught.exception.code, "POLICY_DENIED")
         self.assertFalse(log_path.exists())
 
@@ -432,7 +476,7 @@ for raw in sys.stdin:
             with self.subTest(changes=changes):
                 restricted = Settings(**{**settings.__dict__, **changes})
                 with self.assertRaises(AdapterError) as caught:
-                    execute_agent(request, restricted, ProgressLog(None, request["request_id"]))
+                    execute_agent(request, restricted, ProgressLog(None, request["request_id"]), _test_only_allow_unmetered=True)
                 self.assertEqual(caught.exception.code, "POLICY_DENIED")
                 self.assertFalse(log_path.exists())
 

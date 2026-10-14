@@ -131,6 +131,7 @@ def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[st
         "model": {"id": config.codex_model, "verified": False},
         "effort": {"id": config.codex_effort, "verified": False},
         "account_type": "unknown",
+        "usd_cost_enforced": False,
         "reason": "The host could not verify Codex model readiness.",
     }
     if not isinstance(data, dict):
@@ -146,6 +147,7 @@ def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[st
         or not isinstance(model.get("verified"), bool)
         or not isinstance(effort.get("verified"), bool)
         or data.get("account_type") not in {"chatgpt", "unknown"}
+        or not isinstance(data.get("usd_cost_enforced"), bool)
         or reason is not None and not isinstance(reason, str)
     ):
         return unavailable
@@ -156,6 +158,7 @@ def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[st
         and model.get("verified") is True
         and effort.get("verified") is True
         and data.get("account_type") == "chatgpt"
+        and data.get("usd_cost_enforced") is True
         and data.get("state") == "available"
         and clean_reason is None
     )
@@ -172,7 +175,12 @@ def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[st
                 "verified": effort.get("verified") is True and effort.get("id") == config.codex_effort,
             },
             "account_type": data.get("account_type"),
-            "reason": clean_reason or "The host-configured model and effort were not fully verified.",
+            "usd_cost_enforced": data.get("usd_cost_enforced") is True,
+            "reason": clean_reason or (
+                "The provider cannot enforce a verified USD cost ceiling."
+                if data.get("usd_cost_enforced") is not True
+                else "The host-configured model and effort were not fully verified."
+            ),
         }
     return {
         "state": "available",
@@ -180,6 +188,7 @@ def _codex_capability_from_response(data: Any, config: RuntimeConfig) -> dict[st
         "model": {"id": config.codex_model, "verified": True},
         "effort": {"id": config.codex_effort, "verified": True},
         "account_type": "chatgpt",
+        "usd_cost_enforced": True,
         "reason": None,
     }
 
@@ -614,6 +623,7 @@ def create_app(
                 "model": {"id": cached_model.get("id"), "verified": cached_model.get("verified") is True} if cached_model else {"id": config.codex_model, "verified": False},
                 "effort": {"id": cached_effort.get("id"), "verified": cached_effort.get("verified") is True} if cached_effort else {"id": config.codex_effort, "verified": False},
                 "account_type": cached_capability.get("account_type") if readiness_fresh else "unknown",
+                "usd_cost_enforced": cached_capability.get("usd_cost_enforced") is True if readiness_fresh else False,
                 "refreshed_at": readiness.get("refreshed_at") if readiness_fresh and isinstance(readiness, dict) else None,
                 "reason": _safe_message(cached_capability.get("reason", ""))[:256] if isinstance(cached_capability.get("reason"), str) else None,
             },

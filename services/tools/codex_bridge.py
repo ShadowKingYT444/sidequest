@@ -79,8 +79,13 @@ def _parse_rpc_line(raw: bytes) -> dict[str, Any]:
         value = json.loads(raw.decode("utf-8", "strict"), object_pairs_hook=_unique_object, parse_constant=_reject_constant)
     except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
         raise _failure("DEPENDENCY_FAILED", "Codex app-server returned malformed JSON-RPC data.") from exc
-    if not isinstance(value, dict) or value.get("jsonrpc") not in (None, "2.0"):
+    # The installed app-server schemas define JSONRPCResponse/Error/Request
+    # without a jsonrpc field. Accept that native form, while still rejecting
+    # a marker when the peer explicitly sends an unsupported version.
+    if not isinstance(value, dict) or ("jsonrpc" in value and value["jsonrpc"] != "2.0"):
         raise _failure("DEPENDENCY_FAILED", "Codex app-server returned an invalid JSON-RPC message.")
+    if isinstance(value.get("id"), bool):
+        raise _failure("DEPENDENCY_FAILED", "Codex app-server returned an invalid JSON-RPC identifier.")
     return value
 
 
@@ -492,15 +497,23 @@ class AppServer:
                 message = self._receive(deadline)
             except TimeoutError as exc:
                 raise AppServerFailure("UNAVAILABLE", "Codex app-server operation exceeded its host time limit.", retryable=True) from exc
-            if message.get("id") == request_id:
+            if "method" in message:
+                continue
+            if "id" not in message:
+                raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned a response without an identifier.")
+            response_id = message["id"]
+            if type(response_id) is not int:
+                raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned an invalid JSON-RPC response ID.")
+            if response_id == request_id:
+                if ("error" in message) == ("result" in message):
+                    raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned a malformed JSON-RPC response.")
                 if "error" in message:
                     raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server rejected a required operation.")
                 result = message.get("result")
                 if not isinstance(result, dict):
                     raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned an invalid operation result.")
                 return result
-            if "id" in message and ("result" in message or "error" in message):
-                raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned an unexpected response ID.")
+            raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned an unexpected response ID.")
 
     def notify(self, method: str, params: dict[str, Any] | None = None) -> None:
         self._send({"jsonrpc": "2.0", "method": method, "params": params or {}})
@@ -867,6 +880,7 @@ def probe_capabilities(settings: Settings, progress: ProgressLog) -> dict[str, A
         "model": {"id": model_id, "verified": False},
         "effort": {"id": effort, "verified": False},
         "account_type": "unknown",
+        "usd_cost_enforced": False,
         "reason": None,
     }
     if not settings.codex_enabled:
@@ -895,7 +909,7 @@ def probe_capabilities(settings: Settings, progress: ProgressLog) -> dict[str, A
         elif effort not in model["efforts"]:
             result["reason"] = "The host-configured reasoning effort is not supported by the selected model."
         else:
-            result["state"] = "available"
+            result["reason"] = "Codex app-server cannot enforce a verified USD spend ceiling; execution remains disabled."
         progress.append("status", "Codex app-server capability check completed.")
     except AppServerFailure as exc:
         result["reason"] = exc.message
@@ -918,8 +932,11 @@ def execute_agent(
     progress: ProgressLog,
     *,
     cancel_event: threading.Event | None = None,
+    _test_only_allow_unmetered: bool = False,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
-    """Run one host-authorized app-server turn, then independently freeze Git."""
+    """Run one internal lifecycle turn; production dispatch requires USD metering."""
+    if not _test_only_allow_unmetered:
+        raise _failure("POLICY_DENIED", "Codex execution is disabled because the app-server cannot enforce a verified USD spend ceiling.")
     if not settings.codex_enabled or not settings.codex_consent:
         raise _failure("POLICY_DENIED", "Codex execution is disabled until the host enables it and records explicit consent.")
     if settings.codex_executable is None or settings.codex_model is None or settings.codex_effort is None:

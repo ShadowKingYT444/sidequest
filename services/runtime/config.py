@@ -257,7 +257,13 @@ def codex_readiness_is_fresh(
         parsed = datetime.fromisoformat(refreshed_at.replace("Z", "+00:00"))
     except ValueError:
         return False
+    # An unqualified local wall clock cannot be compared to UTC readiness TTL.
+    # Treat it as stale instead of letting aware/naive subtraction raise 500.
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        return False
     current = now or datetime.now(timezone.utc)
+    if current.tzinfo is None or current.utcoffset() is None:
+        return False
     age = (current - parsed).total_seconds()
     model = capability.get("model")
     effort = capability.get("effort")
@@ -266,6 +272,7 @@ def codex_readiness_is_fresh(
         and capability.get("state") == "available"
         and capability.get("provider") == "codex-app-server"
         and capability.get("account_type") == "chatgpt"
+        and capability.get("usd_cost_enforced") is True
         and capability.get("reason") is None
         and isinstance(model, dict)
         and model.get("id") == config.codex_model

@@ -1,0 +1,105 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "B2 Codex app-server adapter and source-filter repair review",
+  "candidate_sha": "1d23bfcd66419dd8b148690b1ff3a3459913ec46",
+  "review_type": "fresh exact-candidate review; no source edits",
+  "status": "BLOCKED",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+      "result": "PASS",
+      "evidence": "39 tests passed, 0 failures. Codex lifecycle tests use fake app-server transport; Git and artifact tests use disposable fixture repositories."
+    },
+    {
+      "command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m services.tools.main --help",
+      "result": "PASS",
+      "exit_code": 0,
+      "evidence": "Printed adapter usage without loading runtime configuration or contacting Codex."
+    }
+  ],
+  "checks": {
+    "capability_probe": "PASS in fake transport: agent.capabilities reads model/list and account/read(refreshToken:false), returns no account email, and starts no thread or turn. The read-only probe does not require execution consent, but does require the host enabled setting and an existing HOME or CODEX_HOME locator.",
+    "account_model_effort_gates": "PASS in fake transport: execution requires account type chatgpt, exact configured model presence in the catalog, and the selected effort in that model's supported efforts. API-key mode is rejected before thread/start, thread/resume or turn/start. Thread model is read back; thread settings update/read confirms model and effort; turn/start supplies both explicitly with provider fallback disabled.",
+    "project_config_hooks_and_mcp": "PASS for the reviewed paths: committed project trees containing a .codex component are denied before app-server startup. Startup uses --strict-config, explicit empty hooks and MCP settings, cwd /tmp, and an allowlisted environment retaining only the original HOME and CODEX_HOME locators for authentication. No candidate supplied credentials or arbitrary environment values are forwarded.",
+    "json_rpc_matching": "PARTIAL: malformed/truncated lines and mismatched response IDs fail closed, and server action requests are stopped without a reply. An independent probe found a Python bool/int equality edge that accepts response id true for request id 1; see B2-RPC-001.",
+    "approval_denial": "PASS in fake transport: an app-server action request is not answered; the adapter interrupts the turn, returns blocked, and emits no candidate artifacts.",
+    "output_and_usage_filtering": "PASS in fake transport: complete assistant messages are scanned before publication; ANSI control sequences are removed; tool output, reasoning and raw provider diagnostics are omitted; the split API_TOKEN fixture is withheld. Token counts are returned when reported. USD cost remains null and uncertain.",
+    "workspace_and_candidate_scope": "PASS for candidate export: app-server sandbox roots are limited to the disposable workspace with network access disabled; the host write paths are validated and supplied in the task prompt; freeze re-enumerates the worktree and rejects out-of-scope changes. A separate temporary-repository probe added docs/extra.txt under write_paths=[src] and freeze returned POLICY_DENIED. Path-level write scope is enforced at candidate freeze, not as an individual-file OS sandbox during the turn.",
+    "resume_and_session_progress": "PASS in fake transport: thread/turn IDs are written as typed host-only session progress; capabilities produce no session rows. Resume uses only the host-assigned thread ID, requires the persisted objective and token budget to match, rejects completed or exhausted goals, and does not accept provider IDs from the job payload. No live resume was performed.",
+    "time_and_token_limits": "PASS in fake transport: max_seconds is integer bounded by the host setting and a monotonic task deadline spans preflight through turn completion; cancellation, timeout and reaching the reported token ceiling interrupt and do not freeze a candidate. A persistent Codex goal is set and read back. These checks do not establish a USD spend cap.",
+    "process_group_cancellation": "PASS when invoked through the reviewed runtime host: services/runtime/adapters.py starts the adapter in a new session and terminates its process group with SIGTERM then SIGKILL. The app-server inherits that group; it ignores SIGTERM so the adapter can request turn/interrupt, then the adapter kills the direct app-server process if needed. The bridge itself does not create or kill a separate process group, so its cleanup relies on the host group kill for any grandchildren.",
+    "repaired_unquoted_config_scan": "PASS: the suite regression and independent probes reject an unquoted API_TOKEN plaintext value in settings.conf, including under tests/fixtures, with no repository/test-directory whitelist. Token-budget documentation and source code using os.environ.get('API_TOKEN') remain accepted."
+  },
+  "independent_probes": [
+    {
+      "name": "path-aware unquoted config credential scan",
+      "result": "PASS",
+      "evidence": "contains_secret rejected API_TOKEN=fixture_plaintext_secret_value_9a8b7c6d in both src/settings.conf and tests/fixtures/settings.conf. It accepted a 30,000-token documentation sentence and token = os.environ.get('API_TOKEN') in source code."
+    },
+    {
+      "name": "out-of-scope candidate file",
+      "result": "PASS",
+      "evidence": "In a disposable temporary Git clone, adding docs/extra.txt while the assigned write path was src caused artifacts.freeze to return POLICY_DENIED: Candidate changes extend outside the assigned write scope."
+    },
+    {
+      "name": "malformed JSON-RPC boolean response ID",
+      "result": "FINDING",
+      "evidence": "A direct probe of AppServer.request sent integer request ID 1 and supplied a response with id=true; request() returned its result because True == 1 in Python. The parser also accepts a missing jsonrpc field. This is malformed protocol data that should be rejected."
+    }
+  ],
+  "native_readiness": {
+    "status": "BLOCKED",
+    "evidence_file": "evidence/B/B2-readiness.json",
+    "codex_version": "0.159.0-alpha.3",
+    "last_recorded_attempt": "stdio initialize only, using sqlite_home and log_dir under /tmp; the first initialize response was not received",
+    "sanitized_failure": "Read-only file system (os error 30)",
+    "failed_protected_home_operations": [
+      "chmod(<CODEX_HOME>/tmp/arg0, 0700): EROFS",
+      "openat(..., uid_map, O_RDWR): EROFS",
+      "open(<CODEX_HOME>/installation_id, O_RDWR|O_CREAT): EROFS"
+    ],
+    "model_list_completed": false,
+    "account_read_completed": false,
+    "configured_model_effort_verified": false,
+    "thread_or_turn_started": false,
+    "review_action": "No new native readiness attempt, auth/home change, filesystem change, model turn or demo turn was made."
+  },
+  "findings": [
+    {
+      "id": "B2-RPC-001",
+      "severity": "medium",
+      "path": "services/tools/codex_bridge.py:77-84,483-503",
+      "title": "A boolean JSON-RPC response ID matches integer request ID 1",
+      "reproduction": "The independent direct probe passed {jsonrpc:'2.0', id:true, result:{...}} to request() while its first request ID was 1; request() accepted the result.",
+      "impact": "Malformed app-server output can satisfy a pending request. The same parser accepts an omitted jsonrpc version. The app-server is a local configured executable, which limits exposure, but malformed responses should fail closed before they can verify catalog/account operations.",
+      "recommendation": "Require jsonrpc == '2.0' and validate response ID type and exact value before correlating it with a pending integer request ID."
+    },
+    {
+      "id": "B2-BUDGET-001",
+      "severity": "high",
+      "path": "services/tools/codex_bridge.py:819-826,929-930,745-750",
+      "title": "max_cost_usd is accepted but never limits provider spend",
+      "reproduction": "Source inspection confirms _validate_payload only checks that max_cost_usd is a positive finite number; execute_agent discards it as _max_cost. Usage always reports cost_usd:null and uncertain:true. The readiness evidence confirms no independently verified app-server USD measure or provider-enforced ceiling.",
+      "impact": "Different positive dollar limits have identical execution behavior. This is a material guard gap anywhere max_cost_usd is presented or relied on as a spend ceiling. Time and token limits do not establish a USD billing cap.",
+      "recommendation": "Treat USD limiting as unsupported and do not describe this adapter as enforcing a dollar budget. A host billing/usage mechanism or revised contract semantics is needed before spend-sensitive acceptance. No spending was authorized for this review."
+    }
+  ],
+  "acceptance": {
+    "B2-1_live_luna_max_candidate": "BLOCKED: the exact requirement for a real configured Luna/max run cannot be established because the recorded native app-server attempt failed before initialize and the instruction forbade retrying or changing protected auth/home/filesystem state. Fake transport results are not live proof.",
+    "B2-2_deterministic_safety_cases": "PASS for the 39-test suite and reviewed fake-transport cases, subject to B2-RPC-001.",
+    "usd_spend_ceiling": "UNSUPPORTED/MATERIAL GAP: max_cost_usd is validation-only; cost remains unknown and uncertain.",
+    "review_scope": "Native Codex adapter and repaired source credential filter only. GitHub and preview operations were outside this delegated review scope."
+  },
+  "limits": [
+    "All Codex lifecycle tests and API-key/model/effort responses use a fake app-server; they establish adapter behavior only, not native protocol compatibility or authenticated account readiness.",
+    "No live model catalog, account response, Luna/max verification, provider thread, turn, billing observation, demo run, delivery or external write occurred.",
+    "Workspace-write is a disposable-workspace boundary, not an OS/container guarantee against hostile repository code. Candidate export checks file scope after the turn; they do not create a per-path OS sandbox.",
+    "No source files were edited. The review evidence file is the only intended worktree change."
+  ]
+}

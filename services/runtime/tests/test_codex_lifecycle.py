@@ -15,7 +15,7 @@ import httpx
 from services.runtime.adapters import AdapterRunner
 from services.runtime.api import create_app
 from services.runtime.artifacts import ArtifactStore
-from services.runtime.config import RuntimeConfig, codex_configuration_fingerprint
+from services.runtime.config import RuntimeConfig, codex_configuration_fingerprint, codex_readiness_is_fresh
 from services.runtime.models import JobCreate, Source, TaskPlan, TaskSpec, canonical_json
 from services.runtime.policy import ErrorCode, RuntimeFault
 from services.runtime.scheduler import Scheduler
@@ -30,6 +30,9 @@ CAPABILITY = {
     "model": {"id": "fixture-model", "verified": True},
     "effort": {"id": "high", "verified": True},
     "account_type": "chatgpt",
+    # Test-only synthetic capability used by the internal fake lifecycle.
+    # The native B app-server capability always reports this as false today.
+    "usd_cost_enforced": True,
     "reason": None,
 }
 
@@ -79,12 +82,13 @@ def start_codex_attempt(store: RuntimeStore, job_id: str) -> tuple[str, str, dic
 
 
 class FakeAdapters:
-    def __init__(self):
+    def __init__(self, capability: dict | None = None):
         self.calls: list[dict] = []
+        self.capability = capability or CAPABILITY
 
     async def call(self, adapter: str, **kwargs):
         self.calls.append({"adapter": adapter, **kwargs})
-        return {"data": CAPABILITY, "artifacts": [], "usage": {}}
+        return {"data": self.capability, "artifacts": [], "usage": {}}
 
 
 class FakeScheduler:
@@ -337,6 +341,93 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(RuntimeFault) as denied:
             self.store.set_job_command(str(uuid4()), self.store.revision, "job.run", job_id, codex_ready=False)
         self.assertEqual(denied.exception.code, ErrorCode.POLICY_DENIED)
+
+    async def test_native_capability_without_verified_usd_ceiling_cannot_dispatch(self) -> None:
+        capability = {**CAPABILITY, "usd_cost_enforced": False}
+        scheduler = FakeScheduler()
+        scheduler.adapters = FakeAdapters(capability)
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        job_id = create_codex_job(self.store, self.project_id)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            refresh = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "system.codex.refresh",
+                "expected_revision": self.store.revision,
+                "payload": {},
+            })
+            self.assertEqual(refresh.status_code, 202)
+            capabilities = await client.get("/v1/capabilities", headers=auth)
+            self.assertEqual(capabilities.status_code, 200)
+            self.assertFalse(capabilities.json()["features"]["coding"])
+            self.assertFalse(capabilities.json()["worker_model"]["verified"])
+            self.assertFalse(capabilities.json()["codex"]["usd_cost_enforced"])
+
+            run = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "job.run",
+                "expected_revision": self.store.revision,
+                "payload": {"job_id": job_id},
+            })
+            self.assertEqual(run.status_code, 403)
+            self.assertEqual(scheduler.enqueued, [])
+            self.assertEqual(len(scheduler.adapters.calls), 1)
+
+    async def test_cached_capability_without_usd_signal_is_stale(self) -> None:
+        capability = {key: value for key, value in CAPABILITY.items() if key != "usd_cost_enforced"}
+        self.store.record_codex_readiness(
+            str(uuid4()),
+            self.store.revision,
+            config_sha256=codex_configuration_fingerprint(self.config),
+            capability=capability,
+            refreshed_at=utc_now(),
+        )
+        self.assertFalse(codex_readiness_is_fresh(self.config, self.store.get_codex_readiness()))
+        job_id = create_codex_job(self.store, self.project_id)
+        scheduler = FakeScheduler()
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            run = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "job.run",
+                "expected_revision": self.store.revision,
+                "payload": {"job_id": job_id},
+            })
+            self.assertEqual(run.status_code, 403)
+            self.assertEqual(scheduler.enqueued, [])
+            self.assertEqual(scheduler.adapters.calls, [])
+
+    async def test_timezone_less_readiness_is_stale_not_an_http_500(self) -> None:
+        self.store.record_codex_readiness(
+            str(uuid4()),
+            self.store.revision,
+            config_sha256=codex_configuration_fingerprint(self.config),
+            capability=CAPABILITY,
+            refreshed_at="2026-10-14T05:00:00",
+        )
+        job_id = create_codex_job(self.store, self.project_id)
+        scheduler = FakeScheduler()
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            capabilities = await client.get("/v1/capabilities", headers=auth)
+            self.assertEqual(capabilities.status_code, 200)
+            self.assertFalse(capabilities.json()["features"]["coding"])
+            self.assertFalse(capabilities.json()["worker_model"]["verified"])
+            run = await client.post("/v1/commands", headers=auth, json={
+                "v": 1,
+                "command_id": str(uuid4()),
+                "type": "job.run",
+                "expected_revision": self.store.revision,
+                "payload": {"job_id": job_id},
+            })
+            self.assertEqual(run.status_code, 403)
+            self.assertEqual(scheduler.enqueued, [])
+            self.assertEqual(scheduler.adapters.calls, [])
 
     async def test_restart_marks_unknown_usage_ambiguous_and_explicit_resume_reuses_attempt(self) -> None:
         job_id = create_codex_job(self.store, self.project_id)
