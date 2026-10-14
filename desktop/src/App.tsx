@@ -9,7 +9,7 @@ import {requireOfficeSessions} from './runtime-identity';
 import './MonitorSession.css';
 import NotificationTray from './NotificationTray';
 import {deriveNotifications, notificationsByStation, type OfficeNotification} from './notifications';
-import {createLocalDraft, type LocalDraft} from './local-drafts';
+import {createLocalDraft, createDraftOperations, type DraftOperations, type LocalDraft} from './local-drafts';
 import type {MonitorMemory} from './MonitorSession';
 const MonitorSession=lazy(()=>import('./MonitorSession'));
 const OfficeScene = lazy(() => import('./OfficeScene'));
@@ -78,7 +78,7 @@ export default function App() {
   const [monitorTab,setMonitorTab]=useState<'trace'|'files'>('trace');
   const monitorTabs=useRef(new Map<string,'trace'|'files'>());
   const drafts=useRef(new Map<string,LocalDraft>());
-  const draftOperations=useRef(new Map<string,{pending:Promise<void>}>());
+  const draftOperations=useRef(new Map<string,DraftOperations>());
   const traceMemories=useRef(new Map<string,MonitorMemory>());
   const [,setDraftRevision]=useState(0);
   const computerPicker=useRef<HTMLSelectElement>(null);
@@ -103,7 +103,7 @@ export default function App() {
   const compact=useCompact();
   useEffect(()=>{
     if(!active)return;let alive=true,timer:ReturnType<typeof setTimeout>|undefined;
-    const read=async()=>{try{const state=await bridge.runtime.snapshot();const owners=requireOfficeSessions(state);const items=deriveNotifications(state);if(alive){setOfficeSnapshot(state);setNotifications(items);setSessionCount(owners.length);setOfficeError('');}}catch(reason){if(alive){setSessionCount(null);setNotifications([]);setOfficeError(reason instanceof Error?reason.message:'Runtime unavailable.');}}if(alive)timer=setTimeout(()=>void read(),5000);};
+    const read=async()=>{try{const state=await bridge.runtime.snapshot();const owners=requireOfficeSessions(state);const items=deriveNotifications(state);if(alive){setOfficeSnapshot(previous=>previous?.revision===state.revision&&previous.mode===state.mode?previous:state);setNotifications(previous=>JSON.stringify(previous)===JSON.stringify(items)?previous:items);setSessionCount(owners.length);setOfficeError('');}}catch(reason){if(alive){setSessionCount(null);setNotifications([]);setOfficeError(reason instanceof Error?reason.message:'Runtime unavailable.');}}if(alive)timer=setTimeout(()=>void read(),5000);};
     void read();return()=>{alive=false;clearTimeout(timer);};
   },[active,officeRevision]);
   const refreshProviders=useCallback(async()=>{setSettingsBusy(true);const results=await Promise.allSettled([bridge.providers(),bridge.runtime.capabilities()]);if(results[0].status==='fulfilled')setProviders(results[0].value);if(results[1].status==='fulfilled')setRuntimeCaps(results[1].value);else setRuntimeCaps(null);setSettingsBusy(false);},[]);
@@ -186,7 +186,7 @@ export default function App() {
   const selectedOwner=officeSnapshot?.office_sessions?.find(owner=>owner.station_id===selectedStation);
   const sessionKey=JSON.stringify([selectedStation,selectedOwner?.job_id??'',selectedOwner?.project_id??'',selectedOwner?.run_id??'unassigned',selectedOwner?.worker_id??'']);
   let draft=drafts.current.get(sessionKey);if(!draft){draft=createLocalDraft();drafts.current.set(sessionKey,draft);}
-  let operations=draftOperations.current.get(sessionKey);if(!operations){operations={pending:Promise.resolve()};draftOperations.current.set(sessionKey,operations);}
+  let operations=draftOperations.current.get(sessionKey);if(!operations){operations=createDraftOperations();draftOperations.current.set(sessionKey,operations);}
   let traceMemory=traceMemories.current.get(sessionKey);if(!traceMemory){traceMemory={afterSeq:0,previous:[],scrollTop:0};traceMemories.current.set(sessionKey,traceMemory);}
   const chooseMonitorTab=(tab:'trace'|'files')=>{setMonitorTab(tab);if(selectedStation)monitorTabs.current.set(selectedStation,tab);};
   const work=<div className="monitor-shell" role={mode==='expanded'&&monitorTab==='trace'?'dialog':undefined} aria-modal={mode==='expanded'&&monitorTab==='trace'?true:undefined} aria-label={monitorTab==='trace'?'Computer session viewer':undefined} data-monitor-tab={monitorTab}>

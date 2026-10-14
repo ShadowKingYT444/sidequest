@@ -311,6 +311,7 @@ export function CameraRig({
     if (current.elapsed < 0.55) invalidate();
     else {transition.current = null;returningToOffice.current=false;}
     }
+    gl.domElement.dataset.renderFrameCount=String(Number(gl.domElement.dataset.renderFrameCount??0)+1);
     gl.domElement.dataset.cameraPosition=JSON.stringify(camera.position.toArray());
     gl.domElement.dataset.cameraTarget=JSON.stringify((controlsRef.current?.target??officePose.current.target).toArray());
   });

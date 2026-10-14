@@ -2,13 +2,13 @@ import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {bridge} from './bridge';
 import {requireEvents, requireRun} from './RunActivity';
 import PromptComposer from './PromptComposer';
-import type {LocalDraft} from './local-drafts';
+import type {DraftOperations,LocalDraft} from './local-drafts';
 import type {OfficeSession, RunEventPage, RuntimeJob, RuntimeRun} from './types';
 import './MonitorSession.css';
 
 interface RecordedRead {job:RuntimeJob;run:RuntimeRun;page:RunEventPage}
 export interface MonitorMemory {afterSeq:number;previous:number[];scrollTop:number;read?:RecordedRead;error?:string}
-interface Props {owner?:OfficeSession;known:boolean;fixture:boolean;active:boolean;draft:LocalDraft;onDraft:(draft:LocalDraft)=>void;getDraft:()=>LocalDraft;operations:{pending:Promise<void>};memory:MonitorMemory;onProvider:()=>void;onAttach:()=>void}
+interface Props {owner?:OfficeSession;known:boolean;fixture:boolean;active:boolean;draft:LocalDraft;onDraft:(draft:LocalDraft)=>void;getDraft:()=>LocalDraft;operations:DraftOperations;memory:MonitorMemory;onProvider:()=>void;onAttach:()=>void}
 const identity=(value:unknown):value is string=>typeof value==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/.test(value);
 export default function MonitorSession({owner,known,fixture,active,draft,onDraft,getDraft,operations,memory,onProvider,onAttach}:Props){
   const [read,setRead]=useState(memory.read),[error,setError]=useState(memory.error??''),[loading,setLoading]=useState(false),[refresh,setRefresh]=useState(0);
@@ -38,16 +38,16 @@ export default function MonitorSession({owner,known,fixture,active,draft,onDraft
   useLayoutEffect(()=>{
     const node=body.current;if(!node)return;
     const restore=()=>{geometry.current={height:node.clientHeight,content:node.scrollHeight};node.scrollTop=Math.min(memory.scrollTop,Math.max(0,node.scrollHeight-node.clientHeight));node.dataset.scrollTop=String(node.scrollTop);node.dataset.desiredScrollTop=String(memory.scrollTop);};
-    if(read&&!restored.current){restore();restored.current=true;}
+    if(read&&known){restore();restored.current=true;}
     const resize=new ResizeObserver(restore);resize.observe(node);return()=>resize.disconnect();
-  },[read,memory]);
+  },[read,memory,known]);
   const page=(next:number)=>{if(body.current)memory.scrollTop=0;memory.afterSeq=next;memory.read=undefined;restored.current=false;setRead(undefined);setAfterSeq(next);};
-  const state=read?.job.state==='verifying'?'Checking':read&&['failed','blocked','needs_approval','paused','cancelled'].includes(read.job.state)?read.job.state.replaceAll('_',' '):read?.run.state?.replaceAll('_',' ')??'Recorded session';
+  const state=!known?'Unchecked':read?.job.state==='verifying'?'Checking':read&&['failed','blocked','needs_approval','paused','cancelled'].includes(read.job.state)?read.job.state.replaceAll('_',' '):read?.run.state?.replaceAll('_',' ')??'Recorded session';
   const local=read?.job.execution_profile==='local_git_inspection';
   return <section className="monitor-session" aria-label="Session execution trace" data-session-run={owner?.run_id??''}>
     <div className="monitor-trace-toolbar"><span>{fixture?'Test fixture · ':''}{owner?(local?'Local Git inspection':'Recorded session'):'Session'}{owner&&<> <span aria-hidden="true">·</span> <strong>{state}</strong></>}</span>{owner&&<button disabled={!active||loading} onClick={()=>setRefresh(value=>value+1)} aria-label="Refresh trace" title="Refresh trace">↻</button>}</div>
     <div ref={body} className="monitor-trace-body" tabIndex={0} aria-label="Recorded output" data-scroll-top={memory.scrollTop} onScroll={event=>{const node=event.currentTarget;const changed=geometry.current.height!==node.clientHeight||geometry.current.content!==node.scrollHeight;const expected=Math.min(memory.scrollTop,Math.max(0,node.scrollHeight-node.clientHeight));if(!changed&&Math.abs(node.scrollTop-expected)>.5)memory.scrollTop=node.scrollTop;geometry.current={height:node.clientHeight,content:node.scrollHeight};node.dataset.scrollTop=String(node.scrollTop);node.dataset.desiredScrollTop=String(memory.scrollTop);}}>
-      {!known?<p className="monitor-empty" role="status">Reading session ownership…</p>:!owner?<div className="monitor-empty"><h3>No recorded session</h3><p>This computer has no attached run.</p><div><button onClick={onAttach}>Attach a recorded session</button><button onClick={onProvider}>Choose provider</button></div></div>:<>
+      {!known?<p className="monitor-empty" role="status">Session ownership unchecked. Your draft stays local.</p>:!owner?<div className="monitor-empty"><h3>No recorded session</h3><p>This computer has no attached run.</p><div><button onClick={onAttach}>Attach a recorded session</button><button onClick={onProvider}>Choose provider</button></div></div>:<>
         {read&&<><h3 className="monitor-task-title">{read.job.title}</h3><details className="monitor-record-details"><summary>Run details</summary><p>{local?'Local inspection. No model call.':'Recorded output; provider connectivity is not established by this view.'}</p><p>Recorded usage: {read.run.usage.total_tokens===null?'tokens unknown':`${read.run.usage.total_tokens} tokens`} · {read.run.usage.cost_usd===null?'cost unknown':`$${read.run.usage.cost_usd}`}</p><p>Run {read.run.id} · Worker {read.run.worker_id}</p>{typeof (read.job as RuntimeJob&{source?:{text?:string}}).source?.text==='string'&&<pre>{(read.job as RuntimeJob&{source:{text:string}}).source.text.slice(0,2000)}</pre>}</details></>}
         {loading&&!read&&<p role="status">Reading recorded output…</p>}
         {error&&<p className="monitor-read-error" role="alert">{error}{read?' Showing the last validated read.':''}</p>}

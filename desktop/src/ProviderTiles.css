@@ -11,3 +11,5 @@
 .provider-tile-copy strong { font-size: 12px; font-weight: 500; line-height: 1.2; overflow-wrap: anywhere; }
 .provider-tile-copy small { color: var(--launcher-muted, #a3a3a3); font-size: 10px; line-height: 1.2; }
 @media (max-width:440px) { .provider-tiles { grid-template-columns: repeat(2,minmax(0,1fr)); } .provider-tiles .provider-tile { min-height: 58px; padding: 8px 10px; } }
+
+.provider-tile[data-provider="codex"] img,.provider-tile[data-provider="grok"] img{filter:invert(1)}

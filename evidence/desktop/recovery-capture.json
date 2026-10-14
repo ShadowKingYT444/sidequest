@@ -1,0 +1,13 @@
+{
+  "capturedAt": "2026-10-14T15:15:32.383Z",
+  "scope": "Actual browser captures with genuine recorded local inspection; no coding dispatch",
+  "initial": {
+    "position": "[11.5,8.5,12]",
+    "target": "[1,-0.3,-3.8]"
+  },
+  "focused": {
+    "position": "[-1.6600000858306885,1.018136037382276,-4.033434202999148]",
+    "target": "[-1.6600000858306885,0.968999981880188,-3.2144999446310103]"
+  },
+  "errors": []
+}

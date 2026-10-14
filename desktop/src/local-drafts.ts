@@ -13,6 +13,8 @@ export interface LocalAttachment {
 }
 export interface LocalDraft { text: string; attachments: LocalAttachment[] }
 export interface DraftIssue { code: 'type' | 'size' | 'total' | 'count' | 'duplicate' | 'read' | 'text'; message: string; fileName?: string }
+export interface DraftOperations {pending:Promise<void>;reading:number;issues:DraftIssue[];listeners:Set<()=>void>;selection?:[number,number]}
+export const createDraftOperations=():DraftOperations=>({pending:Promise.resolve(),reading:0,issues:[],listeners:new Set()});
 export interface LocalURLStore { createObjectURL: (blob: Blob) => string; revokeObjectURL: (url: string) => void }
 export interface LocalTransfer {
   files: ArrayLike<File>;
