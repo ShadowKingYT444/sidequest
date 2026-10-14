@@ -11,6 +11,7 @@ from typing import Any
 try:
     from .artifact_capture import deliver_candidate, freeze_candidate
     from .config import ConfigurationError, Settings
+    from .codex_bridge import execute_agent, probe_capabilities
     from .git_ops import (
         AdapterError,
         _repo_root,
@@ -29,6 +30,7 @@ try:
 except ImportError:  # Direct script execution by the adapter host.
     from artifact_capture import deliver_candidate, freeze_candidate
     from config import ConfigurationError, Settings
+    from codex_bridge import execute_agent, probe_capabilities
     from git_ops import AdapterError, _repo_root, inspect_worktree, resolve_commit, validate_repo_path
     from protocol import ProgressLog, diagnostic, error_response, read_request, success_response, write_response
 
@@ -48,7 +50,7 @@ def _progress_log(request: dict[str, Any], settings: Settings) -> ProgressLog:
     return ProgressLog(path, request["request_id"], settings.staging_roots)
 
 
-def dispatch(request: dict[str, Any], settings: Settings) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+def dispatch(request: dict[str, Any], settings: Settings) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any] | None]:
     op = request["op"]
     payload = request["payload"]
     context = request.get("context", {})
@@ -64,7 +66,7 @@ def dispatch(request: dict[str, Any], settings: Settings) -> tuple[dict[str, Any
         if sum(len(path.encode("utf-8")) + 4 for path in paths) > 2 * 1024 * 1024:
             raise AdapterError("POLICY_DENIED", "Repository file listing exceeds the protocol response budget.")
         progress.append("status", "Repository inspection completed.")
-        return {"revision": revision, "clean": clean, "files": paths}, []
+        return {"revision": revision, "clean": clean, "files": paths}, [], None
     if op == "repo.prepare":
         if set(payload) != {"repo_path", "revision"} or not isinstance(payload["repo_path"], str) or not isinstance(payload["revision"], str):
             raise AdapterError("INVALID_INPUT", "repo.prepare requires repo_path and revision.")
@@ -74,22 +76,30 @@ def dispatch(request: dict[str, Any], settings: Settings) -> tuple[dict[str, Any
             from git_ops import prepare_clone
         workspace, revision = prepare_clone(payload["repo_path"], payload["revision"], request["workspace"], settings)
         progress.append("status", "Independent repository clone prepared.")
-        return {"workspace": str(workspace), "revision": revision}, []
+        return {"workspace": str(workspace), "revision": revision}, [], None
     if op == "artifacts.freeze":
         progress.append("status", "Validating candidate scope and Git tree.")
         data, artifacts = freeze_candidate(request, settings)
         progress.append("status", "Immutable candidate artifacts frozen.", data["manifest_artifact_id"])
-        return data, artifacts
+        return data, artifacts, None
     if op == "repo.deliver":
         progress.append("status", "Validating exact host approval and delivery identity.")
         data, artifacts = deliver_candidate(request, settings)
         progress.append("status", "Approved local delivery reconciled.")
-        return data, artifacts
+        return data, artifacts, None
+    if op == "agent.capabilities":
+        if payload != {}:
+            raise AdapterError("INVALID_INPUT", "agent.capabilities requires an empty payload.")
+        return probe_capabilities(settings, progress), [], None
+    if op == "agent.execute":
+        progress.append("status", "Checking host Codex settings and installed model catalog.")
+        data, artifacts, usage = execute_agent(request, settings, progress)
+        return data, artifacts, usage
     raise AdapterError("INVALID_INPUT", "Unsupported B operation.")
 
 
 def _args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Sidequest B adapter: isolated Git inspection and frozen artifacts.")
+    parser = argparse.ArgumentParser(description="Sidequest B adapter: isolated Git, Codex app-server and immutable artifacts.")
     parser.add_argument("--version", action="version", version="Sidequest B adapter v1")
     return parser.parse_args(argv)
 
@@ -100,8 +110,8 @@ def run(argv: list[str] | None = None) -> int:
     try:
         request = read_request()
         settings = Settings.from_env()
-        data, artifacts = dispatch(request, settings)
-        response = success_response(request, data, artifacts)
+        data, artifacts, usage = dispatch(request, settings)
+        response = success_response(request, data, artifacts, usage)
     except AdapterError as exc:
         diagnostic(f"{exc.code}: {exc.message}")
         response = error_response(request.get("request_id") if request else None, exc)

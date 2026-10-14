@@ -26,9 +26,14 @@ except ImportError:  # Direct script execution by the adapter host.
 
 _SECRET_NAME = re.compile(r"(?:^|[._-])(?:credentials?|secrets?|tokens?|passwords?|private[_-]?keys?)(?:$|[._-])", re.IGNORECASE)
 _SECRET_FILE_EXTENSIONS = {".json", ".yaml", ".yml", ".toml", ".ini", ".conf", ".cfg", ".txt", ".env"}
+_CONFIG_ASSIGNMENT_EXTENSIONS = {".cfg", ".conf", ".ini", ".properties", ".toml", ".yaml", ".yml"}
 _SECRET_ASSIGNMENT = re.compile(
     rb"(?im)^\s*(?:export\s+)?[A-Z0-9_]*(?:TOKEN|SECRET|API_KEY|PASSWORD|PRIVATE_KEY|ACCESS_KEY)[A-Z0-9_]*\s*[:=]\s*(['\"])([^'\"\r\n]{12,})\1\s*(?:\#.*)?$"
 )
+_CONFIG_SECRET_ASSIGNMENT = re.compile(
+    rb"(?im)^\s*(?:export\s+)?[A-Z0-9_]*(?:TOKEN|SECRET|API_KEY|PASSWORD|PRIVATE_KEY|ACCESS_KEY|CREDENTIALS?)[A-Z0-9_]*\s*[:=]\s*([^\s#;\"'(),]{12,})\s*(?:[;#].*)?$"
+)
+_CONFIG_SECRET_REFERENCE = re.compile(rb"(?:\$\{?[A-Z_][A-Z0-9_]*\}?|%[A-Z_][A-Z0-9_]*%|\{\{[A-Z0-9_.:-]{1,128}\}\})", re.IGNORECASE)
 _SECRET_JSON = re.compile(
     rb"(?is)[\"'](?:private_key|client_secret|refresh_token|access_token|api_key|api_token|token|secret|password)[\"']\s*:\s*[\"'][^\"']{4,}[\"']"
 )
@@ -227,8 +232,12 @@ def is_sensitive_path(path: str) -> bool:
     return suffix in _SECRET_FILE_EXTENSIONS and bool(_SECRET_NAME.search(stem))
 
 
-def contains_secret(data: bytes) -> bool:
-    return bool(_SECRET_ASSIGNMENT.search(data) or _SECRET_JSON.search(data) or _KNOWN_TOKEN.search(data) or _PRIVATE_KEY.search(data))
+def contains_secret(data: bytes, path: str | None = None) -> bool:
+    if _SECRET_ASSIGNMENT.search(data) or _SECRET_JSON.search(data) or _KNOWN_TOKEN.search(data) or _PRIVATE_KEY.search(data):
+        return True
+    if path is not None and PurePosixPath(path).suffix.lower() in _CONFIG_ASSIGNMENT_EXTENSIONS:
+        return any(not _CONFIG_SECRET_REFERENCE.fullmatch(match.group(1)) for match in _CONFIG_SECRET_ASSIGNMENT.finditer(data))
+    return False
 
 
 def _safe_env(extra: dict[str, str] | None = None) -> dict[str, str]:
@@ -529,7 +538,7 @@ def read_blobs(repo: Path, entries: Iterable[TreeEntry], settings: Settings) -> 
         if body_end >= len(raw) or raw[body_end:body_end + 1] != b"\n":
             raise _error("INVALID_INPUT", "Git returned a malformed object stream.")
         content = raw[cursor:body_end]
-        if contains_secret(content):
+        if contains_secret(content, entry.path):
             raise _error("POLICY_DENIED", "Credential-like content is not allowed in a candidate.")
         output[entry.path] = content
         cursor = body_end + 1
@@ -634,7 +643,7 @@ def walk_files(root: Path, settings: Settings, *, skip_git: bool = True) -> dict
             total += len(data)
             if total > settings.max_total_bytes:
                 raise _error("POLICY_DENIED", "Workspace exceeds the 100 MiB content limit.")
-            if contains_secret(data):
+            if contains_secret(data, relative):
                 raise _error("POLICY_DENIED", "Credential-like content is not allowed in a candidate.")
             mode = "100755" if file_info.st_mode & 0o111 else "100644"
             output[relative] = FileData(mode=mode, data=data)

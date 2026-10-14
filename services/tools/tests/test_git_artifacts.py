@@ -389,6 +389,21 @@ class GitInspectionAndFreezeTests(GitFixture):
         with self.assertRaisesRegex(AdapterError, "Credential-like"):
             self.freeze(workspace)
 
+    def test_unquoted_plaintext_config_credentials_are_blocked_but_references_pass(self) -> None:
+        assignment_name = "API_" + "TOKEN"
+        sample_value = "fixture_plaintext_" + "secret_" + "9a8b7c6d"
+        workspace = self.prepare("unquoted-credential-config")
+        (workspace / "src/settings.conf").write_text(assignment_name + "=" + sample_value + "\n")
+        with self.assertRaisesRegex(AdapterError, "Credential-like"):
+            self.freeze(workspace)
+
+        for index, reference in enumerate(("${HOST_" + assignment_name + "}", "$HOST_" + assignment_name)):
+            workspace = self.prepare(f"config-env-reference-{index}")
+            (workspace / "src/settings.conf").write_text(assignment_name + "=" + reference + "\n")
+            data, artifacts = self.freeze(workspace, paths=["src"])
+            self.assertEqual(data["candidate"]["base_revision"], self.base)
+            self.assertEqual(len(artifacts), 3)
+
         workspace = self.prepare("secret-token-file")
         (workspace / "src/token.json").write_text(synthetic_secret_json("token", "live" + "_example_value"))
         with self.assertRaisesRegex(AdapterError, "Credential-like"):

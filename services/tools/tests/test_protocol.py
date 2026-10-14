@@ -28,6 +28,44 @@ class ProtocolTests(unittest.TestCase):
             self.assertEqual([row["seq"] for row in rows], [1, 2])
             self.assertEqual([row["message"] for row in rows], ["first", "second"])
 
+    def test_session_progress_has_typed_top_level_ids_and_generic_message(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="sidequest-progress-session-") as temp:
+            progress = Path(temp) / "progress.jsonl"
+            log = ProgressLog(progress, "request")
+            log.append(
+                "session",
+                "Codex provider session is available.",
+                session={"provider_thread_id": "thread-fixture", "provider_turn_id": None},
+            )
+            log.append(
+                "session",
+                "Codex provider session is available.",
+                session={"provider_thread_id": "thread-fixture", "provider_turn_id": "turn-fixture"},
+            )
+            rows = [json.loads(line) for line in progress.read_text().splitlines()]
+            self.assertEqual([row["seq"] for row in rows], [1, 2])
+            self.assertEqual(
+                set(rows[0]),
+                {"v", "request_id", "seq", "type", "message", "provider_thread_id", "provider_turn_id"},
+            )
+            self.assertEqual(rows[0]["type"], "session")
+            self.assertEqual(rows[0]["provider_thread_id"], "thread-fixture")
+            self.assertIsNone(rows[0]["provider_turn_id"])
+            self.assertEqual(rows[1]["provider_turn_id"], "turn-fixture")
+            self.assertNotIn("thread-fixture", rows[0]["message"])
+            self.assertNotIn("turn-fixture", rows[1]["message"])
+
+    def test_session_progress_rejects_malformed_or_misplaced_ids(self) -> None:
+        log = ProgressLog(None, "request")
+        with self.assertRaisesRegex(AdapterError, "malformed provider ID"):
+            log.append(
+                "session",
+                "Codex provider session is available.",
+                session={"provider_thread_id": "thread\ninvalid", "provider_turn_id": None},
+            )
+        with self.assertRaisesRegex(AdapterError, "only on session"):
+            log.append("status", "no session IDs here", session={"provider_thread_id": "thread", "provider_turn_id": None})
+
     def test_progress_log_rejects_hardlink_without_appending_to_external_file(self) -> None:
         with tempfile.TemporaryDirectory(prefix="sidequest-progress-") as temp:
             root = Path(temp)

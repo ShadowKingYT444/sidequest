@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import re
 import stat
 import sys
 import time
@@ -117,14 +118,30 @@ def validate_request(request: dict[str, Any]) -> None:
         raise AdapterError("INVALID_INPUT", "context must be an object.")
 
 
-def success_response(request: dict[str, Any], data: dict[str, Any], artifacts: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+def success_response(
+    request: dict[str, Any],
+    data: dict[str, Any],
+    artifacts: list[dict[str, Any]] | None = None,
+    usage: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    reported_usage = usage or {"cost_usd": None, "uncertain": True}
+    # Cost remains unknown unless an independently verified provider measure is
+    # available. Token fields are additive metadata; null means unmeasured.
+    reported_usage = {
+        "input_tokens": reported_usage.get("input_tokens"),
+        "cached_input_tokens": reported_usage.get("cached_input_tokens"),
+        "output_tokens": reported_usage.get("output_tokens"),
+        "total_tokens": reported_usage.get("total_tokens"),
+        "cost_usd": reported_usage.get("cost_usd"),
+        "uncertain": bool(reported_usage.get("uncertain", True)),
+    }
     return {
         "v": 1,
         "request_id": request["request_id"],
         "ok": True,
         "data": data,
         "artifacts": artifacts or [],
-        "usage": {"cost_usd": None, "uncertain": True},
+        "usage": reported_usage,
     }
 
 
@@ -166,17 +183,41 @@ class ProgressLog:
         self.seq = 0
         self._times: list[float] = []
 
-    def append(self, kind: str, message: str, artifact_id: str | None = None) -> None:
+    def append(
+        self,
+        kind: str,
+        message: str,
+        artifact_id: str | None = None,
+        *,
+        session: dict[str, Any] | None = None,
+    ) -> None:
+        if kind == "session":
+            if artifact_id is not None or not isinstance(session, dict) or set(session) != {"provider_thread_id", "provider_turn_id"}:
+                raise AdapterError("INVALID_INPUT", "Session progress requires only provider thread and turn IDs.")
+            thread_id = session["provider_thread_id"]
+            turn_id = session["provider_turn_id"]
+
+            def valid_session_id(value: Any) -> bool:
+                return isinstance(value, str) and bool(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,511}", value))
+
+            if not valid_session_id(thread_id) or (turn_id is not None and not valid_session_id(turn_id)):
+                raise AdapterError("INVALID_INPUT", "Session progress contains a malformed provider ID.")
+            if message != "Codex provider session is available.":
+                raise AdapterError("INVALID_INPUT", "Session progress must use the generic session message.")
+        elif session is not None:
+            raise AdapterError("INVALID_INPUT", "Provider session IDs are allowed only on session progress records.")
         if self.path is None:
             return
         now = time.monotonic()
         self._times = [stamp for stamp in self._times if now - stamp < 1.0]
-        if len(self._times) >= MAX_PROGRESS_PER_SECOND:
+        if kind != "session" and len(self._times) >= MAX_PROGRESS_PER_SECOND:
             return
         safe_message = " ".join(str(message).replace("\x1b", "").split())[:3000]
         record: dict[str, Any] = {"v": 1, "request_id": self.request_id, "seq": self.seq + 1, "type": kind, "message": safe_message}
         if artifact_id is not None:
             record["artifact_id"] = artifact_id
+        if session is not None:
+            record.update(session)
         encoded = json.dumps(record, ensure_ascii=False, separators=(",", ":")).encode("utf-8") + b"\n"
         if len(encoded) > MAX_PROGRESS_RECORD_BYTES:
             return
@@ -275,4 +316,5 @@ class ProgressLog:
                     pass
             os.close(parent_fd)
         self.seq += 1
-        self._times.append(now)
+        if kind != "session":
+            self._times.append(now)

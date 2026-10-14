@@ -1,0 +1,26 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "B1-source-filter-repair",
+  "based_on_reviewed_candidate": "332e74677d5b7f43803acec969df21cfe2fba9a1",
+  "status": "implemented_pending_review",
+  "changes": {
+    "scanner": "Added path-aware unquoted credential assignment detection for configuration formats (.cfg, .conf, .ini, .properties, .toml, .yaml, .yml), applied to committed blobs and working-tree files.",
+    "false_positive_control": "Ordinary Markdown token-budget documentation, source-code environment lookups, and config environment interpolation remain usable.",
+    "existing_guards": "Quoted credential assignments, structured secret JSON, known token prefixes, private-key markers, sensitive paths, and credential-like filenames remain blocked."
+  },
+  "validation": {
+    "targeted_regression": "PASS: a synthetic unquoted plaintext secret assignment in src/settings.conf is rejected; a config interpolation reference is accepted.",
+    "suite_command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+    "suite_result": "PASS: 39 tests.",
+    "compile_command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+    "compile_result": "PASS",
+    "help_command": "python3 -m services.tools.main --help",
+    "help_result": "PASS",
+    "diff_check": "PASS"
+  },
+  "limits": [
+    "This evidence records deterministic temporary-repository tests, not a fresh independent source review.",
+    "No provider/model turn, source delivery, authentication change, or external write occurred."
+  ]
+}

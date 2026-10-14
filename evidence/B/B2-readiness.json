@@ -1,0 +1,64 @@
+{
+  "v": 1,
+  "goal": "B2 Codex app-server adapter readiness",
+  "status": "partial",
+  "implementation": {
+    "operations": ["agent.capabilities", "agent.execute"],
+    "transport": "Codex app-server over private stdio JSON-RPC",
+    "host_defaults": "disabled; execution also requires explicit host consent",
+    "capability_probe": "initialize, model/list, account/read(refreshToken:false), close; no thread or turn",
+    "execution": "catalog/account verification, explicit model and effort, persistent goal and token budget, cancellation interrupt, changed-tree freeze",
+    "repository_codex_config": "project-local .codex configuration is rejected before app-server startup",
+    "output": "bounded progress, complete-message secret scan, hidden reasoning/tool output omitted; cost remains null and uncertain",
+    "session_recovery": "agent.execute writes typed host-only session progress after thread and turn acknowledgements; no session rows are emitted by capabilities"
+  },
+  "deterministic_validation": {
+    "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+    "result": "PASS",
+    "tests": 39,
+    "compile_command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+    "compile_result": "PASS",
+    "help_command": "python3 -m services.tools.main --help",
+    "help_result": "PASS",
+    "fake_transport_only": true,
+    "covered": [
+      "catalog/model/effort gates",
+      "read-only capability response shape and no-thread/no-turn behavior",
+      "provider errors and malformed/truncated JSON-RPC",
+      "host cancellation, token ceiling and timeout interrupt",
+      "host-owned resume identity and persistent goal",
+      "typed thread-only and turn session progress; API-key account mode blocked before thread start",
+      "argv/environment isolation and disabled/consent gates",
+      "secret, ANSI, hidden-reasoning and tool-output filtering",
+      "candidate Codex project config rejection",
+      "frozen candidate creation in a disposable Git fixture"
+    ]
+  },
+  "live_readiness": {
+    "codex_version": "0.159.0-alpha.3",
+    "app_server_help": "available",
+    "local_json_schema_generation": "passed",
+    "attempt": "stdio initialize only, with sqlite_home and log_dir under /tmp; host HOME/CODEX_HOME and existing auth were left unchanged",
+    "outcome": "blocked before an initialize JSON-RPC response",
+    "sanitized_diagnostic": "Read-only file system (os error 30)",
+    "bounded_file_trace": {
+      "method": "unprivileged strace file-operation paths only; no file contents traced",
+      "failures": [
+        "chmod(<CODEX_HOME>/tmp/arg0, 0700): EROFS",
+        "openat(..., uid_map, O_RDWR): EROFS",
+        "open(<CODEX_HOME>/installation_id, O_RDWR|O_CREAT): EROFS"
+      ]
+    },
+    "model_list_completed": false,
+    "account_read_completed": false,
+    "configured_model_effort_verified": false,
+    "thread_or_turn_started": false,
+    "turn_authorization": "not granted"
+  },
+  "remaining_limits": [
+    "No live model catalog or authenticated account read was completed; gpt-6-luna/max are not verified.",
+    "No real Codex turn was authorized or run. Fake transport results are tests only.",
+    "max_cost_usd is required and positive-validated but not used as a spend limiter. The app-server exposes no independently verified USD cost; responses report cost_usd:null and uncertain:true. Time and token ceilings are enforced, but the USD ceiling is not.",
+    "Codex workspace-write is not an OS/container security boundary; execution remains for explicitly trusted repositories."
+  ]
+}
