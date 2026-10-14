@@ -119,10 +119,23 @@ for raw in sys.stdin:
     elif method == "thread/settings/update":
         response(request, {{}})
     elif method == "thread/read":
-        response(request, {{"thread": {{"id": params.get("threadId"), "model": MODEL, "reasoningEffort": EFFORT}}}})
+        thread = {{"id": params.get("threadId"), "model": MODEL, "reasoningEffort": EFFORT}}
+        if params.get("includeTurns"):
+            prior_id = "other-turn" if MODE == "followup_anchor_changed" else "prior-turn"
+            prior_status = "inProgress" if MODE == "followup_active" else "completed"
+            thread["turns"] = [{{"id": prior_id, "status": prior_status}}]
+        response(request, {{"thread": thread}})
     elif method == "thread/goal/get":
-        response(request, {{"goal": {{"threadId": params.get("threadId"), "objective": "fixture objective", "status": "active", "tokenBudget": 30000}}}})
+        goal = {{"threadId": params.get("threadId"), "objective": "fixture objective", "status": "active", "tokenBudget": 30000}}
+        if MODE.startswith("followup"):
+            goal["status"] = "complete"
+            if MODE == "followup_unknown_status": goal["status"] = "unknown"
+            if MODE != "followup_unknown_usage":
+                goal["tokensUsed"] = 30000 if MODE == "followup_budget" else 15
+        response(request, {{"goal": goal}})
     elif method == "thread/goal/set":
+        if MODE.startswith("followup"):
+            params["tokensUsed"] = 0 if MODE == "followup_goal_reset" else 15
         response(request, {{"goal": params}})
     elif method == "turn/start":
         workspace = pathlib.Path(params["cwd"])
@@ -144,7 +157,7 @@ for raw in sys.stdin:
             total = 40 if MODE == "token_budget" else 15
             usage = {{"inputTokens": 10, "cachedInputTokens": 1, "outputTokens": 5, "reasoningOutputTokens": 0, "totalTokens": total}}
             emit({{"jsonrpc": "2.0", "method": "thread/tokenUsage/updated", "params": {{"threadId": params.get("threadId"), "turnId": "fixture-turn", "tokenUsage": {{"last": usage, "total": usage}}}}}})
-            if MODE in ("success", "token_budget", "resume", "native_marker_free"):
+            if MODE in ("success", "token_budget", "resume", "native_marker_free") or MODE.startswith("followup"):
                 emit({{"jsonrpc": "2.0", "method": "turn/completed", "params": {{"threadId": params.get("threadId"), "turn": {{"id": "fixture-turn", "status": "completed"}}}}}})
     elif method == "turn/interrupt":
         response(request, {{}})

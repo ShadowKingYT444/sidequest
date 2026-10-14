@@ -1,0 +1,34 @@
+{
+  "baseline": "1a5d1be12314b0e314740cec7a9083e1ae470387",
+  "verification_kind": "protocol-fake-only",
+  "live_provider_turns": 0,
+  "production_usd_guard_changed": false,
+  "full_tools": {
+    "tests": 53,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 11.758
+  },
+  "transport_tests": {
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 3.367
+  },
+  "source_sha256": {
+    "services/tools/provider_inputs.py": "2e777137bdf9318893a269c3d2d836d3f75094ea2bece4b80df7c6be221784c5",
+    "services/tools/codex_bridge.py": "7604a748ba4db904e785cb399343ecba729225b9f02c45ff0d5c019c7edad7de",
+    "services/tools/main.py": "e2d5e2ef6ff6d6083fd11ca33f14640a1342e7a9d4f05a76e8fbb16188bd25ce",
+    "services/tools/tests/test_provider_transport.py": "489e95607b767a4ec535f792d0d2ff9afea5316c2d282fde96c4282e784e520a",
+    "services/tools/tests/test_codex_bridge.py": "19e7a2543e1b29d1f6fdde675a6bd1fd811b33dcb743cb32279b43fc9d4134b9"
+  },
+  "log_sha256": {
+    "baseline.log": "871001d31c5071ee6c161df8e401c1a204f13730bc7ca6371a9e9350e1a43160",
+    "red.log": "196afa5f50702c473f1c21baeecb1914b8e2a46a766600f7b2af5ec99fbf49c8",
+    "red-confirmed-contract.log": "e771ed354eeb65da3a6f6f059ebf1c1b8b2c1d82e8d87275aafc935616edbbac",
+    "green.log": "14f5c25d5b3ce294374751f27a3ba8e5b88c770ca72886b3709ca636457f8f55",
+    "red-hardening.log": "0a8a81379204fdfbd170447a0149c60ff262d7e366962cfe79761d5be307f2ca",
+    "green-hardened.log": "0bac3cd24cd6acc0aa99615d89b39eb57ab5017d5a4096f4dc7730f3ddfb3425",
+    "full-tools.log": "51b236671d2e10baaf127a0e2aef947f09ec72ff6e4ff4c85bb88c1166b74269"
+  }
+}

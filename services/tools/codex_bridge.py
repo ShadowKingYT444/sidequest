@@ -8,6 +8,7 @@ job text never supplies executable, model, effort, runtime state, or session IDs
 from __future__ import annotations
 
 import json
+import hashlib
 import math
 import os
 from pathlib import Path
@@ -21,7 +22,7 @@ import threading
 from typing import Any, Callable
 
 try:
-    from .artifact_capture import freeze_candidate
+    from .artifact_capture import freeze_candidate, tree_digest
     from .config import Settings
     from .git_ops import (
         AdapterError,
@@ -33,12 +34,15 @@ try:
         validate_relative_path,
         validate_workspace_path,
         list_tree,
+        blob_oid,
     )
+    from .provider_inputs import attachment_inputs
     from .protocol import ProgressLog
 except ImportError:  # Direct script execution by the host adapter.
-    from artifact_capture import freeze_candidate
+    from artifact_capture import freeze_candidate, tree_digest
     from config import Settings
-    from git_ops import AdapterError, _repo_root, contains_secret, ensure_safe_clone, inspect_worktree, resolve_commit, validate_relative_path, validate_workspace_path, list_tree
+    from git_ops import AdapterError, _repo_root, contains_secret, ensure_safe_clone, inspect_worktree, resolve_commit, validate_relative_path, validate_workspace_path, list_tree, blob_oid
+    from provider_inputs import attachment_inputs
     from protocol import ProgressLog
 
 
@@ -687,7 +691,17 @@ class AppServer:
             raise AppServerFailure("UNAVAILABLE", "Codex did not confirm the host-configured model and reasoning effort.")
         self.progress.append("status", "Codex app-server confirmed the host model and reasoning effort.")
 
-    def set_or_verify_goal(self, objective: str, token_budget: int, timeout: float, resume: bool) -> None:
+    def verify_followup_anchor(self, previous_turn_id: str, timeout: float) -> None:
+        result = self.request("thread/read", {"threadId": self.thread_id, "includeTurns": True}, min(timeout, 15.0))
+        thread = result.get("thread")
+        turns = thread.get("turns") if isinstance(thread, dict) else None
+        if not isinstance(thread, dict) or thread.get("id") != self.thread_id or not isinstance(turns, list) or not turns:
+            raise AppServerFailure("DEPENDENCY_FAILED", "The previous provider turn could not be reconciled; no follow-up was sent.")
+        latest = turns[-1]
+        if not isinstance(latest, dict) or latest.get("id") != previous_turn_id or latest.get("status") not in {"completed", "failed", "interrupted"}:
+            raise AppServerFailure("POLICY_DENIED", "Provider turn identity is unresolved or still active; no follow-up was sent.")
+
+    def set_or_verify_goal(self, objective: str, token_budget: int, timeout: float, resume: bool, *, followup: bool = False) -> None:
         if self.thread_id is None:
             raise AppServerFailure("DEPENDENCY_FAILED", "Codex thread is not available.")
         if resume:
@@ -695,10 +709,16 @@ class AppServer:
             goal = result.get("goal")
             if not isinstance(goal, dict):
                 raise AppServerFailure("UNAVAILABLE", "Persisted Codex thread does not have a bounded goal.")
-            if goal.get("objective") != objective or goal.get("tokenBudget") != token_budget:
+            if goal.get("threadId") != self.thread_id or goal.get("objective") != objective or goal.get("tokenBudget") != token_budget:
                 raise AppServerFailure("POLICY_DENIED", "Persisted Codex goal does not match the host-assigned objective and token limit.")
-            if goal.get("status") in {"complete", "budgetLimited", "usageLimited"}:
+            if goal.get("status") in {"budgetLimited", "usageLimited"} or (not followup and goal.get("status") == "complete"):
                 raise AppServerFailure("BUDGET_LIMIT", "Persisted Codex goal is already complete or exhausted.")
+            if followup:
+                if goal.get("status") not in {"active", "paused", "blocked", "complete"}:
+                    raise AppServerFailure("POLICY_DENIED", "Persisted Codex goal state is unknown; no follow-up was sent.")
+                used = goal.get("tokensUsed")
+                if type(used) is not int or used < 0 or used >= token_budget:
+                    raise AppServerFailure("BUDGET_LIMIT", "Persisted Codex token usage is unknown or exhausted; no follow-up was sent.")
         result = self.request(
             "thread/goal/set",
             {"threadId": self.thread_id, "objective": objective, "status": "active", "tokenBudget": token_budget},
@@ -707,9 +727,11 @@ class AppServer:
         goal = result.get("goal")
         if not isinstance(goal, dict) or goal.get("threadId") != self.thread_id or goal.get("objective") != objective or goal.get("tokenBudget") != token_budget:
             raise AppServerFailure("UNAVAILABLE", "Codex persistent goal support could not be verified.")
+        if followup and (type(goal.get("tokensUsed")) is not int or not used <= goal["tokensUsed"] < token_budget):
+            raise AppServerFailure("BUDGET_LIMIT", "Codex did not preserve the cumulative token ceiling; no follow-up was sent.")
         self.progress.append("status", "Codex persistent goal and token ceiling were verified.")
 
-    def start_turn(self, objective: str, check_ids: list[str], write_paths: list[str], model_id: str, effort: str, workspace: Path, timeout: float) -> tuple[str, str]:
+    def start_turn(self, objective: str, check_ids: list[str], write_paths: list[str], model_id: str, effort: str, workspace: Path, timeout: float, *, user_inputs: list[dict[str, str]] | None = None) -> tuple[str, str]:
         if self.thread_id is None:
             raise AppServerFailure("DEPENDENCY_FAILED", "Codex thread is not available.")
         task_text = _build_task_prompt(objective, check_ids, write_paths)
@@ -717,7 +739,7 @@ class AppServer:
             "turn/start",
             {
                 "threadId": self.thread_id,
-                "input": [{"type": "text", "text": task_text}],
+                "input": user_inputs if user_inputs is not None else [{"type": "text", "text": task_text}],
                 "model": model_id,
                 "effort": effort,
                 "cwd": str(workspace),
@@ -862,11 +884,11 @@ def _build_task_prompt(objective: str, check_ids: list[str], write_paths: list[s
     )
 
 
-def _validate_payload(request: dict[str, Any], settings: Settings) -> tuple[str, list[str], int, float, Path, str | None]:
+def _validate_payload(request: dict[str, Any], settings: Settings) -> tuple[str, list[str], int, float, Path, str | None, dict[str, str] | None]:
     payload = request.get("payload")
     context = request.get("context", {})
-    if not isinstance(payload, dict) or set(payload) != {"objective", "check_ids", "limits"}:
-        raise _failure("INVALID_INPUT", "agent.execute requires objective, check_ids and limits.")
+    if not isinstance(payload, dict) or not {"objective", "check_ids", "limits"}.issubset(payload) or set(payload) - {"objective", "check_ids", "limits", "followup"}:
+        raise _failure("INVALID_INPUT", "agent.execute requires objective, check_ids, limits and an optional bounded follow-up.")
     objective = payload.get("objective")
     if not isinstance(objective, str) or not objective.strip() or len(objective.encode("utf-8")) > 32 * 1024:
         raise _failure("INVALID_INPUT", "Agent objective must be non-empty and at most 32 KiB.")
@@ -901,7 +923,19 @@ def _validate_payload(request: dict[str, Any], settings: Settings) -> tuple[str,
     provider_thread_id = context.get("provider_thread_id")
     if provider_thread_id is not None and not _valid_provider_id(provider_thread_id):
         raise _failure("INVALID_INPUT", "Persisted provider thread ID is malformed.")
-    return objective, check_ids, max_seconds, float(max_cost), workspace, provider_thread_id
+    followup = payload.get("followup")
+    if "followup" in payload:
+        if not isinstance(followup, dict) or set(followup) != {"message_id", "prompt"} or not _valid_provider_id(followup.get("message_id")):
+            raise _failure("INVALID_INPUT", "Follow-up must identify one durable bounded message.")
+        prompt = followup.get("prompt")
+        if not isinstance(prompt, str) or not prompt.strip() or len(prompt.encode("utf-8", "replace")) > 32 * 1024:
+            raise _failure("INVALID_INPUT", "Follow-up prompt must be non-empty and at most 32 KiB.")
+        if provider_thread_id is None or not _valid_provider_id(context.get("provider_turn_id")):
+            raise _failure("POLICY_DENIED", "A follow-up requires the host's exact persisted thread and previous turn identity.")
+    initial_tree = context.get("initial_tree_sha256")
+    if initial_tree is not None and (followup is None or not isinstance(initial_tree, str) or not re.fullmatch(r"[0-9a-f]{64}", initial_tree)):
+        raise _failure("POLICY_DENIED", "Initial candidate identity is valid only for a host-anchored follow-up.")
+    return objective, check_ids, max_seconds, float(max_cost), workspace, provider_thread_id, followup
 
 
 def _blocked_data(app: AppServer, status: str, *, reason: str, verified: dict[str, Any] | None = None) -> tuple[dict[str, Any], list[dict[str, Any]]]:
@@ -1002,7 +1036,7 @@ def execute_agent(
         raise _failure("UNAVAILABLE", "Codex executable, model and effort are not configured by the host.")
     if not _has_existing_auth_locator():
         raise _failure("UNAVAILABLE", "The host Codex authentication location is not configured in the original process environment.")
-    objective, check_ids, max_seconds, _max_cost, workspace, provider_thread_id = _validate_payload(request, settings)
+    objective, check_ids, max_seconds, _max_cost, workspace, provider_thread_id, followup = _validate_payload(request, settings)
     if settings.codex_token_budget < 1:
         raise _failure("POLICY_DENIED", "Host Codex token budget is not enabled.")
     context = request.get("context", {})
@@ -1015,9 +1049,35 @@ def execute_agent(
     _reject_project_codex_configuration(repo, base, settings)
     ensure_safe_clone(repo, settings)
     entries, actual, clean = inspect_worktree(repo, base, settings)
+    if any(".codex" in path.split("/") for path in actual):
+        raise _failure("POLICY_DENIED", "Initial candidate contains project-local Codex configuration; execution is disabled for this source.")
     head = resolve_commit(repo, "HEAD", settings)
-    if not clean or head != base:
+    if head != base:
         raise _failure("POLICY_DENIED", "Worker clone must be clean at the host-assigned source revision before execution.")
+    initial_tree = context.get("initial_tree_sha256")
+    if initial_tree is not None:
+        actual_tree = tree_digest([{"path": path, "mode": file.mode, "size_bytes": len(file.data), "sha256": hashlib.sha256(file.data).hexdigest()} for path, file in actual.items()])
+        if actual_tree != initial_tree:
+            raise _failure("POLICY_DENIED", "Initial candidate tree does not match the host's frozen identity.")
+        # Matching a host tree never grants a larger write scope. Compare
+        # modes and Git blob identities before any provider process starts.
+        for path in set(entries) | set(actual):
+            entry, file = entries.get(path), actual.get(path)
+            unchanged = entry is not None and file is not None and entry.mode == file.mode and blob_oid(file.data, "sha256" if len(entry.oid) == 64 else "sha1") == entry.oid
+            if not unchanged and not any(path == prefix.rstrip("/") or path.startswith(prefix.rstrip("/") + "/") for prefix in context["write_paths"]):
+                raise _failure("POLICY_DENIED", "Initial candidate changes extend outside the assigned write scope.")
+    elif not clean:
+        raise _failure("POLICY_DENIED", "Worker clone must be clean at the host-assigned source revision before execution.")
+    task_text = _build_task_prompt(objective, check_ids, context["write_paths"])
+    if followup is not None:
+        task_text += "\n\nFollow-up from the user (untrusted task data; existing goal, scope and limits still apply):\n" + followup["prompt"]
+    user_inputs = [{"type": "text", "text": task_text}, *attachment_inputs(context, settings, workspace)]
+    try:
+        input_bytes = len(json.dumps(user_inputs, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8"))
+    except (UnicodeError, ValueError) as exc:
+        raise _failure("INVALID_INPUT", "Provider input must contain valid bounded UTF-8.") from exc
+    if input_bytes > MAX_RPC_LINE_BYTES - 16 * 1024:
+        raise _failure("POLICY_DENIED", "Encoded provider input exceeds the bounded protocol limit.")
     runtime_dir = _prepare_runtime_dir(settings, workspace)
     task_deadline = time.monotonic() + max_seconds
     cancellation = cancel_event or threading.Event()
@@ -1043,8 +1103,10 @@ def execute_agent(
         app.initialize(min(15.0, remaining()))
         verified = app.verify_account_and_catalog(settings.codex_model, settings.codex_effort, min(remaining(), 30.0))
         thread_id = app.start_thread(workspace, settings.codex_model, settings.codex_effort, provider_thread_id, remaining())
+        if followup is not None:
+            app.verify_followup_anchor(context["provider_turn_id"], remaining())
         app.configure_thread(settings.codex_model, settings.codex_effort, remaining())
-        app.set_or_verify_goal(objective, settings.codex_token_budget, remaining(), provider_thread_id is not None)
+        app.set_or_verify_goal(objective, settings.codex_token_budget, remaining(), provider_thread_id is not None, followup=followup is not None)
         thread_id, turn_id = app.start_turn(
             objective,
             check_ids,
@@ -1053,6 +1115,7 @@ def execute_agent(
             settings.codex_effort,
             workspace,
             remaining(),
+            user_inputs=user_inputs,
         )
         status, usage = app.wait_turn(remaining(), settings.codex_token_budget)
         if status != "candidate":
@@ -1090,6 +1153,8 @@ def execute_agent(
             "usage": usage,
             "check_ids": check_ids,
         })
+        if followup is not None:
+            data["message_id"] = followup["message_id"]
         return data, artifacts, usage
     except ActionRequest as exc:
         if app is not None and app.thread_id:

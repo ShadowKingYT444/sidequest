@@ -11,7 +11,7 @@ from typing import Any
 try:
     from .artifact_capture import deliver_candidate, freeze_candidate
     from .config import ConfigurationError, Settings
-    from .codex_bridge import probe_capabilities
+    from .codex_bridge import execute_agent, probe_capabilities
     from .git_ops import (
         AdapterError,
         _repo_root,
@@ -30,7 +30,7 @@ try:
 except ImportError:  # Direct script execution by the adapter host.
     from artifact_capture import deliver_candidate, freeze_candidate
     from config import ConfigurationError, Settings
-    from codex_bridge import probe_capabilities
+    from codex_bridge import execute_agent, probe_capabilities
     from git_ops import AdapterError, _repo_root, inspect_worktree, resolve_commit, validate_repo_path
     from protocol import ProgressLog, diagnostic, error_response, read_request, success_response, write_response
 
@@ -92,7 +92,9 @@ def dispatch(request: dict[str, Any], settings: Settings) -> tuple[dict[str, Any
             raise AdapterError("INVALID_INPUT", "agent.capabilities requires an empty payload.")
         return probe_capabilities(settings, progress), [], None
     if op == "agent.execute":
-        raise AdapterError("POLICY_DENIED", "Codex execution is disabled because the app-server cannot enforce a verified USD spend ceiling.")
+        # The adapter's unchanged production guard rejects unknown USD
+        # enforcement before creating a provider process or session.
+        return execute_agent(request, settings, progress)
     raise AdapterError("INVALID_INPUT", "Unsupported B operation.")
 
 
