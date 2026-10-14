@@ -1,0 +1,72 @@
+{
+  "candidate_sha": "d9e415ceba2b8e9378caa90eb3af4f50f7fcf481",
+  "base_candidate_sha": "23f26d614e69117456033ffd48d5e4d700ce05cc",
+  "reviewed_at": "2026-10-14",
+  "review_type": "narrow native smoke assertion repair review",
+  "review_tree": "/workspace/sidequest-reviews/C-smoke-repair",
+  "scope_verdict": "PASS",
+  "summary": "The smoke script now expects the current three-key preload bridge and checks the exact fixed runtime method list. A VM probe of the actual preload source matched both expected lists, and node --check passed. The C-DESKTOP-001 stale assertion is resolved at this candidate. Native Electron startup and OS sandbox validation remain BLOCKED by the documented host limitation.",
+  "diff_scope": {
+    "changed_files": [
+      "desktop/scripts/electron-smoke.mjs",
+      "desktop/tests/browser/jobs-live.spec.ts"
+    ],
+    "production_change": "Only the native smoke boundary expectations and captured runtime-key evidence changed in production tooling; no preload or bridge capability changed.",
+    "browser_test_change": "The inspection browser test now records the completed job and its registered project, checks zero spend, and checks artifact visibility, responsive overflow, screenshots, and accessibility at 960px and 390px."
+  },
+  "checks": [
+    {
+      "command": "node --check desktop/scripts/electron-smoke.mjs",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check 23f26d614e69117456033ffd48d5e4d700ce05cc..d9e415c",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "command": "Execute preload.cjs in a VM with a stub Electron bridge and compare its exposed keys with electron-smoke.mjs expectations",
+      "result": "PASS",
+      "bridge_keys": [
+        "diff",
+        "runtime",
+        "snapshot"
+      ],
+      "runtime_keys": [
+        "artifact",
+        "artifacts",
+        "capabilities",
+        "diff",
+        "files",
+        "job",
+        "register",
+        "run",
+        "snapshot",
+        "stop",
+        "submitInspection",
+        "text"
+      ],
+      "bridge_matches": true,
+      "runtime_matches": true
+    }
+  ],
+  "resolved_finding": {
+    "id": "C-DESKTOP-001",
+    "status": "RESOLVED at d9e415ceba2b8e9378caa90eb3af4f50f7fcf481",
+    "evidence": "The smoke assertion expects sorted bridge keys diff,runtime,snapshot and sorted runtime keys snapshot,capabilities,job,artifact,artifacts,files,text,diff,register,submitInspection,run,stop. The VM probe confirmed these exactly match the actual preload.cjs exports."
+  },
+  "native_gate": {
+    "status": "BLOCKED",
+    "evidence": "desktop/README.md records that the VM's chrome-sandbox is not root-owned mode 4755 and unprivileged namespaces do not provide a usable alternative. This reviewer did not launch Electron or bypass the OS sandbox. The script correction is statically and syntactically verified, but native startup and IPC remain unverified."
+  },
+  "review_limits": [
+    "No Electron, browser, Vite, runtime service, or job process was started.",
+    "The updated browser assertions were inspected but not executed in this narrow follow-up.",
+    "No second full npm test, typecheck, or production build was run; the follow-up only changes the smoke assertion and browser test evidence."
+  ],
+  "tree_state": {
+    "head": "d9e415ceba2b8e9378caa90eb3af4f50f7fcf481",
+    "source_diff": "clean before writing this evidence file"
+  }
+}

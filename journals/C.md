@@ -17,3 +17,11 @@ Connected the fixed host runtime bridge and Jobs board to actual project registr
 Validation: 26 desktop component/security tests, six browser viewer tests, typecheck and build passed. The genuine inspection browser test passed before the final readiness/reflow additions; final integrated rerun follows the frozen repairs. Fixed Monaco's actual vendored DOMPurify import to patched 3.4.17; production audit reports zero advisories. Exact-commit A3/B2 reviews are separate; fake lifecycle tests do not establish native agent readiness.
 
 Remaining: actual art transfer still fails proxy403 before URL evaluation; native Electron lacks a usable preserved sandbox; native Codex fails protected read-only state before initialize, and USD ceiling support is unavailable. No live coding turn, capture, delivery, merge or deployment. Next: final browser captures, precise provenance/run instructions and updated draft PR.
+
+## 2026-10-14 — final browser acceptance
+
+All seven browser tests passed against backend repairs and clean genuine Sidequest commit 23f26d6. The strengthened inspection test separately passed with visible reports and zero accessibility violations at 960/390px, actual registered-project/job/run/candidate provenance, zero inference calls and zero spent USD. Screenshots are real browser captures. The D1 standalone bad/red and known-good/green controls passed as expected. Runtime/tools/check/dev suites passed 39/41/13/31 tests; desktop passed 26 with typecheck/build.
+
+Fresh A3/B2 repair reviews passed their deterministic scope while retaining native BLOCKED. C review found the native smoke script's stale API assertion; d9e415c corrected the expected narrow bridge and received a separate passing review. That does not prove native startup. Original failures and reviews are preserved.
+
+Final evidence now identifies exact source and screenshot hashes, genuine local job identity and patched production sanitizer. README and RUN_EVALS include reproducible commands and the inspection-versus-agent distinction. Art transfer, preserved native Electron sandbox, native Codex state and enforceable USD budget remain blockers. No model demo, account change, source delivery, merge or deployment. Next: publish the reviewed branch and update draft PR1; complete the blocked live gates only when their prerequisites are available.

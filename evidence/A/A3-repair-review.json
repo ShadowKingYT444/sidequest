@@ -1,0 +1,71 @@
+{
+  "v": 1,
+  "candidate_sha": "f9476f9b81e320549629b9b5b84a5e9e459a14a3",
+  "verdict": "BLOCKED",
+  "deterministic_scoped_verdict": "PASS",
+  "native_live_status": "BLOCKED",
+  "review_scope": "Independent review of the repaired A3 Codex runtime lifecycle gates at the exact candidate commit. Checked USD ceiling readiness, malformed/stale readiness, zero-dispatch status reads, private host session identity, cancellation, and explicit same-session resume using deterministic fake adapters and fake app-server transport. This does not accept the full A3 workshop, watcher, or system-level stop/resume scope.",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "39 tests passed, 0 failed. Includes cached readiness refresh, missing/false USD signal denial, timezone-less readiness handling, private session progress, restart ambiguity and same-attempt resume, pause cancellation, HTTPX API, and fake subprocess lifecycle checks."
+    },
+    {
+      "command": "python3 -m unittest discover -s services/tools/tests -p 'test_codex_bridge.py' -v",
+      "exit_code": 0,
+      "result": "17 fake app-server bridge tests passed, 0 failed. The suite verified capability reads without a turn, refusal of unknown USD cost before app-server startup, cancellation interruption, and host-owned thread resume. No native Codex process was launched."
+    },
+    {
+      "command": "Disposable inline Python probe using HTTPX ASGITransport and temporary RuntimeStore data",
+      "exit_code": 0,
+      "result": "Four job.run cases (USD capability absent, USD capability false, naive refreshed_at, and expired refreshed_at) each returned HTTP 403 with zero scheduler enqueues and zero provider adapter calls. Six authenticated GETs (capabilities, snapshot, job, run, run events, and watchers) returned HTTP 200 with zero adapter/enqueue calls; stored fake thread and turn IDs were absent from public responses."
+    },
+    {
+      "command": "git rev-parse HEAD",
+      "exit_code": 0,
+      "result": "f9476f9b81e320549629b9b5b84a5e9e459a14a3"
+    }
+  ],
+  "focused_probes": [
+    {
+      "case": "Capability omits usd_cost_enforced",
+      "result": "HTTP 403 from job.run; no enqueue or provider adapter call."
+    },
+    {
+      "case": "Capability sets usd_cost_enforced=false",
+      "result": "HTTP 403 from job.run; no enqueue or provider adapter call."
+    },
+    {
+      "case": "Readiness has a timezone-less refreshed_at value",
+      "result": "Capabilities and job dispatch handled the record as stale; job.run returned HTTP 403 with no enqueue or provider adapter call. No HTTP 500."
+    },
+    {
+      "case": "Readiness is more than ten minutes old",
+      "result": "job.run returned HTTP 403 with no enqueue or provider adapter call."
+    },
+    {
+      "case": "Status GETs with valid synthetic test readiness and private persisted session IDs",
+      "result": "All six GETs returned HTTP 200, issued zero provider adapter calls, and exposed neither the thread ID nor turn ID in response bodies."
+    },
+    {
+      "case": "Pause cancellation and explicit resume",
+      "result": "Runtime tests passed: cancellation leaves one ambiguous attempt with unknown usage and a held uncertain reservation; explicit resume reuses that attempt, reservation, and persisted thread ID. Fake B transport tests confirmed host cancellation sends turn/interrupt and a later host-owned resume sends thread/resume with the persisted ID."
+    }
+  ],
+  "verified": [
+    "Readiness is fresh only when its timestamp is timezone-aware and within the ten-minute TTL, its configuration fingerprint matches, and model, effort, account, and usd_cost_enforced=true are verified. Naive or expired records fail closed.",
+    "Both absent and false USD ceiling signals prevent coding job enqueue. A positive reservation remains a reservation and is not represented as provider-enforced USD spend control.",
+    "Ordinary status reads do not call the provider. The independent probe covered capabilities, snapshot, job, run, run events, and watcher status.",
+    "Provider thread and turn identity remains in host-side attempt state. Public API responses contained no probed session IDs, and resume accepts a job ID while the scheduler supplies the stored thread ID to B.",
+    "Cancellation preserves ambiguity and uncertain usage without an automatic replacement attempt. Explicit resume requires current readiness, source identity, saved thread identity, and the existing uncertain reservation; it reuses the prior attempt.",
+    "The `usd_cost_enforced=true` value used by the runtime's fake lifecycle fixture is explicitly synthetic and test-only. B's native capability path reports false, and public execution rejects unknown USD cost before starting the app-server."
+  ],
+  "findings": [],
+  "limits": [
+    "Native Codex readiness remains blocked before initialize by the already observed EROFS on protected CODEX_HOME operations. This review did not retry native initialization, as instructed; no native catalog/account verification or provider turn occurred.",
+    "No native provider USD ceiling enforcement was verified or claimed. The reservation is not a hard provider spend cap, and current native B capability reports usd_cost_enforced=false.",
+    "The deterministic lifecycle scope passes, but live native readiness remains blocked. Workshop activation, watcher cursor/coalescing behavior, and broader system-level stop/resume were outside this review scope and are not accepted by this verdict."
+  ],
+  "fixture_live_distinction": "All execution was limited to temporary databases, temporary repositories, HTTPX ASGI transport, fake runtime adapters, and fake app-server transport. No live provider readiness call, model turn, external delivery, authentication or home change, or native Codex initialization was performed. The only repository change from this review is this evidence file."
+}

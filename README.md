@@ -2,15 +2,15 @@
 
 Start the current Electron + React + TypeScript client with [desktop/README.md](desktop/README.md). It replaces the Unity presentation decision and provides a read-only local Git diff viewer with lazy Monaco, expandable reading and Escape/state restoration. The office loader expects the owner’s actual GLB and explicit monitor bindings; no replacement art is generated.
 
-The Python runtime, scheduling, persistence and Codex integration remain specified, not implemented. Desktop agent state says unavailable. Browser preview evidence does not certify Electron or actual office compatibility. Current blockers and exact verification are recorded in [evidence/desktop/README.md](evidence/desktop/README.md).
+The specified Python/SQLite runtime, scheduling, policy, authenticated artifact API, isolated Git pipeline and trusted checks are implemented. The jobs board completed a genuine local inspection through the browser, runtime and adapters with zero model calls and no source delivery. The Codex app-server adapter and persisted session lifecycle are implemented and tested with a fake transport; native coding execution remains blocked. Browser evidence does not certify Electron or actual office compatibility. See [run/eval instructions](docs/RUN_EVALS.md), [acceptance limits](docs/MVP_ACCEPTANCE.md) and [screenshots/provenance](evidence/desktop/README.md).
 
-The original launch-kit instructions below are retained for context. Its unchanged Unity C lane is not the current frontend build path; do not start the legacy model controller to run this viewer.
+The development-controller instructions below are retained for operator context. The machine plan now points C at Electron; the current MVP was built through explicitly coordinated lanes rather than that controller. Do not start model workers to launch the viewer or local evaluations.
 
 # Sidequest
 
-A calm Unity office for real agent swarms. Inspect artifacts and diffs directly on the main worker's computer. Use existing coding agents; do not build another agent framework.
+A calm office for real agent swarms, with Electron presentation. Inspect artifacts and diffs directly on a selected computer. Use existing coding agents; do not build another agent framework.
 
-**Current state:** implementation specification and development tooling. The owner has completed the office assets; they are protected inputs. The inspected repository does not yet contain the Unity asset project. Do not regenerate the office.
+The owner's completed Blender/GLB office assets are protected inputs. Their archive has been located but the VM transfer is blocked; the checkout contains no actual office art. Do not regenerate the office. Native Electron and Codex readiness are also blocked as recorded in the acceptance evidence.
 
 Start at [START HERE](docs/START_HERE.md). Read [SPEC](SPEC.md) for scope or [ARCHITECTURE](docs/ARCHITECTURE.md) for the fixed stack. Workers read only their assigned goal and its relevant documents, not the entire research archive.
 
@@ -18,7 +18,7 @@ Start at [START HERE](docs/START_HERE.md). Read [SPEC](SPEC.md) for scope or [AR
 |---|---|
 | A | Local runtime, database, scheduler, artifact HTTP service |
 | B | Coding-provider adapter, isolated Git, file/diff capture, local monitoring |
-| C | Existing Unity assets, computer UI, office interaction and build |
+| C | Existing GLB assets, Electron computer UI, office interaction and build |
 | D | Independent checks, reusable workshops, demo and final acceptance rig |
 
 Each lane has three goals. Each candidate gets a new validator thread at its exact commit. Main is not automatically changed by development runs. The [low-token policy](docs/LOW_TOKEN_EXECUTION.md) selects Luna/max, short task packets, deterministic tests first, bounded attempts, and no always-running manager.
