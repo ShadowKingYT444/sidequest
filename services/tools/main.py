@@ -45,7 +45,7 @@ def _progress_log(request: dict[str, Any], settings: Settings) -> ProgressLog:
     except ImportError:
         from git_ops import _canonical_under
     path = _canonical_under(raw, settings.staging_roots, must_exist=False)
-    return ProgressLog(path, request["request_id"])
+    return ProgressLog(path, request["request_id"], settings.staging_roots)
 
 
 def dispatch(request: dict[str, Any], settings: Settings) -> tuple[dict[str, Any], list[dict[str, Any]]]:

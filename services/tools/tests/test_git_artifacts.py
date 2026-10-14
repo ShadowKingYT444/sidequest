@@ -140,6 +140,39 @@ class GitFixture(unittest.TestCase):
 
 
 class GitInspectionAndFreezeTests(GitFixture):
+    def test_freeze_rejects_hardlinked_git_config_without_touching_external_file(self) -> None:
+        workspace = self.prepare("hardlinked-config")
+        outside = self.root / "outside-config"
+        outside.write_bytes(b"external sentinel must remain unchanged\n")
+        config = workspace / ".git" / "config"
+        config.unlink()
+        os.link(outside, config)
+        before = outside.read_bytes()
+
+        with self.assertRaises(AdapterError) as caught:
+            self.freeze(workspace)
+
+        self.assertEqual(caught.exception.code, "POLICY_DENIED")
+        self.assertEqual(outside.read_bytes(), before)
+        self.assertEqual(config.read_bytes(), before)
+        self.assertEqual(os.stat(config).st_nlink, 2)
+
+    def test_freeze_rejects_hardlinks_anywhere_in_git_metadata(self) -> None:
+        workspace = self.prepare("hardlinked-ref")
+        outside = self.root / "outside-ref"
+        outside.write_bytes(b"external ref sentinel\n")
+        ref = workspace / ".git" / "refs" / "heads" / "sidequest-base"
+        ref.unlink()
+        os.link(outside, ref)
+        before = outside.read_bytes()
+
+        with self.assertRaises(AdapterError) as caught:
+            self.freeze(workspace)
+
+        self.assertEqual(caught.exception.code, "POLICY_DENIED")
+        self.assertEqual(outside.read_bytes(), before)
+        self.assertEqual(ref.read_bytes(), before)
+
     def test_prepare_is_independent_and_does_not_change_source(self) -> None:
         before_refs = git(self.source, "for-each-ref", "--format=%(refname) %(objectname)")
         before_bytes = {p.relative_to(self.source).as_posix(): p.read_bytes() for p in self.source.rglob("*") if p.is_file() and ".git" not in p.parts}

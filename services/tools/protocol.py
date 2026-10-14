@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import stat
 import sys
 import time
 from typing import Any, BinaryIO
@@ -22,6 +23,38 @@ class AdapterError(Exception):
         self.code = code
         self.message = message
         self.retryable = retryable
+
+
+def _open_absolute_directory(path: Path) -> int:
+    if not hasattr(os, "O_NOFOLLOW") or not hasattr(os, "O_DIRECTORY"):
+        raise AdapterError("DEPENDENCY_FAILED", "No-follow directory access is unavailable on this platform.")
+    absolute = Path(os.path.abspath(path))
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    try:
+        fd = os.open(os.sep, flags)
+    except OSError as exc:
+        raise AdapterError("POLICY_DENIED", "Progress directory could not be opened safely.") from exc
+    try:
+        for component in absolute.parts[1:]:
+            try:
+                before = os.stat(component, dir_fd=fd, follow_symlinks=False)
+                if not stat.S_ISDIR(before.st_mode):
+                    raise AdapterError("POLICY_DENIED", "Progress path cannot contain symlinks or files.")
+                child = os.open(component, flags, dir_fd=fd)
+            except AdapterError:
+                raise
+            except OSError as exc:
+                raise AdapterError("POLICY_DENIED", "Progress directory could not be opened safely.") from exc
+            after = os.fstat(child)
+            if (before.st_dev, before.st_ino) != (after.st_dev, after.st_ino):
+                os.close(child)
+                raise AdapterError("POLICY_DENIED", "Progress directory changed while it was opened.")
+            os.close(fd)
+            fd = child
+        return fd
+    except Exception:
+        os.close(fd)
+        raise
 
 
 def _reject_constant(value: str) -> None:
@@ -126,9 +159,10 @@ def diagnostic(message: str) -> None:
 class ProgressLog:
     """Append bounded activity records to the host-assigned progress file."""
 
-    def __init__(self, path: Path | None, request_id: str):
+    def __init__(self, path: Path | None, request_id: str, allowed_roots: tuple[Path, ...] = ()):
         self.path = path
         self.request_id = request_id
+        self.allowed_roots = allowed_roots
         self.seq = 0
         self._times: list[float] = []
 
@@ -146,20 +180,99 @@ class ProgressLog:
         encoded = json.dumps(record, ensure_ascii=False, separators=(",", ":")).encode("utf-8") + b"\n"
         if len(encoded) > MAX_PROGRESS_RECORD_BYTES:
             return
-        self.path.parent.mkdir(parents=True, exist_ok=True)
+        name = self.path.name
+        if not name or name in {".", ".."}:
+            raise AdapterError("POLICY_DENIED", "Progress file path is invalid.")
+        if self.allowed_roots:
+            try:
+                from .git_ops import open_directory_beneath
+            except ImportError:
+                from git_ops import open_directory_beneath
+            parent_fd = open_directory_beneath(self.path.parent, self.allowed_roots, create=True)
+        else:
+            parent_fd = _open_absolute_directory(self.path.parent)
+        temporary: str | None = None
+        fd: int | None = None
         try:
-            current_size = self.path.stat().st_size
-        except FileNotFoundError:
-            current_size = 0
-        if current_size + len(encoded) > MAX_PROGRESS_BYTES:
-            return
-        flags = os.O_APPEND | os.O_CREAT | os.O_WRONLY
-        if hasattr(os, "O_NOFOLLOW"):
-            flags |= os.O_NOFOLLOW
-        fd = os.open(self.path, flags, 0o600)
-        try:
-            os.write(fd, encoded)
-        finally:
+            try:
+                before = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                before = None
+            except OSError as exc:
+                raise AdapterError("POLICY_DENIED", "Progress file could not be inspected safely.") from exc
+            if before is not None and (
+                stat.S_ISLNK(before.st_mode) or not stat.S_ISREG(before.st_mode) or before.st_nlink != 1
+            ):
+                raise AdapterError("POLICY_DENIED", "Progress file must be a single-link regular file.")
+            existing = b""
+            if before is not None:
+                if before.st_size > MAX_PROGRESS_BYTES:
+                    return
+                fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0), dir_fd=parent_fd)
+                opened = os.fstat(fd)
+                if not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1 or (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino):
+                    raise AdapterError("POLICY_DENIED", "Progress file changed while it was being read.")
+                chunks = bytearray()
+                while len(chunks) <= MAX_PROGRESS_BYTES:
+                    chunk = os.read(fd, min(1024 * 1024, MAX_PROGRESS_BYTES + 1 - len(chunks)))
+                    if not chunk:
+                        break
+                    chunks.extend(chunk)
+                if len(chunks) > MAX_PROGRESS_BYTES or len(chunks) != opened.st_size:
+                    return
+                existing = bytes(chunks)
+                os.close(fd)
+                fd = None
+                named = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+                if (named.st_dev, named.st_ino) != (opened.st_dev, opened.st_ino) or named.st_nlink != 1:
+                    raise AdapterError("POLICY_DENIED", "Progress file changed while it was read.")
+            updated = existing + encoded
+            if len(updated) > MAX_PROGRESS_BYTES:
+                return
+            temporary = ".sidequest-progress-" + os.urandom(16).hex() + ".tmp"
+            flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+            fd = os.open(temporary, flags, 0o600, dir_fd=parent_fd)
+            opened = os.fstat(fd)
+            if not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1:
+                raise AdapterError("POLICY_DENIED", "Progress temporary file is not a single-link regular file.")
+            view = memoryview(updated)
+            while view:
+                written = os.write(fd, view)
+                view = view[written:]
+            os.fsync(fd)
             os.close(fd)
+            fd = None
+            staged = os.stat(temporary, dir_fd=parent_fd, follow_symlinks=False)
+            if not stat.S_ISREG(staged.st_mode) or staged.st_nlink != 1 or staged.st_size != len(updated):
+                raise AdapterError("POLICY_DENIED", "Progress temporary file changed before installation.")
+            try:
+                current = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                current = None
+            if before is None and current is not None:
+                raise AdapterError("POLICY_DENIED", "Progress file appeared while it was being written.")
+            if before is not None and (
+                current is None
+                or not stat.S_ISREG(current.st_mode)
+                or current.st_nlink != 1
+                or (current.st_dev, current.st_ino) != (before.st_dev, before.st_ino)
+            ):
+                raise AdapterError("POLICY_DENIED", "Progress file changed before it was updated.")
+            os.replace(temporary, name, src_dir_fd=parent_fd, dst_dir_fd=parent_fd)
+            installed = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+            if (installed.st_dev, installed.st_ino) != (staged.st_dev, staged.st_ino) or installed.st_nlink != 1:
+                raise AdapterError("POLICY_DENIED", "Progress file installation could not be verified.")
+            os.fsync(parent_fd)
+        except OSError as exc:
+            raise AdapterError("POLICY_DENIED", "Progress file could not be written safely.") from exc
+        finally:
+            if fd is not None:
+                os.close(fd)
+            if temporary is not None:
+                try:
+                    os.unlink(temporary, dir_fd=parent_fd)
+                except OSError:
+                    pass
+            os.close(parent_fd)
         self.seq += 1
         self._times.append(now)

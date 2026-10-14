@@ -35,6 +35,7 @@ try:
         list_tree,
         numstat,
         object_format,
+        open_directory_beneath,
         read_blobs,
         resolve_commit,
         run_git,
@@ -62,6 +63,7 @@ except ImportError:  # Direct script execution by the adapter host.
         list_tree,
         numstat,
         object_format,
+        open_directory_beneath,
         read_blobs,
         resolve_commit,
         run_git,
@@ -139,63 +141,104 @@ def _ensure_directory(path: Path, root: Path) -> None:
         relative = path.relative_to(canonical_root)
     except ValueError as exc:
         raise _fail("POLICY_DENIED", "Output directory is outside its configured root.") from exc
-    cursor = canonical_root
-    if not cursor.exists():
-        cursor.mkdir(parents=True, exist_ok=True, mode=0o700)
-    info = cursor.lstat()
-    if stat.S_ISLNK(info.st_mode) or not stat.S_ISDIR(info.st_mode):
-        raise _fail("POLICY_DENIED", "Configured output root must be a real directory.")
-    for component in relative.parts:
-        cursor = cursor / component
-        try:
-            cursor.mkdir(mode=0o700)
-        except FileExistsError:
-            pass
-        except OSError as exc:
-            raise _fail("POLICY_DENIED", "Output directory could not be created safely.") from exc
-        try:
-            info = cursor.lstat()
-        except OSError as exc:
-            raise _fail("POLICY_DENIED", "Output directory could not be inspected safely.") from exc
-        if stat.S_ISLNK(info.st_mode) or not stat.S_ISDIR(info.st_mode):
-            raise _fail("POLICY_DENIED", "Output paths cannot contain symlinks or files.")
+    if not hasattr(os, "O_NOFOLLOW") or not hasattr(os, "O_DIRECTORY"):
+        raise _fail("DEPENDENCY_FAILED", "No-follow directory access is unavailable on this platform.")
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    try:
+        current_fd = os.open(os.sep, flags)
+    except OSError as exc:
+        raise _fail("POLICY_DENIED", "Output root could not be opened safely.") from exc
+    try:
+        for component in (*canonical_root.parts[1:], *relative.parts):
+            if component in {"", ".", ".."}:
+                raise _fail("POLICY_DENIED", "Output directory path is not normalized.")
+            try:
+                before = os.stat(component, dir_fd=current_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                try:
+                    os.mkdir(component, mode=0o700, dir_fd=current_fd)
+                    before = os.stat(component, dir_fd=current_fd, follow_symlinks=False)
+                except OSError as exc:
+                    raise _fail("POLICY_DENIED", "Output directory could not be created safely.") from exc
+            except OSError as exc:
+                raise _fail("POLICY_DENIED", "Output directory could not be inspected safely.") from exc
+            if not stat.S_ISDIR(before.st_mode):
+                raise _fail("POLICY_DENIED", "Output paths cannot contain symlinks or files.")
+            try:
+                child_fd = os.open(component, flags, dir_fd=current_fd)
+            except OSError as exc:
+                raise _fail("POLICY_DENIED", "Output directory could not be opened safely.") from exc
+            after = os.fstat(child_fd)
+            if (before.st_dev, before.st_ino) != (after.st_dev, after.st_ino):
+                os.close(child_fd)
+                raise _fail("POLICY_DENIED", "Output directory changed while it was opened.")
+            os.close(current_fd)
+            current_fd = child_fd
+    finally:
+        os.close(current_fd)
 
 
-def _write_immutable(path: Path, data: bytes, mode: int = 0o400) -> None:
+def _write_immutable(path: Path, data: bytes, root: Path, mode: int = 0o400) -> None:
     # Callers provide content-addressed paths below a checked root; recheck the
     # parent components so a pre-created symlink cannot redirect the write.
-    base = None
-    for ancestor in (path.parent, *path.parents):
-        if ancestor == ancestor.parent:
-            break
-        if ancestor.exists() and not ancestor.is_symlink():
-            base = ancestor
-            break
-    if base is None:
-        raise _fail("POLICY_DENIED", "Artifact output parent is unavailable.")
+    base = root.resolve(strict=False)
+    try:
+        path.parent.relative_to(base)
+    except ValueError as exc:
+        raise _fail("POLICY_DENIED", "Artifact file is outside its configured output root.") from exc
     _ensure_directory(path.parent, base)
-    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
-    if hasattr(os, "O_NOFOLLOW"):
-        flags |= os.O_NOFOLLOW
+    parent_fd = open_directory_beneath(path.parent, (base,))
+    name = path.name
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
     try:
-        fd = os.open(path, flags, mode)
-    except FileExistsError:
-        info = path.lstat()
-        if not stat.S_ISREG(info.st_mode) or info.st_nlink > 1:
-            raise _fail("POLICY_DENIED", "Artifact output path is not a regular file.")
-        existing = _read_regular_file(path, len(data))
-        if existing != data:
-            raise _fail("POLICY_DENIED", "Immutable artifact path already contains different bytes.")
-        return
-    try:
-        view = memoryview(data)
-        while view:
-            written = os.write(fd, view)
-            view = view[written:]
-        os.fsync(fd)
+        try:
+            fd = os.open(name, flags, mode, dir_fd=parent_fd)
+        except FileExistsError:
+            try:
+                info = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+                if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > len(data):
+                    raise _fail("POLICY_DENIED", "Artifact output path is not a single-link regular file.")
+                read_fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0), dir_fd=parent_fd)
+                try:
+                    opened = os.fstat(read_fd)
+                    if not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1 or (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino):
+                        raise _fail("POLICY_DENIED", "Artifact output changed while it was inspected.")
+                    chunks = bytearray()
+                    while len(chunks) <= len(data):
+                        chunk = os.read(read_fd, min(1024 * 1024, len(data) + 1 - len(chunks)))
+                        if not chunk:
+                            break
+                        chunks.extend(chunk)
+                    if len(chunks) != opened.st_size:
+                        raise _fail("POLICY_DENIED", "Artifact output changed while it was inspected.")
+                    existing = bytes(chunks)
+                finally:
+                    os.close(read_fd)
+            except AdapterError:
+                raise
+            except OSError as exc:
+                raise _fail("POLICY_DENIED", "Artifact output path could not be inspected safely.") from exc
+            if existing != data:
+                raise _fail("POLICY_DENIED", "Immutable artifact path already contains different bytes.")
+            return
+        try:
+            opened = os.fstat(fd)
+            if not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1:
+                raise _fail("POLICY_DENIED", "Artifact output did not open as a single-link regular file.")
+            view = memoryview(data)
+            while view:
+                written = os.write(fd, view)
+                view = view[written:]
+            os.fchmod(fd, mode)
+            os.fsync(fd)
+            named = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+            if (named.st_dev, named.st_ino) != (opened.st_dev, opened.st_ino) or named.st_nlink != 1:
+                raise _fail("POLICY_DENIED", "Artifact output changed while it was written.")
+            os.fsync(parent_fd)
+        finally:
+            os.close(fd)
     finally:
-        os.close(fd)
-    os.chmod(path, mode, follow_symlinks=False)
+        os.close(parent_fd)
 
 
 def _read_regular_file(path: Path, limit: int) -> bytes:
@@ -231,27 +274,43 @@ def _read_regular_file(path: Path, limit: int) -> bytes:
 
 def _write_candidate_snapshot(root: Path, candidate_id: str, files: dict[str, FileData]) -> Path:
     snapshot = root / f"candidate-{candidate_id}"
+    root_fd = open_directory_beneath(root, (root,))
     try:
-        snapshot.mkdir(mode=0o700)
+        os.mkdir(snapshot.name, mode=0o700, dir_fd=root_fd)
+        snapshot_fd = os.open(
+            snapshot.name,
+            os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0),
+            dir_fd=root_fd,
+        )
+        try:
+            named = os.stat(snapshot.name, dir_fd=root_fd, follow_symlinks=False)
+            opened = os.fstat(snapshot_fd)
+            if not stat.S_ISDIR(named.st_mode) or (named.st_dev, named.st_ino) != (opened.st_dev, opened.st_ino):
+                raise _fail("POLICY_DENIED", "Candidate snapshot directory changed while it was created.")
+        finally:
+            os.close(snapshot_fd)
     except FileExistsError as exc:
         raise _fail("POLICY_DENIED", "Candidate snapshot path already exists.") from exc
+    finally:
+        os.close(root_fd)
     directories = {snapshot}
     for rel, file in sorted(files.items()):
         validate_relative_path(rel)
         target = snapshot.joinpath(*rel.split("/"))
+        _ensure_directory(target.parent, root)
         parent = target.parent
-        chain: list[Path] = []
         while parent != snapshot:
-            chain.append(parent)
+            directories.add(parent)
             parent = parent.parent
-        for directory in reversed(chain):
-            if directory not in directories:
-                directory.mkdir(mode=0o700)
-                directories.add(directory)
         # Candidate data has already been scanned and is copied without following links.
-        _write_immutable(target, file.data, 0o555 if file.mode == "100755" else 0o444)
+        _write_immutable(target, file.data, root, 0o555 if file.mode == "100755" else 0o444)
     for directory in sorted(directories, key=lambda item: len(item.parts), reverse=True):
-        os.chmod(directory, 0o555, follow_symlinks=False)
+        directory_fd = open_directory_beneath(directory, (root,))
+        try:
+            os.fchmod(directory_fd, 0o555)
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
     return snapshot
 
 
@@ -302,7 +361,7 @@ def _write_artifact(
     digest = _hash_bytes(data)
     relative = f"artifacts/{kind}-{digest}.{extension}"
     _ensure_directory(root / "artifacts", root)
-    _write_immutable(root / relative, data)
+    _write_immutable(root / relative, data, root)
     return _artifact_record(
         artifact_id=artifact_id,
         kind=kind,
@@ -619,7 +678,7 @@ def _state_paths(settings: Settings, delivery_id: str) -> tuple[Path, Path]:
     if not isinstance(delivery_id, str) or not _SAFE_ID.fullmatch(delivery_id):
         raise _fail("INVALID_INPUT", "delivery_id must be a bounded stable identifier.")
     root = _canonical_under(str(settings.delivery_state_root), (settings.delivery_state_root,), must_exist=False)
-    root.mkdir(parents=True, exist_ok=True, mode=0o700)
+    _ensure_directory(root, root)
     root = _canonical_under(str(root), (root,), must_exist=True)
     if not root.is_dir():
         raise _fail("POLICY_DENIED", "Delivery state root must be a directory.")
@@ -628,26 +687,94 @@ def _state_paths(settings: Settings, delivery_id: str) -> tuple[Path, Path]:
 
 
 @contextmanager
-def _exclusive_lock(path: Path):
-    fd = os.open(path, os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0), 0o600)
+def _exclusive_lock(path: Path, root: Path):
+    parent_fd = open_directory_beneath(path.parent, (root,))
+    fd = None
     try:
+        try:
+            before = os.stat(path.name, dir_fd=parent_fd, follow_symlinks=False)
+        except FileNotFoundError:
+            before = None
+        except OSError as exc:
+            raise _fail("POLICY_DENIED", "Delivery lock could not be inspected safely.") from exc
+        if before is not None and (
+            not stat.S_ISREG(before.st_mode) or before.st_nlink != 1
+        ):
+            raise _fail("POLICY_DENIED", "Delivery lock must be a single-link regular file.")
+        flags = os.O_RDWR | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+        if before is None:
+            try:
+                fd = os.open(path.name, flags | os.O_CREAT | os.O_EXCL, 0o600, dir_fd=parent_fd)
+            except FileExistsError as exc:
+                raise _fail("POLICY_DENIED", "Delivery lock appeared while it was being opened.") from exc
+        else:
+            fd = os.open(path.name, flags, dir_fd=parent_fd)
+        opened = os.fstat(fd)
+        if not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1:
+            raise _fail("POLICY_DENIED", "Delivery lock changed while it was opened.")
+        if before is not None and (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino):
+            raise _fail("POLICY_DENIED", "Delivery lock changed while it was opened.")
+        named = os.stat(path.name, dir_fd=parent_fd, follow_symlinks=False)
+        if (named.st_dev, named.st_ino) != (opened.st_dev, opened.st_ino) or named.st_nlink != 1:
+            raise _fail("POLICY_DENIED", "Delivery lock changed before it was acquired.")
         fcntl.flock(fd, fcntl.LOCK_EX)
         yield
     finally:
-        fcntl.flock(fd, fcntl.LOCK_UN)
-        os.close(fd)
+        if fd is not None:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_UN)
+            finally:
+                os.close(fd)
+        os.close(parent_fd)
 
 
-def _write_state(path: Path, value: dict[str, Any]) -> None:
+def _write_state(path: Path, value: dict[str, Any], root: Path) -> None:
     data = canonical_json(value) + b"\n"
-    temporary = path.with_name(path.name + ".tmp-" + uuid.uuid4().hex)
-    _write_immutable(temporary, data, 0o600)
-    os.replace(temporary, path)
-    directory_fd = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0))
+    temporary = path.name + ".tmp-" + uuid.uuid4().hex
+    directory_fd = open_directory_beneath(path.parent, (root,))
+    fd = None
     try:
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+        fd = os.open(temporary, flags, 0o600, dir_fd=directory_fd)
+        opened = os.fstat(fd)
+        if not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1:
+            raise _fail("POLICY_DENIED", "Delivery state temporary file is not private.")
+        view = memoryview(data)
+        while view:
+            written = os.write(fd, view)
+            view = view[written:]
+        os.fsync(fd)
+        os.close(fd)
+        fd = None
+        try:
+            existing = os.stat(path.name, dir_fd=directory_fd, follow_symlinks=False)
+        except FileNotFoundError:
+            existing = None
+        if existing is not None and (
+            not stat.S_ISREG(existing.st_mode) or existing.st_nlink != 1
+        ):
+            raise _fail("POLICY_DENIED", "Delivery state path must be a single-link regular file.")
+        staged = os.stat(temporary, dir_fd=directory_fd, follow_symlinks=False)
+        if not stat.S_ISREG(staged.st_mode) or staged.st_nlink != 1 or staged.st_size != len(data):
+            raise _fail("POLICY_DENIED", "Delivery state temporary file changed before installation.")
+        os.replace(temporary, path.name, src_dir_fd=directory_fd, dst_dir_fd=directory_fd)
+        installed = os.stat(path.name, dir_fd=directory_fd, follow_symlinks=False)
+        if (
+            not stat.S_ISREG(installed.st_mode)
+            or installed.st_nlink != 1
+            or (installed.st_dev, installed.st_ino) != (staged.st_dev, staged.st_ino)
+        ):
+            raise _fail("POLICY_DENIED", "Delivery state installation could not be verified.")
         os.fsync(directory_fd)
     finally:
-        os.close(directory_fd)
+        if fd is not None:
+            os.close(fd)
+        try:
+            os.unlink(temporary, dir_fd=directory_fd)
+        except FileNotFoundError:
+            pass
+        finally:
+            os.close(directory_fd)
 
 
 def _read_state(path: Path) -> dict[str, Any] | None:
@@ -748,101 +875,177 @@ def _verify_destination_worktree(repo: Path, expected: dict[str, TreeEntry], set
 
 def _safe_parent_directory(root: Path, relative: str) -> Path:
     validate_relative_path(relative)
-    parts = relative.split("/")[:-1]
-    current = root
-    for part in parts:
-        current = current / part
-        try:
-            info = current.lstat()
-        except FileNotFoundError:
-            try:
-                current.mkdir(mode=0o755)
-                info = current.lstat()
-            except OSError as exc:
-                raise _fail("UNCERTAIN_OUTCOME", "Destination directory could not be created safely.") from exc
-        except OSError as exc:
-            raise _fail("UNCERTAIN_OUTCOME", "Destination directory could not be inspected safely.") from exc
-        if stat.S_ISLNK(info.st_mode) or not stat.S_ISDIR(info.st_mode):
-            raise _fail("POLICY_DENIED", "Destination path contains a symlink or non-directory.")
-    return current
+    parent = root.joinpath(*relative.split("/")[:-1])
+    try:
+        _ensure_directory(parent, root)
+    except AdapterError:
+        raise
+    except OSError as exc:
+        raise _fail("UNCERTAIN_OUTCOME", "Destination directory could not be created safely.") from exc
+    return parent
 
 
 def _write_delivery_file(root: Path, path: str, content: bytes, mode: str) -> None:
     parent = _safe_parent_directory(root, path)
-    target = parent / path.rsplit("/", 1)[-1]
+    target_name = path.rsplit("/", 1)[-1]
+    parent_fd = open_directory_beneath(parent, (root,))
+    temporary: str | None = None
+    fd: int | None = None
     try:
-        info = target.lstat()
-    except FileNotFoundError:
-        info = None
-    except OSError as exc:
-        raise _fail("UNCERTAIN_OUTCOME", "Destination file could not be inspected safely.") from exc
-    if info is not None and (stat.S_ISLNK(info.st_mode) or not stat.S_ISREG(info.st_mode) or info.st_nlink > 1):
-        raise _fail("POLICY_DENIED", "Destination file is a symlink, special file or hard link.")
-    temporary = parent / (".sidequest-" + uuid.uuid4().hex + ".tmp")
-    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
-    fd = os.open(temporary, flags, 0o600)
-    try:
+        try:
+            info = os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+        except FileNotFoundError:
+            info = None
+        except OSError as exc:
+            raise _fail("UNCERTAIN_OUTCOME", "Destination file could not be inspected safely.") from exc
+        if info is not None and (stat.S_ISLNK(info.st_mode) or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1):
+            raise _fail("POLICY_DENIED", "Destination file is a symlink, special file or hard link.")
+        temporary = ".sidequest-" + uuid.uuid4().hex + ".tmp"
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+        fd = os.open(temporary, flags, 0o600, dir_fd=parent_fd)
+        opened = os.fstat(fd)
+        if not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1:
+            raise _fail("POLICY_DENIED", "Destination temporary file is not a single-link regular file.")
         view = memoryview(content)
         while view:
             written = os.write(fd, view)
             view = view[written:]
         os.fchmod(fd, 0o755 if mode == "100755" else 0o644)
         os.fsync(fd)
-    finally:
         os.close(fd)
-    os.replace(temporary, target)
+        fd = None
+        staged = os.stat(temporary, dir_fd=parent_fd, follow_symlinks=False)
+        if not stat.S_ISREG(staged.st_mode) or staged.st_nlink != 1:
+            raise _fail("POLICY_DENIED", "Destination temporary file changed before installation.")
+        try:
+            current = os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+        except FileNotFoundError:
+            current = None
+        if info is None and current is not None:
+            raise _fail("UNCERTAIN_OUTCOME", "Destination file appeared during delivery.")
+        if info is not None and (
+            current is None
+            or not stat.S_ISREG(current.st_mode)
+            or current.st_nlink != 1
+            or (current.st_dev, current.st_ino) != (info.st_dev, info.st_ino)
+        ):
+            raise _fail("UNCERTAIN_OUTCOME", "Destination file changed during delivery.")
+        os.replace(temporary, target_name, src_dir_fd=parent_fd, dst_dir_fd=parent_fd)
+        installed = os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+        if (installed.st_dev, installed.st_ino) != (staged.st_dev, staged.st_ino) or installed.st_nlink != 1:
+            raise _fail("UNCERTAIN_OUTCOME", "Destination file installation could not be verified.")
+        os.fsync(parent_fd)
+    finally:
+        if fd is not None:
+            os.close(fd)
+        if temporary is not None:
+            try:
+                os.unlink(temporary, dir_fd=parent_fd)
+            except OSError:
+                pass
+        os.close(parent_fd)
 
 
 def _remove_delivery_file(root: Path, path: str) -> None:
     parent = _safe_parent_directory(root, path)
-    target = parent / path.rsplit("/", 1)[-1]
+    target_name = path.rsplit("/", 1)[-1]
+    parent_fd = open_directory_beneath(parent, (root,))
     try:
-        info = target.lstat()
-    except FileNotFoundError:
-        raise _fail("UNCERTAIN_OUTCOME", "Expected destination file disappeared during delivery.")
-    except OSError as exc:
-        raise _fail("UNCERTAIN_OUTCOME", "Destination file could not be inspected safely.") from exc
-    if stat.S_ISLNK(info.st_mode) or not stat.S_ISREG(info.st_mode) or info.st_nlink > 1:
-        raise _fail("POLICY_DENIED", "Destination file is a symlink, special file or hard link.")
-    target.unlink()
+        try:
+            info = os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+        except FileNotFoundError:
+            raise _fail("UNCERTAIN_OUTCOME", "Expected destination file disappeared during delivery.")
+        except OSError as exc:
+            raise _fail("UNCERTAIN_OUTCOME", "Destination file could not be inspected safely.") from exc
+        if stat.S_ISLNK(info.st_mode) or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+            raise _fail("POLICY_DENIED", "Destination file is a symlink, special file or hard link.")
+        current = os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+        if (current.st_dev, current.st_ino) != (info.st_dev, info.st_ino) or current.st_nlink != 1:
+            raise _fail("UNCERTAIN_OUTCOME", "Destination file changed during delivery.")
+        os.unlink(target_name, dir_fd=parent_fd)
+        os.fsync(parent_fd)
+    finally:
+        os.close(parent_fd)
 
 
 def _install_index(repo: Path, source_index: Path) -> None:
     metadata = repo / ".git"
-    index = metadata / "index"
-    lock = metadata / "index.lock"
+    metadata_fd = open_directory_beneath(metadata, (repo,))
+    fd: int | None = None
+    lock_created = False
     try:
-        info = metadata.lstat()
-    except OSError as exc:
-        raise _fail("UNCERTAIN_OUTCOME", "Destination Git metadata disappeared during delivery.") from exc
-    if stat.S_ISLNK(info.st_mode) or not stat.S_ISDIR(info.st_mode):
-        raise _fail("POLICY_DENIED", "Destination Git metadata must be a local directory.")
-    try:
-        index_info = index.lstat()
-        if stat.S_ISLNK(index_info.st_mode) or not stat.S_ISREG(index_info.st_mode):
-            raise _fail("POLICY_DENIED", "Destination Git index must be a regular file.")
-    except FileNotFoundError:
-        pass
-    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
-    try:
-        fd = os.open(lock, flags, 0o600)
-    except FileExistsError as exc:
-        raise _fail("POLICY_DENIED", "Destination Git index is locked by another operation.", retryable=True) from exc
-    try:
-        with source_index.open("rb") as source:
+        try:
+            index_info = os.stat("index", dir_fd=metadata_fd, follow_symlinks=False)
+            if stat.S_ISLNK(index_info.st_mode) or not stat.S_ISREG(index_info.st_mode) or index_info.st_nlink != 1:
+                raise _fail("POLICY_DENIED", "Destination Git index must be a single-link regular file.")
+        except FileNotFoundError:
+            index_info = None
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+        try:
+            fd = os.open("index.lock", flags, 0o600, dir_fd=metadata_fd)
+            lock_created = True
+        except FileExistsError as exc:
+            raise _fail("POLICY_DENIED", "Destination Git index is locked by another operation.", retryable=True) from exc
+        lock_info = os.fstat(fd)
+        if not stat.S_ISREG(lock_info.st_mode) or lock_info.st_nlink != 1:
+            raise _fail("POLICY_DENIED", "Destination Git index lock is not a single-link regular file.")
+        named_lock = os.stat("index.lock", dir_fd=metadata_fd, follow_symlinks=False)
+        if (named_lock.st_dev, named_lock.st_ino) != (lock_info.st_dev, lock_info.st_ino) or named_lock.st_nlink != 1:
+            raise _fail("POLICY_DENIED", "Destination Git index lock changed while it was opened.")
+        source_fd = os.open(source_index, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0))
+        try:
+            source_info = os.fstat(source_fd)
+            if not stat.S_ISREG(source_info.st_mode) or source_info.st_nlink != 1:
+                raise _fail("POLICY_DENIED", "Staged Git index must be a single-link regular file.")
             while True:
-                chunk = source.read(1024 * 1024)
+                chunk = os.read(source_fd, 1024 * 1024)
                 if not chunk:
                     break
                 view = memoryview(chunk)
                 while view:
                     written = os.write(fd, view)
                     view = view[written:]
+        finally:
+            os.close(source_fd)
         os.fchmod(fd, 0o644)
         os.fsync(fd)
-    finally:
         os.close(fd)
-    os.replace(lock, index)
+        fd = None
+        staged = os.stat("index.lock", dir_fd=metadata_fd, follow_symlinks=False)
+        if (
+            not stat.S_ISREG(staged.st_mode)
+            or staged.st_nlink != 1
+            or (staged.st_dev, staged.st_ino) != (lock_info.st_dev, lock_info.st_ino)
+        ):
+            raise _fail("POLICY_DENIED", "Destination Git index lock changed before installation.")
+        try:
+            current_index = os.stat("index", dir_fd=metadata_fd, follow_symlinks=False)
+        except FileNotFoundError:
+            current_index = None
+        if index_info is None and current_index is not None:
+            raise _fail("UNCERTAIN_OUTCOME", "Destination Git index appeared during delivery.")
+        if index_info is not None and (
+            current_index is None
+            or not stat.S_ISREG(current_index.st_mode)
+            or current_index.st_nlink != 1
+            or (current_index.st_dev, current_index.st_ino) != (index_info.st_dev, index_info.st_ino)
+        ):
+            raise _fail("UNCERTAIN_OUTCOME", "Destination Git index changed during delivery.")
+        os.replace("index.lock", "index", src_dir_fd=metadata_fd, dst_dir_fd=metadata_fd)
+        lock_created = False
+        installed = os.stat("index", dir_fd=metadata_fd, follow_symlinks=False)
+        if (installed.st_dev, installed.st_ino) != (staged.st_dev, staged.st_ino) or installed.st_nlink != 1:
+            raise _fail("UNCERTAIN_OUTCOME", "Destination Git index installation could not be verified.")
+        os.fsync(metadata_fd)
+    finally:
+        if fd is not None:
+            os.close(fd)
+        if lock_created:
+            try:
+                os.unlink("index.lock", dir_fd=metadata_fd)
+            except OSError:
+                pass
+        os.close(metadata_fd)
 
 
 def deliver_candidate(request: dict[str, Any], settings: Settings) -> tuple[dict[str, Any], list[dict[str, Any]]]:
@@ -935,11 +1138,11 @@ def deliver_candidate(request: dict[str, Any], settings: Settings) -> tuple[dict
         "destination": str(destination),
         "approval_id": approval.get("id"),
     }))
-    state_path, lock_path = _state_paths(settings, delivery_id)
     state_root = Path(settings.delivery_state_root).resolve(strict=False)
     if _is_within(state_root, workspace) or _is_within(workspace, state_root):
         raise _fail("POLICY_DENIED", "Delivery state storage must be separate from the worker workspace.")
-    with _exclusive_lock(lock_path):
+    state_path, lock_path = _state_paths(settings, delivery_id)
+    with _exclusive_lock(lock_path, state_root):
         old = _read_state(state_path)
         if old is not None:
             if old.get("fingerprint") != fingerprint:
@@ -973,7 +1176,7 @@ def deliver_candidate(request: dict[str, Any], settings: Settings) -> tuple[dict
             raise
         state = {"v": 1, "delivery_id": delivery_id, "action_id": action_id, "fingerprint": fingerprint, "status": "started", "destination": str(destination), "candidate_id": candidate_id, "started_at": time.time()}
         try:
-            _write_state(state_path, state)
+            _write_state(state_path, state, state_root)
         except Exception:
             try:
                 temp_index.unlink()
@@ -1006,7 +1209,7 @@ def deliver_candidate(request: dict[str, Any], settings: Settings) -> tuple[dict
             completed = dict(state)
             completed["status"] = "completed"
             completed["completed_at"] = time.time()
-            _write_state(state_path, completed)
+            _write_state(state_path, completed, state_root)
         except AdapterError as exc:
             if exc.code == "UNCERTAIN_OUTCOME":
                 raise

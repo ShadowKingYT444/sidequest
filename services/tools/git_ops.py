@@ -62,6 +62,84 @@ def _error(code: str, message: str, retryable: bool = False) -> AdapterError:
     return AdapterError(code, message, retryable)
 
 
+def open_directory_beneath(path: str | Path, roots: Iterable[Path], *, create: bool = False) -> int:
+    """Open an absolute directory without following any path component symlinks.
+
+    The returned descriptor pins the checked directory even if a pathname is
+    subsequently renamed. Callers should perform file operations relative to
+    this descriptor rather than re-resolving a checked string path.
+    """
+    if not hasattr(os, "O_NOFOLLOW") or not hasattr(os, "O_DIRECTORY"):
+        raise _error("DEPENDENCY_FAILED", "No-follow directory access is unavailable on this platform.")
+    absolute = Path(os.path.abspath(os.fspath(path)))
+    matches: list[tuple[int, Path, Path]] = []
+    for root in roots:
+        canonical = Path(os.path.abspath(os.fspath(root)))
+        try:
+            relative = absolute.relative_to(canonical)
+        except ValueError:
+            continue
+        matches.append((len(canonical.parts), canonical, relative))
+    if not matches:
+        raise _error("POLICY_DENIED", "Directory is outside configured host roots.")
+    _, root, relative = max(matches, key=lambda item: item[0])
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    try:
+        fd = os.open(os.sep, flags)
+    except OSError as exc:
+        raise _error("POLICY_DENIED", "Filesystem root could not be opened safely.") from exc
+    try:
+        for component in (*root.parts[1:], *relative.parts):
+            if component in {"", ".", ".."}:
+                raise _error("POLICY_DENIED", "Directory path is not normalized.")
+            try:
+                try:
+                    before = os.stat(component, dir_fd=fd, follow_symlinks=False)
+                except FileNotFoundError:
+                    if not create:
+                        raise
+                    try:
+                        os.mkdir(component, mode=0o700, dir_fd=fd)
+                    except FileExistsError:
+                        pass
+                    before = os.stat(component, dir_fd=fd, follow_symlinks=False)
+                if not stat.S_ISDIR(before.st_mode):
+                    raise _error("POLICY_DENIED", "Directory paths cannot contain symlinks or files.")
+                child_fd = os.open(component, flags, dir_fd=fd)
+            except AdapterError:
+                raise
+            except OSError as exc:
+                raise _error("POLICY_DENIED", "Directory path could not be opened safely.") from exc
+            after = os.fstat(child_fd)
+            if (before.st_dev, before.st_ino) != (after.st_dev, after.st_ino):
+                os.close(child_fd)
+                raise _error("POLICY_DENIED", "Directory changed while it was opened.")
+            os.close(fd)
+            fd = child_fd
+        return fd
+    except Exception:
+        os.close(fd)
+        raise
+
+
+def _open_child_directory(parent_fd: int, name: str) -> int:
+    try:
+        before = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+        if not stat.S_ISDIR(before.st_mode):
+            raise _error("POLICY_DENIED", "Git metadata cannot contain symlinks or special directories.")
+        flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+        fd = os.open(name, flags, dir_fd=parent_fd)
+    except AdapterError:
+        raise
+    except OSError as exc:
+        raise _error("POLICY_DENIED", "Git metadata directory could not be opened safely.") from exc
+    after = os.fstat(fd)
+    if (before.st_dev, before.st_ino) != (after.st_dev, after.st_ino):
+        os.close(fd)
+        raise _error("POLICY_DENIED", "Git metadata directory changed while it was opened.")
+    return fd
+
+
 def _canonical_under(raw: str | Path, roots: Iterable[Path], *, must_exist: bool = True) -> Path:
     path = Path(raw).expanduser()
     if not path.is_absolute():
@@ -298,45 +376,79 @@ def _repo_root(path: Path, settings: Settings) -> None:
         raise _error("POLICY_DENIED", "Repository metadata resolves outside the selected worktree.")
 
 
-def _validate_git_metadata(repo: Path, settings: Settings) -> None:
-    metadata = repo / ".git"
-    try:
-        info = metadata.lstat()
-    except OSError as exc:
-        raise _error("POLICY_DENIED", "Git metadata must be a local directory.") from exc
-    if not stat.S_ISDIR(info.st_mode):
-        raise _error("POLICY_DENIED", "Git metadata must be a local directory.")
-    alternates = metadata / "objects" / "info" / "alternates"
-    stack = [metadata]
+def _git_roots(settings: Settings) -> tuple[Path, ...]:
+    return (*settings.allowed_repo_roots, *settings.staging_roots, *settings.delivery_roots)
+
+
+def _scan_git_metadata_fd(metadata_fd: int, settings: Settings) -> None:
+    stack: list[tuple[int, str]] = [(os.dup(metadata_fd), "")]
     visited = 0
-    while stack:
-        current = stack.pop()
-        try:
-            children = list(os.scandir(current))
-        except OSError as exc:
-            raise _error("POLICY_DENIED", "Git metadata could not be inspected safely.") from exc
-        for child in children:
-            visited += 1
-            if visited > settings.max_files * 100:
-                raise _error("POLICY_DENIED", "Git metadata contains too many entries to inspect safely.")
-            try:
-                child_info = child.stat(follow_symlinks=False)
-            except OSError as exc:
-                raise _error("POLICY_DENIED", "Git metadata could not be inspected safely.") from exc
-            if stat.S_ISLNK(child_info.st_mode):
-                raise _error("POLICY_DENIED", "Git metadata cannot contain symlinks.")
-            if stat.S_ISDIR(child_info.st_mode):
-                stack.append(Path(child.path))
-            elif not stat.S_ISREG(child_info.st_mode):
-                raise _error("POLICY_DENIED", "Git metadata cannot contain special files.")
     try:
-        alternates.lstat()
-    except FileNotFoundError:
-        pass
-    except OSError as exc:
-        raise _error("POLICY_DENIED", "Git alternate object storage could not be inspected.") from exc
-    else:
-        raise _error("POLICY_DENIED", "Git alternate object stores are not allowed.")
+        while stack:
+            current_fd, prefix = stack.pop()
+            try:
+                try:
+                    names = os.listdir(current_fd)
+                except OSError as exc:
+                    raise _error("POLICY_DENIED", "Git metadata could not be inspected safely.") from exc
+                for name in names:
+                    visited += 1
+                    if visited > settings.max_files * 100:
+                        raise _error("POLICY_DENIED", "Git metadata contains too many entries to inspect safely.")
+                    relative = f"{prefix}/{name}" if prefix else name
+                    if relative == "objects/info/alternates":
+                        raise _error("POLICY_DENIED", "Git alternate object stores are not allowed.")
+                    try:
+                        info = os.stat(name, dir_fd=current_fd, follow_symlinks=False)
+                    except OSError as exc:
+                        raise _error("POLICY_DENIED", "Git metadata changed while it was inspected.") from exc
+                    if stat.S_ISLNK(info.st_mode):
+                        raise _error("POLICY_DENIED", "Git metadata cannot contain symlinks.")
+                    if stat.S_ISDIR(info.st_mode):
+                        stack.append((_open_child_directory(current_fd, name), relative))
+                    elif not stat.S_ISREG(info.st_mode):
+                        raise _error("POLICY_DENIED", "Git metadata cannot contain special files.")
+                    elif info.st_nlink != 1:
+                        raise _error("POLICY_DENIED", "Hard-linked Git metadata files are not allowed.")
+            finally:
+                os.close(current_fd)
+    finally:
+        for pending_fd, _ in stack:
+            os.close(pending_fd)
+
+
+def _open_repo_and_metadata(repo: Path, settings: Settings) -> tuple[int, int]:
+    repo_fd = open_directory_beneath(repo, _git_roots(settings))
+    try:
+        metadata_fd = _open_child_directory(repo_fd, ".git")
+    except Exception:
+        os.close(repo_fd)
+        raise
+    return repo_fd, metadata_fd
+
+
+def _assert_pinned_metadata_path(repo: Path, settings: Settings, repo_fd: int, metadata_fd: int) -> None:
+    current_repo_fd = open_directory_beneath(repo, _git_roots(settings))
+    try:
+        pinned_repo = os.fstat(repo_fd)
+        current_repo = os.fstat(current_repo_fd)
+        if (pinned_repo.st_dev, pinned_repo.st_ino) != (current_repo.st_dev, current_repo.st_ino):
+            raise _error("POLICY_DENIED", "Repository directory changed while Git metadata was inspected.")
+        current_metadata = os.stat(".git", dir_fd=current_repo_fd, follow_symlinks=False)
+        pinned_metadata = os.fstat(metadata_fd)
+        if not stat.S_ISDIR(current_metadata.st_mode) or (current_metadata.st_dev, current_metadata.st_ino) != (pinned_metadata.st_dev, pinned_metadata.st_ino):
+            raise _error("POLICY_DENIED", "Git metadata directory changed while it was inspected.")
+    finally:
+        os.close(current_repo_fd)
+
+
+def _validate_git_metadata(repo: Path, settings: Settings) -> None:
+    repo_fd, metadata_fd = _open_repo_and_metadata(repo, settings)
+    try:
+        _scan_git_metadata_fd(metadata_fd, settings)
+    finally:
+        os.close(metadata_fd)
+        os.close(repo_fd)
 
 
 def resolve_commit(repo: Path, revision: str, settings: Settings) -> str:
@@ -555,25 +667,8 @@ def inspect_worktree(repo: Path, commit: str, settings: Settings) -> tuple[dict[
 
 
 def ensure_safe_clone(repo: Path, settings: Settings) -> None:
-    metadata = repo / ".git"
-    try:
-        meta_info = metadata.lstat()
-    except OSError as exc:
-        raise _error("POLICY_DENIED", "Git metadata must be a local directory.") from exc
-    if not stat.S_ISDIR(meta_info.st_mode):
-        raise _error("POLICY_DENIED", "Git metadata must be a local directory.")
-    alternates = metadata / "objects" / "info" / "alternates"
-    if alternates.exists():
-        raise _error("POLICY_DENIED", "Shared Git object stores are not allowed.")
-    config_path = metadata / "config"
-    try:
-        info = config_path.lstat()
-    except OSError as exc:
-        raise _error("POLICY_DENIED", "Git configuration is missing.") from exc
-    if not stat.S_ISREG(info.st_mode):
-        raise _error("POLICY_DENIED", "Git configuration must be a regular file.")
-    # Replace worker-editable config before every Git operation; all repository-specific
-    # filters, hooks, remotes and include directives are discarded.
+    repo_fd, metadata_fd = _open_repo_and_metadata(repo, settings)
+    temporary = ".sidequest-config-" + uuid.uuid4().hex
     fixed = (
         "[core]\n"
         "\trepositoryformatversion = 0\n"
@@ -581,14 +676,72 @@ def ensure_safe_clone(repo: Path, settings: Settings) -> None:
         "\tbare = false\n"
         "\tlogallrefupdates = true\n"
     )
-    flags = os.O_WRONLY | os.O_TRUNC
-    if hasattr(os, "O_NOFOLLOW"):
-        flags |= os.O_NOFOLLOW
-    fd = os.open(config_path, flags)
     try:
-        os.write(fd, fixed.encode("ascii"))
+        _scan_git_metadata_fd(metadata_fd, settings)
+        _assert_pinned_metadata_path(repo, settings, repo_fd, metadata_fd)
+        try:
+            original = os.stat("config", dir_fd=metadata_fd, follow_symlinks=False)
+        except OSError as exc:
+            raise _error("POLICY_DENIED", "Git configuration is missing or changed.") from exc
+        if not stat.S_ISREG(original.st_mode) or original.st_nlink != 1:
+            raise _error("POLICY_DENIED", "Git configuration must be a single-link regular file.")
+
+        # Build a fresh inode and rename it over config. Never open an
+        # attacker-controlled config inode with O_TRUNC, even after lstat.
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+        _assert_pinned_metadata_path(repo, settings, repo_fd, metadata_fd)
+        try:
+            fd = os.open(temporary, flags, 0o600, dir_fd=metadata_fd)
+        except OSError as exc:
+            raise _error("POLICY_DENIED", "Safe Git configuration could not be staged.") from exc
+        try:
+            opened = os.fstat(fd)
+            if not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1:
+                raise _error("POLICY_DENIED", "Staged Git configuration is not a private regular file.")
+            view = memoryview(fixed.encode("ascii"))
+            while view:
+                written = os.write(fd, view)
+                view = view[written:]
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+
+        # Refuse replacement if either the metadata directory or config entry
+        # changed since the scan. The final rename is descriptor-relative and
+        # cannot follow a symlink planted at the config pathname.
+        _assert_pinned_metadata_path(repo, settings, repo_fd, metadata_fd)
+        current_metadata = os.stat(".git", dir_fd=repo_fd, follow_symlinks=False)
+        pinned_metadata = os.fstat(metadata_fd)
+        current_config = os.stat("config", dir_fd=metadata_fd, follow_symlinks=False)
+        if (current_metadata.st_dev, current_metadata.st_ino) != (pinned_metadata.st_dev, pinned_metadata.st_ino):
+            raise _error("POLICY_DENIED", "Git metadata changed while configuration was sanitized.")
+        if (
+            not stat.S_ISREG(current_config.st_mode)
+            or current_config.st_nlink != 1
+            or (current_config.st_dev, current_config.st_ino) != (original.st_dev, original.st_ino)
+        ):
+            raise _error("POLICY_DENIED", "Git configuration changed while it was sanitized.")
+        staged = os.stat(temporary, dir_fd=metadata_fd, follow_symlinks=False)
+        if not stat.S_ISREG(staged.st_mode) or staged.st_nlink != 1 or staged.st_size != len(fixed.encode("ascii")):
+            raise _error("POLICY_DENIED", "Staged Git configuration changed before installation.")
+        os.replace(temporary, "config", src_dir_fd=metadata_fd, dst_dir_fd=metadata_fd)
+        installed = os.stat("config", dir_fd=metadata_fd, follow_symlinks=False)
+        if (
+            not stat.S_ISREG(installed.st_mode)
+            or installed.st_nlink != 1
+            or installed.st_size != len(fixed.encode("ascii"))
+            or (installed.st_dev, installed.st_ino) != (staged.st_dev, staged.st_ino)
+        ):
+            raise _error("POLICY_DENIED", "Sanitized Git configuration could not be verified.")
+        os.fsync(metadata_fd)
     finally:
-        os.close(fd)
+        try:
+            os.unlink(temporary, dir_fd=metadata_fd)
+        except OSError:
+            pass
+        finally:
+            os.close(metadata_fd)
+            os.close(repo_fd)
     _repo_root(repo, settings)
 
 
@@ -616,9 +769,24 @@ def prepare_clone(repo_path: str, revision: str, workspace_raw: str, settings: S
         raise _error("POLICY_DENIED", "Source repository must be clean at the requested revision.")
     if sum(len(file.data) for file in actual.values()) > settings.max_total_bytes:
         raise _error("POLICY_DENIED", "Source repository exceeds the configured clone limit.")
-    workspace.parent.mkdir(parents=True, exist_ok=True)
-    # Check newly created parents for symlinks after mkdir and before invoking Git.
-    workspace = validate_workspace_path(str(workspace), settings.staging_roots, must_exist=False)
+    if workspace.name in {"", ".", ".."}:
+        raise _error("POLICY_DENIED", "Workspace destination must be a named directory under staging.")
+    parent_fd = open_directory_beneath(workspace.parent, settings.staging_roots, create=True)
+    try:
+        try:
+            os.mkdir(workspace.name, mode=0o700, dir_fd=parent_fd)
+        except FileExistsError as exc:
+            raise _error("POLICY_DENIED", "Workspace destination must not already exist.") from exc
+        except OSError as exc:
+            raise _error("POLICY_DENIED", "Workspace destination could not be created safely.") from exc
+        workspace_fd = _open_child_directory(parent_fd, workspace.name)
+        try:
+            created_workspace = os.fstat(workspace_fd)
+        finally:
+            os.close(workspace_fd)
+    finally:
+        os.close(parent_fd)
+    workspace = validate_workspace_path(str(workspace), settings.staging_roots, must_exist=True)
     template = tempfile.TemporaryDirectory(prefix="sidequest-git-template-")
     try:
         clone_args = [
@@ -656,8 +824,21 @@ def prepare_clone(repo_path: str, revision: str, workspace_raw: str, settings: S
         ensure_safe_clone(workspace, settings)
         return workspace, commit
     except Exception:
-        if workspace.exists() and workspace.is_dir() and not workspace.is_symlink():
-            shutil.rmtree(workspace, ignore_errors=True)
+        try:
+            parent_fd = open_directory_beneath(workspace.parent, settings.staging_roots)
+            try:
+                current = os.stat(workspace.name, dir_fd=parent_fd, follow_symlinks=False)
+                if (
+                    stat.S_ISDIR(current.st_mode)
+                    and (current.st_dev, current.st_ino) == (created_workspace.st_dev, created_workspace.st_ino)
+                ):
+                    shutil.rmtree(workspace.name, ignore_errors=True, dir_fd=parent_fd)
+            finally:
+                os.close(parent_fd)
+        except Exception:
+            # An unexpected path change means cleanup is unsafe; leave the partial
+            # host staging directory for explicit reconciliation.
+            pass
         raise
     finally:
         template.cleanup()

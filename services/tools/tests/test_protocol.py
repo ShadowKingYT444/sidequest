@@ -11,12 +11,39 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from protocol import AdapterError, error_response, read_request, success_response, write_response
+from protocol import AdapterError, ProgressLog, error_response, read_request, success_response, write_response
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_progress_log_updates_atomically_with_bounded_json_records(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="sidequest-progress-ok-") as temp:
+            root = Path(temp)
+            progress = root / "nested" / "progress.jsonl"
+            log = ProgressLog(progress, "request", (root,))
+            log.append("status", "first")
+            log.append("status", "second")
+            rows = [json.loads(line) for line in progress.read_text().splitlines()]
+            self.assertEqual([row["seq"] for row in rows], [1, 2])
+            self.assertEqual([row["message"] for row in rows], ["first", "second"])
+
+    def test_progress_log_rejects_hardlink_without_appending_to_external_file(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="sidequest-progress-") as temp:
+            root = Path(temp)
+            external = root / "external.log"
+            external.write_bytes(b"external sentinel\n")
+            progress = root / "progress.jsonl"
+            os.link(external, progress)
+            before = external.read_bytes()
+
+            with self.assertRaises(AdapterError) as caught:
+                ProgressLog(progress, "request", (root,)).append("status", "must not write")
+
+            self.assertEqual(caught.exception.code, "POLICY_DENIED")
+            self.assertEqual(external.read_bytes(), before)
+            self.assertEqual(progress.read_bytes(), before)
+
     def test_reads_one_json_line_and_rejects_extra_data_or_duplicate_keys(self) -> None:
         request = b'{"v":1,"request_id":"r","op":"repo.inspect","job_id":"j","workspace":"/tmp/w","payload":{}}\n'
         self.assertEqual(read_request(io.BytesIO(request))["request_id"], "r")
