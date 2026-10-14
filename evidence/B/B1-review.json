@@ -1,0 +1,49 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "B1",
+  "candidate_sha": "0265dd14c524c965606709531446a5c1877920cb",
+  "status": "FAIL",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+      "result": "PASS",
+      "evidence": "15 tests passed; 0 failures. All Git/delivery tests use disposable temporary fixture repositories."
+    },
+    {
+      "command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m services.tools.main --help",
+      "result": "PASS",
+      "exit_code": 0,
+      "evidence": "Printed the adapter usage and exited successfully without runtime configuration."
+    }
+  ],
+  "checks": {
+    "clone_ref_and_source_isolation": "PASS: suite verified unchanged source refs/files, distinct clone object inodes, no alternates and no retained remote; dirty source and unsafe tree inputs were rejected.",
+    "scope_secret_symlink_and_size_controls": "PASS: suite rejected out-of-scope, traversal, symlink, oversized and credential-like candidate inputs; tracked add/edit/delete/rename, mode and binary cases were captured.",
+    "argv_and_git_configuration": "FAIL: shell-free Git invocation and environment/filter/hook protections passed their fixtures, but worker-editable .git/config can be a hard link to an outside file and is truncated by ensure_safe_clone().",
+    "manifest_tree_and_snapshot": "PASS: independent fixture probe confirmed canonical manifest bytes, candidate tree digest, all non-deleted manifest paths, content hashes and Git modes match the frozen snapshot; snapshot files/directories were read-only by mode.",
+    "host_approval_and_delivery_identity": "PASS: payload approval alone returned POLICY_DENIED; host-staged approval delivered a fixture once; exact repeat reconciled; a different valid candidate reusing the delivery ID was denied; stale/mismatched identities were denied.",
+    "artifact_ids_and_output_roots": "PASS within configured roots: duplicate IDs and traversal IDs were rejected; an output root outside the configured artifact root was denied without creating files. The Git metadata hard-link finding still breaks overall write confinement.",
+    "malformed_stdout_and_protocol": "PASS: required tests verified one JSON response line for malformed input, duplicate keys and extra input rejection."
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "path": "services/tools/git_ops.py",
+      "lines": "568-587",
+      "title": "Worker-editable .git/config hard link overwrites a file outside configured roots",
+      "reproduction": "In a disposable fixture clone, replace .git/config with a hard link to a regular file outside every configured root, then call artifacts.freeze. The adapter accepted the workspace and overwrote the external file with the fixed Git config; the link count remained 2.",
+      "impact": "The freeze path performs an arbitrary write to any same-filesystem file the worker can hard-link, despite validating the config path itself. The regular-file check must also reject hard links before opening with O_TRUNC.",
+      "evidence": "Independent temporary-repository probe; no development repository was used as a runtime target."
+    }
+  ],
+  "limits": [
+    "All local deliveries and security probes used disposable temporary Git repositories. They are fixtures, not proof of a live product/runtime integration or provider behavior.",
+    "No provider/model call, B2 operation, authentication change, external write, or source edit was performed."
+  ]
+}

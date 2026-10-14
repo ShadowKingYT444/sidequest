@@ -1,0 +1,35 @@
+{
+  "candidate_sha": "5f1de2613e3f8f0840e670a34bd1d7d8c8158f35",
+  "verdict": "PASS",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "13 tests passed."
+    },
+    {
+      "command": "Focused inline Python probes with temporary SQLite and Git fixtures",
+      "exit_code": 1,
+      "result": "All requested assertions before a reviewer-only expectation passed; the final assertion wrongly expected a task settled as completed with unknown cost to become blocked. The corrected persistence/idempotency probe below passed."
+    },
+    {
+      "command": "Corrected inline persistence/idempotency probe across RuntimeStore close and reopen",
+      "exit_code": 0,
+      "result": "NULL cost and positive 60 micro-dollar uncertain reservation persisted; identical command replay survived reload and revision change; different body conflicted."
+    },
+    {
+      "command": "Inline temporary Git root-policy probes",
+      "exit_code": 0,
+      "result": "Symlink escape rejected with POLICY_DENIED; non-root repository directory rejected with INVALID_INPUT."
+    }
+  ],
+  "material_findings": [],
+  "verified": [
+    "Zero-reserved build and research claims after unknown usage reject with BUDGET_LIMIT while preserving NULL spend and the positive reservation.",
+    "max_parallel=4 cannot exceed RuntimeConfig.max_parallel=1.",
+    "Approval detects a changed registered Git ref without an explicit refresh and marks the approval stale.",
+    "SQLite rejects clearing the immutable candidate-manifest link to NULL.",
+    "Zero-cost work requires both kind=verify and an explicitly trusted verifier. A1 public models expose neither task kind nor a trust opt-in field; the trust flag appears only in internal worker creation and claim logic."
+  ],
+  "fixture_live_distinction": "All probes used temporary local databases and Git repositories. No live worker, provider/model call, or external delivery was run."
+}

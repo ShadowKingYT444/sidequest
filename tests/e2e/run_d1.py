@@ -9,8 +9,10 @@ import importlib.metadata
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -30,6 +32,25 @@ def canonical(value: Any) -> bytes:
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def copy_frozen_fixture(source: Path, destination: Path) -> Path:
+    if source.is_symlink() or not source.is_dir():
+        raise RuntimeError(f"D1 fixture source is not a regular directory: {source}")
+    shutil.copytree(source, destination, symlinks=True, copy_function=shutil.copy2)
+    for path in sorted(destination.rglob("*"), reverse=True):
+        if path.is_symlink():
+            raise RuntimeError("D1 fixture unexpectedly contains a symlink")
+        info = path.stat(follow_symlinks=False)
+        if stat.S_ISDIR(info.st_mode):
+            mode = stat.S_IMODE(info.st_mode) & ~0o222
+        elif stat.S_ISREG(info.st_mode):
+            mode = stat.S_IMODE(info.st_mode) & ~0o222
+        else:
+            raise RuntimeError("D1 fixture contains a special file")
+        path.chmod(mode)
+    destination.chmod(stat.S_IMODE(destination.stat().st_mode) & ~0o222)
+    return destination
 
 
 def build_manifest(root: Path, name: str) -> tuple[dict[str, Any], str]:
@@ -160,8 +181,12 @@ def main() -> int:
     INPUTS.mkdir(mode=0o700, exist_ok=True)
     OUTPUTS.mkdir(mode=0o700, exist_ok=True)
     cases: list[dict[str, Any]] = []
-    cases.append(run_adapter("bad", FIXTURES / "bad"))
-    cases.append(run_adapter("known-good", FIXTURES / "known-good"))
+    with tempfile.TemporaryDirectory(prefix="sidequest-d1-fixtures-") as temp_root:
+        temp_path = Path(temp_root)
+        bad_fixture = copy_frozen_fixture(FIXTURES / "bad", temp_path / "bad")
+        known_good_fixture = copy_frozen_fixture(FIXTURES / "known-good", temp_path / "known-good")
+        cases.append(run_adapter("bad", bad_fixture))
+        cases.append(run_adapter("known-good", known_good_fixture))
 
     expected = {
         "bad": (False, "SIGNUP_DESTINATION_MISMATCH"),
