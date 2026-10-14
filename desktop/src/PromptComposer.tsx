@@ -26,7 +26,6 @@ export default function PromptComposer({ draft, onChange, canSubmit, onSubmit, g
   const pending = useRef(createDraftOperations());
   const store=operations??pending.current;
   const getDraft=useRef(getCurrentDraft);getDraft.current=getCurrentDraft;
-  const pendingCount = useRef(0);
   const [issues, setIssuesState] = useState<DraftIssue[]>(store.issues);
   const announce=()=>store.listeners.forEach(listener=>listener());
   const setIssues=(next:DraftIssue[])=>{store.issues=next;announce();};
@@ -40,7 +39,6 @@ export default function PromptComposer({ draft, onChange, canSubmit, onSubmit, g
 
   function attach(files: File[]) {
     if (!files.length) return;
-    pendingCount.current++;
     store.reading++;announce();
     // Serialize local reads so fast paste/drop actions cannot overwrite each other.
     const queue=store;
@@ -53,7 +51,7 @@ export default function PromptComposer({ draft, onChange, canSubmit, onSubmit, g
       const latest = getDraft.current?.()??current.current;
       const updated = { text: latest.text, attachments: [...latest.attachments, ...additions] };
       commit(updated); setIssues(result.issues);
-    }).catch(() => setIssues([{ code: 'read', message: 'Files could not be added. Try selecting them again.' }])).finally(() => { pendingCount.current--; setReading(pendingCount.current > 0); });
+    }).catch(() => setIssues([{ code: 'read', message: 'Files could not be added. Try selecting them again.' }])).finally(() => {store.reading=Math.max(0,store.reading-1);announce();});
   }
 
   function insert(text: string) {
