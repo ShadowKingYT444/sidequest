@@ -15,6 +15,7 @@ export interface OfficeNotification {
 }
 
 type Row = Record<string, unknown>;
+type ValidatedJob = { job: Row; tasks: Row[]; runIds: string[]; checks: Row[]; events: Row[] };
 const jobStates = new Set(['queued', 'running', 'verifying', 'needs_approval', 'accepted', 'completed', 'blocked', 'failed', 'paused', 'cancelled']);
 const taskStates = new Set([...jobStates].filter(state => state !== 'accepted'));
 const checkStates = new Set(['pass', 'fail', 'blocked', 'pending']);
@@ -30,6 +31,19 @@ function row(value: unknown): Row { if (!value || typeof value !== 'object' || A
 function rows(value: unknown, maximum: number): Row[] { if (!Array.isArray(value) || value.length > maximum) fail(); return value.map(row); }
 function uniqueIds(items: Row[]): void { const ids = new Set(); for (const item of items) { if (!identity(item.id) || ids.has(item.id)) fail(); ids.add(item.id); } }
 function ids(value: unknown, maximum: number): string[] { if (!Array.isArray(value) || value.length > maximum || !value.every(identity) || new Set(value).size !== value.length) fail(); return value; }
+function notificationFingerprint({ job, tasks, runIds, checks, events }: ValidatedJob): string {
+  const byId = (left: Row, right: Row) => String(left.id).localeCompare(String(right.id));
+  // Compare the validated fields used by this projection. JSON property order and
+  // unrelated runtime metadata cannot change a notification or its ownership.
+  return JSON.stringify({ id: job.id, projectId: job.project_id, title: job.title, state: job.state,
+    workerId: job.worker_id, blockedReason: job.blocked_reason ?? null,
+    artifactIds: [...job.artifact_ids as string[]].sort(), runIds: [...runIds].sort(),
+    tasks: [...tasks].sort(byId).map(task => ({ id: task.id, state: task.state, workerId: task.worker_id, attemptId: task.attempt_id })),
+    checks: [...checks].sort(byId).map(check => ({ id: check.id, state: check.state, artifactId: check.evidence_artifact_id ?? null })),
+    events: [...events].sort(byId).map(event => ({ id: String(event.id), at: event.at, type: event.type,
+      message: event.message, taskId: event.task_id ?? null, artifactId: event.artifact_id ?? null })),
+  });
+}
 const compare = (left: OfficeNotification, right: OfficeNotification) =>
   Number(right.kind === 'attention') - Number(left.kind === 'attention')
   || (right.occurredAt ? Date.parse(right.occurredAt) : 0) - (left.occurredAt ? Date.parse(left.occurredAt) : 0)
@@ -40,19 +54,23 @@ export function deriveNotifications(value: unknown): OfficeNotification[] {
   const snapshot = row(value);
   if (snapshot.v !== 1 || !Number.isSafeInteger(snapshot.revision) || (snapshot.revision as number) < 0
     || !text(snapshot.mode, 64) || typeof snapshot.stopped !== 'boolean') fail();
-  const projects = rows(snapshot.projects, 100), jobs = rows(snapshot.jobs, 20);
-  uniqueIds(projects); uniqueIds(jobs);
+  const projects = rows(snapshot.projects, 100), recentJobs = rows(snapshot.jobs, 20);
+  const hasOfficeJobs = snapshot.office_jobs !== undefined;
+  // Supplemental projection: at most 24 assigned jobs plus 100 active jobs.
+  const officeJobs = hasOfficeJobs ? rows(snapshot.office_jobs, 124) : [];
+  uniqueIds(projects); uniqueIds(recentJobs); uniqueIds(officeJobs);
   const projectIds = new Set(projects.map(project => project.id));
   const owners = rows(snapshot.office_sessions ?? [], 24);
   const ownedStations = new Set(), ownedRuns = new Set(), ownedWorkers = new Set();
   for (const owner of owners) {
     if (!station(owner.station_id) || ![owner.job_id, owner.project_id, owner.run_id, owner.worker_id].every(identity)
-      || !timestamp(owner.assigned_at) || ownedStations.has(owner.station_id) || ownedRuns.has(owner.run_id) || ownedWorkers.has(owner.worker_id)) fail();
+      || !projectIds.has(owner.project_id) || !timestamp(owner.assigned_at)
+      || ownedStations.has(owner.station_id) || ownedRuns.has(owner.run_id) || ownedWorkers.has(owner.worker_id)) fail();
     ownedStations.add(owner.station_id); ownedRuns.add(owner.run_id); ownedWorkers.add(owner.worker_id);
   }
   const notifications: OfficeNotification[] = [];
-  const validatedJobs = new Map<string, { job: Row; tasks: Row[]; runIds: string[]; checks: Row[]; events: Row[] }>();
-  for (const job of jobs) {
+  const validatedJobs = new Map<string, ValidatedJob>();
+  for (const job of [...recentJobs, ...officeJobs]) {
     if (!identity(job.project_id) || !projectIds.has(job.project_id) || !text(job.title, 200) || !job.title.trim()
       || !jobStates.has(job.state as string) || !nullableId(job.worker_id)
       || !(job.blocked_reason === undefined || job.blocked_reason === null || text(job.blocked_reason, 4096))) fail();
@@ -76,13 +94,16 @@ export function deriveNotifications(value: unknown): OfficeNotification[] {
         || (event.artifact_id !== undefined && event.artifact_id !== null && !identity(event.artifact_id))) fail();
       eventIds.add(eventId);
     }
-    validatedJobs.set(job.id as string, { job, tasks, runIds, checks, events });
+    const validated = { job, tasks, runIds, checks, events };
+    const previous = validatedJobs.get(job.id as string);
+    if (previous && notificationFingerprint(previous) !== notificationFingerprint(validated)) fail();
+    if (!previous) validatedJobs.set(job.id as string, validated);
   }
   for (const owner of owners) {
     const selected = validatedJobs.get(owner.job_id as string);
-    // The public snapshot contains only the latest 20 jobs. An older recorded
-    // owner is not an invalid record, but cannot supply a badge without its job.
-    if (!selected) continue;
+    // Older runtimes expose only recent jobs. New runtimes explicitly promise
+    // all assigned jobs in office_jobs, so an unresolved owner is an error.
+    if (!selected) { if (hasOfficeJobs) fail(); continue; }
     const matchingTasks = selected.tasks.filter(task => task.attempt_id === owner.run_id);
     const knownWorkerConflict = (selected.job.worker_id != null && selected.job.worker_id !== owner.worker_id)
       || matchingTasks.some(task => task.worker_id != null && task.worker_id !== owner.worker_id);
@@ -91,7 +112,7 @@ export function deriveNotifications(value: unknown): OfficeNotification[] {
     // The persisted owner remains valid; missing linkage or a known conflict does not.
     const releasedWorker = selected.job.worker_id == null && matchingTasks.length === 1 && matchingTasks[0].worker_id === null;
     if (selected.job.project_id !== owner.project_id || !selected.runIds.includes(owner.run_id as string)
-      || matchingTasks.length > 1 || knownWorkerConflict || !(knownWorker || releasedWorker)) fail();
+      || matchingTasks.length !== 1 || knownWorkerConflict || !(knownWorker || releasedWorker)) fail();
   }
   for (const { job, tasks, checks, events } of validatedJobs.values()) {
     const jobOwners = owners.filter(item => item.job_id === job.id).sort((a, b) => (a.station_id as string).localeCompare(b.station_id as string));

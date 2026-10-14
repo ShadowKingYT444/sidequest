@@ -1,0 +1,16 @@
+✔ completed jobs require every task completed and a nonempty passing check set; checking never means completed (4.87845ms)
+✔ only validated persisted job/run/project/worker ownership receives a station badge (6.790513ms)
+✔ failed, blocked, approval and warning events are attention with stable identities (4.40446ms)
+✔ one task notification supplies badges to each distinct validated recorded session (22.091731ms)
+✔ released worker ownership requires the exact retained task attempt and rejects every known conflict (10.956726ms)
+✔ task and failed-check attention outrank a completed result, without duplicated warning alerts (0.161457ms)
+✔ fixture labels are explicit, unassigned notifications never invent station ownership (0.142437ms)
+✔ malformed, overbound, duplicate and cross-identity records fail before projection (0.535511ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 224.995819

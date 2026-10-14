@@ -1,0 +1,119 @@
+✔ completed jobs require every task completed and a nonempty passing check set; checking never means completed (2.355741ms)
+✔ only validated persisted job/run/project/worker ownership receives a station badge (0.966779ms)
+✔ failed, blocked, approval and warning events are attention with stable identities (2.818039ms)
+✔ one task notification supplies badges to each distinct validated recorded session (7.727591ms)
+✔ released worker ownership requires the exact retained task attempt and rejects every known conflict (0.730132ms)
+✔ task and failed-check attention outrank a completed result, without duplicated warning alerts (0.523207ms)
+✔ fixture labels are explicit, unassigned notifications never invent station ownership (0.259238ms)
+✔ malformed, overbound, duplicate and cross-identity records fail before projection (0.611193ms)
+✖ assigned runs older than the latest twenty retain completion and attention badges after worker release (5.389119ms)
+✖ older active unassigned jobs retain attention without inventing station ownership (0.424945ms)
+✖ recent and supplemental job projections deduplicate equivalent records and reject conflicting state (0.469357ms)
+✖ supplemental records are bounded and validated before any notification is projected (0.274466ms)
+✖ supplemental snapshots require complete project, run, task and worker identities for every recorded owner (0.212645ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 8
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 155.597796
+
+✖ failing tests:
+
+test at desktop/tests/notifications.test.mjs:69:1
+✖ assigned runs older than the latest twenty retain completion and attention badges after worker release (5.389119ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///tmp/sidequest-notifications/desktop/tests/notifications.test.mjs:73:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at desktop/tests/notifications.test.mjs:81:1
+✖ older active unassigned jobs retain attention without inventing station ownership (0.424945ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///tmp/sidequest-notifications/desktop/tests/notifications.test.mjs:86:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at desktop/tests/notifications.test.mjs:91:1
+✖ recent and supplemental job projections deduplicate equivalent records and reject conflicting state (0.469357ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///tmp/sidequest-notifications/desktop/tests/notifications.test.mjs:98:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at desktop/tests/notifications.test.mjs:102:1
+✖ supplemental records are bounded and validated before any notification is projected (0.274466ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///tmp/sidequest-notifications/desktop/tests/notifications.test.mjs:106:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at desktop/tests/notifications.test.mjs:112:1
+✖ supplemental snapshots require complete project, run, task and worker identities for every recorded owner (0.212645ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///tmp/sidequest-notifications/desktop/tests/notifications.test.mjs:116:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

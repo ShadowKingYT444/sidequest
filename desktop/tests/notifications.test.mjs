@@ -61,3 +61,63 @@ test('malformed, overbound, duplicate and cross-identity records fail before pro
   for (const patch of [{ job_id: 'other' }, { project_id: 'other' }, { task_id: 'other' }, { at: 'yesterday' }, { id: 0 }, { type: 'script' }, { message: 'x'.repeat(16_385) }]) assert.throws(() => deriveNotifications(snapshot({ jobs: [job({ events: [{ ...event(1), ...patch }] })] })));
   assert.throws(() => deriveNotifications(snapshot({ jobs: [job({ events: [event(1), event('1')] })] })));
 });
+
+const newerJobs = () => Array.from({ length: 20 }, (_, index) => job({
+  id: `newer-job-${index}`, state: 'queued', run_ids: [], tasks: [], checks: [], events: [],
+}));
+
+test('assigned runs older than the latest twenty retain completion and attention badges after worker release', () => {
+  const released = job({ tasks: [{ id: 'task-1', state: 'completed', worker_id: null, attempt_id: 'run-1' }] });
+  const state = snapshot({ jobs: newerJobs(), office_jobs: [released], office_sessions: [owner()] });
+  const items = deriveNotifications(state);
+  assert.equal(items.length, 1);
+  assert.equal(items[0].jobId, 'job-1');
+  assert.equal(notificationsByStation(items).get('parent_019')?.kind, 'completed');
+  const attention = deriveNotifications({ ...state, office_jobs: [{ ...released, state: 'blocked', blocked_reason: 'Review this older run' }] });
+  assert.equal(attention[0]?.detail, 'Review this older run');
+  assert.equal(notificationsByStation(attention).get('parent_019')?.kind, 'attention');
+});
+
+test('older active unassigned jobs retain attention without inventing station ownership', () => {
+  const items = deriveNotifications(snapshot({ jobs: newerJobs(), office_jobs: [job({
+    state: 'running', tasks: [{ id: 'task-1', state: 'running', worker_id: 'worker-1', attempt_id: 'run-1' }],
+    checks: [], events: [event(1, 'warning', 'Older active run needs input')],
+  })] }));
+  assert.equal(items.length, 1);
+  assert.equal(items[0].detail, 'Older active run needs input');
+  assert.equal(notificationsByStation(items).size, 0);
+});
+
+test('recent and supplemental job projections deduplicate equivalent records and reject conflicting state', () => {
+  // Property order is not identity. Runtime fields unrelated to notifications may differ.
+  const copy = { events: [event(1)], ...job(), budget_usd: 5 };
+  const items = deriveNotifications(snapshot({ office_jobs: [copy], office_sessions: [owner()] }));
+  assert.equal(items.length, 1);
+  assert.equal(notificationsByStation(items).size, 1);
+  for (const patch of [{ state: 'blocked' }, { worker_id: 'other-worker' }, { run_ids: [] }, { events: [event(1, 'warning')] }]) {
+    assert.throws(() => deriveNotifications(snapshot({ office_jobs: [job(patch)] })));
+  }
+});
+
+test('supplemental records are bounded and validated before any notification is projected', () => {
+  for (const malformed of [null, {}, [job(), job()], Array.from({ length: 125 }, (_, index) => job({ id: `old-${index}` })),
+    [job({ project_id: 'other-project' })], [job({ checks: [{ id: 'identity', state: 'green' }] })],
+    [job({ events: [{ ...event(1), project_id: 'other-project' }] })]]) {
+    assert.throws(() => deriveNotifications(snapshot({ office_jobs: malformed })));
+  }
+  const atBound = Array.from({ length: 124 }, (_, index) => job({ id: `old-${index}`, state: 'queued', tasks: [], checks: [], events: [] }));
+  assert.equal(deriveNotifications(snapshot({ jobs: [], office_jobs: atBound })).length, 0);
+});
+
+test('supplemental snapshots require complete project, run, task and worker identities for every recorded owner', () => {
+  const released = job({ tasks: [{ id: 'task-1', state: 'completed', worker_id: null, attempt_id: 'run-1' }] });
+  const state = snapshot({ jobs: newerJobs(), office_jobs: [released], office_sessions: [owner()] });
+  for (const patch of [{ job_id: 'missing-job' }, { project_id: 'other-project' }, { run_id: 'wrong-run' }]) {
+    assert.throws(() => deriveNotifications({ ...state, office_sessions: [owner(patch)] }));
+  }
+  for (const patch of [{ tasks: [] }, { run_ids: [] }, { tasks: [{ ...released.tasks[0], worker_id: 'wrong-worker' }] },
+    { tasks: [{ ...released.tasks[0], attempt_id: 'wrong-run' }] }, { worker_id: 'wrong-worker' },
+    { worker_id: 'worker-1', tasks: [{ ...released.tasks[0], attempt_id: 'wrong-run' }] }]) {
+    assert.throws(() => deriveNotifications({ ...state, office_jobs: [{ ...released, ...patch }] }));
+  }
+});
