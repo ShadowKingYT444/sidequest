@@ -1,0 +1,11 @@
+# Successful acknowledgement then pre-dispatch rejection repair
+
+Continued from verified published `f4634ffbb0c087992b2ae1027cc561e7d1c3aaed`, with a clean tree and matching remote head. The successful 202-equivalent receipt was clearing the command identity and original draft/files before the runtime could reject its queued intent. Existing lost-response tests did not cover this success path.
+
+`red-unit.log` and `red-browser.log` reproduce the loss without throwing away the acknowledgement. `red-source.json` identifies the unchanged implementation; `red-browser-results/` preserves its assertion snapshot.
+
+The original sent text/File snapshot and acknowledged receipt now persist separately from the editable newer draft until verified completion. Queued/running/missing/uncertain outcomes retain the command lock; conflicting receipt identity/revision cannot release it or allow another send. Rejection before dispatch preserves input across reload. Explicit Review restores an empty draft or retains the original beside a newer draft; Restore swaps them so the newer text/files stay recoverable. An existing retained draft cannot be silently overwritten by a later rejection. Legacy records migrate only while every original File identity remains available; corrupt or incomplete snapshots fail closed. Local previews are recreated; URLs/paths/credentials are not persisted.
+
+Targeted successful-reply regression and five transport browser checks pass. 19 store cases and 82 desktop unit tests pass; TypeScript/production build passes. Updated completion fixtures supply verified completed message metadata, retaining their behavior assertions. Intermediate failures are preserved, including the completion-status update and the test fixture HTML language omission. Image/phone-width/accessibility checks and the final frozen 25-test browser suite are recorded here as verification completes.
+
+Changes are limited to the draft store, existing thin composer recovery disclosure/style, and regression tests. Original art, runtime/provider/spending/auth/security gates are unchanged. No native probe or live/model/paid turn, new auth, credential copy, sandbox/permission change, force push, merge or deployment. Native/live acceptance remains blocked by the already recorded host and authority prerequisites.

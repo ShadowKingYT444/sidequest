@@ -7,7 +7,7 @@ import {addLocalFiles} from '../src/local-drafts.ts';
 function protocolFixture(){
  const rows=new Map(), calls=[], receipts=new Map();
  const storage={async read(key){return rows.get(key);},async write(key,value){rows.set(key,structuredClone(value));}};
- const transport={async snapshot(){return {revision:2};},async stageAttachment(run,key,name,mime,bytes){calls.push(['stage',run,key]);return {v:1,attachment:{id:'attachment-1',run_id:run,name,media_type:mime,size_bytes:3,sha256:'a'.repeat(64)}};},async sessionMessage(run,id,prompt,ids,revision){calls.push(['send',run,id,prompt,ids,revision]);const reply={v:1,accepted:true,command_id:id,revision:revision+1,result:{run_id:run}};receipts.set(id,reply);return reply;},async commandStatus(id){calls.push(['status',id]);return {v:1,found:receipts.has(id),...(receipts.has(id)?{command:receipts.get(id)}:{})};}};
+ const transport={async snapshot(){return {revision:2};},async stageAttachment(run,key,name,mime,bytes){calls.push(['stage',run,key]);return {v:1,attachment:{id:'attachment-1',run_id:run,name,media_type:mime,size_bytes:Buffer.from(bytes,'base64').length,sha256:'a'.repeat(64)}};},async sessionMessage(run,id,prompt,ids,revision){calls.push(['send',run,id,prompt,ids,revision]);const reply={v:1,accepted:true,command_id:id,revision:revision+1,result:{run_id:run}};receipts.set(id,reply);return reply;},async commandStatus(id){calls.push(['status',id]);return {v:1,found:receipts.has(id),...(receipts.has(id)?{command:receipts.get(id),message:{id,state:'completed',run_id:'follow-up-run'}}:{})};}};
  return {storage,transport,rows,calls,receipts};
 }
 const urls=()=>({createObjectURL:()=>`blob:preview-${crypto.randomUUID()}`,revokeObjectURL(){}});
@@ -35,8 +35,9 @@ test('protocol fixture: lost send reply stays locked across reload, reconciles o
 test('protocol fixture: drafts edited during send are retained and only submitted attachment identities clear after acceptance',async()=>{
  const fixture=protocolFixture(),store=new SessionDraftStore('session-1',fixture.storage,urls());await store.ready;
  const added=await addLocalFiles({text:'Original',attachments:[]},[new File(['abc'],'notes.txt',{type:'text/plain'})],urls());store.change(added.draft);
- fixture.transport.sessionMessage=async(run,id)=>{store.change({...store.state.draft,text:'Next thought'});return {v:1,accepted:true,command_id:id,revision:3};};
- await store.send(target,fixture.transport);assert.equal(store.state.draft.text,'Next thought');assert.equal(store.state.draft.attachments.length,0);assert.equal(store.state.pending,undefined);
+ const realSend=fixture.transport.sessionMessage;fixture.transport.sessionMessage=async(...args)=>{store.change({...store.state.draft,text:'Next thought'});return realSend(...args);};
+ await store.send(target,fixture.transport);assert.equal(store.state.draft.text,'Next thought');assert.equal(store.state.draft.attachments.length,0);assert.equal(store.state.pending.state,'accepted');assert.equal(await store.state.submitted.attachments[0].file.text(),'abc');
+ await store.reconcile(fixture.transport);assert.equal(store.state.pending,undefined);assert.equal(store.state.draft.text,'Next thought');assert.equal(store.state.submitted,undefined);
  assert.equal(fixture.calls.filter(call=>call[0]==='stage').length,1);
 });
 
@@ -101,4 +102,69 @@ test('protocol fixture: a contradictory later status cannot erase a known not-st
  const fixture=protocolFixture(),store=new SessionDraftStore('session-1',fixture.storage,urls());await store.ready;store.change({text:'Retain rejected draft',attachments:[]});const realSend=fixture.transport.sessionMessage;fixture.transport.sessionMessage=async(...args)=>{await realSend(...args);throw Error('Lost reply');};await store.send(target,fixture.transport);const id=store.state.pending.commandId;
  fixture.transport.commandStatus=async()=>({v:1,found:true,command:fixture.receipts.get(id),message:{id,state:'rejected',run_id:null}});await store.reconcile(fixture.transport);
  for(const message of [undefined,{id,state:'queued',run_id:null}]){fixture.transport.commandStatus=async()=>({v:1,found:true,command:fixture.receipts.get(id),...(message?{message}:{})});await store.reconcile(fixture.transport);assert.equal(store.state.pending.state,'rejected');assert.equal(store.state.draft.text,'Retain rejected draft');assert.match(store.state.error,/rejected message status/i);}
+});
+
+test('protocol fixture: successful 202 then rejected-before-start survives reload with sent files and a separate newer draft',async()=>{
+ const fixture=protocolFixture(),first=new SessionDraftStore('acknowledged-send',fixture.storage,urls());await first.ready;
+ const original=await addLocalFiles({text:'Original successfully acknowledged request',attachments:[]},[new File(['abc'],'sent.txt',{type:'text/plain',lastModified:9})],urls());first.change(original.draft);await first.send(target,fixture.transport);
+ const send=fixture.calls.find(call=>call[0]==='send'),id=send[2];assert.equal(fixture.receipts.get(id).accepted,true,'fixture returns a successful acknowledgement, never a lost reply');
+ const newer=await addLocalFiles({text:'A distinct newer thought',attachments:[]},[new File(['xyz'],'next.txt',{type:'text/plain',lastModified:10})],urls());first.change(newer.draft);await first.flush();
+ const second=new SessionDraftStore('acknowledged-send',fixture.storage,urls());await second.ready;
+ assert.equal(second.state.pending?.commandId,id,'202 acknowledgement must retain the exact pending identity until outcome');
+ assert.equal(second.state.pending.receipt.command_id,id);assert.equal(second.state.submitted.text,original.draft.text);assert.equal(second.state.submitted.attachments[0].id,original.draft.attachments[0].id);assert.equal(await second.state.submitted.attachments[0].file.text(),'abc');
+ fixture.transport.commandStatus=async(commandId)=>({v:1,found:true,command:fixture.receipts.get(commandId),message:{id:commandId,state:'rejected',run_id:null}});
+ await second.reconcile(fixture.transport);await second.flush();
+ const third=new SessionDraftStore('acknowledged-send',fixture.storage,urls());await third.ready;assert.equal(third.state.pending.state,'rejected');assert.equal(third.state.pending.commandId,id);assert.equal(third.state.draft.text,newer.draft.text);assert.equal(await third.state.draft.attachments[0].file.text(),'xyz');assert.equal(await third.state.submitted.attachments[0].file.text(),'abc');
+ await third.send(target,fixture.transport);assert.equal(fixture.calls.filter(call=>call[0]==='send').length,1,'rejection review and reload must not send another command');
+ await third.reviewRejected();assert.equal(third.state.pending,undefined);assert.equal(third.state.draft.text,newer.draft.text);assert.equal(third.state.recovery.text,original.draft.text);
+ await third.restoreRecovery();assert.equal(third.state.draft.text,original.draft.text);assert.equal(third.state.draft.attachments[0].id,original.draft.attachments[0].id);assert.equal(await third.state.draft.attachments[0].file.text(),'abc');assert.equal(third.state.recovery.text,newer.draft.text);assert.equal(await third.state.recovery.attachments[0].file.text(),'xyz');
+ const fourth=new SessionDraftStore('acknowledged-send',fixture.storage,urls());await fourth.ready;assert.equal(fourth.state.draft.text,original.draft.text);assert.equal(fourth.state.recovery.text,newer.draft.text);assert.equal(fixture.calls.filter(call=>call[0]==='send').length,1);
+});
+
+test('protocol fixture: acknowledged queued, running, missing and uncertain outcomes retain the sent snapshot and forbid another send',async()=>{
+ const fixture=protocolFixture(),store=new SessionDraftStore('outcomes',fixture.storage,urls());await store.ready;
+ const original=await addLocalFiles({text:'Original text',attachments:[]},[new File(['abc'],'sent.txt',{type:'text/plain'})],urls());store.change(original.draft);await store.send(target,fixture.transport);const id=store.state.pending.commandId;
+ const newer=await addLocalFiles({text:'Original text',attachments:[]},[new File(['xyz'],'next.txt',{type:'text/plain'})],urls());store.change(newer.draft);
+ for(const message of [undefined,{id,state:'queued',run_id:null},{id,state:'dispatching',run_id:'follow-up-run'},{id,state:'uncertain',run_id:'follow-up-run'}]){
+  fixture.transport.commandStatus=async()=>({v:1,found:true,command:fixture.receipts.get(id),...(message?{message}:{})});await store.reconcile(fixture.transport);await store.send(target,fixture.transport);
+  assert.equal(store.state.pending.commandId,id);assert.equal(store.state.submitted.text,'Original text');assert.equal(await store.state.submitted.attachments[0].file.text(),'abc');assert.equal(store.state.draft.text,'Original text');assert.equal(await store.state.draft.attachments[0].file.text(),'xyz');assert.equal(fixture.calls.filter(call=>call[0]==='send').length,1);
+ }
+ fixture.transport.commandStatus=async()=>({v:1,found:false});await store.reconcile(fixture.transport);await store.retry(target,fixture.transport);assert.match(store.state.error,/acknowledged.*receipt/i);assert.equal(fixture.calls.filter(call=>call[0]==='send').length,1);
+ fixture.transport.commandStatus=async()=>({v:1,found:true,command:{...fixture.receipts.get(id),revision:999},message:{id,state:'completed',run_id:'follow-up-run'}});await store.reconcile(fixture.transport);assert.match(store.state.error,/receipt.*match/i);assert.equal(store.state.submitted.text,'Original text');
+ fixture.transport.commandStatus=async()=>({v:1,found:true,command:fixture.receipts.get(id),message:{id,state:'completed',run_id:'follow-up-run'}});await store.reconcile(fixture.transport);assert.equal(store.state.pending,undefined);assert.equal(store.state.submitted,undefined);assert.equal(store.state.draft.text,'Original text','completion must not clear newly typed identical text');assert.equal(await store.state.draft.attachments[0].file.text(),'xyz');
+});
+
+test('protocol fixture: removing an editable attachment while awaiting 202 does not erase the sent snapshot',async()=>{
+ const fixture=protocolFixture(),store=new SessionDraftStore('removed-in-flight',fixture.storage,urls());await store.ready;
+ const original=await addLocalFiles({text:'Original sent message',attachments:[]},[new File(['abc'],'sent.txt',{type:'text/plain'})],urls());store.change(original.draft);
+ const realSend=fixture.transport.sessionMessage;fixture.transport.sessionMessage=async(...args)=>{store.change({text:'Newer empty-file thought',attachments:[]});return realSend(...args);};await store.send(target,fixture.transport);const id=store.state.pending.commandId;
+ fixture.transport.commandStatus=async()=>({v:1,found:true,command:fixture.receipts.get(id),message:{id,state:'rejected',run_id:null}});await store.reconcile(fixture.transport);await store.reviewRejected();await store.restoreRecovery();assert.equal(store.state.draft.text,original.draft.text);assert.equal(await store.state.draft.attachments[0].file.text(),'abc');assert.equal(store.state.recovery.text,'Newer empty-file thought');assert.equal(fixture.calls.filter(call=>call[0]==='send').length,1);
+});
+
+test('protocol fixture: a rejected acknowledged message restores its original into an empty draft on explicit review',async()=>{
+ const fixture=protocolFixture(),store=new SessionDraftStore('empty-after-ack',fixture.storage,urls());await store.ready;store.change({text:'Restore exactly this request',attachments:[]});await store.send(target,fixture.transport);const id=store.state.pending.commandId;
+ assert.equal(store.state.draft.text,'');fixture.transport.commandStatus=async()=>({v:1,found:true,command:fixture.receipts.get(id),message:{id,state:'rejected',run_id:null}});await store.reconcile(fixture.transport);await store.reviewRejected();assert.equal(store.state.draft.text,'Restore exactly this request');assert.equal(store.state.pending,undefined);assert.equal(store.state.recovery,undefined);assert.equal(fixture.calls.filter(call=>call[0]==='send').length,1);
+});
+
+test('protocol fixture: malformed submitted bytes or receipt identity lock storage without overwriting recovery',async()=>{
+ for(const corrupt of ['bytes','receipt']){
+  const fixture=protocolFixture(),store=new SessionDraftStore('corrupt-outbox',fixture.storage,urls());await store.ready;const added=await addLocalFiles({text:'Retained original',attachments:[]},[new File(['abc'],'sent.txt',{type:'text/plain'})],urls());store.change(added.draft);await store.send(target,fixture.transport);
+  const saved=fixture.rows.get('corrupt-outbox');if(corrupt==='bytes')saved.submitted.attachments[0].blob=new Blob(['wrong size']);else saved.pending.receipt.command_id=crypto.randomUUID();fixture.rows.set('corrupt-outbox',saved);
+  const reloaded=new SessionDraftStore('corrupt-outbox',fixture.storage,urls());await reloaded.ready;assert.match(reloaded.state.error,/restore/);reloaded.change({text:'Do not replace the corrupt retained record',attachments:[]});await reloaded.flush();await reloaded.send(target,fixture.transport);assert.deepEqual(fixture.rows.get('corrupt-outbox'),saved);assert.equal(fixture.calls.filter(call=>call[0]==='send').length,1);
+ }
+});
+
+test('protocol fixture: older uncertain pending records migrate only when all original File identities remain available',async()=>{
+ const fixture=protocolFixture(),store=new SessionDraftStore('legacy-pending',fixture.storage,urls());await store.ready;const added=await addLocalFiles({text:'Old original',attachments:[]},[new File(['abc'],'sent.txt',{type:'text/plain'})],urls());store.change(added.draft);
+ const realSend=fixture.transport.sessionMessage;fixture.transport.sessionMessage=async(...args)=>{await realSend(...args);throw Error('Lost reply');};await store.send(target,fixture.transport);const saved=fixture.rows.get('legacy-pending');delete saved.submitted;fixture.rows.set('legacy-pending',saved);
+ const migrated=new SessionDraftStore('legacy-pending',fixture.storage,urls());await migrated.ready;assert.equal(migrated.state.submitted.text,'Old original');assert.equal(await migrated.state.submitted.attachments[0].file.text(),'abc');
+ saved.attachments=[];fixture.rows.set('missing-legacy-bytes',saved);const missing=new SessionDraftStore('missing-legacy-bytes',fixture.storage,urls());await missing.ready;assert.match(missing.state.error,/restore/);await missing.send(target,fixture.transport);assert.equal(fixture.calls.filter(call=>call[0]==='send').length,1);
+});
+
+test('protocol fixture: reviewing a later rejection never overwrites an existing retained draft',async()=>{
+ const fixture=protocolFixture(),store=new SessionDraftStore('multiple-rejections',fixture.storage,urls());await store.ready;
+ const reject=async()=>{const id=store.state.pending.commandId;fixture.transport.commandStatus=async()=>({v:1,found:true,command:fixture.receipts.get(id),message:{id,state:'rejected',run_id:null}});await store.reconcile(fixture.transport);};
+ store.change({text:'First retained message',attachments:[]});await store.send(target,fixture.transport);store.change({text:'Second message',attachments:[]});await reject();await store.reviewRejected();assert.equal(store.state.recovery.text,'First retained message');
+ await store.send(target,fixture.transport);store.change({text:'Third unsent thought',attachments:[]});await reject();await store.reviewRejected();assert.equal(store.state.pending.state,'rejected');assert.equal(store.state.submitted.text,'Second message');assert.equal(store.state.recovery.text,'First retained message');assert.equal(store.state.draft.text,'Third unsent thought');assert.match(store.state.error,/existing retained draft/);
+ await store.discardRecovery();await store.reviewRejected();assert.equal(store.state.pending,undefined);assert.equal(store.state.recovery.text,'Second message');assert.equal(store.state.draft.text,'Third unsent thought');assert.equal(fixture.calls.filter(call=>call[0]==='send').length,2);
 });

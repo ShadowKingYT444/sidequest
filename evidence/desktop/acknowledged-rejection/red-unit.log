@@ -1,0 +1,30 @@
+✖ protocol fixture: successful 202 then rejected-before-start survives reload with sent files and a separate newer draft (12.047867ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 215.977637
+
+✖ failing tests:
+
+test at desktop/tests/session-drafts.test.mjs:106:1
+✖ protocol fixture: successful 202 then rejected-before-start survives reload with sent files and a separate newer draft (12.047867ms)
+  AssertionError [ERR_ASSERTION]: 202 acknowledgement must retain the exact pending identity until outcome
+  + actual - expected
+  
+  + undefined
+  - 'f40549df-ee79-471e-9ba0-cdba866678ae'
+  
+      at TestContext.<anonymous> (file:///workspace/sidequest/desktop/tests/session-drafts.test.mjs:112:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'f40549df-ee79-471e-9ba0-cdba866678ae',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

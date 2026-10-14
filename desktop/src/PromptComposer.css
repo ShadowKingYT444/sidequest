@@ -35,3 +35,7 @@
 .prompt-transport-status button{min-height:28px;padding:3px 6px;border:1px solid rgb(255 255 255 / 12%);border-radius:4px;background:transparent;color:inherit;font:inherit;cursor:pointer}
 .prompt-transport-status button:disabled{opacity:.45;cursor:default}
 .prompt-transport-status button:focus-visible{outline:2px solid #8ab4ff;outline-offset:2px}
+.prompt-retained-draft{flex:none;min-width:0;padding:0 12px 8px;background:var(--surface,#111);color:#a3a3a3;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+.prompt-retained-draft pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:120px;overflow:auto}
+.prompt-retained-draft ul{padding-left:18px}.prompt-retained-draft div{display:flex;gap:6px;flex-wrap:wrap}
+.prompt-retained-draft button{min-height:28px;padding:3px 6px;border:1px solid rgb(255 255 255 / 12%);border-radius:4px;background:transparent;color:inherit;font:inherit;cursor:pointer}.prompt-retained-draft button:focus-visible{outline:2px solid #8ab4ff;outline-offset:2px}

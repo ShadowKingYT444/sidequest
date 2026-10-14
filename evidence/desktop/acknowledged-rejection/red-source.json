@@ -1,0 +1,10 @@
+{
+  "head": "f4634ffbb0c087992b2ae1027cc561e7d1c3aaed",
+  "implementation_sha256": "7423e9ac34a823d378ee29e8e12f13fbb5442677b58cb3d2820c9938af8c0ea7",
+  "unit_exit_code": 1,
+  "browser_exit_code": 1,
+  "successful_reply": true,
+  "lost_reply": false,
+  "native_attempts": 0,
+  "model_turns": 0
+}

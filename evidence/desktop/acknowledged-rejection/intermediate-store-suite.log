@@ -1,0 +1,93 @@
+✔ protocol fixture: reload preserves File bytes, local identities and recreated image previews without storing URLs (7.256453ms)
+✖ protocol fixture: lost send reply stays locked across reload, reconciles original command ID and never sends twice (2.556192ms)
+✖ protocol fixture: drafts edited during send are retained and only submitted attachment identities clear after acceptance (1.416422ms)
+✔ protocol fixture: staging/readiness failure retains draft and ID; explicit retry after not-found reuses same send identity (0.843919ms)
+✔ protocol fixture: storage failure blocks sends before staging or message network mutation (0.566551ms)
+✔ protocol fixture: malformed stored pending or mismatched receipts cannot clear a draft (0.498087ms)
+✔ protocol fixture: retry replays the exact saved revision even after staging and later runtime revision changes (1.046782ms)
+✔ protocol fixture: a definite revision rejection retains draft and requires explicit review before a new send identity (1.156749ms)
+✔ protocol fixture: a corrupt pending record is never overwritten by edits or allowed to create another send (0.323088ms)
+✔ protocol fixture: an accepted receipt rejected before provider start retains attachments and the concurrent next thought until explicit review (1.577409ms)
+✔ protocol fixture: conflicting or malformed message status never clears a pending draft or offers a fresh send identity (0.97561ms)
+✔ protocol fixture: a contradictory later status cannot erase a known not-started rejection (0.615281ms)
+✔ protocol fixture: successful 202 then rejected-before-start survives reload with sent files and a separate newer draft (2.091563ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 11
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 217.726863
+
+✖ failing tests:
+
+test at desktop/tests/session-drafts.test.mjs:25:1
+✖ protocol fixture: lost send reply stays locked across reload, reconciles original command ID and never sends twice (2.556192ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + {
+  +   attachmentIds: [],
+  +   commandId: 'b95afc83-144f-45e7-9b47-22e55f27b82f',
+  +   expectedRevision: 2,
+  +   localIds: [],
+  +   receipt: {
+  +     accepted: true,
+  +     command_id: 'b95afc83-144f-45e7-9b47-22e55f27b82f',
+  +     revision: 3,
+  +     v: 1
+  +   },
+  +   runId: 'run-1',
+  +   state: 'accepted',
+  +   text: 'Follow up'
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (file:///workspace/sidequest/desktop/tests/session-drafts.test.mjs:31:51)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { commandId: 'b95afc83-144f-45e7-9b47-22e55f27b82f', runId: 'run-1', text: 'Follow up', localIds: [], attachmentIds: [], state: 'accepted', expectedRevision: 2, receipt: { v: 1, accepted: true, command_id: 'b95afc83-144f-45e7-9b47-22e55f27b82f', revision: 3 } },
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at desktop/tests/session-drafts.test.mjs:35:1
+✖ protocol fixture: drafts edited during send are retained and only submitted attachment identities clear after acceptance (1.416422ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + {
+  +   attachmentIds: [
+  +     'attachment-1'
+  +   ],
+  +   commandId: 'ef9559d5-28ac-45a8-89d4-f29990b26325',
+  +   expectedRevision: 2,
+  +   localIds: [
+  +     'f27518ad-3c60-4513-a5ed-20d164bbfa33'
+  +   ],
+  +   receipt: {
+  +     accepted: true,
+  +     command_id: 'ef9559d5-28ac-45a8-89d4-f29990b26325',
+  +     revision: 3,
+  +     v: 1
+  +   },
+  +   runId: 'run-1',
+  +   state: 'accepted',
+  +   text: 'Original'
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (file:///workspace/sidequest/desktop/tests/session-drafts.test.mjs:39:157)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { commandId: 'ef9559d5-28ac-45a8-89d4-f29990b26325', runId: 'run-1', text: 'Original', localIds: [ 'f27518ad-3c60-4513-a5ed-20d164bbfa33' ], attachmentIds: [ 'attachment-1' ], state: 'accepted', expectedRevision: 2, receipt: { v: 1, accepted: true, command_id: 'ef9559d5-28ac-45a8-89d4-f29990b26325', revision: 3 } },
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

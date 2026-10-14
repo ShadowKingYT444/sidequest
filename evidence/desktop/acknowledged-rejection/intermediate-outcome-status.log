@@ -1,0 +1,48 @@
+✔ protocol fixture: reload preserves File bytes, local identities and recreated image previews without storing URLs (7.159654ms)
+✖ protocol fixture: lost send reply stays locked across reload, reconciles original command ID and never sends twice (2.170406ms)
+✔ protocol fixture: drafts edited during send are retained and only submitted attachment identities clear after acceptance (1.327413ms)
+✔ protocol fixture: staging/readiness failure retains draft and ID; explicit retry after not-found reuses same send identity (0.758792ms)
+✔ protocol fixture: storage failure blocks sends before staging or message network mutation (0.478346ms)
+✔ protocol fixture: malformed stored pending or mismatched receipts cannot clear a draft (0.588079ms)
+✔ protocol fixture: retry replays the exact saved revision even after staging and later runtime revision changes (1.157583ms)
+✔ protocol fixture: a definite revision rejection retains draft and requires explicit review before a new send identity (0.705665ms)
+✔ protocol fixture: a corrupt pending record is never overwritten by edits or allowed to create another send (0.335228ms)
+✔ protocol fixture: an accepted receipt rejected before provider start retains attachments and the concurrent next thought until explicit review (2.048554ms)
+✔ protocol fixture: conflicting or malformed message status never clears a pending draft or offers a fresh send identity (1.062509ms)
+✔ protocol fixture: a contradictory later status cannot erase a known not-started rejection (0.48739ms)
+✔ protocol fixture: successful 202 then rejected-before-start survives reload with sent files and a separate newer draft (2.48828ms)
+✔ protocol fixture: acknowledged queued, running, missing and uncertain outcomes retain the sent snapshot and forbid another send (1.376184ms)
+✔ protocol fixture: removing an editable attachment while awaiting 202 does not erase the sent snapshot (0.637987ms)
+✔ protocol fixture: a rejected acknowledged message restores its original into an empty draft on explicit review (0.308166ms)
+✔ protocol fixture: malformed submitted bytes or receipt identity lock storage without overwriting recovery (0.964674ms)
+✔ protocol fixture: older uncertain pending records migrate only when all original File identities remain available (0.701088ms)
+✔ protocol fixture: reviewing a later rejection never overwrites an existing retained draft (0.612978ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 18
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 154.68003
+
+✖ failing tests:
+
+test at desktop/tests/session-drafts.test.mjs:25:1
+✖ protocol fixture: lost send reply stays locked across reload, reconciles original command ID and never sends twice (2.170406ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'Local draft saved'
+  - 'Message accepted'
+  
+      at TestContext.<anonymous> (file:///workspace/sidequest/desktop/tests/session-drafts.test.mjs:31:137)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Local draft saved',
+    expected: 'Message accepted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
