@@ -1,0 +1,74 @@
+{
+  "verified_at": "2026-10-14T23:28:47.707285+00:00",
+  "starting_published_head": "cf5fda740c7827a95efd305c8c582396241560f7",
+  "tested_functional_source": "af4420cf1993ab6a0ede1fcb180b8a2ce2ebb25f",
+  "functional_paths_checked": 279,
+  "functional_hashes_unchanged": true,
+  "protected_assets": 126,
+  "protected_asset_hashes_unchanged": true,
+  "earlier_failure_and_full_suite_logs_unchanged": true,
+  "worktrees": [
+    {
+      "path": "/workspace/sidequest",
+      "head": "cf5fda740c7827a95efd305c8c582396241560f7",
+      "working_tree_clean_at_initial_audit": true,
+      "patches_already_included": true,
+      "patch_equivalence": []
+    },
+    {
+      "path": "/tmp/sidequest-desktop-transport",
+      "head": "3b8d0cb5ee4e2e5784528c6d189b160654e3344f",
+      "working_tree_clean_at_initial_audit": true,
+      "patches_already_included": true,
+      "patch_equivalence": [
+        "- 2717752bcf7bd6665a90aede59101e9cfb2990e1",
+        "- 3b8d0cb5ee4e2e5784528c6d189b160654e3344f"
+      ]
+    },
+    {
+      "path": "/tmp/sidequest-integrated-fixes",
+      "head": "ef47361419075b97a0de22f00cf3f1f370c3ec76",
+      "working_tree_clean_at_initial_audit": true,
+      "patches_already_included": true,
+      "patch_equivalence": []
+    },
+    {
+      "path": "/tmp/sidequest-notifications",
+      "head": "19d31589d0edd429e22770fe7045a5d90ae7221c",
+      "working_tree_clean_at_initial_audit": true,
+      "patches_already_included": true,
+      "patch_equivalence": [
+        "- ad62f1fa52b5f331236aeff922cf33f9122706cd",
+        "- 19d31589d0edd429e22770fe7045a5d90ae7221c"
+      ]
+    },
+    {
+      "path": "/tmp/sidequest-provider-transport",
+      "head": "80c7c29799bc4b6d7abeb7a7d18865ca94f403df",
+      "working_tree_clean_at_initial_audit": true,
+      "patches_already_included": true,
+      "patch_equivalence": [
+        "- 30bc4857e07643aca07042ecaf9d7c2dc4db92d7",
+        "- 80c7c29799bc4b6d7abeb7a7d18865ca94f403df"
+      ]
+    },
+    {
+      "path": "/tmp/sidequest-quota-reserve",
+      "head": "d4b61d8bc6b7f4e14b4690033830cb8e7814f30b",
+      "working_tree_clean_at_initial_audit": true,
+      "patches_already_included": true,
+      "patch_equivalence": [
+        "- d4b61d8bc6b7f4e14b4690033830cb8e7814f30b"
+      ]
+    }
+  ],
+  "excluded": [
+    ".sidequest private machine/runtime state",
+    ".venv",
+    "desktop/node_modules",
+    "desktop/dist",
+    "desktop/test-results and Python caches",
+    "local Library xattrs and unrelated temporary helpers"
+  ],
+  "scope": "Documentation-only final handoff; future additions are proposals; no native/live/model/auth/security changes."
+}

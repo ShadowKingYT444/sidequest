@@ -1,6 +1,6 @@
 # Current presentation decision — 2026-10-14
 
-The owner superseded the Unity presentation choice with Electron + React + TypeScript + React Three Fiber and Drei. The existing office GLB and Blender originals are protected inputs. The active implementation and run instructions are in [desktop/README.md](desktop/README.md). The Python scheduling, persistence, Codex session and permission architecture below remains the intended backend boundary; it is not implemented yet. The current desktop slice is read-only local Git and must not be described as working agent execution. The original baseline follows for backend context and historical acceptance scope.
+The owner superseded the Unity presentation choice with Electron + React + TypeScript + React Three Fiber and Drei. The existing office GLB and Blender originals are protected inputs. The active implementation and run instructions are in [desktop/README.md](desktop/README.md). Python scheduling/persistence, Git/check adapters and guarded Codex follow-up transport are implemented and verified through local/protocol tests; native Electron and live provider execution remain unaccepted and blocked by the documented host/spending prerequisites. [PR #1 handoff](docs/PR1_HANDOFF.md) records exact verified scope, current issues and proposed future work. The original baseline below remains historical requirements and backend context, not a claim of completed live execution.
 
 # Sidequest — implementation baseline 0.3
 
