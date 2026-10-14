@@ -1,0 +1,20 @@
+test_empty_image_mime_and_code_types_preserve_receipt_and_map_supported_inputs (services.runtime.tests.test_session_transport.SessionTransportTests.test_empty_image_mime_and_code_types_preserve_receipt_and_map_supported_inputs) ... FAIL
+
+======================================================================
+FAIL: test_empty_image_mime_and_code_types_preserve_receipt_and_map_supported_inputs (services.runtime.tests.test_session_transport.SessionTransportTests.test_empty_image_mime_and_code_types_preserve_receipt_and_map_supported_inputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 102, in test_empty_image_mime_and_code_types_preserve_receipt_and_map_supported_inputs
+    self.assertEqual(response.status_code,200,response.text)
+AssertionError: 400 != 200 : {"v":1,"error":{"code":"INVALID_INPUT","message":"This attachment type is not supported.","retryable":false}}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.066s
+
+FAILED (failures=1)

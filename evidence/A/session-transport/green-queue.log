@@ -1,0 +1,11 @@
+test_attachment_binding_and_provider_send_bounds_are_checked_before_queue (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_binding_and_provider_send_bounds_are_checked_before_queue) ... ok
+test_attachment_staging_is_durable_idempotent_and_never_dispatches (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_staging_is_durable_idempotent_and_never_dispatches) ... ok
+test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal (services.runtime.tests.test_session_transport.SessionTransportTests.test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal) ... ok
+test_message_keeps_production_readiness_scope_and_budget_checks (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_keeps_production_readiness_scope_and_budget_checks) ... ok
+test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice) ... ok
+test_staging_rejects_auth_paths_binary_spoofing_and_bounds (services.runtime.tests.test_session_transport.SessionTransportTests.test_staging_rejects_auth_paths_binary_spoofing_and_bounds) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.376s
+
+OK

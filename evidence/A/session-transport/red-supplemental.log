@@ -1,0 +1,28 @@
+test_attachment_binding_and_provider_send_bounds_are_checked_before_queue (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_binding_and_provider_send_bounds_are_checked_before_queue) ... Executing <Task finished name='Task-1' coro=<SessionTransportTests.asyncSetUp() done, defined at /workspace/sidequest/services/runtime/tests/test_session_transport.py:24> result=None created at /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:100> took 0.133 seconds
+ok
+test_attachment_staging_is_durable_idempotent_and_never_dispatches (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_staging_is_durable_idempotent_and_never_dispatches) ... ok
+test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal (services.runtime.tests.test_session_transport.SessionTransportTests.test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal) ... ok
+test_interrupted_send_is_uncertain_and_cannot_start_a_fresh_turn (services.runtime.tests.test_session_transport.SessionTransportTests.test_interrupted_send_is_uncertain_and_cannot_start_a_fresh_turn) ... ok
+test_latest_twenty_jobs_do_not_hide_an_assigned_old_run (services.runtime.tests.test_session_transport.SessionTransportTests.test_latest_twenty_jobs_do_not_hide_an_assigned_old_run) ... FAIL
+test_message_keeps_production_readiness_scope_and_budget_checks (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_keeps_production_readiness_scope_and_budget_checks) ... ok
+test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice) ... ok
+test_staging_rejects_auth_paths_binary_spoofing_and_bounds (services.runtime.tests.test_session_transport.SessionTransportTests.test_staging_rejects_auth_paths_binary_spoofing_and_bounds) ... ok
+
+======================================================================
+FAIL: test_latest_twenty_jobs_do_not_hide_an_assigned_old_run (services.runtime.tests.test_session_transport.SessionTransportTests.test_latest_twenty_jobs_do_not_hide_an_assigned_old_run)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 177, in test_latest_twenty_jobs_do_not_hide_an_assigned_old_run
+    self.assertIn(self.job_id, [j['id'] for j in snapshot.get('office_jobs',[])])
+AssertionError: '1651a9e3-5abb-40b6-bc09-462ae7539a03' not found in []
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.813s
+
+FAILED (failures=1)

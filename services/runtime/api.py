@@ -39,6 +39,7 @@ from .models import (
 from .policy import ErrorCode, RuntimeFault
 from .scheduler import Scheduler, is_local_git_inspection_from_stored
 from .store import RuntimeStore
+from .sessions import AttachmentStore
 
 _MAX_PAGE_BYTES = 256 * 1024
 _MAX_TEXT_LINE_BYTES = 256 * 1024
@@ -602,10 +603,11 @@ def create_app(
     @app.middleware("http")
     async def bound_request_body(request: Request, call_next: Callable[..., Any]):
         length = request.headers.get("content-length")
+        maximum = 14 * 1024 * 1024 if request.url.path == "/v1/session-attachments" else 4 * 1024 * 1024
         if length:
             try:
-                if int(length) > 4 * 1024 * 1024:
-                    return _json_error(400, ErrorCode.INVALID_INPUT, "request body exceeds 4 MiB")
+                if int(length) < 0 or int(length) > maximum:
+                    return _json_error(400, ErrorCode.INVALID_INPUT, "request body exceeds its endpoint limit")
             except ValueError:
                 return _json_error(400, ErrorCode.INVALID_INPUT, "content length is invalid")
         return await call_next(request)
@@ -677,6 +679,8 @@ def create_app(
             "contract_revision": "1.1",
             "features": {
                 "computer_artifacts": True,
+                "session_messages": True,
+                "session_attachments": True,
                 "screen_watch": "unavailable",
                 "github_delivery": False,
                 "local_git_inspection": local_enabled,
@@ -699,7 +703,17 @@ def create_app(
         projects = runtime_store.list_projects()
         selected_id = runtime_store.get_setting("selected_project_id")
         jobs = runtime_store.list_jobs(project_id=selected_id, limit=20) if selected_id else runtime_store.list_jobs(limit=20)
+        recent_ids = {item['id'] for item in jobs}
+        owners = runtime_store.list_office_sessions()
+        assigned_ids = {owner['job_id'] for owner in owners}
         with runtime_store.read_connection() as connection:
+            excluded = recent_ids | assigned_ids
+            exclusion = ','.join('?' for _ in excluded) or 'NULL'
+            active = connection.execute(
+                "SELECT id FROM jobs WHERE state IN ('queued','running','verifying','needs_approval','paused') "
+                f"AND id NOT IN ({exclusion}) ORDER BY created_at DESC,id DESC LIMIT 101", tuple(excluded)
+            ).fetchall()
+            supplemental_ids = sorted(assigned_ids - recent_ids) + [item['id'] for item in active[:100]]
             total_budget, total_spent = connection.execute(
                 "SELECT COALESCE(SUM(budget_micro), 0), CASE WHEN COUNT(*) = 0 THEN 0 "
                 "WHEN SUM(CASE WHEN spent_micro IS NULL THEN 1 ELSE 0 END) > 0 THEN NULL ELSE SUM(spent_micro) END "
@@ -727,11 +741,13 @@ def create_app(
                 },
             } for item in projects],
             "jobs": [_job_public(runtime_store, item["id"], detail=False) for item in jobs],
+            "office_jobs": [_job_public(runtime_store, job_id, detail=False) for job_id in supplemental_ids],
+            "office_jobs_truncated": len(active) > 100,
             "workers": [
                 {"id": item["id"], "role": item["role"], "state": item["state"], "job_id": item["current_job_id"]}
                 for item in runtime_store.list_workers()[:50]
             ],
-            "office_sessions": runtime_store.list_office_sessions(),
+            "office_sessions": owners,
             "workshops": [],
             "approvals": runtime_store.list_approvals(),
             "layout": runtime_store.get_setting("layout", {"version": 0, "nodes": [], "edges": []}),
@@ -1036,6 +1052,24 @@ def create_app(
     async def watchers() -> dict[str, Any]:
         return {"v": 1, "items": []}
 
+    @app.get("/v1/commands/{command_id}", dependencies=[Depends(authenticate)])
+    async def command_receipt(command_id: str) -> dict[str, Any]:
+        return runtime_store.command_receipt(command_id)
+
+    @app.post("/v1/session-attachments", dependencies=[Depends(authenticate)])
+    async def stage_session_attachment(request: Request) -> dict[str, Any]:
+        maximum = 14 * 1024 * 1024
+        chunks = bytearray()
+        async for chunk in request.stream():
+            chunks.extend(chunk)
+            if len(chunks) > maximum:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "Attachment staging request exceeds 14 MiB")
+        try:
+            body = json.loads(chunks)
+        except (ValueError, UnicodeError):
+            raise RuntimeFault(ErrorCode.INVALID_INPUT, "Attachment staging request must be JSON") from None
+        return {"v": 1, "attachment": AttachmentStore(config, runtime_store).stage(body)}
+
     @app.post("/v1/commands", status_code=202, dependencies=[Depends(authenticate)])
     async def commands(command: CommandRequest) -> JSONResponse:
         payload = command.payload
@@ -1138,6 +1172,22 @@ def create_app(
                 payload["job_id"],
                 payload["worker_id"],
             )
+        elif command.type == "session.message":
+            if expected is None:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "session.message requires expected_revision")
+            # An exact replay returns the saved receipt even if readiness later expires.
+            previous = runtime_store.lookup_command_result(command.command_id, command.type, payload, expected)
+            if previous is not None:
+                return JSONResponse(previous, status_code=202)
+            if set(payload) != {"run_id", "prompt", "attachment_ids"}:
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "session.message requires run_id, prompt and attachment_ids")
+            recorded = runtime_store.get_run(payload["run_id"])
+            registered = runtime_store.get_job(recorded["job_id"])
+            runtime_store.refresh_project_revision(registered["project_id"])
+            AttachmentStore(config, runtime_store).resolve(payload["run_id"], payload["attachment_ids"])
+            result = runtime_store.queue_session_message(command.command_id, expected, payload,
+                codex_ready=codex_execution_enabled(config, runtime_store.get_codex_readiness()))
+            scheduler.enqueue(result["result"]["job_id"])
         elif command.type == "office.assign_session":
             if expected is None or set(payload) != {"station_id", "job_id", "run_id"}:
                 raise RuntimeFault(ErrorCode.INVALID_INPUT, "office.assign_session requires expected_revision, station_id, job_id and run_id")

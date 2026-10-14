@@ -29,6 +29,7 @@ from .models import (
     is_codex_job_from_stored,
 )
 from .policy import ErrorCode, PolicyEngine, RuntimeFault
+from .sessions import SessionStoreMixin
 
 
 _MIGRATIONS_DIR = Path(__file__).parent / "migrations"
@@ -66,7 +67,7 @@ def _require_office_station(value: str) -> str:
     return value
 
 
-class RuntimeStore:
+class RuntimeStore(SessionStoreMixin):
     """One SQLite connection and one serialized writer per runtime process.
 
     The process lock protects the shared connection. BEGIN IMMEDIATE also
@@ -994,6 +995,9 @@ class RuntimeStore:
             for task in ready_rows:
                 if task["project_status"] != "active":
                     continue
+                message_worker = self.queued_message_worker(task['id'])
+                if message_worker is not None and message_worker != worker_id:
+                    continue
                 deps = _json_load(task["depends_on_json"])
                 if deps:
                     placeholders = ",".join("?" for _ in deps)
@@ -1129,6 +1133,7 @@ class RuntimeStore:
                 connection.execute("UPDATE workers SET state = 'working', current_task_id = ? WHERE id = ?", (task["id"], worker_id))
                 connection.execute("UPDATE jobs SET state = 'running', updated_at = ? WHERE id = ?", (now, task["job_id"]))
                 self._insert_event(connection, task["job_id"], attempt_id, 1, "dispatch_intent", "Task dispatch reserved.", None)
+                followup = self._claim_session_message(connection, task["id"], attempt_id, worker_id)
                 revision = self._bump_revision(connection)
                 return {
                     "task_id": task["id"],
@@ -1140,6 +1145,7 @@ class RuntimeStore:
                     "provider_thread_id": None,
                     "resume": False,
                     "revision": revision,
+                    **followup,
                 }
             if has_ready and budget_blocked:
                 raise RuntimeFault(ErrorCode.BUDGET_LIMIT, "job budget cannot cover the requested reservation")
@@ -1576,6 +1582,12 @@ class RuntimeStore:
                     (row["project_id"], job_id),
                 ).fetchall()
                 resume_task = next((item for item in task_rows if item["attempt_state"] == "ambiguous"), None)
+                if resume_task and connection.execute(
+                    "SELECT 1 FROM session_messages WHERE run_id=? AND state='uncertain'",
+                    (resume_task['current_attempt_id'],),
+                ).fetchone():
+                    raise RuntimeFault(ErrorCode.POLICY_DENIED,
+                        "An uncertain follow-up requires provider-result reconciliation; no turn was repeated.")
                 profile_tasks = []
                 all_tasks = connection.execute("SELECT * FROM tasks WHERE job_id = ? ORDER BY sort_order, id", (job_id,)).fetchall()
                 for task in all_tasks:

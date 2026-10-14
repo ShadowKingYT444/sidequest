@@ -80,7 +80,7 @@ class StorageTests(unittest.TestCase):
             artifact = connection.execute("SELECT candidate_id FROM artifacts WHERE id = ?", (artifact_id,)).fetchone()
             self.assertEqual(connection.execute("PRAGMA foreign_keys").fetchone()[0], 1)
             self.assertEqual(connection.execute("PRAGMA journal_mode").fetchone()[0].lower(), "wal")
-        self.assertEqual(migration, 4)
+        self.assertEqual(migration, 5)
         self.assertEqual(candidate["tree_sha256"], "b" * 64)
         self.assertEqual(artifact["candidate_id"], candidate_id)
         with self.assertRaises(sqlite3.IntegrityError):

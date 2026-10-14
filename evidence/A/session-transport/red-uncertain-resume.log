@@ -1,0 +1,20 @@
+test_interrupted_send_is_uncertain_and_cannot_start_a_fresh_turn (services.runtime.tests.test_session_transport.SessionTransportTests.test_interrupted_send_is_uncertain_and_cannot_start_a_fresh_turn) ... FAIL
+
+======================================================================
+FAIL: test_interrupted_send_is_uncertain_and_cannot_start_a_fresh_turn (services.runtime.tests.test_session_transport.SessionTransportTests.test_interrupted_send_is_uncertain_and_cannot_start_a_fresh_turn)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 204, in test_interrupted_send_is_uncertain_and_cannot_start_a_fresh_turn
+    self.assertEqual(response.status_code,403,response.text)
+AssertionError: 202 != 403 : {"v":1,"command_id":"989caa3e-dfc5-4b53-806e-e8fdec151009","accepted":true,"revision":14,"result":{"job_id":"c29bd047-59e0-4e30-9591-b2c6051fc335","task_id":"92b65efa-b99f-43a5-97bf-3363947f771a","state":"running","resumed":true}}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.089s
+
+FAILED (failures=1)

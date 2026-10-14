@@ -1,0 +1,100 @@
+test_attachment_binding_and_provider_send_bounds_are_checked_before_queue (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_binding_and_provider_send_bounds_are_checked_before_queue) ... FAIL
+test_attachment_staging_is_durable_idempotent_and_never_dispatches (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_staging_is_durable_idempotent_and_never_dispatches) ... FAIL
+test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal (services.runtime.tests.test_session_transport.SessionTransportTests.test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal) ... FAIL
+test_message_keeps_production_readiness_scope_and_budget_checks (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_keeps_production_readiness_scope_and_budget_checks) ... FAIL
+test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice) ... FAIL
+test_staging_rejects_auth_paths_binary_spoofing_and_bounds (services.runtime.tests.test_session_transport.SessionTransportTests.test_staging_rejects_auth_paths_binary_spoofing_and_bounds) ... FAIL
+
+======================================================================
+FAIL: test_attachment_binding_and_provider_send_bounds_are_checked_before_queue (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_binding_and_provider_send_bounds_are_checked_before_queue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 131, in test_attachment_binding_and_provider_send_bounds_are_checked_before_queue
+    self.assertEqual(response.status_code, 200, response.text)
+AssertionError: 404 != 200 : {"v":1,"error":{"code":"NOT_FOUND","message":"endpoint was not found","retryable":false}}
+
+======================================================================
+FAIL: test_attachment_staging_is_durable_idempotent_and_never_dispatches (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_staging_is_durable_idempotent_and_never_dispatches)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 70, in test_attachment_staging_is_durable_idempotent_and_never_dispatches
+    self.assertEqual(response.status_code, 200, response.text)
+AssertionError: 404 != 200 : {"v":1,"error":{"code":"NOT_FOUND","message":"endpoint was not found","retryable":false}}
+
+======================================================================
+FAIL: test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal (services.runtime.tests.test_session_transport.SessionTransportTests.test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 145, in test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal
+    self.assertEqual(response.status_code, 202, response.text)
+AssertionError: 403 != 202 : {"v":1,"error":{"code":"POLICY_DENIED","message":"command is not enabled in this local runtime profile","retryable":false}}
+
+======================================================================
+FAIL: test_message_keeps_production_readiness_scope_and_budget_checks (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_keeps_production_readiness_scope_and_budget_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 121, in test_message_keeps_production_readiness_scope_and_budget_checks
+    self.assertEqual((await self.http.get('/v1/commands/' + str(uuid4()), headers=self.auth)).json(),
+AssertionError: {'v': 1, 'error': {'code': 'NOT_FOUND', 'message': [41 chars]lse}} != {'v': 1, 'found': False}
++ {'found': False, 'v': 1}
+- {'error': {'code': 'NOT_FOUND',
+-            'message': 'endpoint was not found',
+-            'retryable': False},
+-  'v': 1}
+
+======================================================================
+FAIL: test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 98, in test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice
+    self.assertEqual(staged.status_code, 200, staged.text)
+AssertionError: 404 != 200 : {"v":1,"error":{"code":"NOT_FOUND","message":"endpoint was not found","retryable":false}}
+
+======================================================================
+FAIL: test_staging_rejects_auth_paths_binary_spoofing_and_bounds (services.runtime.tests.test_session_transport.SessionTransportTests.test_staging_rejects_auth_paths_binary_spoofing_and_bounds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 86, in test_staging_rejects_auth_paths_binary_spoofing_and_bounds
+    self.assertEqual((await self.http.post('/v1/session-attachments', json={})).status_code, 403)
+AssertionError: 404 != 403
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.240s
+
+FAILED (failures=6)

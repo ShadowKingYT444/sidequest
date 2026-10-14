@@ -18,6 +18,7 @@ from .config import RuntimeConfig, codex_execution_enabled
 from .models import CandidateCreate, budget_to_micro, is_codex_job_from_stored
 from .policy import ErrorCode, RuntimeFault
 from .store import RuntimeStore
+from .sessions import AttachmentStore
 
 _HEX_OBJECT = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -42,6 +43,7 @@ class Scheduler:
         if self._closed:
             self._closed = False
         self.store.reconcile_interrupted_attempts()
+        self.store.reconcile_interrupted_messages()
         workers = self.store.list_workers()
         self._workers = [
             worker["id"]
@@ -57,6 +59,11 @@ class Scheduler:
         ]
         if self.config.codex_enabled and self.config.codex_consent and not self._builder_workers:
             self._builder_workers.append(self.store.create_worker("builder", configuration={"host_codex": True}))
+        # Only saved intents that never reached provider dispatch may resume.
+        # Interrupted dispatches were marked uncertain above and are excluded.
+        if codex_execution_enabled(self.config, self.store.get_codex_readiness()):
+            for job_id in self.store.queued_message_jobs():
+                self.enqueue(job_id)
 
     def enqueue(self, job_id: str) -> None:
         if self._closed:
@@ -143,6 +150,9 @@ class Scheduler:
                     for worker_id in (self._builder_workers if execution_profile == "codex_session" else self._workers)
                     if workers.get(worker_id, {}).get("configuration", {}).get("assigned_job_id") is None
                 ]
+                message_worker = self.store.queued_message_worker(pending_task['id'])
+                if message_worker is not None:
+                    worker_ids = [worker for worker in worker_ids if worker == message_worker]
                 if execution_profile == "codex_session":
                     budget = self.store.get_budget(job_id)
                     resume_requested = pending_task.get("resume_requested") == 1
@@ -266,6 +276,8 @@ class Scheduler:
             except RuntimeFault:
                 pass
         finally:
+            if attempt_id:
+                self.store.settle_session_message(attempt_id)
             self._cancel_events.pop(job_id, None)
             for path in (
                 self.config.workspaces_dir / f"inspection-{attempt_id}" if attempt_id else None,
@@ -572,6 +584,15 @@ class Scheduler:
             if not isinstance(provider_thread_id, str) or not provider_thread_id:
                 raise RuntimeFault(ErrorCode.POLICY_DENIED, "explicit Codex resume has no persisted provider thread")
             context["provider_thread_id"] = provider_thread_id
+        if claim.get("followup"):
+            context["provider_thread_id"] = claim["provider_thread_id"]
+            context["provider_turn_id"] = claim["provider_turn_id"]
+            context["attachments"] = AttachmentStore(self.config, self.store).resolve(
+                claim["parent_run_id"], claim["attachment_ids"])
+            previous_candidate = job.get("candidate_id")
+            if previous_candidate:
+                context["initial_tree_sha256"] = self.artifacts.restore_candidate_for_followup(
+                    previous_candidate, claim["parent_run_id"], workspace, write_paths)
         response = await self.adapters.call(
             "B",
             op="agent.execute",
@@ -584,6 +605,7 @@ class Scheduler:
                     "max_seconds": self.config.codex_max_seconds,
                     "max_cost_usd": max_cost_usd,
                 },
+                **({"followup": claim["followup"]} if claim.get("followup") else {}),
             },
             context=context,
             progress_callback=lambda record: self._progress(job_id, attempt_id, record),
@@ -615,6 +637,12 @@ class Scheduler:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "Codex model identity is invalid")
         if effort is not None and not isinstance(effort, str):
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "Codex effort identity is invalid")
+        if claim.get("followup") and (
+            data.get("message_id") != claim["followup"]["message_id"]
+            or provider_thread_id != claim["provider_thread_id"]
+            or not provider_turn_id or provider_turn_id == claim["provider_turn_id"]
+        ):
+            raise RuntimeFault(ErrorCode.POLICY_DENIED, "Follow-up response differs from its saved message/thread/turn identity")
         self.store.record_provider_session(
             attempt_id,
             provider_thread_id=provider_thread_id,
@@ -622,6 +650,19 @@ class Scheduler:
             model=model,
             effort=effort,
         )
+
+        if claim.get("followup") and data.get("status") == "completed":
+            if (data.get("message_id") != claim["followup"]["message_id"]
+                or provider_thread_id != claim["provider_thread_id"]
+                or not provider_turn_id or data.get("model_verified") is not True
+                or data.get("effort_verified") is not True or model != self.config.codex_model
+                or effort != self.config.codex_effort or response.get("artifacts")
+                or cancel_event.is_set() or response.get("_cancel_requested") is True):
+                raise RuntimeFault(ErrorCode.INVALID_INPUT, "Follow-up completion identity is invalid")
+            self.store.settle_attempt(attempt_id, cost_micro=None, uncertain=True, state="completed",
+                **{name: usage.get(name) for name in usage_fields})
+            self.store.finalize_job(job_id, "verifying", "Follow-up completed without new Git changes. Prior frozen artifacts remain available; USD usage stays unknown.")
+            return
 
         if data.get("status") != "candidate" or response.get("_cancel_requested") is True or cancel_event.is_set():
             self.store.settle_attempt(

@@ -464,6 +464,56 @@ class ArtifactStore:
             raise RuntimeFault(ErrorCode.INVALID_INPUT, "artifact manifest shape is invalid")
         return parsed
 
+    def restore_candidate_for_followup(self, candidate_id: str, parent_run_id: str,
+                                       workspace: Path, write_paths: list[str]) -> str:
+        """Restore verified prior edits into a fresh original-base disposable clone."""
+        from .sessions import _directory
+        candidate = self.store.get_candidate(candidate_id)
+        parent_run = self.store.get_run(parent_run_id)
+        job = self.store.get_job(parent_run['job_id'])
+        if candidate['job_id'] != parent_run['job_id'] or job['candidate_id'] != candidate_id:
+            raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Follow-up candidate belongs to a different run.')
+        manifest = self.read_manifest(self.store.get_artifact(candidate['manifest_artifact_id']))
+        if any(manifest['candidate'].get(key) != candidate[key] for key in
+               ('id','base_revision','candidate_revision','tree_sha256','patch_sha256')):
+            raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate manifest identity changed.')
+        source_artifacts = {item['display_name']: item for item in self.store.list_candidate_artifacts(candidate_id)
+                            if item['kind'] == 'source_file'}
+        for entry in manifest['files']:
+            if entry['status'] == 'unchanged': continue
+            path = _safe_relative_path(entry['path'])
+            paths = [path] + ([entry['old_path']] if entry.get('old_path') else [])
+            for relative in paths:
+                _safe_relative_path(relative)
+                if any(part in {'.git','.codex'} for part in relative.split('/')) or not any(
+                    relative == prefix or relative.startswith(prefix.rstrip('/') + '/') for prefix in write_paths):
+                    raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate exceeds the original follow-up scope.')
+                parent = workspace.joinpath(*PurePosixPath(relative).parts[:-1])
+                directory_fd = _directory(parent)
+                try:
+                    name = PurePosixPath(relative).name
+                    if relative != path or entry['status'] == 'deleted':
+                        try: os.unlink(name, dir_fd=directory_fd)
+                        except FileNotFoundError: pass
+                        continue
+                    raw = source_artifacts.get(path)
+                    if (not raw or raw['sha256'] != entry['sha256'] or raw['size_bytes'] != entry['size_bytes']):
+                        raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate source artifact is missing or changed.')
+                    data = self.read_artifact(raw)
+                    try:
+                        info = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
+                        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+                            raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Follow-up destination is not a single-link regular file.')
+                        os.unlink(name, dir_fd=directory_fd)
+                    except FileNotFoundError: pass
+                    fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                                 0o755 if entry['mode'] == '100755' else 0o644, dir_fd=directory_fd)
+                    with os.fdopen(fd,'wb') as stream:
+                        stream.write(data); stream.flush(); os.fsync(stream.fileno())
+                finally:
+                    os.close(directory_fd)
+        return candidate['tree_sha256']
+
     def read_path(self, storage_key: str, expected_sha256: str) -> bytes:
         path = _contained_file(self.root, _safe_relative_path(storage_key))
         data = _read_regular(path)

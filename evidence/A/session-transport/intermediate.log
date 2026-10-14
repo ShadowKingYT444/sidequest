@@ -1,0 +1,205 @@
+test_attachment_binding_and_provider_send_bounds_are_checked_before_queue (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_binding_and_provider_send_bounds_are_checked_before_queue) ... ok
+test_attachment_staging_is_durable_idempotent_and_never_dispatches (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_staging_is_durable_idempotent_and_never_dispatches) ... ok
+test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal (services.runtime.tests.test_session_transport.SessionTransportTests.test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal) ... ERROR
+test_message_keeps_production_readiness_scope_and_budget_checks (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_keeps_production_readiness_scope_and_budget_checks) ... ok
+test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice) ... ERROR
+test_staging_rejects_auth_paths_binary_spoofing_and_bounds (services.runtime.tests.test_session_transport.SessionTransportTests.test_staging_rejects_auth_paths_binary_spoofing_and_bounds) ... ok
+
+======================================================================
+ERROR: test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal (services.runtime.tests.test_session_transport.SessionTransportTests.test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 144, in test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal
+    response = await self.http.post('/v1/commands', headers=self.auth, json=command)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1859, in post
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_transports/asgi.py", line 170, in handle_async_request
+    await self.app(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/api.py", line 612, in bound_request_body
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/workspace/sidequest/services/runtime/api.py", line 91, in __call__
+    await self.app(scope, replay, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 352, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/api.py", line 1175, in commands
+    result = runtime_store.queue_session_message(command.command_id, expected, payload,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/sessions.py", line 250, in queue_session_message
+    return self.execute_command(command_id,'session.message',payload,expected_revision,write)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/store.py", line 234, in execute_command
+    result = operation(connection)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/sessions.py", line 242, in write
+    connection.execute('INSERT INTO session_messages VALUES (?,?,?,?,NULL,?,?,?,?)',
+sqlite3.ProgrammingError: Error binding parameter 1: type 'UUID' is not supported
+
+======================================================================
+ERROR: test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 100, in test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice
+    sent = await self.http.post('/v1/commands', headers=self.auth, json=command)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1859, in post
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/httpx/_transports/asgi.py", line 170, in handle_async_request
+    await self.app(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/api.py", line 612, in bound_request_body
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/workspace/sidequest/services/runtime/api.py", line 91, in __call__
+    await self.app(scope, replay, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 352, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/api.py", line 1175, in commands
+    result = runtime_store.queue_session_message(command.command_id, expected, payload,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/sessions.py", line 250, in queue_session_message
+    return self.execute_command(command_id,'session.message',payload,expected_revision,write)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/store.py", line 234, in execute_command
+    result = operation(connection)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/sessions.py", line 242, in write
+    connection.execute('INSERT INTO session_messages VALUES (?,?,?,?,NULL,?,?,?,?)',
+sqlite3.ProgrammingError: Error binding parameter 1: type 'UUID' is not supported
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.455s
+
+FAILED (errors=2)
