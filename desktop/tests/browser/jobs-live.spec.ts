@@ -48,11 +48,18 @@ test('genuine local inspection job produces immutable files and a check report',
   expect(calls.slice(refreshStart).every(call=>['snapshot','capabilities','artifacts','artifact','files','text','diff'].includes(call.method))).toBe(true);
   await page.screenshot({path:path.resolve('../evidence/desktop/job-readiness.png')});
   await board.locator('.coding-readiness summary').click();
+  const responsiveAccessibility:{width:number;violations:unknown[]}[]=[];
   for(const width of [960,390]){
     await page.setViewportSize({width,height:780});
+    await board.locator('.artifact-content').scrollIntoViewIfNeeded();
+    await expect(board.locator('.artifact-text')).toBeInViewport();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
     await page.screenshot({path:path.resolve(`../evidence/desktop/job-${width}.png`)});
+    const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
+    responsiveAccessibility.push({width,violations:result.violations});
+    expect(result.violations.map(item=>({id:item.id,impact:item.impact}))).toEqual([]);
   }
+  await writeFile(path.resolve('../evidence/desktop/job-responsive-accessibility.json'),JSON.stringify(responsiveAccessibility,null,2));
   await page.setViewportSize({width:1440,height:900});
   const accessibility=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
   await writeFile(path.resolve('../evidence/desktop/job-accessibility.json'),JSON.stringify(accessibility.violations,null,2));
@@ -63,6 +70,10 @@ test('genuine local inspection job produces immutable files and a check report',
   await page.getByRole('button',{name:'Jobs',exact:true}).click();
   await expect(board.locator('#job-artifact')).toHaveValue(selectedArtifact);
   const response=await request.get('/__sidequest/snapshot');const git=await response.json();
-  await writeFile(path.resolve('../evidence/desktop/job-browser.json'),JSON.stringify({title,source:{base:git.baseRevision,candidate:git.candidateRevision},frozen_check_report:report,browser_requests:calls,model_calls:report.inference_calls,scope:'Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run',page_errors:errors},null,2));
+  const state=await page.evaluate(async()=>{const response=await fetch('/__sidequest/runtime/snapshot',{method:'POST',headers:{'Content-Type':'application/json'},body:'[]'});if(!response.ok)throw new Error('Final local snapshot unavailable.');return response.json();});
+  const completedJob=state.jobs.find((item:{title:string})=>item.title===title);
+  expect(completedJob?.spent_usd).toBe(0);
+  const registeredProject=state.projects.find((item:{id:string})=>item.id===completedJob.project_id);
+  await writeFile(path.resolve('../evidence/desktop/job-browser.json'),JSON.stringify({title,source:{base:git.baseRevision,candidate:git.candidateRevision},registered_project:registeredProject,job:completedJob,frozen_check_report:report,browser_requests:calls,model_calls:report.inference_calls,scope:'Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run',page_errors:errors},null,2));
   expect(errors).toEqual([]);
 });

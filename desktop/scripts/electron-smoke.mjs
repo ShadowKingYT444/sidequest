@@ -28,10 +28,11 @@ try {
   const context=browser.contexts()[0];
   const page=context.pages()[0] ?? await context.waitForEvent('page');
   await page.waitForLoadState('domcontentloaded');
-  const boundary=await page.evaluate(async()=>({bridgeKeys:Object.keys(window.sidequest ?? {}).sort(),nodeAccess:typeof window.require,snapshot:await window.sidequest?.snapshot()}));
-  if(boundary.nodeAccess!=='undefined'||boundary.bridgeKeys.join(',')!=='diff,snapshot'||boundary.snapshot?.mode!=='local-git')throw new Error('Desktop boundary smoke check failed.');
+  const boundary=await page.evaluate(async()=>({bridgeKeys:Object.keys(window.sidequest ?? {}).sort(),runtimeKeys:Object.keys(window.sidequest?.runtime ?? {}).sort(),nodeAccess:typeof window.require,snapshot:await window.sidequest?.snapshot()}));
+  const expectedRuntimeKeys=['snapshot','capabilities','job','artifact','artifacts','files','text','diff','register','submitInspection','run','stop'].sort();
+  if(boundary.nodeAccess!=='undefined'||boundary.bridgeKeys.join(',')!=='diff,runtime,snapshot'||boundary.runtimeKeys.join(',')!==expectedRuntimeKeys.join(',')||boundary.snapshot?.mode!=='local-git')throw new Error('Desktop boundary smoke check failed.');
   await page.screenshot({path:path.join(evidence,'electron-window.png')});
-  await writeFile(path.join(evidence,'electron-smoke.json'),JSON.stringify({status:'passed',startedAt,bridgeKeys:boundary.bridgeKeys,nodeAccess:false,mode:boundary.snapshot.mode,args},null,2)+'\n');
+  await writeFile(path.join(evidence,'electron-smoke.json'),JSON.stringify({status:'passed',startedAt,bridgeKeys:boundary.bridgeKeys,runtimeKeys:boundary.runtimeKeys,nodeAccess:false,mode:boundary.snapshot.mode,args},null,2)+'\n');
   console.log('Native Electron window and real Git IPC passed.');
 }catch(error){
   const reason=error instanceof Error?error.message:String(error);
