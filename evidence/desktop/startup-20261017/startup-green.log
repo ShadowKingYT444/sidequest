@@ -1,0 +1,11 @@
+✔ missing renderer build exits nonzero with setup instructions instead of opening a broken window (4.877428ms)
+✔ native window startup rejection is visible, nonzero, and does not disclose raw errors (1.368005ms)
+✔ built production renderer still loads through the restricted app protocol (0.943835ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 86.190097

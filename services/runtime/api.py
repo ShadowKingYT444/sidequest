@@ -26,6 +26,7 @@ from .config import (
     RuntimeConfig,
     codex_configuration_fingerprint,
     codex_catalog_is_fresh,
+    codex_refresh_is_fresh,
     codex_execution_enabled,
 )
 from .models import (
@@ -628,15 +629,18 @@ def create_app(
                 continue
         local_enabled = bool(roots and config.b_argv and config.d_argv)
         readiness = runtime_store.get_codex_readiness()
+        refresh_fresh = codex_refresh_is_fresh(config, readiness)
         catalog_fresh = codex_catalog_is_fresh(config, readiness)
         codex_ready = codex_execution_enabled(config, readiness)
         cached_capability = readiness.get("capability") if isinstance(readiness, dict) else None
-        cached_capability = cached_capability if isinstance(cached_capability, dict) else {}
+        cached_capability = cached_capability if refresh_fresh and isinstance(cached_capability, dict) else {}
         cached_model = cached_capability.get("model") if isinstance(cached_capability.get("model"), dict) else {}
         cached_effort = cached_capability.get("effort") if isinstance(cached_capability.get("effort"), dict) else {}
         reasons = []
         if not config.codex_enabled:
             reasons.append("Codex execution is disabled by host settings.")
+        elif refresh_fresh and not catalog_fresh and isinstance(cached_capability.get("reason"), str):
+            reasons.append(_safe_message(cached_capability["reason"])[:256])
         elif not catalog_fresh:
             reasons.append("Codex model and effort catalog is not verified or has expired; use the explicit host readiness refresh command.")
         elif cached_capability.get("usd_cost_enforced") is not True and not isinstance(cached_capability.get("reason"), str):
@@ -645,7 +649,7 @@ def create_app(
             reasons.append("Host consent for Codex task execution has not been recorded.")
         elif not codex_ready:
             reasons.append("Codex task execution is unavailable.")
-        if catalog_fresh and isinstance(cached_capability.get("reason"), str):
+        if refresh_fresh and isinstance(cached_capability.get("reason"), str):
             safe_reason = _safe_message(cached_capability["reason"])[:256]
             if safe_reason not in reasons:
                 reasons.append(safe_reason)
@@ -654,13 +658,13 @@ def create_app(
         codex_public = {
             "host_enabled": config.codex_enabled,
             "catalog_verified": catalog_fresh,
-            "state": cached_capability.get("state") if catalog_fresh and cached_capability.get("state") in {"available", "unavailable"} else "unverified",
+            "state": cached_capability.get("state") if refresh_fresh and cached_capability.get("state") in {"available", "unavailable"} else "unverified",
             "provider": "codex-app-server",
             "model": {"id": cached_model.get("id"), "verified": cached_model.get("verified") is True} if cached_model else {"id": config.codex_model, "verified": False},
             "effort": {"id": cached_effort.get("id"), "verified": cached_effort.get("verified") is True} if cached_effort else {"id": config.codex_effort, "verified": False},
             "account_type": cached_capability.get("account_type") if catalog_fresh else "unknown",
             "usd_cost_enforced": cached_capability.get("usd_cost_enforced") is True if catalog_fresh else False,
-            "refreshed_at": readiness.get("refreshed_at") if catalog_fresh and isinstance(readiness, dict) else None,
+            "refreshed_at": readiness.get("refreshed_at") if refresh_fresh and isinstance(readiness, dict) else None,
             "reason": _safe_message(cached_capability.get("reason", ""))[:256] if isinstance(cached_capability.get("reason"), str) else (
                 "The provider has not verified a USD cost ceiling."
                 if catalog_fresh and cached_capability.get("usd_cost_enforced") is not True

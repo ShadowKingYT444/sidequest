@@ -1,0 +1,61 @@
+test_startup_executable_errors_identify_missing_or_denied_installation (test_codex_bridge.CodexBridgeTests.test_startup_executable_errors_identify_missing_or_denied_installation) ... 
+  test_startup_executable_errors_identify_missing_or_denied_installation (test_codex_bridge.CodexBridgeTests.test_startup_executable_errors_identify_missing_or_denied_installation) (error='FileNotFoundError') ... FAIL
+  test_startup_executable_errors_identify_missing_or_denied_installation (test_codex_bridge.CodexBridgeTests.test_startup_executable_errors_identify_missing_or_denied_installation) (error='PermissionError') ... FAIL
+test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) ... 
+  test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) (mode='startup_read_only') ... FAIL
+  test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) (mode='startup_permission') ... FAIL
+  test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) (mode='startup_no_space') ... FAIL
+  test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) (mode='startup_cli_option') ... FAIL
+
+======================================================================
+FAIL: test_startup_executable_errors_identify_missing_or_denied_installation (test_codex_bridge.CodexBridgeTests.test_startup_executable_errors_identify_missing_or_denied_installation) (error='FileNotFoundError')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/tools/tests/test_codex_bridge.py", line 513, in test_startup_executable_errors_identify_missing_or_denied_installation
+    self.assertIn(expected, caught.exception.message)
+AssertionError: 'was not found' not found in 'Codex app-server could not be started.'
+
+======================================================================
+FAIL: test_startup_executable_errors_identify_missing_or_denied_installation (test_codex_bridge.CodexBridgeTests.test_startup_executable_errors_identify_missing_or_denied_installation) (error='PermissionError')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/tools/tests/test_codex_bridge.py", line 513, in test_startup_executable_errors_identify_missing_or_denied_installation
+    self.assertIn(expected, caught.exception.message)
+AssertionError: 'permission was denied' not found in 'Codex app-server could not be started.'
+
+======================================================================
+FAIL: test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) (mode='startup_read_only')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/tools/tests/test_codex_bridge.py", line 493, in test_startup_failures_have_safe_actionable_diagnostics
+    self.assertIn(expected, data["reason"])
+AssertionError: 'read-only filesystem' not found in 'Codex app-server exited before its response.'
+
+======================================================================
+FAIL: test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) (mode='startup_permission')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/tools/tests/test_codex_bridge.py", line 493, in test_startup_failures_have_safe_actionable_diagnostics
+    self.assertIn(expected, data["reason"])
+AssertionError: 'permission was denied' not found in 'Codex app-server exited before its response.'
+
+======================================================================
+FAIL: test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) (mode='startup_no_space')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/tools/tests/test_codex_bridge.py", line 493, in test_startup_failures_have_safe_actionable_diagnostics
+    self.assertIn(expected, data["reason"])
+AssertionError: 'no free space' not found in 'Codex app-server exited before its response.'
+
+======================================================================
+FAIL: test_startup_failures_have_safe_actionable_diagnostics (test_codex_bridge.CodexBridgeTests.test_startup_failures_have_safe_actionable_diagnostics) (mode='startup_cli_option')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/tools/tests/test_codex_bridge.py", line 493, in test_startup_failures_have_safe_actionable_diagnostics
+    self.assertIn(expected, data["reason"])
+AssertionError: 'does not support the required app-server options' not found in 'Codex app-server exited before its response.'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.979s
+
+FAILED (failures=6)

@@ -49,6 +49,7 @@ except ImportError:  # Direct script execution by the host adapter.
 MAX_RPC_LINE_BYTES = 2 * 1024 * 1024
 MAX_RPC_STDOUT_BYTES = 32 * 1024 * 1024
 MAX_RPC_STDERR_BYTES = 1024 * 1024
+MAX_STARTUP_DIAGNOSTIC_BYTES = 8192
 MAX_PUBLIC_MESSAGE_BYTES = 2600
 MAX_MODEL_PAGES = 5
 _ANSI = re.compile(r"\x1b(?:\][^\x07\x1b]*(?:\x07|\x1b\\)|\[[0-?]*[ -/]*[@-~])")
@@ -264,6 +265,10 @@ class AppServer:
                 bufsize=0,
                 preexec_fn=lambda: signal.signal(signal.SIGTERM, signal.SIG_IGN),
             )
+        except FileNotFoundError as exc:
+            raise AppServerFailure("UNAVAILABLE", "The configured Codex executable or its interpreter was not found. Check the CLI installation and refresh readiness.") from exc
+        except PermissionError as exc:
+            raise AppServerFailure("UNAVAILABLE", "Codex could not start because executable permission was denied. Check the host CLI installation permissions.") from exc
         except OSError as exc:
             raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server could not be started.") from exc
         assert self.process.stdin is not None and self.process.stdout is not None and self.process.stderr is not None
@@ -276,6 +281,8 @@ class AppServer:
         self.stdout_bytes = 0
         self.stderr_bytes = 0
         self.stderr_exceeded = False
+        self._startup_stderr = bytearray()
+        self._initialized = False
         self.request_seq = 0
         self.progress = progress
         self.cancel_event = cancel_event or threading.Event()
@@ -298,7 +305,7 @@ class AppServer:
 
     def _send(self, message: dict[str, Any]) -> None:
         if self.process.poll() is not None:
-            raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server exited unexpectedly.", retryable=True)
+            raise self._exit_failure("Codex app-server exited unexpectedly.")
         raw = json.dumps(message, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8") + b"\n"
         if len(raw) > MAX_RPC_LINE_BYTES:
             raise AppServerFailure("INVALID_INPUT", "Codex JSON-RPC request exceeded its size limit.")
@@ -307,7 +314,44 @@ class AppServer:
             self.process.stdin.write(raw)
             self.process.stdin.flush()
         except OSError as exc:
-            raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server input closed unexpectedly.", retryable=True) from exc
+            raise self._exit_failure("Codex app-server input closed unexpectedly.") from exc
+
+    def _record_stderr(self, chunk: bytes) -> None:
+        self.stderr_bytes += len(chunk)
+        if self.stderr_bytes > MAX_RPC_STDERR_BYTES:
+            self.stderr_exceeded = True
+            raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server diagnostics exceeded their size limit.")
+        if not self._initialized:
+            self._startup_stderr.extend(chunk)
+            del self._startup_stderr[:-MAX_STARTUP_DIAGNOSTIC_BYTES]
+
+    def _exit_failure(self, fallback: str) -> AppServerFailure:
+        if not self._initialized:
+            # A CLI can fail before the first write/read. Drain only currently
+            # available bytes from its nonblocking diagnostic pipe. Never put
+            # raw stderr (paths, configuration or credentials) in public state.
+            assert self.process.stderr is not None
+            while self.stderr_bytes <= MAX_RPC_STDERR_BYTES:
+                try:
+                    chunk = os.read(self.process.stderr.fileno(), 65536)
+                except (BlockingIOError, OSError):
+                    break
+                if not chunk:
+                    break
+                self._record_stderr(chunk)
+            text = _ANSI.sub("", self._startup_stderr.decode("utf-8", "replace"))
+            # Warnings can describe a recoverable PATH-alias failure. Only a
+            # fatal diagnostic may replace the generic exit reason.
+            fatal = "\n".join(line for line in text.lower().splitlines() if re.match(r"^\s*(?:error|fatal):", line))
+            for markers, message in (
+                (("read-only file system", "os error 30"), "Codex app-server reported a read-only filesystem. Use a host with writable Codex state while preserving the existing account configuration."),
+                (("permission denied", "os error 13"), "Codex app-server could not start because filesystem permission was denied. Check access to the existing host Codex configuration and state directories."),
+                (("no space left on device", "os error 28"), "Codex app-server could not start because its filesystem has no free space. Free space on the host state volume and refresh readiness."),
+                (("unexpected argument", "unrecognized option", "unknown option"), "The installed Codex CLI does not support the required app-server options. Check the CLI version and refresh readiness."),
+            ):
+                if any(marker in fatal for marker in markers):
+                    return AppServerFailure("UNAVAILABLE", message)
+        return AppServerFailure("DEPENDENCY_FAILED", fallback, retryable=True)
 
     def _next_line(self, deadline: float) -> dict[str, Any]:
         while True:
@@ -331,7 +375,7 @@ class AppServer:
             if not events and self.process.poll() is not None:
                 if self.stdout_buffer:
                     raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server ended with a truncated event.", retryable=True)
-                raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server exited before its response.", retryable=True)
+                raise self._exit_failure("Codex app-server exited before its response.")
             for key, _ in events:
                 try:
                     chunk = os.read(key.fileobj.fileno(), 65536)
@@ -351,10 +395,7 @@ class AppServer:
                         raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server output exceeded its size limit.")
                     self.stdout_buffer.extend(chunk)
                 else:
-                    self.stderr_bytes += len(chunk)
-                    if self.stderr_bytes > MAX_RPC_STDERR_BYTES:
-                        self.stderr_exceeded = True
-                        raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server diagnostics exceeded their size limit.")
+                    self._record_stderr(chunk)
 
     def _safe_activity(self, params: dict[str, Any]) -> None:
         method = params.get("method")
@@ -557,6 +598,8 @@ class AppServer:
         if not Path(result["codexHome"]).is_absolute():
             raise AppServerFailure("DEPENDENCY_FAILED", "Codex app-server returned an invalid initialization response.")
         self.notify("initialized")
+        self._initialized = True
+        self._startup_stderr.clear()
 
     def read_catalog_and_account(self, timeout: float) -> tuple[dict[str, dict[str, Any]], str]:
         cursor: str | None = None

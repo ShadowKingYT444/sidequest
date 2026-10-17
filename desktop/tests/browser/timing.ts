@@ -1,5 +1,6 @@
+import {evidenceDirectory} from './evidence';
 import {test as base, expect} from '@playwright/test';
-import {mkdir, writeFile} from 'node:fs/promises';
+import {writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 // Collect diagnostics without adding waits, retries or changing assertions.
@@ -25,7 +26,7 @@ export const test=base.extend<{timings:void}>({timings:[async({page},use,info)=>
     mode:document.querySelector('main')?.getAttribute('data-mode'),
     editors:document.querySelectorAll('.diff-editor').length,
   })).catch(error=>({captureError:String(error)}));
-  const directory=path.resolve('../evidence/desktop/repair-20261014',process.env.SIDEQUEST_EVIDENCE_RUN??'timings');await mkdir(directory,{recursive:true});
+  const directory=evidenceDirectory(process.env.SIDEQUEST_EVIDENCE_DIR?'timings':'repair-20261014',process.env.SIDEQUEST_EVIDENCE_RUN??'timings');
   const file=path.join(directory,`${info.title.replace(/[^a-z0-9]+/gi,'-')}-${info.status}.json`);
   await writeFile(file,JSON.stringify({test:info.title,status:info.status,elapsedMs:Date.now()-started,navigations,network,errors,browser},null,2));
 }, {auto:true}]});

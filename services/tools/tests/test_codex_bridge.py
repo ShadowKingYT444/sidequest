@@ -59,6 +59,18 @@ def response(request, result=None, error=None):
     emit(value)
 
 log({{"kind": "startup", "argv": sys.argv[1:], "home": os.environ.get("HOME"), "codex_home": os.environ.get("CODEX_HOME"), "env_names": sorted(os.environ)}})
+if MODE.startswith("startup_"):
+    diagnostics = {{
+        "startup_read_only": "\\x1b[31mError:\\x1b[0m Read-only file system (os error 30)",
+        "startup_permission": "Error: Permission denied (os error 13)",
+        "startup_no_space": "Error: No space left on device (os error 28)",
+        "startup_cli_option": "error: unexpected argument '--fixture-private-option' found",
+        "startup_unknown": "Error: fixture-private-unknown-failure",
+        "startup_warning": "WARNING: proceeding: Read-only file system (os error 30)",
+    }}
+    sys.stderr.write(diagnostics[MODE] + " /fixture-private-path API_TOKEN=fixture_private_secret_value")
+    sys.stderr.flush()
+    sys.exit(1)
 for raw in sys.stdin:
     try:
         request = json.loads(raw)
@@ -458,6 +470,60 @@ for raw in sys.stdin:
                 if mode == "api_key":
                     self.assertNotIn("account/rateLimits/read", methods)
                 self.assertNotIn("turn/start", methods)
+
+    def test_startup_failures_have_safe_actionable_diagnostics(self) -> None:
+        cases = {
+            "startup_read_only": "read-only filesystem",
+            "startup_permission": "permission was denied",
+            "startup_no_space": "no free space",
+            "startup_cli_option": "does not support the required app-server options",
+            "startup_unknown": "exited before its response",
+            "startup_warning": "exited before its response",
+        }
+        for mode, expected in cases.items():
+            with self.subTest(mode=mode):
+                settings, _executable, log_path = self._settings(mode)
+                progress_path = self.staging / f"{mode}.jsonl"
+                request = {
+                    "v": 1, "request_id": mode, "op": "agent.capabilities",
+                    "job_id": "startup-fixture", "workspace": str(self.staging),
+                    "payload": {}, "context": {"progress_path": str(progress_path)},
+                }
+                data, artifacts, usage = dispatch(request, settings)
+                self.assertIn(expected, data["reason"])
+                self.assertFalse(data["model"]["verified"])
+                self.assertFalse(data["usd_cost_enforced"])
+                self.assertEqual(data["state"], "unavailable")
+                self.assertEqual(artifacts, [])
+                self.assertIsNone(usage)
+                public = json.dumps(data) + progress_path.read_text()
+                for private in ("fixture-private", "fixture_private", "API_TOKEN", "\\x1b"):
+                    self.assertNotIn(private, public)
+                self.assertEqual([row["kind"] for row in self._rpc_log(log_path)], ["startup"])
+
+    def test_startup_executable_errors_identify_missing_or_denied_installation(self) -> None:
+        settings, _executable, _log_path = self._settings("success")
+        for error, expected in (
+            (FileNotFoundError("fixture-private-path"), "was not found"),
+            (PermissionError("fixture-private-path"), "permission was denied"),
+        ):
+            with self.subTest(error=type(error).__name__), mock.patch("codex_bridge.subprocess.Popen", side_effect=error):
+                with self.assertRaises(AppServerFailure) as caught:
+                    AppServer(settings, settings.codex_state_dir, ProgressLog(None, "fixture"))
+                self.assertIn(expected, caught.exception.message)
+                self.assertNotIn("fixture-private", caught.exception.message)
+
+    def test_startup_diagnostic_survives_process_exit_before_initialize_is_sent(self) -> None:
+        settings, _executable, _log_path = self._settings("startup_read_only")
+        app = AppServer(settings, settings.codex_state_dir, ProgressLog(None, "fixture"))
+        try:
+            self.assertEqual(app.process.wait(timeout=3), 1)
+            with self.assertRaises(AppServerFailure) as caught:
+                app.initialize()
+            self.assertIn("read-only filesystem", caught.exception.message)
+            self.assertNotIn("fixture-private", caught.exception.message)
+        finally:
+            app.close()
 
     def test_capabilities_requires_an_existing_auth_locator_without_inventing_one(self) -> None:
         settings, _executable, log_path = self._settings("success")

@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const evidence = path.resolve(root, '../evidence/desktop');
+const evidence = path.resolve(process.env.SIDEQUEST_EVIDENCE_DIR ?? path.resolve(root, '../evidence/desktop'));
 await mkdir(evidence, { recursive: true });
 let child, browser;
 let output = '';

@@ -1,6 +1,7 @@
 'use strict';
 
-const { app, BrowserWindow, ipcMain, protocol, session } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, protocol, session } = require('electron');
+const { existsSync } = require('node:fs');
 const path = require('node:path');
 const { createGitReader } = require('./git-reader.cjs');
 const { createRuntimeClient, dispatchRuntimeReply } = require('./runtime-client.cjs');
@@ -132,6 +133,9 @@ async function createWindow() {
 }
 
 async function start() {
+  if ((!DEV_SERVER || app.isPackaged) && !existsSync(path.join(DIST_ROOT, 'index.html'))) {
+    throw Object.assign(new Error('Renderer build missing.'), { code: 'BUILD_MISSING' });
+  }
   const repo = process.env.SIDEQUEST_REPO;
   if (repo) gitReader = createGitReader(repo, process.env.SIDEQUEST_BASE || 'HEAD~1');
   runtimeClient = createRuntimeClient({url:process.env.SIDEQUEST_RUNTIME_URL,token:process.env.SIDEQUEST_RUNTIME_TOKEN,tokenFile:process.env.SIDEQUEST_API_TOKEN_FILE,repo,baseRef:process.env.SIDEQUEST_PROJECT_BASE || 'HEAD'});
@@ -140,13 +144,20 @@ async function start() {
   await createWindow();
 }
 
-app.whenReady().then(start).catch(() => {
-  // Keep startup failures generic; Git errors can include paths and local repository details.
-  app.quit();
-});
+function startupFailure(error) {
+  // Do not display raw errors: they may contain local paths or runtime credentials.
+  const message = error?.code === 'BUILD_MISSING'
+    ? 'The desktop build is missing. Run python3 sidequest.py setup from the Sidequest folder, then try again.'
+    : 'Sidequest could not start. Run python3 sidequest.py doctor from the Sidequest folder to check dependencies and desktop support.';
+  console.error(message);
+  dialog.showErrorBox('Sidequest could not start', message);
+  app.exit(1);
+}
+
+app.whenReady().then(start).catch(startupFailure);
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow().catch(() => app.quit());
+  if (BrowserWindow.getAllWindows().length === 0) createWindow().catch(startupFailure);
 });
 
 app.on('window-all-closed', () => {

@@ -1,9 +1,10 @@
+import {evidenceDirectory} from './evidence';
 import { test, expect } from './timing';
 import type {Page} from '@playwright/test';
 import path from 'node:path';
 import { writeFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
-const evidence = path.resolve('../evidence/desktop');
+const evidence = evidenceDirectory();
 async function traceEditorMounts(page:Page){
   await page.addInitScript(()=>{
     const trace:unknown[]=[];(window as unknown as {__editorLifecycle:unknown[]}).__editorLifecycle=trace;

@@ -1,0 +1,8 @@
+{
+  "exit_code": 1,
+  "runtime_reached_ready": true,
+  "existing_vite_port_rejected": true,
+  "runtime_shutdown": true,
+  "persistent_token_files": 0,
+  "model_calls": 0
+}

@@ -1,10 +1,11 @@
+import {evidenceDirectory} from './evidence';
 import {test,expect,type Page} from '@playwright/test';
 import {mkdir} from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 
 // Explicit protocol fake: real Chromium IndexedDB/File reload, real React composer,
 // fake authenticated runtime receipts. No provider startup or model turn occurs.
-const captures=`../evidence/desktop/transport/${process.env.SIDEQUEST_TRANSPORT_EVIDENCE_RUN??'captures'}`;
+const captures=evidenceDirectory('transport',process.env.SIDEQUEST_TRANSPORT_EVIDENCE_RUN??'captures');
 async function composerFixture(page:Page,{lostReply=false,usd=true,rejectedBeforeStart=false}={}){
  page.on('pageerror',error=>console.error('Composer fixture page error:',error.message));
  await page.addInitScript(({lostReply,usd,rejectedBeforeStart})=>{

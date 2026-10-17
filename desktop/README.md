@@ -1,3 +1,9 @@
+# Start the office and runtime together
+
+From the repository root, run `python3 sidequest.py setup`, then `python3 sidequest.py run --repo /absolute/path/to/project`. Add `--browser` to both commands for a headless host. `python3 sidequest.py doctor` checks prerequisites. See the [quick start](../README.md) for state storage, limitations and all steps. This launcher connects the local runtime automatically using an ephemeral process-only API token and closes its owned services together. Coding remains disabled.
+
+The manual commands below remain useful for development and separately managed runtimes. They require the explicit runtime configuration shown later in this document.
+
 # Sidequest desktop slice
 
 Electron hosts React/TypeScript. React Three Fiber/Drei binds the supplied office GLB. Clicking a computer smoothly approaches its original monitor and opens the recorded session trace with a compact local prompt composer. Trace/Files controls switch to genuine read-only Git or assigned job results; only that selected computer can mount a lazy Monaco editor. Expand opens the same work in a flat reading panel. Escape restores the previous office camera and retains the selected view, file, draft, attachments and scroll. Non-selected monitors use small previews. The office renders on demand and stops rendering while hidden; decorative animation is not started.

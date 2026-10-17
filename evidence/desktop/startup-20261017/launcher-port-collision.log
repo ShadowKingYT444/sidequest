@@ -1,0 +1,27 @@
+INFO:     Started server process [10156]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:38615 (Press CTRL+C to quit)
+Local runtime ready. Git inspection, saved sessions and artifacts are connected. Coding is disabled; no provider turn will start.
+Open http://127.0.0.1:5173 after Vite reports ready. Press Ctrl+C to stop both services.
+
+> sidequest-desktop@0.1.0 dev
+> vite --host 127.0.0.1
+
+error when starting dev server:
+Error: Port 5173 is already in use
+    at httpServerStart (file:///workspace/sidequest/desktop/node_modules/vite/dist/node/chunks/node.js:14706:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async startServer (file:///workspace/sidequest/desktop/node_modules/vite/dist/node/chunks/node.js:25156:30)
+    at async Object.listen (file:///workspace/sidequest/desktop/node_modules/vite/dist/node/chunks/node.js:24962:4)
+    at async CAC.<anonymous> (file:///workspace/sidequest/desktop/node_modules/vite/dist/node/cli.js:725:3)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10156]
+Sidequest: The office could not run. Review the error above; run doctor. Electron needs a supported desktop sandbox. Do not disable it; use --browser on headless hosts.

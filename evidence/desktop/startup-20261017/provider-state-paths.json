@@ -1,0 +1,40 @@
+{
+  "status": "blocked",
+  "returncode": 1,
+  "response_lines": 0,
+  "readonly_filesystem_syscalls": [
+    "chmod(\"/run/codex-environment/codex-home/tmp/arg0\", 0700) = -1 EROFS (Read-only file system)",
+    "[pid 10081] openat(4, \"uid_map\", O_RDWR|O_CLOEXEC) = -1 EROFS (Read-only file system)",
+    "[pid 10066] open(\"/run/codex-environment/codex-home/installation_id\", O_RDWR|O_CREAT|O_LARGEFILE|O_CLOEXEC, 0644) = -1 EROFS (Read-only file system)"
+  ],
+  "tracing_unavailable": false,
+  "methods_requested": [
+    "initialize"
+  ],
+  "model_calls": 0,
+  "auth_locator_unchanged": true,
+  "sqlite_state_directory": "/tmp/sidequest-state-path-probe-2rgbrtch",
+  "codex_home": "/run/codex-environment/codex-home",
+  "codex_home_writable": false,
+  "containing_mount": {
+    "mountpoint": "/",
+    "options": [
+      "ro",
+      "nosuid",
+      "nodev",
+      "relatime"
+    ]
+  },
+  "diagnosis": "Hard environment restriction: the original CODEX_HOME is on a read-only mount. SQLite already uses a separate writable /tmp directory. The app-server fails opening CODEX_HOME/installation_id for read-write/create before initialize returns.",
+  "supported_relocation_found": false,
+  "upstream_source": "https://github.com/openai/codex/blob/main/codex-rs/core/src/installation_id.rs",
+  "source_caveat": "Current upstream source corroborates the observed path and read-write/create behavior; installed CLI 0.159.0-alpha.3 syscall evidence is authoritative for this host.",
+  "next_host_requirement": "A supported host with an existing authenticated writable Codex home, or a host-provisioned authenticated app-server endpoint with separately tested adapter integration. No credential copying, remounts or permission bypass.",
+  "verification_checklist": [
+    "Run Electron with sandbox enabled on a desktop session; verify window, context-isolated IPC and office interactions.",
+    "Keep original HOME/CODEX_HOME and use an app-owned private SIDEQUEST_CODEX_STATE_DIR for SQLite; explicit initialize must return successfully.",
+    "Use explicit readiness refresh for model/list, account/read(refreshToken:false), account/rateLimits/read; retain unknown values and show the current check timestamp.",
+    "Production execution remains unavailable until verified USD enforcement is supplied; readiness/account proof alone does not satisfy that contract.",
+    "Only after host prerequisites, enforcement and explicit scope are authorized: disposable bounded agent/follow-up/attachment/reconnect verification with exact identities and zero duplicate turns."
+  ]
+}

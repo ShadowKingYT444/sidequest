@@ -1,38 +1,61 @@
-# Sidequest — Electron presentation work
-
-Start the current Electron + React + TypeScript client with [desktop/README.md](desktop/README.md). It replaces the Unity presentation decision and provides a read-only local Git diff viewer with lazy Monaco, expandable reading and Escape/state restoration. The owner’s original office GLB, 24 measured monitor bindings and 26 staged reference figures are imported. Slim bars and scene objects provide navigation, with a compact detected-provider/prompt layer. The owner rejected the temporary office/settings at 05:17 UTC; rejected work is archived and excluded from the default experience.
-
-The specified Python/SQLite runtime, scheduling, policy, authenticated artifact API, isolated Git pipeline and trusted checks are implemented. The jobs board completed a genuine local inspection through the browser, runtime and adapters with zero model calls and no source delivery. The Codex app-server adapter and persisted session lifecycle are implemented and tested with a fake transport; native coding execution remains blocked. Browser evidence verifies the imported office and local inspection; it does not certify native Electron or a live coding agent. See [run/eval instructions](docs/RUN_EVALS.md), [acceptance limits](docs/MVP_ACCEPTANCE.md) and [screenshots/provenance](evidence/desktop/README.md).
-
-The development-controller instructions below are retained for operator context. The machine plan now points C at Electron; the current MVP was built through explicitly coordinated lanes rather than that controller. Do not start model workers to launch the viewer or local evaluations.
-
 # Sidequest
 
-A calm office for real agent swarms, with Electron presentation. Inspect artifacts and diffs directly on a selected computer. Use existing coding agents; do not build another agent framework.
+A local Electron office for inspecting coding work, recorded sessions, files and Git diffs. The original office assets are included. Python owns the local runtime; React and Electron display it.
 
-The owner's completed Blender/GLB assets are protected inputs. The authorized recovery verified the complete archive and imported original geometry, materials, local textures and staged figures. Preserve native originals and recorded hashes. Native Electron and Codex readiness remain blocked as recorded in the acceptance evidence.
+**Current limit:** local Git inspection and office interactions work. Live coding is still unavailable: the Codex adapter cannot enforce the required spending ceiling. Other detected CLIs have no execution adapter. Installed does not mean connected. See [current verification and blockers](evidence/desktop/startup-20261017/README.md).
 
-Start at [START HERE](docs/START_HERE.md). Read [SPEC](SPEC.md) for scope or [ARCHITECTURE](docs/ARCHITECTURE.md) for the fixed stack. Workers read only their assigned goal and its relevant documents, not the entire research archive.
+## Quick start
 
-| Lane | Exclusive responsibility |
-|---|---|
-| A | Local runtime, database, scheduler, artifact HTTP service |
-| B | Coding-provider adapter, isolated Git, file/diff capture, local monitoring |
-| C | Existing GLB assets, Electron computer UI, office interaction and build |
-| D | Independent checks, reusable workshops, demo and final acceptance rig |
+Requires **Python 3.12+**, **Node.js 24 LTS** (with npm), and **Git**, on Linux or macOS. Native Electron also needs a desktop session with a working OS sandbox. Native Windows is not supported by the Python runtime yet.
 
-Each lane has three goals. Each candidate gets a new validator thread at its exact commit. Main is not automatically changed by development runs. The [low-token policy](docs/LOW_TOKEN_EXECUTION.md) selects Luna/max, short task packets, deterministic tests first, bounded attempts, and no always-running manager.
+From the Sidequest folder:
 
-```bash
-python3 -m unittest discover -s dev -p 'test_*.py' -v
-python3 dev/check.py --setup
-python3 dev/loop.py prepare
-python3 dev/luna.py run A --allow-network
-# Start B, C and D in their own terminals from this same checkout.
+```sh
+python3 sidequest.py setup
+python3 sidequest.py run --repo /absolute/path/to/your/project
 ```
 
-Complete the asset/environment preflight in START HERE before preparing worktrees. `dev/luna.py` checks the effective Codex configuration and account model support before allowing a model run. The low-cost configuration is an explicit preference, not an estimate of your account bill.
+The project must be a trusted local Git repository with at least one commit. Setup installs the locked dependencies and Electron, then builds the app. Run starts the authenticated runtime and office together, waits for readiness, and stops both when you close the app. It rebuilds changed renderer source automatically. There is no token to copy, provider login to create, or paid turn to start.
 
-[Computer UI](docs/COMPUTER_UI.md) · [Asset binding](docs/ASSET_BINDING.md) · [Protocol](contracts/PROTOCOL.md) · [Extensions](contracts/EXTENSIONS.md) · [Feature coverage](docs/FEATURE_MATRIX.md) · [Upstream sources](docs/RESEARCH.md)
+For a headless host or browser-only use:
 
-The diagrams are architecture specifications, not screenshots of an implemented app. Earlier concept images and station-kit drawings are not authority to redesign the owner's completed office.
+```sh
+python3 sidequest.py setup --browser
+python3 sidequest.py run --browser --repo /absolute/path/to/your/project
+```
+
+Open **http://127.0.0.1:5173** after Vite reports ready. Press **Ctrl+C** to stop. Browser mode exercises the office and runtime but does not establish native Electron acceptance.
+
+```sh
+python3 sidequest.py doctor          # dependencies and desktop display
+python3 sidequest.py doctor --browser
+```
+
+Git compares the previous commit with HEAD; a one-commit repository uses HEAD for an empty comparison. Use `--base <commit>` to choose a different base. The viewer displays committed files. Jobs performs an immutable inspection and does not deliver changes to your source.
+
+Runtime history lives outside Git, under `~/.local/share/sidequest` on Linux (or `$XDG_DATA_HOME/sidequest`) and `~/Library/Application Support/Sidequest` on macOS. Use `--state-dir /absolute/private/directory` to change it. The launcher uses a new in-memory local API token each session; no persistent credential is generated. A lock prevents two launcher instances from using the same state at once. Your CLI account configuration is unchanged.
+
+## Use the office
+
+- Click a workstation for provider choices. **Connect provider** opens Settings; detected CLIs show their honest connection state.
+- Click a computer for its recorded output and local text/file/image draft. **Files** opens Git or assigned results. **Expand** and **Escape** retain your place.
+- Open **Jobs**, register the configured repository, submit an inspection, then click **Run inspection**. Inspect its immutable files, diff, report and activity; assign the result to a computer.
+- Click a figure for recorded session ownership, or the workboard for tasks. Notifications distinguish completed work from work needing attention.
+
+Live Send/Launch remains gated. No model inference is needed to view the office, edit local drafts or run a Git inspection. Large repositories are bounded by the existing inspection limits; the asset-heavy Sidequest checkout itself exceeds those limits, so use a small project for the first inspection.
+
+## Development and verification
+
+[Desktop details](desktop/README.md) · [Evaluation commands](docs/RUN_EVALS.md) · [PR handoff](docs/PR1_HANDOFF.md) · [Original asset provenance](desktop/public/office/provenance.json)
+
+```sh
+python3 -m unittest discover -s tests -p test_launcher.py -v
+npm --prefix desktop test
+npm --prefix desktop run build
+.venv/bin/python -m unittest discover -s services/runtime/tests -p 'test_*.py' -v
+.venv/bin/python -m unittest discover -s services/tools/tests -p 'test_*.py' -v
+```
+
+CI runs the application unit suites and production build as well as the retained controller checks. Browser and native results are recorded separately. Do not disable Electron's sandbox to make a native check pass.
+
+The original managed development documents remain under [START HERE](docs/START_HERE.md), [SPEC](SPEC.md) and [ARCHITECTURE](docs/ARCHITECTURE.md). Their Unity/controller instructions are historical where superseded by the current Electron branch. `dev/luna.py` runs development model workers; it is not needed to install or use the office.

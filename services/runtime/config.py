@@ -238,13 +238,14 @@ def codex_configuration_fingerprint(
     })
 
 
-def _codex_refresh_is_fresh(
+def codex_refresh_is_fresh(
     config: RuntimeConfig,
     record: dict[str, object] | None,
     *,
     now: datetime | None = None,
     environ: dict[str, str] | None = None,
 ) -> bool:
+    """Whether a successful or failed probe belongs to current host settings."""
     if not config.codex_enabled or not isinstance(record, dict):
         return False
     if record.get("config_sha256") != codex_configuration_fingerprint(config, environ):
@@ -280,7 +281,7 @@ def codex_catalog_is_fresh(
     This read-only catalog signal is deliberately independent from permission to
     dispatch: provider USD-ceiling support is an additional execution gate.
     """
-    if not config.codex_enabled or not _codex_refresh_is_fresh(config, record, now=now, environ=environ):
+    if not config.codex_enabled or not codex_refresh_is_fresh(config, record, now=now, environ=environ):
         return False
     assert isinstance(record, dict)
     capability = record.get("capability")

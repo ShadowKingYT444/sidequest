@@ -353,6 +353,46 @@ class CodexLifecycleTests(unittest.IsolatedAsyncioTestCase):
             self.store.set_job_command(str(uuid4()), self.store.revision, "job.run", job_id, codex_ready=False)
         self.assertEqual(denied.exception.code, ErrorCode.POLICY_DENIED)
 
+    async def test_failed_refresh_reports_current_failure_without_claiming_catalog_verification(self) -> None:
+        reason = "Codex app-server cannot start because its state is on a read-only filesystem."
+        capability = {
+            **CAPABILITY, "state": "unavailable", "usd_cost_enforced": False,
+            "model": {"id": self.config.codex_model, "verified": False},
+            "effort": {"id": self.config.codex_effort, "verified": False},
+            "account_type": "unknown", "reason": reason,
+        }
+        scheduler = FakeScheduler()
+        scheduler.adapters = FakeAdapters(capability)
+        app = create_app(self.config, token=TOKEN, store=self.store, scheduler=scheduler)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://runtime") as client:
+            auth = {"Authorization": f"Bearer {TOKEN}"}
+            response = await client.post("/v1/commands", headers=auth, json={
+                "v": 1, "command_id": str(uuid4()), "type": "system.codex.refresh",
+                "expected_revision": self.store.revision, "payload": {},
+            })
+            self.assertEqual(response.status_code, 202)
+            caps = (await client.get("/v1/capabilities", headers=auth)).json()
+            self.assertEqual(caps["codex"]["state"], "unavailable")
+            self.assertEqual(caps["codex"]["reason"], reason)
+            self.assertIsNotNone(caps["codex"]["refreshed_at"])
+            self.assertFalse(caps["codex"]["catalog_verified"])
+            self.assertFalse(caps["features"]["coding"])
+            self.assertIn(reason, caps["reasons"])
+            self.assertEqual(len(scheduler.adapters.calls), 1)
+
+            # A changed model/account configuration must not present a prior
+            # failure, old model identity, or verified flag as current evidence.
+            changed = replace(self.config, codex_model="different-model")
+            changed_app = create_app(changed, token=TOKEN, store=self.store, scheduler=scheduler)
+            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=changed_app), base_url="http://runtime") as changed_client:
+                caps = (await changed_client.get("/v1/capabilities", headers=auth)).json()
+            self.assertEqual(caps["codex"]["state"], "unverified")
+            self.assertIsNone(caps["codex"]["reason"])
+            self.assertIsNone(caps["codex"]["refreshed_at"])
+            self.assertEqual(caps["codex"]["model"], {"id": "different-model", "verified": False})
+            self.assertNotIn(reason, caps["reasons"])
+            self.assertEqual(len(scheduler.adapters.calls), 1)
+
     async def test_subscription_reserve_survives_refresh_without_granting_execution(self) -> None:
         scheduler = FakeScheduler()
         scheduler.adapters = FakeAdapters({

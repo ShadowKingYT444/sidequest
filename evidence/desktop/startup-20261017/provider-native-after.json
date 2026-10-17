@@ -1,0 +1,13 @@
+{
+  "status": "blocked",
+  "error_code": "UNAVAILABLE",
+  "reason": "Codex app-server reported a read-only filesystem. Use a host with writable Codex state while preserving the existing account configuration.",
+  "returncode": 1,
+  "stdout_bytes": 0,
+  "stderr_bytes": 532,
+  "methods_requested": [
+    "initialize"
+  ],
+  "model_calls": 0,
+  "auth_locator_unchanged": true
+}

@@ -1,7 +1,9 @@
+import {evidenceDirectory} from './evidence';
 import {test,expect} from './timing';
 import path from 'node:path';
 import {writeFile} from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
+const evidence=evidenceDirectory();
 
 test('genuine local inspection job produces immutable files and a check report',async({page,request})=>{
   test.setTimeout(120_000);
@@ -23,7 +25,7 @@ test('genuine local inspection job produces immutable files and a check report',
   await board.getByRole('button',{name:'Submit inspection',exact:true}).click();
   await board.getByRole('button',{name:new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))}).click();
   await expect(board.getByRole('button',{name:'Run inspection',exact:true})).toBeEnabled();
-  await page.screenshot({path:path.resolve('../evidence/desktop/job-queued.png')});
+  await page.screenshot({path:path.join(evidence,'job-queued.png')});
   await board.getByRole('button',{name:'Run inspection',exact:true}).click();
   await expect(board.locator('.job-state')).toHaveText('verifying',{timeout:20_000});
   await expect(board.locator('.job-checks')).toContainText('pass',{timeout:90_000});
@@ -31,21 +33,21 @@ test('genuine local inspection job produces immutable files and a check report',
   await expect(board.locator('.artifact-files>button').first()).toBeVisible();
   await expect(board.locator('.artifact-text')).not.toContainText('Loading file text…');
   await expect(board.locator('.artifact-files>button').first()).toBeVisible();
-  await page.screenshot({path:path.resolve('../evidence/desktop/job-result.png')});
+  await page.screenshot({path:path.join(evidence,'job-result.png')});
   await board.getByRole('button',{name:'Git diff',exact:true}).click();
   await expect(board.locator('.artifact-text')).toContainText('No textual changes in this inspected candidate.');
-  await page.screenshot({path:path.resolve('../evidence/desktop/job-diff.png')});
+  await page.screenshot({path:path.join(evidence,'job-diff.png')});
   await board.locator('#job-artifact').selectOption({label:await board.locator('#job-artifact option').filter({hasText:'test_report'}).first().textContent()??''});
   await expect(board.locator('.artifact-text')).toContainText('candidate.frozen_identity');
   await expect.poll(async()=>JSON.parse(await board.locator('.artifact-text').textContent()??'{}').inference_calls).toBe(0);
   const report=JSON.parse(await board.locator('.artifact-text').textContent()??'{}');
-  await page.screenshot({path:path.resolve('../evidence/desktop/job-check-report.png')});
+  await page.screenshot({path:path.join(evidence,'job-check-report.png')});
   await board.locator('.job-activity > summary').click();
   const activity=board.getByRole('region',{name:'Run activity'});
   await expect(activity).toContainText('No model call');
   await expect(activity.locator('.run-activity-state')).toHaveText('completed');
   await expect.poll(()=>activity.locator('.run-activity-timeline>li').count()).toBeGreaterThan(0);
-  await page.screenshot({path:path.resolve('../evidence/desktop/run-activity-actual.png')});
+  await page.screenshot({path:path.join(evidence,'run-activity-actual.png')});
   await board.locator('.job-activity > summary').click();
   await board.locator('.coding-readiness summary').click();
   await expect(board.locator('.coding-readiness')).toContainText('Coding tasks remain blocked.');
@@ -53,7 +55,7 @@ test('genuine local inspection job produces immutable files and a check report',
   await board.getByRole('button',{name:'Refresh status',exact:true}).click();
   await expect.poll(()=>calls.slice(refreshStart).filter(call=>call.method==='capabilities').length).toBeGreaterThan(0);
   expect(calls.slice(refreshStart).every(call=>['snapshot','capabilities','artifacts','artifact','files','text','diff','runInfo','runEvents'].includes(call.method))).toBe(true);
-  await page.screenshot({path:path.resolve('../evidence/desktop/job-readiness.png')});
+  await page.screenshot({path:path.join(evidence,'job-readiness.png')});
   await board.locator('.coding-readiness summary').click();
   const responsiveAccessibility:{width:number;violations:unknown[]}[]=[];
   for(const width of [960,390]){
@@ -61,15 +63,15 @@ test('genuine local inspection job produces immutable files and a check report',
     await board.locator('.artifact-content').scrollIntoViewIfNeeded();
     await expect(board.locator('.artifact-text')).toBeInViewport();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
-    await page.screenshot({path:path.resolve(`../evidence/desktop/job-${width}.png`)});
+    await page.screenshot({path:path.join(evidence,`job-${width}.png`)});
     const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
     responsiveAccessibility.push({width,violations:result.violations});
     expect(result.violations.map(item=>({id:item.id,impact:item.impact}))).toEqual([]);
   }
-  await writeFile(path.resolve('../evidence/desktop/job-responsive-accessibility.json'),JSON.stringify(responsiveAccessibility,null,2));
+  await writeFile(path.join(evidence,'job-responsive-accessibility.json'),JSON.stringify(responsiveAccessibility,null,2));
   await page.setViewportSize({width:1440,height:900});
   const accessibility=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
-  await writeFile(path.resolve('../evidence/desktop/job-accessibility.json'),JSON.stringify(accessibility.violations,null,2));
+  await writeFile(path.join(evidence,'job-accessibility.json'),JSON.stringify(accessibility.violations,null,2));
   expect(accessibility.violations.map(item=>({id:item.id,impact:item.impact}))).toEqual([]);
   const selectedArtifact=await board.locator('#job-artifact').inputValue();
   await page.keyboard.press('Escape');await expect(board).toBeHidden();
@@ -81,7 +83,7 @@ test('genuine local inspection job produces immutable files and a check report',
   const completedJob=state.jobs.find((item:{title:string})=>item.title===title);
   expect(completedJob?.spent_usd).toBe(0);
   const registeredProject=state.projects.find((item:{id:string})=>item.id===completedJob.project_id);
-  await writeFile(path.resolve('../evidence/desktop/job-browser.json'),JSON.stringify({title,source:{base:git.baseRevision,candidate:git.candidateRevision},registered_project:registeredProject,job:completedJob,frozen_check_report:report,browser_requests:calls,model_calls:report.inference_calls,scope:'Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run',page_errors:errors},null,2));
+  await writeFile(path.join(evidence,'job-browser.json'),JSON.stringify({title,source:{base:git.baseRevision,candidate:git.candidateRevision},registered_project:registeredProject,job:completedJob,frozen_check_report:report,browser_requests:calls,model_calls:report.inference_calls,scope:'Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run',page_errors:errors},null,2));
   expect(errors).toEqual([]);
 });
 
@@ -133,8 +135,8 @@ test('real jobs clear stale notices, recover reads and preserve assigned compute
   await expect(result).toBeVisible();
   await expect(result.locator('.artifact-files button[aria-pressed="true"]')).toHaveAttribute('title',selectedFile!);
   await expect.poll(()=>result.locator('.artifact-text').evaluate(node=>node.scrollTop)).toBeGreaterThan(100);
-  await page.screenshot({path:path.resolve('../evidence/desktop/assigned-result.png')});
-  await writeFile(path.resolve('../evidence/desktop/result-display-browser.json'),JSON.stringify({job_id:completed.id,queued_test_title:queuedTitle,queued_test_executed:false,selected_file:selectedFile,temporary_network_failure:true,recovered:true,scope:'Actual local inspection artifacts; display assignment only; zero coding/model launches'},null,2));
+  await page.screenshot({path:path.join(evidence,'assigned-result.png')});
+  await writeFile(path.join(evidence,'result-display-browser.json'),JSON.stringify({job_id:completed.id,queued_test_title:queuedTitle,queued_test_executed:false,selected_file:selectedFile,temporary_network_failure:true,recovered:true,scope:'Actual local inspection artifacts; display assignment only; zero coding/model launches'},null,2));
 });
 
 test('recorded session ownership persists at a figure and renders real contextual events',async({page,request})=>{
@@ -153,23 +155,23 @@ test('recorded session ownership persists at a figure and renders real contextua
  await session.getByRole('button',{name:'Assign session',exact:true}).click();
  await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);await expect(session).toContainText('Recorded local inspection');
  await expect(session).toContainText('Checking');await expect(session.locator('.run-activity')).toHaveCount(0);
- await page.screenshot({path:path.resolve('../evidence/desktop/recorded-session.png')});
+ await page.screenshot({path:path.join(evidence,'recorded-session.png')});
  await session.getByRole('button',{name:'Open monitor',exact:true}).click();const trace=page.getByRole('region',{name:'Session execution trace'});
  await expect(trace.locator('.monitor-events>li').first()).toBeVisible();await expect(trace).toContainText('Checking');
- await page.screenshot({path:path.resolve('../evidence/desktop/monitor-pov.png')});
+ await page.screenshot({path:path.join(evidence,'monitor-pov.png')});
  await trace.getByText('Run details',{exact:true}).click();await expect(trace).toContainText('No model call');await expect(trace).toContainText('Recorded usage:');await page.keyboard.press('Escape');
  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});
  await session.getByRole('button',{name:'Open results',exact:true}).click();const results=page.getByRole('region',{name:'Computer job results'});await expect(results).toBeVisible();await expect(results.locator('.job-summary')).toContainText(job.title);await page.keyboard.press('Escape');
  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
  const saved=await read();const owner=saved.office_sessions.find((owner:{station_id:string})=>owner.station_id==='parent_019');expect(owner).toMatchObject({job_id:job.id,run_id:runId,worker_id:run.worker_id,project_id:job.project_id});
- await writeFile(path.resolve(`../evidence/desktop/repair-20261014/session-before-reload-${process.env.SIDEQUEST_EVIDENCE_RUN??'timings'}.json`),JSON.stringify({elapsedMs:Date.now()-sessionTestStarted,entries:await page.evaluate(()=>performance.getEntries().filter(e=>e.name.startsWith('sidequest:')).map(e=>e.toJSON()))},null,2));
+ await writeFile(path.join(evidenceDirectory(process.env.SIDEQUEST_EVIDENCE_DIR?'timings':'repair-20261014'),`session-before-reload-${process.env.SIDEQUEST_EVIDENCE_RUN??'timings'}.json`),JSON.stringify({elapsedMs:Date.now()-sessionTestStarted,entries:await page.evaluate(()=>performance.getEntries().filter(e=>e.name.startsWith('sidequest:')).map(e=>e.toJSON()))},null,2));
  await page.reload();await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
  await page.setViewportSize({width:390,height:780});await session.getByRole('button',{name:'Open monitor',exact:true}).click();await expect(trace.locator('.monitor-events>li').first()).toBeVisible();
- expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);const axe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();await writeFile(path.resolve('../evidence/desktop/session-accessibility.json'),JSON.stringify(axe.violations,null,2));expect(axe.violations.map(v=>v.id)).toEqual([]);
- await page.screenshot({path:path.resolve('../evidence/desktop/recorded-session-390.png')});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);const axe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();await writeFile(path.join(evidence,'session-accessibility.json'),JSON.stringify(axe.violations,null,2));expect(axe.violations.map(v=>v.id)).toEqual([]);
+ await page.screenshot({path:path.join(evidence,'recorded-session-390.png')});
  await page.route('**/__sidequest/runtime/runInfo',route=>route.fulfill({json:{v:1,run:{...run,worker_id:'fixture-wrong-worker'}}}));await trace.getByRole('button',{name:'Refresh trace',exact:true}).click();await expect(trace).toContainText('Recorded session worker identity changed.');await page.unroute('**/__sidequest/runtime/runInfo');
  await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('board');const detail=page.getByRole('region',{name:'Tasks board detail'});await detail.getByRole('combobox',{name:'Task',exact:true}).selectOption(job.id);await expect(detail).toContainText('Recorded worker at Computer 19');await detail.getByRole('button',{name:'Open session',exact:true}).click();
  session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
  await session.getByText('Session details',{exact:true}).click();await session.getByRole('button',{name:'Detach session',exact:true}).click();await expect(session).toContainText('No live session attached');expect((await read()).office_sessions.some((row:{station_id:string})=>row.station_id==='parent_019')).toBe(false);expect(coding).toEqual([]);
- await writeFile(path.resolve('../evidence/desktop/session-browser.json'),JSON.stringify({scope:'Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation',owner,reload_restored:true,board_links_same_session:true,open_results_same_job:true,wrong_worker_rejected:true,fixtures:['Read-only runInfo response with explicitly fixture-wrong-worker; no persisted state changed'],explicit_detach:true,coding_requests:coding,axe_violations:axe.violations.map(v=>v.id)},null,2));
+ await writeFile(path.join(evidence,'session-browser.json'),JSON.stringify({scope:'Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation',owner,reload_restored:true,board_links_same_session:true,open_results_same_job:true,wrong_worker_rejected:true,fixtures:['Read-only runInfo response with explicitly fixture-wrong-worker; no persisted state changed'],explicit_detach:true,coding_requests:coding,axe_violations:axe.violations.map(v=>v.id)},null,2));
 });

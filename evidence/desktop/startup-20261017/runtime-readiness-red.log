@@ -1,0 +1,23 @@
+test_failed_refresh_reports_current_failure_without_claiming_catalog_verification (test_codex_lifecycle.CodexLifecycleTests.test_failed_refresh_reports_current_failure_without_claiming_catalog_verification) ... FAIL
+
+======================================================================
+FAIL: test_failed_refresh_reports_current_failure_without_claiming_catalog_verification (test_codex_lifecycle.CodexLifecycleTests.test_failed_refresh_reports_current_failure_without_claiming_catalog_verification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 375, in test_failed_refresh_reports_current_failure_without_claiming_catalog_verification
+    self.assertEqual(caps["codex"]["state"], "unavailable")
+AssertionError: 'unverified' != 'unavailable'
+- unverified
++ unavailable
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.079s
+
+FAILED (failures=1)

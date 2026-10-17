@@ -1,3 +1,11 @@
+# Current follow-up — 2026-10-17
+
+The earlier handoff below is historical. The active repair adds a single `sidequest.py setup/run/doctor` entry point, supervised runtime + office launch, process-only local API authentication, one-commit Git support, actionable Electron startup failure handling, safe provider startup diagnostics and fresh/stale readiness handling. The application suites and build now run in CI. Browser evidence can be redirected without overwriting prior captures.
+
+Start with the [quick start](../README.md) and [new verification record](../evidence/desktop/startup-20261017/README.md). **Native Electron and live coding acceptance remain blocked; PR #1 stays draft.** No sandbox, spending or permission gate was weakened. No credentials were copied or persisted, and no model turn, merge, deployment or release was performed.
+
+---
+
 # PR #1 handoff
 
 Branch: `feat/electron-office-diff`. PR: <https://github.com/ShadowKingYT444/sidequest/pull/1>. Keep the PR draft until native/live acceptance is established. This handoff changes documentation only and proposes future work without implementing it.

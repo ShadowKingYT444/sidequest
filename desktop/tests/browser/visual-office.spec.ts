@@ -1,8 +1,9 @@
+import {evidenceDirectory} from './evidence';
 import {test,expect} from './timing';
 import path from 'node:path';
 import {writeFile} from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
-const evidence=path.resolve('../evidence/desktop');
+const evidence=evidenceDirectory();
 for(const width of [1440,390]) test(`provider settings and preserved work at ${width}px`,async({page})=>{
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   await page.setViewportSize({width,height:width===390?780:1000});

@@ -1,9 +1,10 @@
+import {evidenceDirectory} from './evidence';
 import {test,expect,type Page} from './timing';
 import {writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {PerspectiveCamera,Vector3,Euler} from 'three';
 import AxeBuilder from '@axe-core/playwright';
-const evidence=path.resolve('../evidence/desktop');
+const evidence=evidenceDirectory();
 const origin={Origin:'http://127.0.0.1:5173'};
 const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aTioAAAAASUVORK5CYII=','base64');
 const pose=async(page:Page)=>page.locator('.office-canvas canvas').evaluate(node=>({position:JSON.parse((node as HTMLElement).dataset.cameraPosition!),target:JSON.parse((node as HTMLElement).dataset.cameraTarget!)}));
