@@ -1,0 +1,104 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0 --reporter=list,json --output /workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results
+
+[WebServer] (node:8765) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 25 tests using 1 worker
+
+(node:8867) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 1:36:50 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   1 tests/browser/jobs-live.spec.ts:8:1 › genuine local inspection job produces immutable files and a check report (50.9s)
+[WebServer] 1:37:40 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✘   2 tests/browser/jobs-live.spec.ts:90:1 › real jobs clear stale notices, recover reads and preserve assigned computer results (1.6m)
+(node:10260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 1:39:19 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[WebServer] 1:40:39 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✘   3 tests/browser/jobs-live.spec.ts:142:1 › recorded session ownership persists at a figure and renders real contextual events (2.1m)
+(node:10711) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 1:41:24 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   4 tests/browser/monitor-ui.spec.ts:13:1 › physical monitor POV restores orbited office camera through an interrupted return (1.2m)
+[WebServer] 1:42:40 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✘   5 tests/browser/monitor-ui.spec.ts:39:1 › local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages (38.1s)
+
+
+  1) tests/browser/jobs-live.spec.ts:90:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('region', { name: 'Computer job results' })
+    Expected: visible
+    Error: Test timeout of 90000ms exceeded.
+
+    Call log:
+      - Expect "toBeVisible" getByRole('region', { name: 'Computer job results' }) with timeout 15000ms
+      - waiting for getByRole('region', { name: 'Computer job results' })
+      - Test timeout of 90000ms exceeded.
+
+
+      133 |   await page.keyboard.press('Escape');await expect(result).toHaveCount(0);
+      134 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
+    > 135 |   await expect(result).toBeVisible();
+          |                        ^
+      136 |   await expect(result.locator('.artifact-files button[aria-pressed="true"]')).toHaveAttribute('title',selectedFile!);
+      137 |   await expect.poll(()=>result.locator('.artifact-text').evaluate(node=>node.scrollTop)).toBeGreaterThan(100);
+      138 |   await page.screenshot({path:path.join(evidence,'assigned-result.png')});
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:135:24
+
+    Error Context: ../evidence/desktop/startup-browser-20261017/playwright-results/jobs-live-real-jobs-clear--ce5fb-e-assigned-computer-results/error-context.md
+
+  2) tests/browser/jobs-live.spec.ts:142:1 › recorded session ownership persists at a figure and renders real contextual events 
+
+    Test timeout of 120000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 120000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: 'Tasks board detail' }).getByRole('combobox', { name: 'Task', exact: true })
+
+
+      171 |  await page.screenshot({path:path.join(evidence,'recorded-session-390.png')});
+      172 |  await page.route('**/__sidequest/runtime/runInfo',route=>route.fulfill({json:{v:1,run:{...run,worker_id:'fixture-wrong-worker'}}}));await trace.getByRole('button',{name:'Refresh trace',exact:true}).click();await expect(trace).toContainText('Recorded session worker identity changed.');await page.unroute('**/__sidequest/runtime/runInfo');
+    > 173 |  await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('board');const detail=page.getByRole('region',{name:'Tasks board detail'});await detail.getByRole('combobox',{name:'Task',exact:true}).selectOption(job.id);await expect(detail).toContainText('Recorded worker at Computer 19');await detail.getByRole('button',{name:'Open session',exact:true}).click();
+          |                                                                                                                                                                                                                                                      ^
+      174 |  session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
+      175 |  await session.getByText('Session details',{exact:true}).click();await session.getByRole('button',{name:'Detach session',exact:true}).click();await expect(session).toContainText('No live session attached');expect((await read()).office_sessions.some((row:{station_id:string})=>row.station_id==='parent_019')).toBe(false);expect(coding).toEqual([]);
+      176 |  await writeFile(path.join(evidence,'session-browser.json'),JSON.stringify({scope:'Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation',owner,reload_restored:true,board_links_same_session:true,open_results_same_job:true,wrong_worker_rejected:true,fixtures:['Read-only runInfo response with explicitly fixture-wrong-worker; no persisted state changed'],explicit_detach:true,coding_requests:coding,axe_violations:axe.violations.map(v=>v.id)},null,2));
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:173:246
+
+    Error Context: ../evidence/desktop/startup-browser-20261017/playwright-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md
+
+  3) tests/browser/monitor-ui.spec.ts:39:1 › local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages 
+
+    Test was interrupted.
+
+    Error: locator.evaluate: Test ended.
+    Call log:
+      - waiting for locator('.office-canvas canvas')
+        - locator resolved to visible <canvas width="1440" height="820" data-agent-badges="[]" data-shadow-passes="5" data-engine="three.js r186" data-render-frame-count="5" data-camera-target="[1,-0.3,-3.8]" data-office-controls-enabled="true" data-camera-position="[11.5,8.5,12]"></canvas>
+
+
+       8 | const origin={Origin:'http://127.0.0.1:5173'};
+       9 | const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aTioAAAAASUVORK5CYII=','base64');
+    > 10 | const pose=async(page:Page)=>page.locator('.office-canvas canvas').evaluate(node=>({position:JSON.parse((node as HTMLElement).dataset.cameraPosition!),target:JSON.parse((node as HTMLElement).dataset.cameraTarget!)}));
+         |                                                                    ^
+      11 | async function paste(page:Page,text:string,image=false){await page.getByRole('textbox',{name:'Message this session'}).evaluate((node,payload)=>{const transfer=new DataTransfer();transfer.setData('text/plain',payload.text);transfer.setData('text/html','<img src=x onerror="window.__badPaste=true">');if(payload.image)transfer.items.add(new File([Uint8Array.from(payload.bytes)],'clipboard.png',{type:'image/png',lastModified:1}));node.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));},{text,image,bytes:Array.from(png)});}
+      12 |
+      13 | test('physical monitor POV restores orbited office camera through an interrupted return',async({page,request})=>{
+        at pose (/workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:10:68)
+        at /workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:49:223
+
+    Error Context: ../evidence/desktop/startup-browser-20261017/playwright-results/monitor-ui-local-monitor-d-d49c4-n-delayed-reads-and-outages/error-context.md
+
+  2 failed
+    tests/browser/jobs-live.spec.ts:90:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+    tests/browser/jobs-live.spec.ts:142:1 › recorded session ownership persists at a figure and renders real contextual events 
+  1 interrupted
+    tests/browser/monitor-ui.spec.ts:39:1 › local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages 
+  20 did not run
+  2 passed (6.5m)

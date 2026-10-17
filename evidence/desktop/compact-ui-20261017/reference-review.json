@@ -1,0 +1,40 @@
+{
+  "reference": "Actual T3 Code repository source, plus independent worker review of official t3.codes product screenshot",
+  "commit": "d765d03cb7f980794c409c38e6ea5e25d89fde33",
+  "files_read": [
+    {
+      "url": "https://github.com/pingdotgg/t3code/blob/d765d03cb7f980794c409c38e6ea5e25d89fde33/apps/web/src/components/settings/settingsLayout.tsx",
+      "sha256": "21e30ae295ab62bc22aa3841be327e1c49b438ff8d2ac2011a4a437e8be6dff0"
+    },
+    {
+      "url": "https://github.com/pingdotgg/t3code/blob/d765d03cb7f980794c409c38e6ea5e25d89fde33/apps/web/src/components/settings/ProviderInstanceCard.tsx",
+      "sha256": "40cbb5b9997d4c4e73cbc61c4a7d02f96533dabda9c430ec9d57611d8843fc8c"
+    },
+    {
+      "url": "https://github.com/pingdotgg/t3code/blob/d765d03cb7f980794c409c38e6ea5e25d89fde33/apps/web/src/components/usage/UsagePage.tsx",
+      "sha256": "a6f51a0233ff393c08286fc5ae7fce23842d241c68d1438893b7d290866abe96"
+    }
+  ],
+  "design_contract": {
+    "purpose": "Select a physical computer and read work or draft a prompt.",
+    "hierarchy": "Original office; selected task/result; actionable state; expandable technical details.",
+    "style": "Neutral grouped rows and rounded controls from the existing T3-derived settings.",
+    "subtraction": [
+      "Remove repeated explanations and IDs from primary headers",
+      "Fold diagnostic paths and hashes",
+      "Replace empty usage dashboards with a single honest status",
+      "Show paging controls only when another page exists"
+    ],
+    "preserve": [
+      "Original art and render quality",
+      "Draft, selection, scroll, focus and accessible keyboard behavior",
+      "Authentication and spending guards",
+      "Demand rendering and reduced motion"
+    ]
+  },
+  "before_images": [
+    "../native-vm-20261017/imported/screenshots/native-inspection-result.png",
+    "../native-graphics-20261017/vm/captures/native-graphics-recovery.png"
+  ],
+  "validation": "90 repository desktop tests/build pass. Independent archive+patch VM: 88 available tests, five sandbox-enabled browser cases at 1440/960/390px with keyboard/axe checks, and native Jobs/Details/immutable files/trace and draft reload pass. Source scope and original captures in vm/RESULTS.txt. Physical office remains unavailable on VM; no whole-product or live-provider claim."
+}

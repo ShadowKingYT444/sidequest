@@ -1,0 +1,24 @@
+.notification-control{position:relative;flex:none}
+.notification-toggle{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.notification-count{display:grid;place-items:center;min-width:16px;height:16px;padding:0 3px;border-radius:4px;color:#b3efd2;background:#143d2b;font-size:10px;font-variant-numeric:tabular-nums}
+.notification-count[data-attention=true]{color:#fecaca;background:#531f24}
+.notification-tray{position:absolute;right:0;top:calc(100% + 10px);z-index:7;width:min(340px,calc(100vw - 24px));max-height:min(520px,calc(100dvh - 100px));overflow:auto;color:#f5f5f5;background:#111113;border:1px solid #ffffff18;border-radius:12px;box-shadow:0 10px 26px #0003}
+.notification-tray>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line,#ffffff12)}
+.notification-tray h2{font-size:12px;font-weight:500;margin:0}
+.notification-tray>header>button{min-width:28px;min-height:28px;font-size:18px;padding:0;border:0}
+.notification-tray ul{list-style:none;margin:0;padding:0}
+.notification-tray li+li{border-top:1px solid var(--line,#ffffff12)}
+.notification-row{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;text-align:left;border:0;border-radius:0;padding:10px 12px}
+.notification-copy{display:grid;gap:4px;min-width:0;flex:1}
+.notification-copy strong{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notification-copy>span{font-size:10px;color:#a3a3a3;line-height:1.4}
+.notification-state-icon{display:flex;flex:none;color:#7de2ad}
+[data-notification-kind=attention] .notification-state-icon{color:#fda4af}
+.notification-open{color:#a3a3a3;font-size:13px}
+.notification-empty,.notification-fixture{padding:12px;font-size:11px;color:#a3a3a3;line-height:1.6;margin:0}
+.notification-fixture{padding-bottom:4px;color:#c8c8c8}
+.notification-detail{margin:0 12px 8px 40px;font-size:10px;color:#a3a3a3}
+.notification-detail summary{cursor:pointer;min-height:24px;line-height:24px}
+.notification-detail p{margin:4px 0 8px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.notification-control button:focus-visible,.notification-detail summary:focus-visible{outline:2px solid var(--focus,#8ab4ff);outline-offset:-2px}
+@media(max-width:600px){.notification-toggle>span:not(.notification-count){display:none}.notification-toggle{min-width:32px;justify-content:center}.notification-tray{position:fixed;top:50px;right:12px}}

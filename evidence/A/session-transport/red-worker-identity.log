@@ -1,0 +1,20 @@
+test_followup_keeps_the_recorded_worker_when_other_idle_builders_exist (services.runtime.tests.test_session_transport.SessionTransportTests.test_followup_keeps_the_recorded_worker_when_other_idle_builders_exist) ... FAIL
+
+======================================================================
+FAIL: test_followup_keeps_the_recorded_worker_when_other_idle_builders_exist (services.runtime.tests.test_session_transport.SessionTransportTests.test_followup_keeps_the_recorded_worker_when_other_idle_builders_exist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 180, in test_followup_keeps_the_recorded_worker_when_other_idle_builders_exist
+    self.assertIsNone(self.store.claim_ready_task(other,10_000,job_id=self.job_id))
+AssertionError: {'task_id': '57763c0f-168e-407d-b2eb-4933156ead48', 'job_id': '1296d5e5-4489-4b5b-84c0-540b7cef6166', 'worker_id': '19e13d81-57bc-4c3b-ba93-4ea605a1e63f', 'attempt_id': '6b06eda7-491e-4237-aff1-2e727b010d44', 'reservation_id': '8ed5217f-ae93-4f2a-b1aa-b6e9eaa5ed0b', 'reserved_micro': 10000, 'provider_thread_id': 'thread-fixture', 'resume': False, 'revision': 12, 'followup': {'message_id': '7e2004a6-8f5a-457b-bb5f-4e01e0a1120c', 'prompt': 'Continue the fixture goal.'}, 'parent_run_id': '0244edd2-40e6-472b-ae6e-94efcdd9f9b5', 'attachment_ids': [], 'provider_turn_id': 'turn-fixture'} is not None
+
+----------------------------------------------------------------------
+Ran 1 test in 0.118s
+
+FAILED (failures=1)

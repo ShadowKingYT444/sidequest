@@ -1,0 +1,314 @@
+{
+  "v": 1,
+  "observed_at": "2026-10-14T09:30:13.317821+00:00",
+  "base_commit": "7e867a22f5653f93f912c718b5678d8f06b23d87",
+  "status": "blocked_no_available_supported_native_runtime_path",
+  "scope": "Read-only installed CLI help, existing generated schemas, source/evidence and host metadata. No native retry, provider job, socket connection, credential read/copy, auth change, permission change or sandbox weakening.",
+  "commands": [
+    {
+      "command": "/opt/codex/bin/codex app-server --help",
+      "exit_code": 0,
+      "transport_started": false,
+      "warning": "PATH aliases could not be created: EROFS"
+    },
+    {
+      "command": "/opt/codex/bin/codex app-server proxy --help",
+      "exit_code": 0,
+      "transport_started": false,
+      "warning": "PATH aliases could not be created: EROFS"
+    }
+  ],
+  "electron": {
+    "version": "44.7.1",
+    "prior_action": "Direct native Electron launch with OS sandbox preserved",
+    "prior_outcome": "failed_before_window_SIGTRAP",
+    "prior_reason": "SUID sandbox helper not root-owned mode 4755",
+    "current_helper": {
+      "exists": true,
+      "uid": 1000,
+      "gid": 1000,
+      "mode": "0755",
+      "is_socket": false
+    },
+    "system_chromium_helper": {
+      "exists": true,
+      "uid": 65534,
+      "gid": 65534,
+      "mode": "4755",
+      "is_socket": false
+    },
+    "max_user_namespaces": "2147483647",
+    "unprivileged_userns_clone_setting_present": false,
+    "metadata_proves_usable_namespaces": false,
+    "prior_namespace_limit_basis": "Existing verification.json/desktop acceptance evidence reports no usable namespace alternative; not retried here.",
+    "supported_future_setup": "A host/environment already provisioned with a usable Electron OS sandbox and desktop session; validate using existing test:electron without disabling the sandbox.",
+    "retry_performed": false
+  },
+  "codex_runtime": {
+    "version": "0.159.0-alpha.3",
+    "prior_action": "Stdio app-server initialize with SQLite/log output redirected and original HOME/CODEX_HOME retained",
+    "prior_outcome": "failed_before_initialize_response_EROFS",
+    "prior_failed_runtime_paths": [
+      "<CODEX_HOME>/tmp/arg0",
+      "uid_map",
+      "<CODEX_HOME>/installation_id"
+    ],
+    "original_codex_home_writable_by_current_process": false,
+    "default_control_socket": {
+      "exists": false
+    },
+    "visible_codex_named_unix_socket_entries": [
+      {
+        "category": "container-runtime-or-networking",
+        "basename": "containerd-debug.sock",
+        "state": "01",
+        "connected_to": false
+      },
+      {
+        "category": "container-runtime-or-networking",
+        "basename": "containerd.sock.ttrpc",
+        "state": "01",
+        "connected_to": false
+      },
+      {
+        "category": "container-runtime-or-networking",
+        "basename": "containerd.sock",
+        "state": "01",
+        "connected_to": false
+      },
+      {
+        "category": "container-runtime-or-networking",
+        "basename": "metrics.sock",
+        "state": "01",
+        "connected_to": false
+      },
+      {
+        "category": "container-runtime-or-networking",
+        "basename": "e03e8c95bbf6.sock",
+        "state": "01",
+        "connected_to": false
+      },
+      {
+        "category": "container-runtime-or-networking",
+        "basename": "containerd.sock",
+        "state": "03",
+        "connected_to": false
+      },
+      {
+        "category": "container-runtime-or-networking",
+        "basename": "containerd.sock",
+        "state": "03",
+        "connected_to": false
+      }
+    ],
+    "app_server_socket_observed": false,
+    "supported_existing_endpoint_transport": "codex app-server proxy --sock SOCKET_PATH; app-server also advertises stdio://, unix://, unix://PATH",
+    "sidequest_current_transport": "Private stdio process, no configured existing-daemon proxy integration",
+    "code_mode_host_is_existing_account_route": false,
+    "supported_future_setup": "Host-provided writable supported runtime state preserving original authentication, or an already-running authenticated host-owned app-server endpoint with explicit adapter validation. Neither is provisioned.",
+    "retry_performed": false
+  },
+  "usd_enforcement": {
+    "category": "independent_product_execution_gate",
+    "native_adapter_reports_usd_cost_enforced": false,
+    "production_execute_rejected_before_process_start": true,
+    "schema_inspection_scope": "Only listed installed JSON schemas and existing adapter implementation; not every possible future provider capability.",
+    "start_schemas_have_top_level_usd_ceiling_field": false,
+    "quota_or_tokens_establish_dollar_limit": false,
+    "host_startup_fix_would_clear_usd_gate": false,
+    "required_next_evidence": "Independently verified enforcement of existing positive USD budget contract; preserve all existing readiness/consent/project/permission gates."
+  },
+  "not_attempted": [
+    "Electron native launch",
+    "Codex initialize/catalog/account/quota read",
+    "Provider thread or turn",
+    "Daemon start/proxy socket connection",
+    "Temporary CODEX_HOME auth copy",
+    "Permission or mount changes",
+    "Sandbox-disabled native launch"
+  ],
+  "source_and_prior_evidence": [
+    {
+      "path": "/workspace/sidequest/desktop/electron/security.cjs",
+      "bytes": 1763,
+      "sha256": "2175ce358f3d993b7123022e1511453e7d39d51898b1dd10dfd83ccc19199333"
+    },
+    {
+      "path": "/workspace/sidequest/desktop/scripts/electron-smoke.mjs",
+      "bytes": 3519,
+      "sha256": "fbaea3e80942eac61ba2b5d06b728676c048ca36f84e35694abdf7f225cf838e"
+    },
+    {
+      "path": "/workspace/sidequest/services/tools/codex_bridge.py",
+      "bytes": 54732,
+      "sha256": "327fe12c537e4c06428a458f660c7dc6adf7acf1307218d3e9dd60e9f184136f"
+    },
+    {
+      "path": "/workspace/sidequest/services/runtime/api.py",
+      "bytes": 55638,
+      "sha256": "2b1a56858c0838431e4464d647eaa072a01bb180b85f642bd5326ba0ce722de9"
+    },
+    {
+      "path": "/workspace/sidequest/evidence/desktop/electron-smoke.json",
+      "bytes": 495,
+      "sha256": "705987eedbcb54ab7178be734d9e91ad616dec2af8e662ac58a900c932ff8b98"
+    },
+    {
+      "path": "/workspace/sidequest/evidence/B/B2-readiness.json",
+      "bytes": 4784,
+      "sha256": "53c263dc82ec3b71846fd3a60b020c242d2e633515987b4078425cf4a72f22ee"
+    },
+    {
+      "path": "/workspace/sidequest/evidence/B/native-setup-diagnosis.json",
+      "bytes": 7587,
+      "sha256": "a65084604058631802d1dcc81f4d36047fc5b32a6492fd5201c789a40e54702e"
+    }
+  ],
+  "installed_schema_evidence": [
+    {
+      "path": "/tmp/sidequest-codex-schema/v1/InitializeResponse.json",
+      "bytes": 1286,
+      "sha256": "62ad689c2cb6379913c1d72749cfd8de5089d35760214123518eb92eef11acc9",
+      "schema": "v1/InitializeResponse.json",
+      "required": [
+        "codexHome",
+        "platformFamily",
+        "platformOs",
+        "userAgent"
+      ],
+      "top_level_properties": [
+        "codexHome",
+        "platformFamily",
+        "platformOs",
+        "userAgent"
+      ],
+      "top_level_usd_ceiling_fields": []
+    },
+    {
+      "path": "/tmp/sidequest-codex-schema/v2/ThreadStartParams.json",
+      "bytes": 13453,
+      "sha256": "80a40a7fac15b4bf70efb7f893fb353acc0a0d30c68f54aee4f01923deca85de",
+      "schema": "v2/ThreadStartParams.json",
+      "required": [],
+      "top_level_properties": [
+        "allowProviderModelFallback",
+        "approvalPolicy",
+        "approvalsReviewer",
+        "baseInstructions",
+        "config",
+        "cwd",
+        "daybreakEnabled",
+        "developerInstructions",
+        "dynamicTools",
+        "environments",
+        "ephemeral",
+        "experimentalRawEvents",
+        "historyMode",
+        "mockExperimentalField",
+        "model",
+        "modelProvider",
+        "multiAgentMode",
+        "permissions",
+        "personality",
+        "projectId",
+        "runtimeWorkspaceRoots",
+        "sandbox",
+        "selectedCapabilityRoots",
+        "serviceName",
+        "serviceTier",
+        "sessionStartSource",
+        "threadSource"
+      ],
+      "top_level_usd_ceiling_fields": []
+    },
+    {
+      "path": "/tmp/sidequest-codex-schema/v2/TurnStartParams.json",
+      "bytes": 25284,
+      "sha256": "07771223642e1b61bd9aac0069fc0f98143a1c047724ca02c7ceb13653442738",
+      "schema": "v2/TurnStartParams.json",
+      "required": [
+        "input",
+        "threadId"
+      ],
+      "top_level_properties": [
+        "additionalContext",
+        "approvalPolicy",
+        "approvalsReviewer",
+        "clientUserMessageId",
+        "collaborationMode",
+        "cwd",
+        "cyberAccessProgram",
+        "disabledPluginIds",
+        "effort",
+        "environments",
+        "input",
+        "model",
+        "multiAgentMode",
+        "outputSchema",
+        "permissions",
+        "personality",
+        "responsesapiClientMetadata",
+        "runtimeWorkspaceRoots",
+        "sandboxPolicy",
+        "serviceTier",
+        "serviceTierForTurn",
+        "summary",
+        "threadId",
+        "toolOutput",
+        "turnTrigger"
+      ],
+      "top_level_usd_ceiling_fields": []
+    },
+    {
+      "path": "/tmp/sidequest-codex-schema/v2/GetAccountRateLimitsResponse.json",
+      "bytes": 8204,
+      "sha256": "cb9655e68130116f634ed9353e45b336492e6069a6628f424d1cd52e54eda0e0",
+      "schema": "v2/GetAccountRateLimitsResponse.json",
+      "required": [
+        "rateLimits"
+      ],
+      "top_level_properties": [
+        "accountId",
+        "ordinaryUsageAllowed",
+        "rateLimitResetCredits",
+        "rateLimitUpsell",
+        "rateLimits",
+        "rateLimitsByLimitId"
+      ],
+      "top_level_usd_ceiling_fields": []
+    },
+    {
+      "path": "/tmp/sidequest-codex-schema/v2/ThreadTokenUsageUpdatedNotification.json",
+      "bytes": 1727,
+      "sha256": "aba4f6c7e4a19b2b842c08ee793b57000c07dafd57b922ad0d8e7c76609108c2",
+      "schema": "v2/ThreadTokenUsageUpdatedNotification.json",
+      "required": [
+        "threadId",
+        "tokenUsage",
+        "turnId"
+      ],
+      "top_level_properties": [
+        "threadId",
+        "tokenUsage",
+        "turnId"
+      ],
+      "top_level_usd_ceiling_fields": []
+    },
+    {
+      "path": "/tmp/sidequest-codex-schema/v2/GetAccountTokenUsageResponse.json",
+      "bytes": 3838,
+      "sha256": "a58e58c852c888e5de925d99a66688d55ebb2fff038e795aadf04f8a8426dff8",
+      "schema": "v2/GetAccountTokenUsageResponse.json",
+      "required": [
+        "summary"
+      ],
+      "top_level_properties": [
+        "dailyUsageBuckets",
+        "summary",
+        "threadUsage"
+      ],
+      "top_level_usd_ceiling_fields": []
+    }
+  ],
+  "product_scope_limit": "Native host blockers are separate from session-to-station ownership, conversation/event rendering and task-specific board ownership; this report does not certify those product flows."
+}

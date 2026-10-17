@@ -1,0 +1,41 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test transport.spec.ts --grep successful 202 --retries=0
+
+[WebServer] (node:71868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+(node:71900) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F
+
+  1) tests/browser/transport.spec.ts:80:1 › protocol fake: successful 202 then rejected-before-start restores sent files without overwriting a newer draft 
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: 'Check send status' })
+    Expected: enabled
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: 'Check send status' }) with timeout 15000ms
+      - waiting for getByRole('button', { name: 'Check send status' })
+        - locator resolved to <button disabled type="button">Check send status</button>
+        - unexpected value "disabled"
+
+
+      81 |  await composerFixture(page,{rejectedBeforeStart:true});const input=page.getByRole('textbox',{name:'Message this session'});await input.fill('Successfully acknowledged original message');
+      82 |  await page.getByLabel('Select local files').setInputFiles({name:'sent.txt',mimeType:'text/plain',buffer:Buffer.from('Original sent bytes')});await expect(page.getByRole('button',{name:'Send message'})).toBeEnabled();await page.getByRole('button',{name:'Send message'}).click();
+    > 83 |  await expect(page.getByRole('button',{name:'Check send status'})).toBeEnabled();await input.fill('Separate newer thought');await page.getByLabel('Select local files').setInputFiles({name:'next.txt',mimeType:'text/plain',buffer:Buffer.from('Newer draft bytes')});await page.evaluate(async()=>{await (window as any).fixtureStore.flush();});await page.reload();
+         |                                                                    ^
+      84 |  await expect(input).toHaveValue('Separate newer thought');await expect(page.getByRole('button',{name:'Send message'})).toBeDisabled();await page.getByRole('button',{name:'Check send status'}).click();await expect(page.getByRole('button',{name:'Review retained draft'})).toBeVisible();
+      85 |  await page.evaluate(async()=>{await (window as any).fixtureStore.flush();});await page.reload();await expect(page.getByRole('button',{name:'Review retained draft'})).toBeVisible();await page.getByRole('button',{name:'Review retained draft'}).click();await page.getByText('Retained draft',{exact:true}).click();await expect(page.locator('.prompt-retained-draft')).toContainText('Successfully acknowledged original message');await expect(page.locator('.prompt-retained-draft')).toContainText('sent.txt');await expect(input).toHaveValue('Separate newer thought');
+      86 |  await page.getByRole('button',{name:'Restore retained draft'}).click();await expect(input).toHaveValue('Successfully acknowledged original message');await expect(page.getByRole('button',{name:'Remove sent.txt'})).toBeVisible();await expect(page.locator('.prompt-retained-draft')).toContainText('Separate newer thought');await expect(page.locator('.prompt-retained-draft')).toContainText('next.txt');
+        at /workspace/sidequest/desktop/tests/browser/transport.spec.ts:83:68
+
+    Error Context: test-results/transport-protocol-fake-su-e49eb-t-overwriting-a-newer-draft/error-context.md
+
+  1 failed
+    tests/browser/transport.spec.ts:80:1 › protocol fake: successful 202 then rejected-before-start restores sent files without overwriting a newer draft 

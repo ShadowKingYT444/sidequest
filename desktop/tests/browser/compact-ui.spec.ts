@@ -1,0 +1,44 @@
+import {test,expect} from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import path from 'node:path';
+import {evidenceDirectory} from './evidence';
+
+// Uses the real UI/discovery. No provider commands or fake connection state.
+for(const width of [1440,960,390])test(`compact settings preserves diagnostics and keyboard access at ${width}px`,async({page})=>{
+  const evidence=evidenceDirectory();
+  const providerWrites:string[]=[];
+  page.on('request',request=>{if(/__sidequest\/runtime\/(submitCoding|runCoding|enableCoding|sessionMessage|stageAttachment)$/.test(request.url()))providerWrites.push(request.url());});
+  await page.setViewportSize({width,height:width===390?780:960});
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.goto('/');
+  await page.getByRole('button',{name:'Settings',exact:true}).click();
+  const settings=page.getByRole('dialog',{name:'Provider settings dialog'});
+  await expect(settings).toBeVisible();
+  await expect(settings.getByText('Authentication',{exact:true})).toBeVisible();
+  await expect(settings.getByText('Service reachability',{exact:true})).toBeVisible();
+  await expect(settings.getByLabel('Display name')).toHaveCount(0);
+  await expect(settings.getByLabel('Binary path')).toBeHidden();
+  const advanced=settings.getByText('Advanced',{exact:true});
+  await advanced.focus();await page.keyboard.press('Enter');
+  await expect(settings.getByLabel('Binary path')).toBeVisible();
+  await expect(settings.getByLabel('Binary path')).toHaveAttribute('readonly','');
+  await advanced.click();
+  await settings.getByRole('button',{name:'Refresh provider discovery'}).click();
+  await expect(settings.getByRole('button',{name:'Refresh provider discovery'})).toBeEnabled();
+  await page.screenshot({path:path.join(evidence,`compact-providers-${width}.png`)});
+  await settings.getByRole('navigation',{name:'Settings view'}).getByRole('button',{name:'Usage',exact:true}).click();
+  await expect(settings.getByText('No usage data reported',{exact:true})).toHaveCount(1);
+  await expect(settings.getByRole('table')).toHaveCount(0);
+  await expect(settings.getByRole('group',{name:'Usage metric'})).toHaveCount(0);
+  await expect(settings.getByRole('combobox',{name:'Usage period'})).toHaveCount(0);
+  await settings.getByRole('combobox',{name:'Provider',exact:true}).selectOption('claude');
+  await expect(settings.getByRole('status',{name:'Claude usage analytics'})).toContainText('No usage data reported');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  const axe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
+  expect(axe.violations.map(({id,impact})=>({id,impact}))).toEqual([]);
+  await page.screenshot({path:path.join(evidence,`compact-usage-${width}.png`)});
+  await page.keyboard.press('Escape');
+  await expect(settings).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'Settings',exact:true})).toBeFocused();
+  expect(providerWrites).toEqual([]);
+});

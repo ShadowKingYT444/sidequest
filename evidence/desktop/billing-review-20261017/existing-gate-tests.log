@@ -1,0 +1,10 @@
+test_capabilities_numeric_reserve_is_readiness_only_and_never_authorizes_execution (services.tools.tests.test_codex_bridge.CodexBridgeTests.test_capabilities_numeric_reserve_is_readiness_only_and_never_authorizes_execution) ... ok
+test_public_execute_rejects_unknown_usd_cost_before_starting_app_server (services.tools.tests.test_codex_bridge.CodexBridgeTests.test_public_execute_rejects_unknown_usd_cost_before_starting_app_server) ... ok
+test_subscription_reserve_survives_refresh_without_granting_execution (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_survives_refresh_without_granting_execution) ... ok
+test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) ... ok
+test_cached_capability_without_usd_signal_keeps_catalog_verified_but_blocks_execution (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_cached_capability_without_usd_signal_keeps_catalog_verified_but_blocks_execution) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.355s
+
+OK

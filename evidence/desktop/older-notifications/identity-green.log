@@ -1,0 +1,13 @@
+✔ office session identities reject duplicate station, run and worker ownership (6.493127ms)
+✔ office session validation bounds supplemental jobs independently from twenty recent jobs (0.540094ms)
+✔ supplemental overflow metadata is explicit boolean state and never accepts unknown coverage as verified (0.209725ms)
+✔ frozen display requires explicit immutability, digest and selected job ownership (0.274107ms)
+✔ file, text and diff pages are bound to the selected frozen artifact and file (0.509885ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 189.97024

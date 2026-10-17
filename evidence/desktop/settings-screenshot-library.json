@@ -1,0 +1,13 @@
+{
+  "library_file_id": "libfile_f3838bc6645c8191b2fdfb7350a30c33",
+  "file_id": "file_00000000d11c81f89bf09a20bd9edd2b",
+  "current_version_number": 1,
+  "file_name": "provider-settings.png",
+  "sha256": "31b2c441294ca781cb3f71e6d6eae65293ef6de9fbe56f1c1fcc961ff8e3bb1b",
+  "bytes": 68627,
+  "savedToLibrary": true,
+  "imageShows": "Actual T3-style settings; executable found separately from unknown auth/reachability",
+  "current_local_capture_sha256": "4f4f5ca340e04ea883da899bcf1fe2219b9bf14531e11b4a7e526661cbf4b80a",
+  "library_version_represents_previous_capture": true,
+  "note": "Browser verification regenerated the local capture; Library identity/version remains the previously saved image. No upload was attempted in the scoped repair."
+}

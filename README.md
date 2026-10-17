@@ -1,30 +1,29 @@
 # Sidequest
 
-A calm Unity office for real agent swarms. Inspect artifacts and diffs directly on the main worker's computer. Use existing coding agents; do not build another agent framework.
+Sidequest is a local visual office for inspecting coding work: click computers to view recorded sessions, draft text with files/images, browse Git diffs and immutable artifacts, or use the workboard to run zero-model Git inspections. Settings detect installed CLIs and show their verified connection state. **Native shell/IPC passes; office rendering needs working WebGL2. Live coding awaits sign-in and verified spending controls.** See the [feature-by-feature proof](docs/ACCEPTANCE.md).
 
-**Current state:** implementation specification and development tooling. The owner has completed the office assets; they are protected inputs. The inspected repository does not yet contain the Unity asset project. Do not regenerate the office.
+## Dependencies
 
-Start at [START HERE](docs/START_HERE.md). Read [SPEC](SPEC.md) for scope or [ARCHITECTURE](docs/ARCHITECTURE.md) for the fixed stack. Workers read only their assigned goal and its relevant documents, not the entire research archive.
+Linux or macOS, **Python 3.12+**, **Node.js 24 LTS** with npm, and **Git**. Native Electron needs a desktop session with a supported OS sandbox. Native Windows is not supported yet.
 
-| Lane | Exclusive responsibility |
-|---|---|
-| A | Local runtime, database, scheduler, artifact HTTP service |
-| B | Coding-provider adapter, isolated Git, file/diff capture, local monitoring |
-| C | Existing Unity assets, computer UI, office interaction and build |
-| D | Independent checks, reusable workshops, demo and final acceptance rig |
+## Install and run
 
-Each lane has three goals. Each candidate gets a new validator thread at its exact commit. Main is not automatically changed by development runs. The [low-token policy](docs/LOW_TOKEN_EXECUTION.md) selects Luna/max, short task packets, deterministic tests first, bounded attempts, and no always-running manager.
-
-```bash
-python3 -m unittest discover -s dev -p 'test_*.py' -v
-python3 dev/check.py --setup
-python3 dev/loop.py prepare
-python3 dev/luna.py run A --allow-network
-# Start B, C and D in their own terminals from this same checkout.
+```sh
+git clone --depth 1 --branch feat/electron-office-diff https://github.com/ShadowKingYT444/sidequest.git
+cd sidequest
+python3 sidequest.py setup
+python3 sidequest.py run --repo /absolute/path/to/your/git-project
 ```
 
-Complete the asset/environment preflight in START HERE before preparing worktrees. `dev/luna.py` checks the effective Codex configuration and account model support before allowing a model run. The low-cost configuration is an explicit preference, not an estimate of your account bill.
+Use a small trusted Git project with at least one commit. Setup installs locked dependencies and builds the app; closing the app stops its runtime.
 
-[Computer UI](docs/COMPUTER_UI.md) · [Asset binding](docs/ASSET_BINDING.md) · [Protocol](contracts/PROTOCOL.md) · [Extensions](contracts/EXTENSIONS.md) · [Feature coverage](docs/FEATURE_MATRIX.md) · [Upstream sources](docs/RESEARCH.md)
+For browser mode:
 
-The diagrams are architecture specifications, not screenshots of an implemented app. Earlier concept images and station-kit drawings are not authority to redesign the owner's completed office.
+```sh
+python3 sidequest.py setup --browser
+python3 sidequest.py run --browser --repo /absolute/path/to/your/git-project
+```
+
+Open **http://127.0.0.1:5173**; press **Ctrl+C** to stop. Diagnose prerequisites with `python3 sidequest.py doctor` (or `doctor --browser`). No provider turn or new login is required.
+
+[Setup details](docs/GETTING_STARTED.md) · [Screenshots and acceptance](docs/ACCEPTANCE.md) · [Developer docs](docs/README.md) · [Evidence index](evidence/README.md)

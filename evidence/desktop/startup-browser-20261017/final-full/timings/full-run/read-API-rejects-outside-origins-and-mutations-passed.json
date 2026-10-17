@@ -1,0 +1,73 @@
+{
+  "test": "read API rejects outside origins and mutations",
+  "status": "passed",
+  "elapsedMs": 42,
+  "navigations": [],
+  "network": [],
+  "errors": [],
+  "browser": {
+    "entries": [
+      {
+        "name": "about:blank",
+        "entryType": "navigation",
+        "startTime": 0,
+        "duration": 57,
+        "navigationId": 7956,
+        "initiatorType": "navigation",
+        "deliveryType": "cache",
+        "nextHopProtocol": "",
+        "renderBlockingStatus": "non-blocking",
+        "contentType": "",
+        "contentEncoding": "",
+        "workerStart": 0,
+        "workerRouterEvaluationStart": 0,
+        "workerCacheLookupStart": 0,
+        "workerMatchedSourceType": "",
+        "workerFinalSourceType": "",
+        "redirectStart": 0,
+        "redirectEnd": 0,
+        "fetchStart": 0,
+        "domainLookupStart": 0,
+        "domainLookupEnd": 0,
+        "connectStart": 0,
+        "secureConnectionStart": 0,
+        "connectEnd": 0,
+        "requestStart": 0,
+        "responseStart": 0,
+        "firstInterimResponseStart": 0,
+        "finalResponseHeadersStart": 0,
+        "responseEnd": 55.300000000046566,
+        "transferSize": 0,
+        "encodedBodySize": 0,
+        "decodedBodySize": 0,
+        "responseStatus": 0,
+        "serverTiming": [],
+        "unloadEventStart": 0,
+        "unloadEventEnd": 0,
+        "domInteractive": 55.39999999990687,
+        "domContentLoadedEventStart": 55.5,
+        "domContentLoadedEventEnd": 55.5999999998603,
+        "domComplete": 56.89999999990687,
+        "loadEventStart": 57,
+        "loadEventEnd": 57,
+        "type": "navigate",
+        "redirectCount": 0,
+        "activationStart": 0,
+        "criticalCHRestart": 0,
+        "notRestoredReasons": null,
+        "confidence": {
+          "randomizedTriggerRate": 0.4994798,
+          "value": "low"
+        }
+      },
+      {
+        "name": "visible",
+        "entryType": "visibility-state",
+        "startTime": 0,
+        "duration": 0,
+        "navigationId": 7956
+      }
+    ],
+    "editors": 0
+  }
+}

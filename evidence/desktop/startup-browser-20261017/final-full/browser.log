@@ -1,0 +1,58 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0 --reporter=list,json --output /workspace/sidequest/evidence/desktop/startup-browser-20261017/final-full/playwright-results
+
+[WebServer] (node:13990) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 25 tests using 1 worker
+
+(node:14022) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 1:55:58 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   1 tests/browser/jobs-live.spec.ts:8:1 › genuine local inspection job produces immutable files and a check report (29.6s)
+[WebServer] 1:56:27 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   2 tests/browser/jobs-live.spec.ts:90:1 › real jobs clear stale notices, recover reads and preserve assigned computer results (45.0s)
+[WebServer] 1:57:12 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[WebServer] 1:57:50 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   3 tests/browser/jobs-live.spec.ts:142:1 › recorded session ownership persists at a figure and renders real contextual events (1.4m)
+[WebServer] 1:58:39 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   4 tests/browser/monitor-ui.spec.ts:13:1 › physical monitor POV restores orbited office camera through an interrupted return (1.1m)
+[WebServer] 1:59:48 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   5 tests/browser/monitor-ui.spec.ts:39:1 › local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages (1.8m)
+[WebServer] 2:01:45 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   6 tests/browser/monitor-ui.spec.ts:78:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure (40.5s)
+[WebServer] 2:02:18 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   7 tests/browser/rendering.spec.ts:3:1 › static office shadows stay cached while opening the lazy editor and returning (52.2s)
+[WebServer] 2:03:10 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   8 tests/browser/rendering.spec.ts:23:1 › local draft edits preserve demand rendering of the unchanged office (32.2s)
+[WebServer] 2:03:43 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓   9 tests/browser/rendering.spec.ts:45:1 › local figure details preserve the unchanged office frame (21.1s)
+  ✓  10 tests/browser/transport.spec.ts:40:1 › protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload (1.3s)
+  ✓  11 tests/browser/transport.spec.ts:55:1 › protocol fake: lost reply survives reload and reconciles exactly one send, keeping a subsequent draft (1.3s)
+  ✓  12 tests/browser/transport.spec.ts:68:1 › protocol fake: unknown spending authority keeps send disabled while durable local draft remains usable (710ms)
+  ✓  13 tests/browser/transport.spec.ts:73:1 › protocol fake: accepted command rejected before start retains file and next draft across reload until explicit review (1.1s)
+  ✓  14 tests/browser/transport.spec.ts:82:1 › protocol fake: successful 202 then rejected-before-start restores sent files without overwriting a newer draft (2.6s)
+[WebServer] 2:04:11 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  15 tests/browser/viewer.spec.ts:15:1 › real Git diff, lazy single editor, expanded state, Escape and keyboard (40.5s)
+[WebServer] 2:04:52 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  16 tests/browser/viewer.spec.ts:59:1 › Escape/reopen mounts one selected Monaco editor and keeps its saved scroll (27.9s)
+  ✓  17 tests/browser/viewer.spec.ts:90:1 › read API rejects outside origins and mutations (174ms)
+[WebServer] 2:05:20 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  18 tests/browser/viewer.spec.ts:95:32 › viewer reflows at 960px with reduced motion (27.0s)
+[WebServer] 2:05:47 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  19 tests/browser/viewer.spec.ts:95:32 › viewer reflows at 390px with reduced motion (18.7s)
+[WebServer] 2:06:06 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  20 tests/browser/viewer.spec.ts:107:1 › keyboard-accessible viewer has no automated WCAG A/AA violations (30.3s)
+[WebServer] 2:06:36 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  21 tests/browser/viewer.spec.ts:119:1 › hostile source stays literal and a failed read can retry (19.2s)
+[WebServer] 2:06:55 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  22 tests/browser/visual-office.spec.ts:7:32 › provider settings and preserved work at 1440px (37.1s)
+[WebServer] 2:07:32 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  23 tests/browser/visual-office.spec.ts:7:32 › provider settings and preserved work at 390px (19.6s)
+[WebServer] 2:07:52 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  24 tests/browser/visual-office.spec.ts:68:32 › compact provider picker and guarded monitor task setup at 1440px (34.9s)
+[WebServer] 2:08:27 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✓  25 tests/browser/visual-office.spec.ts:68:32 › compact provider picker and guarded monitor task setup at 390px (19.5s)
+
+  25 passed (12.9m)

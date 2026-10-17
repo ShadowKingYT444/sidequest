@@ -1,0 +1,65 @@
+{
+  "candidate_sha": "1d23bfcd66419dd8b148690b1ff3a3459913ec46",
+  "verdict": "BLOCKED",
+  "review_scope": "Fresh review of the exact candidate's scoped Codex runtime lifecycle: disabled-by-default host configuration; explicit system.codex.refresh readiness caching; host-derived codex_session dispatch gates; positive reservation and unknown-cost handling; private session IDs; pause, cancel, explicit same-session resume, restart ambiguity, real B adapter transport with fake app-server, and fake-only candidate/check pipeline. Workshop activation, capture, watchers, and general task graphs remain deferred. This is not acceptance of the full original A3 goal.",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "36 tests passed, 0 failed. Includes readiness refresh, zero ordinary status dispatch, resume/restart ambiguity, pause cancellation, fake-only Codex candidate pipeline, unknown-cost reservation, HTTPX API, storage, and actual B/D tools on disposable Git fixtures."
+    },
+    {
+      "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "39 tests passed, 0 failed. Codex app-server tests used a disposable fake JSON-RPC executable; catalog/account gates, exact host model/effort selection, cancellation, safe progress, credential isolation, and candidate freezing were exercised without a native provider."
+    },
+    {
+      "command": "python3 -m compileall -q services/runtime",
+      "exit_code": 0,
+      "result": "Runtime package compiled successfully."
+    },
+    {
+      "command": "python3 -m services.runtime.main --help",
+      "exit_code": 0,
+      "result": "CLI help rendered successfully and documented loopback startup and local path, token, adapter, worker, and timeout settings."
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "result": "No whitespace errors. Candidate checkout was clean before writing this evidence file."
+    },
+    {
+      "command": "Disposable HTTPX cache, status, dispatch, and public-ID probe",
+      "exit_code": 0,
+      "result": "A fresh but unavailable provider record (including nested model/effort verified=true), an expired record, and a wrong-effort record all returned coding=false and worker_model.verified=false; job execution_profile was null and job.run returned 403 for the unavailable record with zero enqueue or adapter calls. A timezone-less timestamp returned HTTP 500 from capabilities and job.run, still with zero enqueue or adapter calls. Fresh valid cached readiness plus GET capabilities/snapshot/job/run/events issued zero adapter calls. Stored thread-private-probe and turn-private-probe IDs were absent from public run, event, job, and snapshot responses."
+    },
+    {
+      "command": "Disposable AdapterRunner progress probe with wrong request ID and non-initial sequence",
+      "exit_code": 0,
+      "result": "Both records failed with INVALID_INPUT before the callback published any session progress."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A3-R1",
+      "severity": "medium",
+      "location": "services/runtime/config.py:256-261",
+      "title": "Timezone-less cached readiness timestamp raises an uncaught error",
+      "detail": "datetime.fromisoformat accepts a timestamp without a timezone, then subtraction from the UTC-aware current time raises TypeError. The independent HTTPX probe reproduced HTTP 500 from both GET /v1/capabilities and job.run with a timezone-less persisted refreshed_at value. This failed closed with no queued job or provider call, so it did not bypass readiness; normal refresh writes UTC Z timestamps. Reject naive timestamps and return stale/unverified instead of raising."
+    }
+  ],
+  "verified": [
+    "Codex execution and consent default false. Enabled configuration requires a host executable, model, effort, and separate state directory. Readiness refresh is an explicit authenticated system.codex.refresh command; it sanitizes the adapter response and caches it against a configuration fingerprint for at most ten minutes. Ordinary capabilities, snapshot, job, run, and event reads make no adapter call.",
+    "The runtime exposes codex_session only from stored typed source, exactly read_repo/propose_patch/run_checks actions, candidate.frozen_identity, one build task, a nonempty host-assigned write scope, positive budget, current verified model/effort readiness, and current host consent. Job creation checks the requested actions against project policy; dispatch rechecks the stored profile, stopped state, capacity, reservation, and project revision. The desktop run path only accepts the queued zero-budget local_git_inspection profile.",
+    "Resume has no caller-supplied provider ID. It requires a fresh verified cache and consent, a stored eligible profile, current project revision, an ambiguous current attempt, its saved thread ID, and a positive uncertain reservation. Claim reuses the original attempt and reservation. B resumes the host-supplied thread and verifies the returned ID matches. App-server model and effort are catalog-checked and read back before each turn.",
+    "Progress requires the generated request ID, bounded records, and strictly increasing per-request sequence numbers. Independent wrong-request and wrong-sequence fake records were rejected before callback publication. Session IDs are persisted on the internal attempt and replaced by a generic public event; public run, job, event, snapshot, and readiness serialization did not contain the tested provider thread or turn IDs.",
+    "Startup reconciliation marks persisted running attempts ambiguous, keeps cost NULL and the reservation uncertain, blocks the job, and records that no automatic retry was scheduled. Explicit resume uses the same attempt; ordinary job.run rejects ambiguous Codex work. Pause/cancel interrupts the active fake session and keeps its usage uncertain without retry.",
+    "The fake-only end-to-end runtime pipeline exercised B inspection/preparation, fake agent execution, frozen candidate import, and D frozen-identity checking. It did not call a real provider, deliver changes, or spend money."
+  ],
+  "limits": [
+    "Native Codex app-server readiness was blocked before initialize by the protected read-only Codex home. No actual provider catalog/account verification or model turn occurred, so the scoped review remains BLOCKED pending host access and a successful explicit readiness refresh. No live call was made by this reviewer.",
+    "The USD reservation is not a provider-enforced spend ceiling. The B bridge validates max_cost_usd as positive and then discards it; the app-server path enforces host time and token limits, while cost_usd stays NULL/uncertain. The positive reservation remains held and blocks treating unknown spend as available for later work, but one turn can exceed the reservation in USD. This is a material cost-control limitation, not a verified hard cap.",
+    "The HTTP API does not currently route system.resume although the shared extension contract lists it. This review covers the explicitly scoped job-level pause/cancel and Codex session resume paths; system-level stop/resume and the broader A3 feature set are not accepted here."
+  ],
+  "fixture_live_distinction": "All executable validation used temporary databases, Git repositories, fake adapters, or a fake app-server process. No native provider readiness call, model turn, registered user repository mutation, external delivery, authentication change, or spending was performed. Only this evidence file was written."
+}

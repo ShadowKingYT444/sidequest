@@ -1,0 +1,21 @@
+{
+  "library_file_id": "libfile_7987934df1cc8191a62fcc1dd8d08c2c",
+  "file_id": "file_0000000041d4820ea91cd23b984252f9",
+  "current_version_number": 2,
+  "file_name": "original-office-overview.png",
+  "sha256": "0243e8305df71a1499b0a0e44221b14e1bd16319e33ed42a3b8e1547ca0a704b",
+  "bytes": 1646015,
+  "savedToLibrary": true,
+  "imageShows": "Final current-source capture: actual original office, parent-reviewed reference camera/lighting and 26 loaded staged figures; no connected native agents",
+  "xattrs_applied": true,
+  "previous_asset_task_version": {
+    "library_file_id": "libfile_7987934df1cc8191a62fcc1dd8d08c2c",
+    "file_id": "file_0000000070fc81f58457ad0aad239f9c",
+    "file_name": "original-office-overview.png",
+    "sha256": "22ba81b8010e67ccd50bd523dd87bd2071a6365d2c72bca9d7d00a12f05b6bb7",
+    "bytes": 586666,
+    "capturedAt": "2026-10-14T06:34:16Z",
+    "savedToLibrary": true,
+    "imageShows": "Actual original runtime environment rendered in Chromium; staged actor loading is owned by the UI integration."
+  }
+}

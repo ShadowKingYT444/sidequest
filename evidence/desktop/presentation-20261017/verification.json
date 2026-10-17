@@ -1,0 +1,38 @@
+{
+  "baseline": "bdf2fdd51196634293588ac38a9845e02894dab0",
+  "removed_disposable_runner_pointers": [
+    "evidence/desktop/startup-browser-20261017/final-full/playwright-results/.last-run.json",
+    "evidence/desktop/startup-browser-20261017/fixture-setup-failure/playwright-results/.last-run.json",
+    "evidence/desktop/startup-browser-20261017/interrupted-full/playwright-results/.last-run.json",
+    "evidence/desktop/startup-browser-20261017/mocked-composer/playwright-results/.last-run.json",
+    "evidence/desktop/startup-browser-20261017/profile/playwright-results/.last-run.json",
+    "evidence/desktop/startup-browser-20261017/software-camera-focus/playwright-results/.last-run.json",
+    "evidence/desktop/startup-browser-20261017/software-camera-regressions/playwright-results/.last-run.json"
+  ],
+  "recovery": "git show bdf2fdd:<path>",
+  "product_source_changes": [],
+  "useful_logs_and_failure_context_preserved": true,
+  "original_assets_preserved": true,
+  "checked_documentation": [
+    "README.md",
+    "docs/README.md",
+    "docs/GETTING_STARTED.md",
+    "docs/ACCEPTANCE.md",
+    "docs/BILLING_CAPABILITIES.md",
+    "docs/PR1_HANDOFF.md",
+    "evidence/README.md",
+    "evidence/desktop/billing-review-20261017/README.md",
+    "evidence/desktop/proof-20261017/README.md"
+  ],
+  "broken_local_links": [],
+  "readme_words": 194,
+  "gate_regressions": {
+    "passed": 5,
+    "scope": "Existing fake/local denial tests only; no live execution",
+    "log": "../billing-review-20261017/existing-gate-tests.log"
+  },
+  "proof_files_verified": 23,
+  "proof_hash_mismatches": [],
+  "proof_manifest": "../proof-20261017/manifest.json",
+  "library_delivery": "library-delivery.json"
+}

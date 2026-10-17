@@ -1,0 +1,26 @@
+{
+  "candidate_sha": "789e0f03d12117f82b362a653ff614a8a446ad07",
+  "verdict": "BLOCKED",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "13 passed, 0 failed"
+    },
+    {
+      "command": "Focused inline Python regression probes with temporary SQLite databases and Git repositories",
+      "result": {
+        "unknown_usage_build_and_research": "zero reservations rejected with BUDGET_LIMIT; after a 60-micro-dollar unknown attempt, spent remained NULL, reserved remained 60, uncertain remained 1, and a 41-micro-dollar follow-up was rejected",
+        "configured_capacity": "with max_parallel=1, a second connection requesting max_parallel=4 received no claim; one reservation remained active",
+        "unrefreshed_git_ref": "decision detected the changed registered HEAD without explicit refresh, returned VERSION_CONFLICT, and persisted approval state stale",
+        "immutable_manifest_link": "UPDATE artifacts SET candidate_id=NULL was rejected",
+        "deterministic_verify_zero_cost": "verify task claimed by verifier at zero reservation and settled at known zero cost",
+        "idempotency_and_persistence": "identical command replay after reopening returned the saved response and ran its operation once; candidate and manifest link persisted"
+      }
+    }
+  ],
+  "findings": [
+    "This candidate was superseded by a later A1 checkpoint before validation could serve as the final acceptance review. BLOCKED applies to acceptance of this SHA; the completed checks above are evidence only."
+  ],
+  "fixture_live_distinction": "All regression probes used temporary fixture databases and Git repositories. No live worker job, provider/model call, or external delivery was run."
+}

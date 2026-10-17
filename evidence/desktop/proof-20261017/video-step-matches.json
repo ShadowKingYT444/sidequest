@@ -1,0 +1,42 @@
+{
+  "08-coding-unavailable.png": {
+    "closest_raw_video_seconds": 49.25,
+    "mean_rgb_absolute_error": 0.187
+  },
+  "06-check-report.png": {
+    "closest_raw_video_seconds": 42.75,
+    "mean_rgb_absolute_error": 0.195
+  },
+  "07-run-activity.png": {
+    "closest_raw_video_seconds": 43.25,
+    "mean_rgb_absolute_error": 0.201
+  },
+  "05-inspection-result.png": {
+    "closest_raw_video_seconds": 40.25,
+    "mean_rgb_absolute_error": 0.215
+  },
+  "01-office.png": {
+    "closest_raw_video_seconds": 16.25,
+    "mean_rgb_absolute_error": 0.928
+  },
+  "03-git-diff.png": {
+    "closest_raw_video_seconds": 29.75,
+    "mean_rgb_absolute_error": 0.389
+  },
+  "04-inspection-queued.png": {
+    "closest_raw_video_seconds": 37.75,
+    "mean_rgb_absolute_error": 0.194
+  },
+  "09-provider-settings.png": {
+    "closest_raw_video_seconds": 52.75,
+    "mean_rgb_absolute_error": 0.047
+  },
+  "10-usage-unavailable.png": {
+    "closest_raw_video_seconds": 53.25,
+    "mean_rgb_absolute_error": 0.015
+  },
+  "02-monitor-draft.png": {
+    "closest_raw_video_seconds": 22.75,
+    "mean_rgb_absolute_error": 0.496
+  }
+}

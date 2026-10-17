@@ -1,0 +1,43 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> sidequest-desktop@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 1317 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                0.70 kB │ gzip:   0.43 kB
+dist/assets/codicon-DF1abBS2.ttf             153.22 kB
+dist/assets/editor.worker-BmdWdrHZ.js        303.77 kB
+dist/assets/ProviderPicker-ButNFPJe.css        1.14 kB │ gzip:   0.50 kB
+dist/assets/ProviderTiles-BjbE9vGO.css         1.54 kB │ gzip:   0.63 kB
+dist/assets/RunActivity-DqBKjE3p.css           4.82 kB │ gzip:   1.48 kB
+dist/assets/MonitorSession-CuHECo0S.css        5.28 kB │ gzip:   1.43 kB
+dist/assets/StationLauncher-DxV2kLu_.css       6.82 kB │ gzip:   1.76 kB
+dist/assets/ProviderSettings-C1aMvd8C.css     13.50 kB │ gzip:   2.90 kB
+dist/assets/index-D2NWI5l5.css                28.67 kB │ gzip:   6.15 kB
+dist/assets/DiffEditor-Cr_ma_16.css           99.49 kB │ gzip:  14.36 kB
+dist/assets/javascript-DMCZ67a5.js             0.68 kB │ gzip:   0.41 kB
+dist/assets/ProviderPicker-DCeQBH8_.js         2.07 kB │ gzip:   1.03 kB
+dist/assets/python-C8zLx1vi.js                 3.45 kB │ gzip:   1.43 kB
+dist/assets/markdown-Cimd5fb3.js               3.63 kB │ gzip:   1.34 kB
+dist/assets/ProviderTiles-B2CuADRp.js          3.87 kB │ gzip:   1.70 kB
+dist/assets/typescript-DLa2aJA8.js             4.67 kB │ gzip:   1.94 kB
+dist/assets/SessionCard-Bd98LJWA.js            4.96 kB │ gzip:   1.86 kB
+dist/assets/RunActivity-BQBRdHyX.js            9.09 kB │ gzip:   3.00 kB
+dist/assets/ProviderSettings-BlKS2z8n.js      12.52 kB │ gzip:   3.43 kB
+dist/assets/StationLauncher-DG2SgIpA.js       13.34 kB │ gzip:   4.62 kB
+dist/assets/MonitorSession-DhQOMUYt.js        17.16 kB │ gzip:   6.22 kB
+dist/assets/JobsBoard-DHTRMuuB.js             20.19 kB │ gzip:   6.54 kB
+dist/assets/index-CcB2DtoK.js                281.56 kB │ gzip:  87.49 kB
+dist/assets/OfficeScene-B_xIToiu.js        1,022.43 kB │ gzip: 275.10 kB
+dist/assets/DiffEditor-C5TQgsHF.js         2,708.41 kB │ gzip: 696.17 kB
+
+✓ built in 951ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

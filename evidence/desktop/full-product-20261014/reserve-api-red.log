@@ -1,0 +1,84 @@
+test_subscription_reserve_survives_refresh_without_granting_execution (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_survives_refresh_without_granting_execution) ... FAIL
+test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) ... 
+  test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=90) ... FAIL
+  test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=89.5) ... FAIL
+  test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary='25') ... FAIL
+  test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=True) ... FAIL
+  test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=-1) ... FAIL
+  test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=101) ... FAIL
+  test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=None) ... FAIL
+
+======================================================================
+FAIL: test_subscription_reserve_survives_refresh_without_granting_execution (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_survives_refresh_without_granting_execution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 379, in test_subscription_reserve_survives_refresh_without_granting_execution
+    self.assertEqual(caps["codex"].get("subscription_reserve"), {
+AssertionError: None != {'primary_used_percent': 15, 'secondary_u[80 chars]True}
+
+======================================================================
+FAIL: test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=90)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 411, in test_subscription_reserve_unknown_boundary_and_stale_reads
+    self.assertIsInstance(reserve, dict)
+AssertionError: None is not an instance of <class 'dict'>
+
+======================================================================
+FAIL: test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=89.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 411, in test_subscription_reserve_unknown_boundary_and_stale_reads
+    self.assertIsInstance(reserve, dict)
+AssertionError: None is not an instance of <class 'dict'>
+
+======================================================================
+FAIL: test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary='25')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 411, in test_subscription_reserve_unknown_boundary_and_stale_reads
+    self.assertIsInstance(reserve, dict)
+AssertionError: None is not an instance of <class 'dict'>
+
+======================================================================
+FAIL: test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 411, in test_subscription_reserve_unknown_boundary_and_stale_reads
+    self.assertIsInstance(reserve, dict)
+AssertionError: None is not an instance of <class 'dict'>
+
+======================================================================
+FAIL: test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=-1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 411, in test_subscription_reserve_unknown_boundary_and_stale_reads
+    self.assertIsInstance(reserve, dict)
+AssertionError: None is not an instance of <class 'dict'>
+
+======================================================================
+FAIL: test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=101)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 411, in test_subscription_reserve_unknown_boundary_and_stale_reads
+    self.assertIsInstance(reserve, dict)
+AssertionError: None is not an instance of <class 'dict'>
+
+======================================================================
+FAIL: test_subscription_reserve_unknown_boundary_and_stale_reads (services.runtime.tests.test_codex_lifecycle.CodexLifecycleTests.test_subscription_reserve_unknown_boundary_and_stale_reads) (secondary=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/sidequest/services/runtime/tests/test_codex_lifecycle.py", line 411, in test_subscription_reserve_unknown_boundary_and_stale_reads
+    self.assertIsInstance(reserve, dict)
+AssertionError: None is not an instance of <class 'dict'>
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.135s
+
+FAILED (failures=8)

@@ -1,0 +1,132 @@
+{
+  "bindingContractPassed": true,
+  "stationCount": 24,
+  "allMonitorSurfacesMatchedOriginalRuntimeGeometry": true,
+  "surfaceToleranceMetres": 0.0001,
+  "maximumErrorMetres": 0.0000015359333226589626,
+  "allRuntimeAndActorResourceHashesPassed": true,
+  "allResourcesLocal": true,
+  "meshCompressionRequired": false,
+  "checks": [
+    {
+      "stationId": "parent_001",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 4.78306785234767e-7
+    },
+    {
+      "stationId": "parent_002",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 4.392731690245728e-7
+    },
+    {
+      "stationId": "parent_003",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 4.0535540904806387e-7
+    },
+    {
+      "stationId": "parent_004",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 3.769728732309794e-7
+    },
+    {
+      "stationId": "parent_005",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 4.0807955760993166e-7
+    },
+    {
+      "stationId": "parent_006",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 3.6363423041669635e-7
+    },
+    {
+      "stationId": "parent_007",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 1.6858739404357614e-7
+    },
+    {
+      "stationId": "parent_008",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 1.228781230931777e-7
+    },
+    {
+      "stationId": "parent_009",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 0.0000015359333226589626
+    },
+    {
+      "stationId": "parent_010",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 5.200765111073805e-7
+    },
+    {
+      "stationId": "parent_011",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 2.1490760299348766e-7
+    },
+    {
+      "stationId": "parent_012",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 4.0535540904806387e-7
+    },
+    {
+      "stationId": "parent_013",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 7.103767140469611e-7
+    },
+    {
+      "stationId": "parent_014",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 4.6510153356950097e-7
+    },
+    {
+      "stationId": "parent_015",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 4.0535540904806387e-7
+    },
+    {
+      "stationId": "parent_016",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 3.769728732309794e-7
+    },
+    {
+      "stationId": "parent_017",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 1.6961124507485994e-7
+    },
+    {
+      "stationId": "parent_018",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 2.076651247798511e-7
+    },
+    {
+      "stationId": "parent_019",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 1.6858739404357614e-7
+    },
+    {
+      "stationId": "parent_020",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 1.228781230931777e-7
+    },
+    {
+      "stationId": "parent_021",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 0.000001335400322298281
+    },
+    {
+      "stationId": "parent_022",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 7.30575822111697e-7
+    },
+    {
+      "stationId": "parent_023",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 2.1490760299348766e-7
+    },
+    {
+      "stationId": "parent_024",
+      "matchedOriginalScreenVertexCount": 48,
+      "maximumNativeToRuntimeErrorMetres": 4.0535540904806387e-7
+    }
+  ]
+}

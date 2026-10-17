@@ -1,0 +1,35 @@
+{
+  "started_at": "2026-10-17T01:55:52.462413+00:00",
+  "runtime_command": [
+    "/workspace/sidequest/.venv/bin/python",
+    "-m",
+    "services.runtime.main",
+    "--allowed-root",
+    "/tmp/sidequest-browser-independent-20261017-xj8b31or/source",
+    "--data-dir",
+    "/tmp/sidequest-browser-final-20261017-0vasc4dq/data",
+    "--config-dir",
+    "/tmp/sidequest-browser-final-20261017-0vasc4dq/config",
+    "--runtime-dir",
+    "/tmp/sidequest-browser-final-20261017-0vasc4dq/runtime",
+    "--port",
+    "44317"
+  ],
+  "test_command": [
+    "npm",
+    "run",
+    "test:browser",
+    "--",
+    "--retries=0",
+    "--reporter=list,json",
+    "--output",
+    "/workspace/sidequest/evidence/desktop/startup-browser-20261017/final-full/playwright-results"
+  ],
+  "coding_enabled": false,
+  "token_persisted": false,
+  "retries": 0,
+  "exit_code": 0,
+  "finished_at": "2026-10-17T02:08:45.873033+00:00",
+  "runtime_exit_code": -15,
+  "token_files_found": []
+}

@@ -1,0 +1,45 @@
+{
+  "candidate_sha": "5c628b522a77817ee34b589f5896df4d2cc0f23d",
+  "verdict": "PASS",
+  "review_scope": "Fresh validation of the implemented authenticated FastAPI inspection surface and fixed zero-budget local_git_inspection pipeline at the exact candidate SHA: serialized page bounds and continuation cursors; immutable artifact, job, run and candidate linkage; token handling; and adapter process-group cleanup. This verdict covers the MVP inspection API only and does not certify the general multi-task A2 scheduler or A3/Codex lifecycle.",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/runtime/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "26 tests passed, 0 failed. Includes HTTP auth, artifact paging and ownership, candidate inspection, adapter cleanup, concurrency, storage, and actual B/D modules on a disposable Git fixture."
+    },
+    {
+      "command": "python3 -m py_compile services/runtime/*.py",
+      "exit_code": 0,
+      "result": "Runtime modules compile."
+    },
+    {
+      "command": "python3 -m services.runtime.main --help",
+      "exit_code": 0,
+      "result": "Help exposes loopback startup, private data/config/runtime directories, token file, allowed roots, B/D argv, worker capacity, port, and adapter timeout settings."
+    },
+    {
+      "command": "Independent disposable HTTPX adversarial API probe: escaped manifest paths, text and diff content; page/cursor continuation; authentication and identity checks",
+      "exit_code": 0,
+      "result": "Unauthenticated capabilities returned 403; authenticated inspection capability showed coding=false and worker_model id=none, verified=false. The token was absent from tested responses. Job, run, candidate, and immutable manifest IDs remained linked. All manifest pages stayed at or below 262144 bytes (259228 and 129453 bytes) and continuation returned all 121 file IDs in order without gaps or duplicates. A heavily escaped text line returned a 262144-byte body with clipped=true and next_line=2; the next request returned TAIL. Escaped diff page bodies were 880, 262143, and 294 bytes; the oversized row had clipped=true, its cursor advanced, and the next page returned DIFF_TAIL. Unclipped rows omitted the optional clipped marker."
+    },
+    {
+      "command": "Independent disposable AdapterRunner descendant probes for timeout, cancellation, malformed response, and successful exit",
+      "exit_code": 0,
+      "result": "All four calls stopped their spawned child in the adapter process group. The timeout probe used a parent that exited while a child held inherited stdout/stderr open; cancellation interrupted a live parent; malformed output used a wrong request ID; successful output returned normally while a detached-stdio child remained alive. No descendant remained running after cleanup."
+    }
+  ],
+  "verified": [
+    "The bearer-token check uses hmac.compare_digest; all /v1 routes require authentication while /health is public. Token values are not returned in tested responses. Source review confirms no CORS middleware is installed.",
+    "The stored execution profile requires typed source, candidate.frozen_identity, exactly read_repo and run_checks, zero budget, and no plan. The scheduler revalidates that profile and accepts only B repo.inspect, B repo.prepare, B artifacts.freeze, and D check.run. The full fake-host pipeline test asserts this operation sequence and excludes agent.execute and repo.deliver.",
+    "The fixed inspection pipeline validates zero inference calls and zero cost, leaves token usage unknown, and checks that D verifies the same candidate identity and staged manifest. The suite's actual B/D fixture pipeline reached verifying with no provider or delivery path enabled.",
+    "Artifact pages use compact JSON response byte measurement, including metadata and cursor fields. Text and diff clipping markers and continuation positions worked with quote, backslash, tab, and Unicode-heavy content. Manifest continuation resumed at each next unconsumed file."
+  ],
+  "findings": [],
+  "limits_vs_full_A2": [
+    "This candidate exposes the fixed single-task local_git_inspection profile. General A2 task-graph scheduling, disjoint-task overlap, dependency ordering, and overlapping write-scope serialization remain a separate milestone and were not claimed by this review.",
+    "A3 restart reconciliation is not part of this candidate; recovery of persisted running attempts after a hard runtime stop remains unimplemented.",
+    "No desktop interaction/idle model-call test was run. The API and adapter allowlist expose no model dispatch for reads, and the deterministic inspection checks report zero inference calls."
+  ],
+  "fixture_live_distinction": "All HTTP and subprocess probes used temporary databases, paths, and Git fixtures. No registered user repository, product job, provider/model service, delivery, credential change, or spending was used. No candidate source file was edited; the detached candidate worktree was clean after validation."
+}

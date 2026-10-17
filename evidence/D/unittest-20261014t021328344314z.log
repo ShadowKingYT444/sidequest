@@ -1,0 +1,18 @@
+test_candidate_shadow_scripts_cannot_change_trusted_check_bytes (test_identity.CandidateIdentityTests.test_candidate_shadow_scripts_cannot_change_trusted_check_bytes) ... ok
+test_deleted_manifest_entries_do_not_appear_in_candidate_tree (test_identity.CandidateIdentityTests.test_deleted_manifest_entries_do_not_appear_in_candidate_tree) ... ok
+test_extra_file_and_writable_candidate_are_rejected (test_identity.CandidateIdentityTests.test_extra_file_and_writable_candidate_are_rejected) ... ok
+test_manifest_digest_and_artifact_digest_are_verified (test_identity.CandidateIdentityTests.test_manifest_digest_and_artifact_digest_are_verified) ... ok
+test_manifest_hash_and_read_only_snapshot_match_exact_tree (test_identity.CandidateIdentityTests.test_manifest_hash_and_read_only_snapshot_match_exact_tree) ... ok
+test_modified_trusted_script_fails_integrity_lock (test_identity.CandidateIdentityTests.test_modified_trusted_script_fails_integrity_lock) ... ok
+test_symlink_candidate_path_and_traversal_are_rejected (test_identity.CandidateIdentityTests.test_symlink_candidate_path_and_traversal_are_rejected) ... ok
+test_browser_action_timeout_is_a_bounded_failed_check (test_protocol_browser.ProtocolBrowserTests.test_browser_action_timeout_is_a_bounded_failed_check) ... ok
+test_candidate_authored_checks_and_destination_cannot_turn_bad_case_green (test_protocol_browser.ProtocolBrowserTests.test_candidate_authored_checks_and_destination_cannot_turn_bad_case_green) ... ok
+test_candidate_changed_during_journey_is_blocked_after_rehash (test_protocol_browser.ProtocolBrowserTests.test_candidate_changed_during_journey_is_blocked_after_rehash) ... ok
+test_fresh_browser_context_does_not_reuse_prior_cookie_state (test_protocol_browser.ProtocolBrowserTests.test_fresh_browser_context_does_not_reuse_prior_cookie_state) ... ok
+test_partial_json_and_wrong_protocol_are_safe_errors (test_protocol_browser.ProtocolBrowserTests.test_partial_json_and_wrong_protocol_are_safe_errors) ... ok
+test_seeded_bad_fails_and_frozen_control_passes_real_popup_journey (test_protocol_browser.ProtocolBrowserTests.test_seeded_bad_fails_and_frozen_control_passes_real_popup_journey) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 9.920s
+
+OK

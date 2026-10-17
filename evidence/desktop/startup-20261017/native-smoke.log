@@ -1,0 +1,11 @@
+
+> sidequest-desktop@0.1.0 test:electron
+> node scripts/electron-smoke.mjs
+
+Native Electron smoke blocked: Native Electron exited (SIGTRAP). [7188:1017/013550.206194:FATAL:sandbox/linux/suid/client/setuid_sandbox_host.cc:166] The SUID sandbox helper binary was found, but is not configured correctly. Rather than run without sandboxing I'm aborting now. You need to make sure that /workspace/sidequest/desktop/node_modules/electron/dist/chrome-sandbox is owned by root and has mode 4755.
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

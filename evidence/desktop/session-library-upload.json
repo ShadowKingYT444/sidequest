@@ -1,0 +1,17 @@
+{
+  "status": "failed before upload preparation; no Library mutation",
+  "action": "Save recorded-session.png and recorded-session-390.png to Library using current prepared upload helper",
+  "reason": "hosted apps tools/list request failed: network",
+  "files": [
+    {
+      "path": "evidence/desktop/recorded-session.png",
+      "sha256": "fe77ade451ec08965350ebbf75f5685ba0d928209f48dff991415ca4c54f32d7"
+    },
+    {
+      "path": "evidence/desktop/recorded-session-390.png",
+      "sha256": "0ec43cf11c781f4d15f0396cc6a4e6eae3f5b5b594333717f6c21022cd427535"
+    }
+  ],
+  "existing_six_library_screenshots": "Prior six uploads remain available; these two new captures are committed in Git",
+  "retry": "No fallback direct upload after required prepared-flow failure; no auth or permissions changed"
+}

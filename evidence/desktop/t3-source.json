@@ -1,0 +1,15 @@
+{
+  "repository": "https://github.com/pingdotgg/t3code",
+  "commit": "d765d03cb7f980794c409c38e6ea5e25d89fde33",
+  "files": {
+    "LICENSE": "935d8f2af0c703f9c39517ee57cc4930b19d02d533be930b63f0e82f93614b43",
+    "apps/web/src/index.css": "b391a47112e8f1b380178b92d9cf75512a2aa7dc6ff5986b0b143b6ac5dd95bc",
+    "apps/web/src/components/settings/ProviderSettingsPanel.tsx": "878683dc53f8781ca3b02964b99d0452a9c7e96169c37ed9e19e077db440fdc8",
+    "apps/web/src/components/settings/ProviderInstanceCard.tsx": "40cbb5b9997d4c4e73cbc61c4a7d02f96533dabda9c430ec9d57611d8843fc8c",
+    "apps/web/src/components/settings/UsageProviderSettings.tsx": "9e0d8ea75fbb69712e34f2527fc5ab96f0d94aaa6428ee1a33d3d01c7e8fa226",
+    "apps/web/src/components/settings/settingsLayout.tsx": "21e30ae295ab62bc22aa3841be327e1c49b438ff8d2ac2011a4a437e8be6dff0",
+    "apps/web/src/components/usage/UsagePage.tsx": "a6f51a0233ff393c08286fc5ae7fce23842d241c68d1438893b7d290866abe96",
+    "apps/web/src/components/usage/UsageLimits.tsx": "9afb9d0be5bade4342cd04afe72bbf548fa05fb325f94e8919fe817fde6ab198",
+    "apps/web/src/components/usage/UsageProviderChart.tsx": "50146099587bf2dd5572cc050422030541ba88c5d9cc7ecdac5850d0e40dd15b"
+  }
+}

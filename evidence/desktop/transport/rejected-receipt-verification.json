@@ -1,0 +1,22 @@
+{
+  "baseline": "2717752bcf7bd6665a90aede59101e9cfb2990e1",
+  "desktop_unit_tests": 68,
+  "browser_protocol_fake_tests": 4,
+  "browser_elapsed_seconds": 16.6,
+  "retries": 0,
+  "build_and_typecheck": "passed",
+  "native_or_live_provider_turns": 0,
+  "protected_asset_hash_matches": 126,
+  "source_hashes": {
+    "desktop/src/session-drafts.ts": "7423e9ac34a823d378ee29e8e12f13fbb5442677b58cb3d2820c9938af8c0ea7",
+    "desktop/src/types.ts": "f31c86a9eb26cd2cc193f5da55bfa4ad9bbc72d6294ddeba27f0e416ae3821ba",
+    "desktop/tests/browser/transport.spec.ts": "a5e9c637ae562a45e0bcc61bde08187b39b2fd51add26619a42f2416562e544c",
+    "desktop/tests/session-drafts.test.mjs": "fcfd81f2720f69015a182382f0ceb7af0f3f884b0923d6a098eab256525c9205",
+    "evidence/desktop/transport/playwright-isolated.config.mts": "ad24b47486f2de789b974a341d1b94e4becd45fcd36a5ec977825b0b68b2235c"
+  },
+  "committed_isolated_config_test": {
+    "passed": 1,
+    "elapsed_seconds": 4.2,
+    "retries": 0
+  }
+}

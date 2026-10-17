@@ -1,0 +1,38 @@
+{
+  "status": "succeeded",
+  "scope": "Browser proof, no mocks or model turns; native Electron and live coding not established by these files.",
+  "files": [
+    {
+      "path": "evidence/desktop/proof-20261017/walkthrough-browser.mp4",
+      "library_file_id": "libfile_58e4c5e7b594819182ad50f4c4711f02",
+      "file_id": "file_000000001cb881f7a5f654cabd7f6ee5",
+      "bytes": 2471355,
+      "sha256": "34c3e086600774fcc0462f96e4e9c7cf658bfe32678e979ba2199be110c54c29",
+      "library_version": 0
+    },
+    {
+      "path": "evidence/desktop/proof-20261017/01-office.png",
+      "library_file_id": "libfile_959cc1d340588191ac1831bb58aa46e9",
+      "file_id": "file_00000000910881f7a1d4b6877cb3bf2e",
+      "bytes": 1567004,
+      "sha256": "cdd27b3c235fdb939c6c644163f9a7a2aad2198db06563036e085bc780e151ec",
+      "library_version": 0
+    },
+    {
+      "path": "evidence/desktop/proof-20261017/02-monitor-draft.png",
+      "library_file_id": "libfile_1fe4315ca13c8191bf17875ad68c3907",
+      "file_id": "file_000000007b0881f5adeed007cb9558c1",
+      "bytes": 98669,
+      "sha256": "d7918135a35db9e3dded59b650cf8dc7900a4877881efef722daf5ae6e571859",
+      "library_version": 0
+    },
+    {
+      "path": "evidence/desktop/proof-20261017/06-check-report.png",
+      "library_file_id": "libfile_8914c3f0bdd48191be5da13d06dd0eb6",
+      "file_id": "file_000000000aa881f5888543ae65c7ce05",
+      "bytes": 205847,
+      "sha256": "841530e33a0d5aad88e9d5b3dc71a3497f64bd9fbfe75d2629fdcbb8d8049163",
+      "library_version": 0
+    }
+  ]
+}

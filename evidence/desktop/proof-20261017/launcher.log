@@ -1,0 +1,19 @@
+INFO:     Started server process [17346]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:47449 (Press CTRL+C to quit)
+Local runtime ready. Git inspection, saved sessions and artifacts are connected. Coding is disabled; no provider turn will start.
+Open http://127.0.0.1:5173 after Vite reports ready. Press Ctrl+C to stop both services.
+
+> sidequest-desktop@0.1.0 dev
+> vite --host 127.0.0.1
+
+
+  VITE v8.3.4  ready in 301 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+2:21:51 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [17346]

@@ -1,0 +1,46 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/jobs-live.spec.ts -g recorded session ownership
+
+
+Running 1 test using 1 worker
+
+(node:188145) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events (39.7s)
+
+
+  1) tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByRole('dialog', { name: 'Agent session' }).locator('.session-records')
+    Expected: "848d6ab2-035b-401b-be1f-8456c43134e0"
+    Received: ""
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveAttribute" getByRole('dialog', { name: 'Agent session' }).locator('.session-records') with timeout 15000ms
+      - waiting for getByRole('dialog', { name: 'Agent session' }).locator('.session-records')
+        32 × locator resolved to <div data-session-run="" class="session-records">…</div>
+           - unexpected value ""
+
+
+      151 |  await session.getByRole('combobox',{name:'Recorded task',exact:true}).selectOption(job.id);await session.getByRole('combobox',{name:'Recorded run',exact:true}).selectOption(runId);
+      152 |  await session.getByRole('button',{name:'Assign session',exact:true}).click();
+    > 153 |  await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);await expect(session).toContainText('Recorded local inspection');
+          |                                                    ^
+      154 |  await expect(session.getByRole('region',{name:'Run activity'}).locator('.run-activity-timeline>li').first()).toBeVisible();
+      155 |  await expect(session).toContainText('No model call');await expect(session).toContainText('Recorded usage:');
+      156 |  await page.screenshot({path:path.resolve('../evidence/desktop/recorded-session.png')});
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:153:52
+
+    Error Context: test-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md
+
+  1 failed
+    tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

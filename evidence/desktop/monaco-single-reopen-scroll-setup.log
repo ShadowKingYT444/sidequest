@@ -1,0 +1,40 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/viewer.spec.ts -g Escape/reopen mounts --retries=0
+
+
+Running 1 test using 1 worker
+
+(node:193791) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/viewer.spec.ts:57:1 › Escape/reopen mounts one selected Monaco editor and keeps its saved scroll (49.4s)
+
+
+  1) tests/browser/viewer.spec.ts:57:1 › Escape/reopen mounts one selected Monaco editor and keeps its saved scroll
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 300
+    Received:   250
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      67 |   await editor.locator('.monaco-editor').last().hover();
+      68 |   for(let index=0;index<5;index++){await page.mouse.wheel(0,800);await page.waitForTimeout(80);}
+    > 69 |   await expect.poll(async()=>Number(await editor.getAttribute('data-scroll-top'))).toBeGreaterThan(300);
+         |                                                                                    ^
+      70 |   await page.keyboard.press('Escape');await expect(editor).toHaveCount(0);
+      71 |   await page.evaluate(()=>{(window as unknown as {__editorLifecycle:unknown[]}).__editorLifecycle.length=0;});
+      72 |   await nav.selectOption('parent_019');
+        at /workspace/sidequest/desktop/tests/browser/viewer.spec.ts:69:84
+
+    Error Context: test-results/viewer-Escape-reopen-mount-828d0--and-keeps-its-saved-scroll/error-context.md
+
+  1 failed
+    tests/browser/viewer.spec.ts:57:1 › Escape/reopen mounts one selected Monaco editor and keeps its saved scroll
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

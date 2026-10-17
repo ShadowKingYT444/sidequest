@@ -1,0 +1,37 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(received).toEqual(expected) // deep equality
+
+- Expected  - 1
++ Received  + 3
+
+- Array []
++ Array [
++   "WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self'\".",
++ ]
+    at captureRawStack (/workspace/sidequest-assets/desktop/node_modules/playwright-core/lib/coreBundle.js:9282:17)
+    at callMatcherAsStep (/workspace/sidequest-assets/desktop/node_modules/playwright/lib/matchers/expect.js:13316:57)
+    at Object.toEqual (/workspace/sidequest-assets/desktop/node_modules/playwright/lib/matchers/expect.js:13308:23)
+    at /workspace/sidequest-assets/evidence/desktop/original-office/capture-browser.mjs:37:16 {
+  matcherResult: {
+    actual: [
+      `WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self'".`
+    ],
+    expected: [],
+    message: 'expect(received).toEqual(expected) // deep equality\n' +
+      '\n' +
+      '- Expected  - 1\n' +
+      '+ Received  + 3\n' +
+      '\n' +
+      '- Array []\n' +
+      '+ Array [\n' +
+      `+   "WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \\"script-src 'self'\\".",\n` +
+      '+ ]',
+    name: 'toEqual',
+    pass: false
+  }
+}
+
+Node.js v24.19.0

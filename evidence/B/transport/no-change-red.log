@@ -1,0 +1,43 @@
+test_attachment_tamper_links_unsupported_and_overflow_fail_before_provider_start (test_provider_transport.ProviderTransportTests.test_attachment_tamper_links_unsupported_and_overflow_fail_before_provider_start) ... ok
+test_followup_accepts_only_exact_host_materialized_scoped_candidate (test_provider_transport.ProviderTransportTests.test_followup_accepts_only_exact_host_materialized_scoped_candidate) ... ok
+test_followup_cumulative_token_counter_cannot_reset (test_provider_transport.ProviderTransportTests.test_followup_cumulative_token_counter_cannot_reset) ... ok
+test_followup_identity_must_be_host_anchored_and_bounded (test_provider_transport.ProviderTransportTests.test_followup_identity_must_be_host_anchored_and_bounded) ... ok
+test_followup_resumes_same_thread_and_preserves_goal_and_token_ceiling (test_provider_transport.ProviderTransportTests.test_followup_resumes_same_thread_and_preserves_goal_and_token_ceiling) ... ok
+test_followup_uncertain_anchor_or_usage_never_starts_another_turn (test_provider_transport.ProviderTransportTests.test_followup_uncertain_anchor_or_usage_never_starts_another_turn) ... ok
+test_followup_unchanged_restored_candidate_completes_trace_and_retains_exact_tree (test_provider_transport.ProviderTransportTests.test_followup_unchanged_restored_candidate_completes_trace_and_retains_exact_tree) ... FAIL
+test_followup_without_git_mutation_completes_trace_without_fabricated_candidate (test_provider_transport.ProviderTransportTests.test_followup_without_git_mutation_completes_trace_without_fabricated_candidate) ... FAIL
+test_original_task_without_git_mutation_remains_blocked (test_provider_transport.ProviderTransportTests.test_original_task_without_git_mutation_remains_blocked) ... ok
+test_production_followup_and_attachments_stay_blocked_before_provider_start (test_provider_transport.ProviderTransportTests.test_production_followup_and_attachments_stay_blocked_before_provider_start) ... ok
+test_text_and_image_attachment_bytes_reach_fake_turn_without_host_paths (test_provider_transport.ProviderTransportTests.test_text_and_image_attachment_bytes_reach_fake_turn_without_host_paths) ... ok
+test_untrusted_initial_dirty_tree_or_scope_never_starts_provider (test_provider_transport.ProviderTransportTests.test_untrusted_initial_dirty_tree_or_scope_never_starts_provider) ... ok
+
+======================================================================
+FAIL: test_followup_unchanged_restored_candidate_completes_trace_and_retains_exact_tree (test_provider_transport.ProviderTransportTests.test_followup_unchanged_restored_candidate_completes_trace_and_retains_exact_tree)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-provider-transport/services/tools/tests/test_provider_transport.py", line 228, in test_followup_unchanged_restored_candidate_completes_trace_and_retains_exact_tree
+    self.assert_trace_completion(data, artifacts, usage)
+  File "/tmp/sidequest-provider-transport/services/tools/tests/test_provider_transport.py", line 196, in assert_trace_completion
+    self.assertEqual(data["status"], "completed")
+AssertionError: 'candidate' != 'completed'
+- candidate
++ completed
+
+
+======================================================================
+FAIL: test_followup_without_git_mutation_completes_trace_without_fabricated_candidate (test_provider_transport.ProviderTransportTests.test_followup_without_git_mutation_completes_trace_without_fabricated_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-provider-transport/services/tools/tests/test_provider_transport.py", line 218, in test_followup_without_git_mutation_completes_trace_without_fabricated_candidate
+    self.assert_trace_completion(data, artifacts, usage)
+  File "/tmp/sidequest-provider-transport/services/tools/tests/test_provider_transport.py", line 196, in assert_trace_completion
+    self.assertEqual(data["status"], "completed")
+AssertionError: 'blocked' != 'completed'
+- blocked
++ completed
+
+
+----------------------------------------------------------------------
+Ran 12 tests in 5.085s
+
+FAILED (failures=2)

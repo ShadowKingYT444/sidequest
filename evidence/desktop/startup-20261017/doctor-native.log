@@ -1,0 +1,7 @@
+OK  Python, Node 24, npm and Git
+OK  Python dependencies (repair: python3 sidequest.py setup)
+OK  Desktop dependencies (repair: setup)
+OK  Original office assets
+OK  Electron executable installed; sandbox availability requires a native launch
+MISSING  Desktop display (headless hosts can use run --browser)
+Agent execution: unavailable until the provider can enforce the required spending ceiling. Installed CLIs do not establish a connected session.

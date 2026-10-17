@@ -12,3 +12,37 @@ jobs:
           python-version: '3.11'
       - run: python3 -m unittest discover -s dev -p 'test_*.py' -v
       - run: python3 dev/check.py --setup
+  application:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: python3 -m venv .venv
+      - run: .venv/bin/python -m pip install -r services/runtime/requirements.lock -r services/workshops/requirements.lock
+      - name: Install the locked Playwright Chromium runtime
+        run: |
+          .venv/bin/python -m playwright install --with-deps chromium
+          .venv/bin/python - <<'PY'
+          import os
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as playwright:
+              executable = playwright.chromium.executable_path
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as environment:
+              environment.write(f"CHROMIUM_PATH={executable}\n")
+          PY
+      - name: Report the browser under test
+        run: '"$CHROMIUM_PATH" --version'
+      - run: npm --prefix desktop ci
+      - run: python3 -m unittest discover -s tests -p test_launcher.py -v
+      - run: .venv/bin/python -m unittest discover -s services/runtime/tests -p 'test_*.py' -v
+      - run: .venv/bin/python -m unittest discover -s services/tools/tests -p 'test_*.py' -v
+      - run: .venv/bin/python -m unittest discover -s services/workshops/tests -p 'test_*.py' -v
+      - run: npm --prefix desktop test
+      - run: npm --prefix desktop run build

@@ -1,0 +1,13 @@
+{
+  "returncode": 1,
+  "response_lines": 0,
+  "stderr_bytes": 532,
+  "read_only_filesystem": true,
+  "permission_denied": false,
+  "unsupported_option": false,
+  "methods_requested": [
+    "initialize"
+  ],
+  "model_calls": 0,
+  "auth_locator_unchanged": true
+}

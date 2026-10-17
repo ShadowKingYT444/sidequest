@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-14T16:17:10.862290+00:00",
+  "status": "Full browser acceptance incomplete: 13 passed, 4 failed; requested monitor/picker/badge cases pass.",
+  "desk_picker": "Only connected/ready logo/name choices, or one Connect provider action. No task fields.",
+  "task_setup": "Existing guarded text-only task form moved to monitor workspace.",
+  "badges": "One per primary figure, after sampled posed/cap bounds max.y +0.33m. Fresh visible completion/attention fixture signs verified.",
+  "tests": {
+    "desktop": 50,
+    "runtime": 48,
+    "tools": 42,
+    "typecheck": "pass",
+    "build": "pass",
+    "focused_local_preservation": "pass",
+    "focused_notification_fixture": "pass",
+    "focused_picker_task_1440_390": "2 pass"
+  },
+  "full_browser": {
+    "tests": 17,
+    "passed": 13,
+    "failed": 4,
+    "exit_code": 1,
+    "retries": 0,
+    "duration_reported_by_playwright": "17.0m",
+    "ended_at": "2026-10-14T16:35:30.438801+00:00",
+    "native_attempts": 0,
+    "coding_model_attempts": 0
+  },
+  "Library": "Root helper failed before upload; parent reports native mobile screenshot delivery.",
+  "dispatch": "Session messages and attachment transport unavailable; coding gates fail closed on current host. No native/model attempts.",
+  "source_commit": "7e4204ed6a4e7415acefdf5f7486b6a6ee7324af",
+  "failure_locations": [
+    "jobs-live.spec.ts:123",
+    "jobs-live.spec.ts:164",
+    "viewer.spec.ts:107",
+    "visual-office.spec.ts:15"
+  ]
+}

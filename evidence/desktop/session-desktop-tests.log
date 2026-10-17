@@ -1,0 +1,47 @@
+
+> sidequest-desktop@0.1.0 test
+> node --test tests/*.test.mjs
+
+✔ inspects GLB manifest metadata and transformed bounds (4.141262ms)
+✔ rejects a GLB that references a remote buffer or image (1.656519ms)
+✔ allows external resources only from files inside the supplied office folder (159.316281ms)
+✔ rejects malformed GLB headers and byte lengths (1.52426ms)
+✔ bindings preserve stable monitor IDs and reject duplicate or invalid geometry (2.307827ms)
+✔ embedded image blobs work while model resource URLs stay local (0.93878ms)
+✔ snapshot exposes bounded changed-file metadata and filters credentials, config, logs, symlinks, and unsafe names (128.00797ms)
+✔ diff reads only pinned commits, handles additions/deletions/renames/binary, and is read-only (228.063364ms)
+✔ rejects malformed identifiers and identifiers outside the captured manifest (122.366821ms)
+✔ pins a caller-selected base and rejects a non-commit or non-repository root (114.82965ms)
+✔ ignores inherited Git repository and config redirects (179.590912ms)
+✔ does not execute repository-configured external diff commands (140.716257ms)
+✔ installs only the runtime GLB and its referenced local resource with provenance (121.226947ms)
+✔ the parts route concatenates the exact eight names without changing source parts (171.687057ms)
+✔ rejects traversal, links, remote resources, and a mismatched archive hash before writing outputs (1091.346321ms)
+✔ production CLI does not accept a test hash override (124.630495ms)
+✔ host runtime client uses fixed paths and secret authentication, and gates safe execution (81.4047ms)
+✔ runtime origin and session file reject redirects, remote hosts, links and loose permissions (15.852106ms)
+✔ runtime response bound limits untrusted artifact output (8.429088ms)
+✔ coding methods require verified capability and USD enforcement before mutations (29.595108ms)
+✔ office session commands validate station and recorded run ownership without launching work (17.174712ms)
+✔ office session identities reject duplicate station, run and worker ownership (3.955458ms)
+✔ frozen display requires explicit immutability, digest and selected job ownership (0.527252ms)
+✔ file, text and diff pages are bound to the selected frozen artifact and file (0.556076ms)
+✔ preload exposes fixed read and validated local-runtime capabilities without shell or credentials (5.962648ms)
+✔ Electron security helpers trust only the app origin or configured loopback dev origin (0.589466ms)
+✔ IPC sender validation requires the current main frame and opaque file IDs (0.287481ms)
+✔ BrowserWindow and main process keep Node access disabled and deny navigation, windows, downloads, and capture (0.550968ms)
+✔ app protocol serves dist assets and root office URLs from copied public assets safely (122.193489ms)
+✔ provider discovery uses fixed executable metadata and never infers authentication (120.609204ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1850.024909
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

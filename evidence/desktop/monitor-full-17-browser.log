@@ -1,0 +1,148 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0
+
+
+Running 17 tests using 1 worker
+
+(node:207382) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/jobs-live.spec.ts:6:1 › genuine local inspection job produces immutable files and a check report (1.0m)
+  ✘   2 tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results (1.5m)
+(node:208378) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   3 tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events (2.1m)
+(node:208530) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 tests/browser/monitor-ui.spec.ts:12:1 › physical monitor POV restores orbited office camera through an interrupted return (52.1s)
+  ✓   5 tests/browser/monitor-ui.spec.ts:38:1 › local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages (2.4m)
+  ✓   6 tests/browser/monitor-ui.spec.ts:77:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure (27.1s)
+  ✓   7 tests/browser/viewer.spec.ts:13:1 › real Git diff, lazy single editor, expanded state, Escape and keyboard (1.3m)
+  ✓   8 tests/browser/viewer.spec.ts:57:1 › Escape/reopen mounts one selected Monaco editor and keeps its saved scroll (1.2m)
+  ✓   9 tests/browser/viewer.spec.ts:88:1 › read API rejects outside origins and mutations (13ms)
+  ✓  10 tests/browser/viewer.spec.ts:93:32 › viewer reflows at 960px with reduced motion (39.3s)
+  ✓  11 tests/browser/viewer.spec.ts:93:32 › viewer reflows at 390px with reduced motion (35.8s)
+  ✘  12 tests/browser/viewer.spec.ts:105:1 › keyboard-accessible viewer has no automated WCAG A/AA violations (41.9s)
+(node:209022) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 tests/browser/viewer.spec.ts:117:1 › hostile source stays literal and a failed read can retry (51.7s)
+  ✘  14 tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 1440px (42.4s)
+(node:209211) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  15 tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 390px (41.9s)
+  ✓  16 tests/browser/visual-office.spec.ts:67:32 › compact provider picker and guarded monitor task setup at 1440px (1.3m)
+  ✓  17 tests/browser/visual-office.spec.ts:67:32 › compact provider picker and guarded monitor task setup at 390px (32.1s)
+
+
+  1) tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: 'Computer job results' }).getByRole('button', { name: 'Expand', exact: true })
+
+
+      121 |   await result.locator('.artifact-text').evaluate(node=>{node.scrollTop=180;node.dispatchEvent(new Event('scroll',{bubbles:true}));});
+      122 |   await expect.poll(()=>result.locator('.artifact-text').evaluate(node=>node.scrollTop)).toBeGreaterThan(100);
+    > 123 |   await result.getByRole('button',{name:'Expand',exact:true}).click();
+          |                                                               ^
+      124 |   await expect(page.getByRole('dialog',{name:'Computer job viewer'})).toBeVisible();
+      125 |   await expect(result.locator('.artifact-files button[aria-pressed="true"]')).toHaveAttribute('title',selectedFile!);
+      126 |   await page.getByRole('button',{name:'Settings',exact:true}).click();
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:123:63
+
+    Error Context: test-results/jobs-live-real-jobs-clear--ce5fb-e-assigned-computer-results/error-context.md
+
+  2) tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+
+    Test timeout of 120000ms exceeded.
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('.app-footer')
+    Expected: "ready"
+    Received: "loading"
+
+    Call log:
+      - Expect "toHaveAttribute" locator('.app-footer') with timeout 60000ms
+      - waiting for locator('.app-footer')
+        9 × locator resolved to <footer class="app-footer" data-staged-actors="0" data-actor-status="loading">…</footer>
+          - unexpected value "loading"
+      - Test timeout of 120000ms exceeded.
+
+
+      162 |  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
+      163 |  const saved=await read();const owner=saved.office_sessions.find((owner:{station_id:string})=>owner.station_id==='parent_019');expect(owner).toMatchObject({job_id:job.id,run_id:runId,worker_id:run.worker_id,project_id:job.project_id});
+    > 164 |  await page.reload();await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
+          |                                                                ^
+      165 |  await page.setViewportSize({width:390,height:780});await session.getByRole('button',{name:'Open monitor',exact:true}).click();await expect(trace.locator('.monitor-events>li').first()).toBeVisible();
+      166 |  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);const axe=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();await writeFile(path.resolve('../evidence/desktop/session-accessibility.json'),JSON.stringify(axe.violations,null,2));expect(axe.violations.map(v=>v.id)).toEqual([]);
+      167 |  await page.screenshot({path:path.resolve('../evidence/desktop/recorded-session-390.png')});
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:164:64
+
+    Error Context: test-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md
+
+  3) tests/browser/viewer.spec.ts:105:1 › keyboard-accessible viewer has no automated WCAG A/AA violations 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('diff-editor').locator('.monaco-editor').last()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('diff-editor').locator('.monaco-editor').last() with timeout 15000ms
+      - waiting for getByTestId('diff-editor').locator('.monaco-editor').last()
+
+
+      105 | test('keyboard-accessible viewer has no automated WCAG A/AA violations',async({page})=>{
+      106 |   await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000}); await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
+    > 107 |   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
+          |                                                                                  ^
+      108 |   await page.getByRole('button',{name:'Expand',exact:true}).click();
+      109 |   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
+      110 |   const code=page.getByRole('button',{name:/dev\/luna\.py/});
+        at /workspace/sidequest/desktop/tests/browser/viewer.spec.ts:107:82
+
+    Error Context: test-results/viewer-keyboard-accessible-9e29a-omated-WCAG-A-AA-violations/error-context.md
+
+  4) tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 1440px ─────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('diff-editor')
+    Expected: 1
+    Received: 0
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('diff-editor') with timeout 15000ms
+      - waiting for getByTestId('diff-editor')
+        5 × locator resolved to 0 elements
+          - unexpected value "0"
+
+
+      13 |
+      14 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
+    > 15 |   await expect(page.getByTestId('diff-editor')).toHaveCount(1);
+         |                                                 ^
+      16 |   await expect(page.getByRole('button',{name:'Expand',exact:true})).toBeVisible();
+      17 |
+      18 |   await page.getByRole('button',{name:'Expand',exact:true}).click();
+        at /workspace/sidequest/desktop/tests/browser/visual-office.spec.ts:15:49
+
+    Error Context: test-results/visual-office-provider-settings-and-preserved-work-at-1440px/error-context.md
+
+  4 failed
+    tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+    tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+    tests/browser/viewer.spec.ts:105:1 › keyboard-accessible viewer has no automated WCAG A/AA violations 
+    tests/browser/visual-office.spec.ts:6:32 › provider settings and preserved work at 1440px ──────
+  13 passed (17.0m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

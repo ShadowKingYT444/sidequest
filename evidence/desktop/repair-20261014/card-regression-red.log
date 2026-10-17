@@ -1,0 +1,33 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0 --grep local figure details preserve
+
+[WebServer] (node:9231) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+(node:9269) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:28:22 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+F
+
+  1) tests/browser/rendering.spec.ts:45:1 › local figure details preserve the unchanged office frame 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "3"
+    Received: "4"
+
+      54 |   await expect(page.getByRole('dialog',{name:'Agent session'})).toBeVisible();
+      55 |   await settle();
+    > 56 |   expect(await canvas.getAttribute('data-render-frame-count')).toBe(before);
+         |                                                                ^
+      57 |   await page.keyboard.press('Escape');
+      58 |   await expect(page.getByRole('dialog',{name:'Agent session'})).toHaveCount(0);
+      59 |   await expect(page.getByRole('combobox',{name:'Office navigation'})).toBeFocused();
+        at /workspace/sidequest/desktop/tests/browser/rendering.spec.ts:56:64
+
+    Error Context: test-results/rendering-local-figure-det-2993b--the-unchanged-office-frame/error-context.md
+
+  1 failed
+    tests/browser/rendering.spec.ts:45:1 › local figure details preserve the unchanged office frame 

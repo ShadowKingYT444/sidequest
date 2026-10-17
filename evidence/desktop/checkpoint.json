@@ -1,0 +1,34 @@
+{
+  "at": "2026-10-14T11:03:59.938043+00:00",
+  "status": "Monaco reopen lifecycle defect repaired; full 12-test browser suite verified; native orchestration remains incomplete",
+  "branch": "feat/electron-office-diff",
+  "tested_source_base_commit": "8a1ea251677a705b5cff58457234e310d27ca346",
+  "source_files_sha256": "546cd47a63a3acdd4c4c603149417a4e543ef44454ff3a71594e312d0af45b36",
+  "verified": {
+    "desktop": 30,
+    "runtime": 48,
+    "typecheck_build": "pass",
+    "browser_baseline": 10,
+    "final_focused_session": 1,
+    "session_accessibility_violations": 0
+  },
+  "full_suite_failure_preserved": "one target-size failure, repaired and focused rerun passed; no single full 11-test green run claim",
+  "native_gates": "unchanged blocked; no supported remedy found",
+  "new_session_library_upload": "network failure before preparation; captures committed",
+  "model_calls": 0,
+  "published_tested_source_commit": "f6b8a1921e3000de82268b1878a090fd900b0560",
+  "final_full_browser": {
+    "exit_code": 0,
+    "passed": 12,
+    "failed": 0,
+    "minutes": 9.9,
+    "retries": 0
+  },
+  "source_unchanged": true,
+  "features_added": false,
+  "native_or_model_runs": 0,
+  "browser_record": "evidence/desktop/repaired-12-run.json",
+  "monaco_reopen_cause_established": true,
+  "monaco_reopen_fix_verified": true,
+  "source_unchanged_during_tests": true
+}

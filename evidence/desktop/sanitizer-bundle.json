@@ -1,0 +1,8 @@
+{
+  "built_editor": "desktop/dist/assets/DiffEditor-CaCC253o.js",
+  "sha256": "0ce393591ec1021b508fefbe694477cb3507392293013b33682ff59880532f63",
+  "dompurify_version": "3.4.17",
+  "old_vendored_version_absent": true,
+  "scope": "Actual production bundle after the scoped Monaco reopen repair",
+  "npm_audit": "evidence/desktop/security-audit.json"
+}

@@ -1,0 +1,43 @@
+{
+  "scope": "Real local Git inspection trace; native dispatch and OS clipboard are not established",
+  "station": "parent_019",
+  "runId": "1900476e-09b5-4972-8ec9-911d4e27a6bb",
+  "office": {
+    "position": [
+      11.5,
+      8.5,
+      12
+    ],
+    "target": [
+      1,
+      -0.3,
+      -3.8
+    ]
+  },
+  "focused": {
+    "position": [
+      -1.6600000858306885,
+      1.013999981880188,
+      -3.9644999446310103
+    ],
+    "target": [
+      -1.6600000858306885,
+      0.968999981880188,
+      -3.2144999446310103
+    ]
+  },
+  "traceScroll": 128,
+  "returnCameraRestored": true,
+  "localAttachmentPaths": [
+    "synthetic clipboard event",
+    "browser file picker",
+    "browser drag/drop"
+  ],
+  "retainedAcrossEscapeAndTabs": true,
+  "delayedReadReopenRetained": true,
+  "outageDraftIdentityRetained": true,
+  "noSilentUpload": true,
+  "mutations": [],
+  "errors": [],
+  "axe": []
+}

@@ -1,0 +1,22 @@
+✔ host runtime client uses fixed paths and secret authentication, and gates safe execution (73.107508ms)
+✔ runtime origin and session file reject redirects, remote hosts, links and loose permissions (9.379243ms)
+✔ runtime response bound limits untrusted artifact output (5.149957ms)
+✔ coding methods require verified capability and USD enforcement before mutations (28.377904ms)
+✔ office session commands validate station and recorded run ownership without launching work (15.524573ms)
+✔ protocol fixture: session transport keeps idempotency identity, validates opaque attachments and retains production USD guard (20.789037ms)
+✔ protocol fixture: native IPC fault envelope never exposes provider messages, paths or credentials (0.788621ms)
+✔ preload exposes fixed read and validated local-runtime capabilities without shell or credentials (4.504769ms)
+✔ Electron security helpers trust only the app origin or configured loopback dev origin (0.470322ms)
+✔ IPC sender validation requires the current main frame and opaque file IDs (0.340409ms)
+✔ BrowserWindow and main process keep Node access disabled and deny navigation, windows, downloads, and capture (0.644877ms)
+✔ app protocol serves dist assets and root office URLs from copied public assets safely (49.063831ms)
+✔ provider discovery uses fixed executable metadata and never infers authentication (106.683973ms)
+✔ protocol fixture: preload retains sanitized definite send rejection code across Electron IPC (1.97892ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 305.118024

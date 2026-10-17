@@ -1,0 +1,126 @@
+test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) ... 
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=0, secondary=40.5) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=89, secondary=89.9) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=90, secondary=20) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=100, secondary=0) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=None, secondary=0) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=True, secondary=0) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary='20', secondary=0) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=-1, secondary=0) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=101, secondary=0) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=nan, secondary=0) ... ERROR
+  test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=inf, secondary=0) ... ERROR
+test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) ... ERROR
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=0, secondary=40.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=89, secondary=89.9)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=90, secondary=20)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=100, secondary=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=None, secondary=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=True, secondary=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary='20', secondary=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=-1, secondary=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=101, secondary=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=nan, secondary=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows) (primary=inf, secondary=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 302, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+======================================================================
+ERROR: test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows (test_codex_bridge.CodexBridgeTests.test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sidequest-quota-reserve/services/tools/tests/test_codex_bridge.py", line 312, in test_subscription_reserve_parses_only_finite_percentages_and_requires_both_windows
+    quota, reserve = app.read_subscription_readiness(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AppServer' object has no attribute 'read_subscription_readiness'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.019s
+
+FAILED (errors=12)

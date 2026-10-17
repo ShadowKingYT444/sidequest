@@ -1,0 +1,35 @@
+✔ protocol fixture: reload preserves File bytes, local identities and recreated image previews without storing URLs (7.781337ms)
+✔ protocol fixture: lost send reply stays locked across reload, reconciles original command ID and never sends twice (1.961696ms)
+✔ protocol fixture: drafts edited during send are retained and only submitted attachment identities clear after acceptance (1.132772ms)
+✔ protocol fixture: staging/readiness failure retains draft and ID; explicit retry after not-found reuses same send identity (0.573333ms)
+✔ protocol fixture: storage failure blocks sends before staging or message network mutation (0.740907ms)
+✔ protocol fixture: malformed stored pending or mismatched receipts cannot clear a draft (0.587325ms)
+✔ protocol fixture: retry replays the exact saved revision even after staging and later runtime revision changes (0.790004ms)
+✔ protocol fixture: a definite revision rejection retains draft and requires explicit review before a new send identity (1.032442ms)
+✔ protocol fixture: a corrupt pending record is never overwritten by edits or allowed to create another send (0.240043ms)
+✖ protocol fixture: an accepted receipt rejected before provider start retains attachments and the concurrent next thought until explicit review (1.727886ms)
+✖ protocol fixture: conflicting or malformed message status never clears a pending draft or offers a fresh send identity (0.668727ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 9
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 174.067455
+
+✖ failing tests:
+
+test at desktop/tests/session-drafts.test.mjs:80:1
+✖ protocol fixture: an accepted receipt rejected before provider start retains attachments and the concurrent next thought until explicit review (1.727886ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (file:///tmp/sidequest-desktop-transport/desktop/tests/session-drafts.test.mjs:86:76)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at desktop/tests/session-drafts.test.mjs:91:1
+✖ protocol fixture: conflicting or malformed message status never clears a pending draft or offers a fresh send identity (0.668727ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (file:///tmp/sidequest-desktop-transport/desktop/tests/session-drafts.test.mjs:96:77)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

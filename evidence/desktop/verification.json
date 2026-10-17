@@ -1,0 +1,107 @@
+{
+  "status": "Full browser acceptance incomplete: 13 passed, 4 failed; requested monitor/picker/badge cases pass.",
+  "recorded_at": "2026-10-14T17:18:44.971007+00:00",
+  "feature_branch": "feat/electron-office-diff",
+  "tested_source_commit": "7e4204ed6a4e7415acefdf5f7486b6a6ee7324af",
+  "source_identity": {
+    "before_after_hashes_unchanged": true,
+    "file_count": 247,
+    "manifest": "monitor-full-17-run.json",
+    "log_sha256": "edf0d4e4c3a16209a33eac3ee8209b92f044b727473336453dc3e430869818f7",
+    "publication_changes": "Evidence and documentation only; no code/asset/test repair or duplicate run."
+  },
+  "checks": {
+    "desktop_unit_tests": 50,
+    "runtime_tests": 48,
+    "tools_tests": 42,
+    "typecheck": "pass",
+    "production_build": "pass",
+    "production_dependency_audit": "0 vulnerabilities",
+    "full_browser": {
+      "tests": 17,
+      "passed": 13,
+      "failed": 4,
+      "exit_code": 1,
+      "retries": 0,
+      "duration_reported_by_playwright": "17.0m",
+      "ended_at": "2026-10-14T16:35:30.438801+00:00",
+      "native_attempts": 0,
+      "coding_model_attempts": 0
+    }
+  },
+  "passing_revision_flows": [
+    "Physical original monitor click and interrupted return to the orbited office camera",
+    "Local paste/image/file picker/drop, validation/removal, Escape/expanded scroll retention, delayed reads, outage recovery and 390px accessibility",
+    "Explicit notification fixture with visible green completion/red attention signs and no child badge",
+    "Compact connected-only desk picker/one Connect provider action and guarded monitor task setup at 1440/390px",
+    "Original Git viewer and single-Monaco Escape/reopen regression"
+  ],
+  "failures": [
+    {
+      "test": "jobs-live.spec.ts:88",
+      "assertion": "jobs-live.spec.ts:123",
+      "observed": "90s test timeout waiting for the embedded job-result Expand button."
+    },
+    {
+      "test": "jobs-live.spec.ts:140",
+      "assertion": "jobs-live.spec.ts:164",
+      "observed": "120s test timeout after reload while staged actors remained loading."
+    },
+    {
+      "test": "viewer.spec.ts:105",
+      "assertion": "viewer.spec.ts:107",
+      "observed": "Selected Monaco editor absent at 15s before the accessibility scan."
+    },
+    {
+      "test": "visual-office.spec.ts:6 (1440px)",
+      "assertion": "visual-office.spec.ts:15",
+      "observed": "Selected diff editor count 0 at 15s before opening settings."
+    }
+  ],
+  "failure_causes": "Not established by this run; preserve assertions and timeouts.",
+  "screenshots": {
+    "provider-selector.png": {
+      "sha256": "3f58fa3bdfe3f8b7fa66b499559d6fb62c73b522b5b3a5f412d2199e952e09f9",
+      "fixture": false
+    },
+    "monitor-pov.png": {
+      "sha256": "1c16774b1afe366d311805f14d26a5da7ead92105827d64cfd4b8e70dc23dc55",
+      "fixture": false
+    },
+    "notifications-badges-fixture.png": {
+      "sha256": "7ffab76d0a422bbc7f7e27b578fa16997a8c0d2f2006d0143106544fcaf4ac59",
+      "fixture": true
+    },
+    "monitor-local-draft-390.png": {
+      "sha256": "96fd117683764d00eea664c745bb7dfaf2d4de96956fd707879226bff895648c",
+      "fixture": false
+    }
+  },
+  "dispatch": {
+    "supported_now": [
+      "Read genuine Git and recorded local inspection artifacts/events",
+      "Explicitly assign or detach recorded display ownership",
+      "Retain bounded prompt/attachment drafts locally",
+      "Read provider metadata; Connect provider opens read-only diagnostics"
+    ],
+    "existing_conditional_path": "Text-only coding submit and launch remain separate guarded actions in monitor Task setup. They require fresh host/model/USD/project verification and explicit consent. Current host remains unavailable.",
+    "unavailable_now": [
+      "Same-session message transport",
+      "Attachment upload/dispatch transport",
+      "Native Electron on current OS sandbox",
+      "Native Codex execution without supported state writes and enforceable USD verification",
+      "Linux capture/delivery approval integration"
+    ]
+  },
+  "delivery": {
+    "root_library_attempt": "Failed before preparation: hosted apps discovery network unavailable; no Library mutations.",
+    "parent_report": "Latest screenshots delivered natively to mobile user.",
+    "new_upload_attempts": 0
+  },
+  "restrictions": {
+    "merged": false,
+    "deployed": false,
+    "auth_or_credentials_changed": false,
+    "sandbox_weakened": false
+  }
+}

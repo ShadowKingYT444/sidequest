@@ -1,0 +1,388 @@
+{
+  "testedAt": "2026-10-14T06:34:16.655Z",
+  "baseCommit": "1e4b7440cb526f09203a7351af1abe8b69dd922f",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "stationCount": 24,
+  "overviewRendered": true,
+  "measuredMonitorSelected": "parent_019",
+  "actualGitDiffMounted": true,
+  "expandedViewerVisible": true,
+  "escapeReturnedToOverview": true,
+  "pageErrors": [
+    "WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self'\"."
+  ],
+  "requestFailures": [],
+  "assetResponses": [
+    {
+      "path": "/office/bindings.json",
+      "status": 200
+    },
+    {
+      "path": "/office/office.glb",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/001-e3f0f809bf28.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/000-5f7bdfb1f68d.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/003-42a6cb087d1a.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/002-73a581383e55.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/005-c67eef46c964.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/004-aa3684ec0d5d.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/007-d7f09932a45e.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/006-cfef99972f8d.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/009-5ec1531a7774.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/008-261f2dc0c27f.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/010-b50cde1be412.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/011-da20a21009b0.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/012-5fb6a195a6d0.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/013-030bbd3c246a.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/015-e91284228ee5.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/014-95ba0185529a.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/016-8d6b2608d7d4.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/019-6cc42254870a.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/017-cf079bee7cc0.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/018-dad4731dd5e9.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/021-f11261547ae2.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/020-cf38045cff0b.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/023-3353bcb15da6.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/022-3a28bf00e6f3.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/025-a7641b9f0046.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/024-8b94eb98daa7.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/027-31d9705ab53c.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/026-1756bda8e2da.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/029-bc9ae9cc5f4e.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/028-57a4d2641279.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/031-0f66c39463bd.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/030-1c956c3052dc.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/033-913df5ba81b4.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/032-0deb2c916372.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/035-b8835794a99b.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/034-5d8f204e7952.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/037-6ca35f69eac2.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/036-f33d1e12dbbf.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/039-eb77053a262d.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/038-a3948a0a97a4.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/041-402697d1f0d9.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/040-c99aa6581e46.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/043-7dbcdfb43917.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/042-1c3b858d4453.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/045-39b7bd7d8508.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/044-1f3bb8f1b133.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/047-d7e935df6e30.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/046-de6441941c79.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/050-e5c6e6efd949.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/048-c45ac1f37852.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/049-0429fe89e120.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/051-f7c99779e3e3.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/052-abfa3f18fc21.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/053-d8f017bee59e.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/054-3bd8e1c67ea0.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/056-48198a777799.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/055-89153dc540de.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/058-53815d7064c5.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/057-683e62491afd.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/060-b129cc854ff7.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/059-465b8243feca.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/062-2e201ba51820.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/061-221b55c5bae1.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/063-3275357c4515.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/064-d96f787276fc.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/066-b9560a27c56c.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/065-3bc93c8664f1.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/067-4806882067d2.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/068-02ecefed9c39.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/069-557863d8cbcb.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/070-7f8c8d3a8075.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/071-d59410915911.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/072-506efc8123ff.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/073-7d17b351727a.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/074-7f8c8d3a8075.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/075-86157fa8db15.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/076-9a83fbac9122.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/077-79e389e4f05a.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/078-67a486543e20.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/080-368504af228e.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/079-98399ba6ba8b.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/081-5e1fcfa3a20d.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/082-5729b7ff67ce.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/083-870eac0ac896.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/085-ea4b2da7b618.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/084-586373354fb7.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/086-2120d65837c5.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/087-83d4a5392a03.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/089-add7c0a1e4fc.png",
+      "status": 200
+    },
+    {
+      "path": "/office/textures/088-817ff0490416.png",
+      "status": 200
+    }
+  ]
+}

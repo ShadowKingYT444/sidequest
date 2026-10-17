@@ -1,0 +1,639 @@
+{
+  "source": "evidence/desktop/startup-browser-20261017/profile/timings/full-run/real-jobs-clear-stale-notices-recover-reads-and-preserve-assigned-computer-results-timedOut.cpuprofile",
+  "duration_ms": 90190.5,
+  "sample_count": 14780,
+  "self": [
+    {
+      "function": "(program)",
+      "url": "",
+      "line": 0,
+      "ms": 80311.4,
+      "node_id": 2
+    },
+    {
+      "function": "texSubImage2D",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 48377,
+      "ms": 2413.3,
+      "node_id": 449
+    },
+    {
+      "function": "(idle)",
+      "url": "",
+      "line": 0,
+      "ms": 1875.1,
+      "node_id": 3
+    },
+    {
+      "function": "onFirstUse",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 46368,
+      "ms": 601.7,
+      "node_id": 435
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 283.2,
+      "node_id": 1454
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "line": 0,
+      "ms": 249.2,
+      "node_id": 70
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 205.2,
+      "node_id": 1351
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 155.5,
+      "node_id": 1480
+    },
+    {
+      "function": "applyBoneTransform",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 18032,
+      "ms": 125.8,
+      "node_id": 969
+    },
+    {
+      "function": "applyBoneTransform",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 18032,
+      "ms": 115.8,
+      "node_id": 798
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 111.6,
+      "node_id": 1596
+    },
+    {
+      "function": "createBuffer",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 42480,
+      "ms": 95.0,
+      "node_id": 1008
+    },
+    {
+      "function": "",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@react-three_drei.js?v=cff86c1c",
+      "line": 18020,
+      "ms": 89.2,
+      "node_id": 567
+    },
+    {
+      "function": "",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 31839,
+      "ms": 87.4,
+      "node_id": 504
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 80.5,
+      "node_id": 1350
+    },
+    {
+      "function": "",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@react-three_drei.js?v=cff86c1c",
+      "line": 17896,
+      "ms": 66.5,
+      "node_id": 553
+    },
+    {
+      "function": "needsUpdate",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 43405,
+      "ms": 58.2,
+      "node_id": 1017
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 52.9,
+      "node_id": 122
+    },
+    {
+      "function": "Vector3",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 4949,
+      "ms": 51.3,
+      "node_id": 970
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 47.7,
+      "node_id": 1594
+    },
+    {
+      "function": "multiplyMatrices",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 8253,
+      "ms": 45.9,
+      "node_id": 810
+    },
+    {
+      "function": "onFirstUse",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 46368,
+      "ms": 45.0,
+      "node_id": 1090
+    },
+    {
+      "function": "computeElementStyleVisibilityVisible",
+      "url": "",
+      "line": 3155,
+      "ms": 43.8,
+      "node_id": 1456
+    },
+    {
+      "function": "projectObject",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52527,
+      "ms": 39.7,
+      "node_id": 961
+    },
+    {
+      "function": "",
+      "url": "http://127.0.0.1:5173/src/OfficeScene.tsx",
+      "line": 150,
+      "ms": 38.8,
+      "node_id": 271
+    },
+    {
+      "function": "",
+      "url": "http://127.0.0.1:5173/src/JobsBoard.tsx",
+      "line": 203,
+      "ms": 36.9,
+      "node_id": 1330
+    },
+    {
+      "function": "GLTFBinaryExtension",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@react-three_drei.js?v=cff86c1c",
+      "line": 17310,
+      "ms": 36.7,
+      "node_id": 570
+    },
+    {
+      "function": "Vector3",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 4949,
+      "ms": 35.8,
+      "node_id": 804
+    },
+    {
+      "function": "getVertexPosition",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 17974,
+      "ms": 35.6,
+      "node_id": 968
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 35.2,
+      "node_id": 37
+    },
+    {
+      "function": "WebGLRenderer.renderBufferDirect",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52233,
+      "ms": 32.4,
+      "node_id": 428
+    },
+    {
+      "function": "WebGLRenderer.setSize",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 51903,
+      "ms": 31.4,
+      "node_id": 240
+    },
+    {
+      "function": "getVertexPosition",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 17974,
+      "ms": 30.8,
+      "node_id": 797
+    },
+    {
+      "function": "readData",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 31838,
+      "ms": 30.8,
+      "node_id": 505
+    },
+    {
+      "function": "applyBoneTransform",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 18032,
+      "ms": 30.6,
+      "node_id": 824
+    },
+    {
+      "function": "get",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 46927,
+      "ms": 30.0,
+      "node_id": 1648
+    },
+    {
+      "function": "setProgram",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52775,
+      "ms": 27.8,
+      "node_id": 429
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 26.7,
+      "node_id": 1380
+    },
+    {
+      "function": "isElementHiddenForAria",
+      "url": "",
+      "line": 3568,
+      "ms": 25.6,
+      "node_id": 1342
+    },
+    {
+      "function": "multiplyMatrices",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 8253,
+      "ms": 25.5,
+      "node_id": 971
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 25.0,
+      "node_id": 124
+    },
+    {
+      "function": "SyntheticBaseEvent",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 1953,
+      "ms": 22.9,
+      "node_id": 1153
+    },
+    {
+      "function": "setup",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 43334,
+      "ms": 22.5,
+      "node_id": 1006
+    },
+    {
+      "function": "fetch",
+      "url": "",
+      "line": 0,
+      "ms": 22.4,
+      "node_id": 1364
+    },
+    {
+      "function": "exports.jsxDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=cff86c1c",
+      "line": 192,
+      "ms": 22.0,
+      "node_id": 1651
+    }
+  ],
+  "inclusive": [
+    {
+      "function": "(root)",
+      "url": "",
+      "line": 0,
+      "ms": 90185.3,
+      "node_id": 1
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "line": 0,
+      "ms": 80311.4,
+      "node_id": 2
+    },
+    {
+      "function": "loop",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c",
+      "line": 10092,
+      "ms": 4100.9,
+      "node_id": 421
+    },
+    {
+      "function": "update",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c",
+      "line": 10071,
+      "ms": 4095.7,
+      "node_id": 422
+    },
+    {
+      "function": "WebGLRenderer.render",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52443,
+      "ms": 4095.1,
+      "node_id": 424
+    },
+    {
+      "function": "gl.render",
+      "url": "http://127.0.0.1:5173/src/OfficeScene.tsx",
+      "line": 522,
+      "ms": 4095.1,
+      "node_id": 423
+    },
+    {
+      "function": "renderObjects",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52647,
+      "ms": 3501.1,
+      "node_id": 426
+    },
+    {
+      "function": "renderScene",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52572,
+      "ms": 3501.1,
+      "node_id": 425
+    },
+    {
+      "function": "renderObject",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52657,
+      "ms": 3498.4,
+      "node_id": 427
+    },
+    {
+      "function": "WebGLRenderer.renderBufferDirect",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52233,
+      "ms": 3486.1,
+      "node_id": 428
+    },
+    {
+      "function": "setProgram",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52775,
+      "ms": 3231.7,
+      "node_id": 429
+    },
+    {
+      "function": "upload",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 45861,
+      "ms": 2435.5,
+      "node_id": 436
+    },
+    {
+      "function": "setValueT1",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 45566,
+      "ms": 2435.4,
+      "node_id": 437
+    },
+    {
+      "function": "uploadTexture",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 48995,
+      "ms": 2435.1,
+      "node_id": 439
+    },
+    {
+      "function": "setTexture2D",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 48834,
+      "ms": 2435.1,
+      "node_id": 438
+    },
+    {
+      "function": "texSubImage2D",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 48377,
+      "ms": 2413.3,
+      "node_id": 449
+    },
+    {
+      "function": "performWorkUntilDeadline",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/scheduler-kNtYHXIZ.js?v=cff86c1c",
+      "line": 14,
+      "ms": 2176.5,
+      "node_id": 19
+    },
+    {
+      "function": "(idle)",
+      "url": "",
+      "line": 0,
+      "ms": 1875.1,
+      "node_id": 3
+    },
+    {
+      "function": "performWorkOnRootViaSchedulerTask",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 9577,
+      "ms": 1525.2,
+      "node_id": 20
+    },
+    {
+      "function": "performWorkOnRoot",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 8414,
+      "ms": 1519.9,
+      "node_id": 22
+    },
+    {
+      "function": "renderRootSync",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 8740,
+      "ms": 1197.6,
+      "node_id": 23
+    },
+    {
+      "function": "performUnitOfWork",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 8899,
+      "ms": 1182.6,
+      "node_id": 25
+    },
+    {
+      "function": "workLoopSync",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 8796,
+      "ms": 1182.6,
+      "node_id": 24
+    },
+    {
+      "function": "runWithFiberInDEV",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 693,
+      "ms": 1133.3,
+      "node_id": 26
+    },
+    {
+      "function": "beginWork",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 6081,
+      "ms": 1128.1,
+      "node_id": 27
+    },
+    {
+      "function": "renderWithHooks",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 4141,
+      "ms": 1083.4,
+      "node_id": 29
+    },
+    {
+      "function": "updateFunctionComponent",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 5520,
+      "ms": 1083.4,
+      "node_id": 28
+    },
+    {
+      "function": "react_stack_bottom_frame",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 13891,
+      "ms": 1083.1,
+      "node_id": 30
+    },
+    {
+      "function": "JobsBoard",
+      "url": "http://127.0.0.1:5173/src/JobsBoard.tsx",
+      "line": 37,
+      "ms": 870.9,
+      "node_id": 1348
+    },
+    {
+      "function": "onFirstUse",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 46368,
+      "ms": 606.8,
+      "node_id": 435
+    },
+    {
+      "function": "WebGLProgram.getUniforms",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 46407,
+      "ms": 606.8,
+      "node_id": 434
+    },
+    {
+      "function": "Zm",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c",
+      "line": 7200,
+      "ms": 576.1,
+      "node_id": 452
+    },
+    {
+      "function": "Mf",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c",
+      "line": 3281,
+      "ms": 576.1,
+      "node_id": 451
+    },
+    {
+      "function": "projectObject",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52527,
+      "ms": 438.4,
+      "node_id": 955
+    },
+    {
+      "function": "projectObject",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52527,
+      "ms": 438.4,
+      "node_id": 954
+    },
+    {
+      "function": "Vp",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c",
+      "line": 7282,
+      "ms": 437.9,
+      "node_id": 453
+    },
+    {
+      "function": "projectObject",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52527,
+      "ms": 437.8,
+      "node_id": 958
+    },
+    {
+      "function": "projectObject",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52527,
+      "ms": 437.8,
+      "node_id": 957
+    },
+    {
+      "function": "projectObject",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c",
+      "line": 52527,
+      "ms": 437.8,
+      "node_id": 956
+    },
+    {
+      "function": "ig",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c",
+      "line": 7644,
+      "ms": 432.3,
+      "node_id": 467
+    },
+    {
+      "function": "_d",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c",
+      "line": 7612,
+      "ms": 432.3,
+      "node_id": 466
+    },
+    {
+      "function": "processRootScheduleInMicrotask",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 9523,
+      "ms": 425.5,
+      "node_id": 190
+    },
+    {
+      "function": "",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 9605,
+      "ms": 425.5,
+      "node_id": 189
+    },
+    {
+      "function": "performWorkOnRoot",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 8414,
+      "ms": 420.4,
+      "node_id": 1156
+    },
+    {
+      "function": "performSyncWorkOnRoot",
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c",
+      "line": 9591,
+      "ms": 420.4,
+      "node_id": 1155
+    }
+  ]
+}

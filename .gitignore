@@ -27,3 +27,14 @@ playwright-report/
 test-results/
 docs/design/cache/
 .DS_Store
+
+# Electron build and protected local art inputs
+desktop/dist/
+desktop/public/office/
+*.tar.xz
+*.tar.xz.part*
+core
+core.*
+
+# Disposable Playwright resume pointers; reports and failure context stay tracked
+.last-run.json

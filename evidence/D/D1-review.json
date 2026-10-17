@@ -1,0 +1,135 @@
+{
+  "candidate_checkout": "/workspace/sidequest-reviews/D1-final",
+  "candidate_sha": "8a69815ff276225a49a5f1096a4b8f01bc45b0a8",
+  "candidate_tree_sha256": "9b83e201406e21fd33b16a5b502173530ffdbc4a",
+  "candidate_worktree_clean_after_review": true,
+  "checks": {
+    "persisted_d1_artifacts": {
+      "all_reported_sha256_and_sizes_match_files": true,
+      "artifact_files_verified": 8,
+      "report_path": "evidence/D/D1.json",
+      "status": "PASS"
+    },
+    "protocol_isolation_and_bounds": {
+      "browser_timeout_is_nonpassing_and_bounded": true,
+      "configured_limits": {
+        "artifact_input_bytes": 16777216,
+        "browser_requests": 256,
+        "browser_step_timeout_ms": 5000,
+        "browser_total_timeout_seconds": 20,
+        "candidate_bytes": 104857600,
+        "candidate_files": 1000,
+        "fixture_html_bytes": 1048576,
+        "report_bytes": 2097152,
+        "request_bytes": 4194304,
+        "screenshot_bytes": 8388608
+      },
+      "fresh_context_does_not_reuse_cookie_state": true,
+      "generic_internal_error_is_sanitized": true,
+      "oversized_request_rejected": true,
+      "partial_line_rejected": true,
+      "status": "PASS",
+      "wrong_protocol_version_rejected": true
+    },
+    "real_chromium_red_green": {
+      "environment": {
+        "chromium": "151.0.7922.173",
+        "playwright": "1.62.0",
+        "python": "3.12.14"
+      },
+      "frozen_control": {
+        "artifacts": [
+          {
+            "kind": "screenshot",
+            "sha256": "962de4fe8af599d984692e7596247cbf6c937402e55bb5c46d1b0d1f1e5d3b52",
+            "size_bytes": 14130
+          },
+          {
+            "kind": "screenshot",
+            "sha256": "ab9c7601f357566e80a5f88833fdd117024c7f647e3f5cb65c7ba39e1aa60537",
+            "size_bytes": 10781
+          },
+          {
+            "kind": "log",
+            "sha256": "3d3866661c9ca6eed02d0d47e1117862f8e3c6ecf47962e6412e60502a6a0edd",
+            "size_bytes": 480
+          },
+          {
+            "kind": "test_report",
+            "sha256": "1d9f1a8ea0948931f78702121129cb1a68eb62b43885d2b84024d36098559c7c",
+            "size_bytes": 853
+          }
+        ],
+        "browser_check": "SIGNUP_JOURNEY_PASSED",
+        "candidate_identity_check": "pass",
+        "candidate_tree_sha256": "68235516c83c59078c09601665d3fc7f1a45aa536299afb3f36bc43c9a647c01",
+        "passed": true
+      },
+      "inference_calls": 0,
+      "method": "Fresh invocation of ProtocolBrowserTests._run_fixture in this checkout; it copies each static fixture to a temporary tree, freezes it read-only, calls the workshop adapter, and verifies each returned artifact byte hash.",
+      "seeded_bad": {
+        "artifacts": [
+          {
+            "kind": "screenshot",
+            "sha256": "962de4fe8af599d984692e7596247cbf6c937402e55bb5c46d1b0d1f1e5d3b52",
+            "size_bytes": 14130
+          },
+          {
+            "kind": "screenshot",
+            "sha256": "ab9c7601f357566e80a5f88833fdd117024c7f647e3f5cb65c7ba39e1aa60537",
+            "size_bytes": 10781
+          },
+          {
+            "kind": "log",
+            "sha256": "16d02ecad12bd347fc747e216b4f3df6545728e43f91d7c639f9e91595eecd1f",
+            "size_bytes": 415
+          },
+          {
+            "kind": "test_report",
+            "sha256": "d680ff1c0cb13d266d5fdf1628ab4931ddd44c1dc812013ba515dc43f7f3e962",
+            "size_bytes": 832
+          }
+        ],
+        "browser_check": "SIGNUP_DESTINATION_MISMATCH",
+        "candidate_identity_check": "pass",
+        "candidate_tree_sha256": "dfdd74ba2a68cbe28433479fc9f194ba5c7df9eefa153b382cd49b8542eb325c",
+        "passed": false
+      },
+      "status": "PASS",
+      "usage_cost_usd": 0.0
+    },
+    "trusted_identity_and_manifest": {
+      "adjustment_new_hashes_match_lock_and_bytes": true,
+      "adjustment_old_hashes_match_parent_lock": true,
+      "all_lock_hashes_match_current_bytes": true,
+      "expected_check_definitions_changed_in_candidate_commit": false,
+      "status": "PASS",
+      "targeted_negative_probes": {
+        "bad_artifact_digest_rejected": true,
+        "candidate_mutation_during_check_becomes_blocked_after_rehash": true,
+        "candidate_supplied_check_scripts_and_destination_cannot_turn_seeded_bad_green": true,
+        "extra_file_in_read_only_candidate_rejected": true,
+        "traversal_manifest_path_rejected": true,
+        "writable_candidate_file_rejected": true
+      },
+      "trust_lock_files_checked": 9,
+      "trusted_checks_sha256": "bbac3ebdccf1094fe7ee7cfba97fe409504a53943f2ed4723c20b774fc6c0d07"
+    },
+    "unit_tests": {
+      "command": "python3 -m unittest discover -s services/workshops/tests -p 'test_*.py' -v",
+      "duration_seconds": 12.472,
+      "exit_code": 0,
+      "status": "PASS",
+      "tests_run": 13
+    }
+  },
+  "fresh_run_d1_script": {
+    "command": "python3 tests/e2e/run_d1.py",
+    "reason": "The entry point requires the checkout's fixture files to already be read-only and exits before a journey because the detached checkout restored them writable. No candidate permissions or source files were changed. The unittest fixture helper independently ran the real Chromium journeys above using temporary frozen copies.",
+    "status": "BLOCKED"
+  },
+  "reviewed_at": "2026-10-14T02:09:39Z",
+  "schema": "sidequest-d1-review-v1",
+  "scope_limit": "D1 validates deterministic browser checks against disposable local fixtures; this is not proof of a live coding-worker/provider run.",
+  "verdict": "PASS"
+}

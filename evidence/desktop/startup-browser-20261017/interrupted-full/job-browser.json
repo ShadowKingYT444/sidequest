@@ -1,0 +1,493 @@
+{
+  "title": "Browser inspection 2026-10-17T01:37:20.261Z",
+  "source": {
+    "base": "69bf06696a93c9f58eee2d088e84404d4f6563d6",
+    "candidate": "8a9fb11c3b01a404c4dd305b71458377082697c1"
+  },
+  "registered_project": {
+    "id": "c0b58fb3-7cfc-4a50-9807-68cde0f648fd",
+    "name": "source",
+    "base_revision": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+    "status": "active",
+    "policy": {
+      "allowed_actions": [
+        "read_repo",
+        "run_checks"
+      ]
+    }
+  },
+  "job": {
+    "id": "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+    "project_id": "c0b58fb3-7cfc-4a50-9807-68cde0f648fd",
+    "title": "Browser inspection 2026-10-17T01:37:20.261Z",
+    "source": {
+      "kind": "typed",
+      "text": "Inspect the registered Git repository and produce immutable read-only artifacts with a frozen-identity check. No coding model, source mutation or delivery.",
+      "uri": "sidequest:local-git-inspection"
+    },
+    "state": "verifying",
+    "checks": [
+      {
+        "id": "candidate.frozen_identity",
+        "state": "pass",
+        "evidence_artifact_id": "sha256:504f3a24646ce8e3dfc4188e613a87fa7618f30e37aa9a3628b9d3eb3784e9cf"
+      }
+    ],
+    "allowed_actions": [
+      "read_repo",
+      "run_checks"
+    ],
+    "budget_usd": 0,
+    "spent_usd": 0,
+    "worker_id": null,
+    "artifact_ids": [
+      "art_4e44c933db4d4994b697c0c442355d9b",
+      "art_bd141b74bf444921b940bba8e1da20a5",
+      "art_1a287edc875d4a03946f62b44ef2237a",
+      "sha256:504f3a24646ce8e3dfc4188e613a87fa7618f30e37aa9a3628b9d3eb3784e9cf",
+      "44ae15a2-46ae-4e21-9c08-f81b808103e3",
+      "3774b87f-f083-4280-addf-a8315eca1aa0",
+      "5890e9a7-f9e6-4fcd-92ac-8e8471bc5eba",
+      "9226387e-e2c1-44a4-8901-c3621e68896b",
+      "b3d4904d-6212-43f1-bba0-afa63ce17e65",
+      "7a565c3b-f85e-4013-8919-447eea2c2bf9",
+      "93ec5970-6315-405a-9320-868011667455",
+      "de718fdf-e41b-46db-a642-3b1b6644ad7d",
+      "54e377ec-6594-43d5-a8f5-4934b1c91bba",
+      "90b0a59a-2b77-4ce4-b67b-879ab913e031",
+      "93c5a679-b950-49ec-907d-fa9500069a1b",
+      "133ea633-7683-4d56-a514-cc97b971fba1",
+      "8ed42710-b7a8-420d-9a74-08370a443e91",
+      "ffe9af61-04fb-40a8-bcdb-df12e9acb893",
+      "017012ec-7957-4e57-b144-aab09126f32a",
+      "5a3e0282-e8a6-4f07-9b29-57552354c9ad",
+      "665aea27-e9c2-4c43-8079-ed1df9ac9b6d",
+      "944e028e-e944-42c4-ab19-13dae1f1cf92",
+      "0ef2ea22-8a60-440b-87ec-b536b47df2c8",
+      "75d73466-b3eb-48cb-9340-8ada683aa182",
+      "b16c098c-c0f5-4a98-b5d7-e4db5e2af9e1",
+      "3d778d29-4ff8-4e97-843f-13b7ce34ee45",
+      "6de2c2a4-6754-4827-a03c-c81e0ab02968",
+      "7365967f-6257-4b22-a203-d57e598b53d1",
+      "3936de14-71a5-4c58-b02b-edf6b2135bc1",
+      "df7474fb-7cd1-4c89-a02f-7cc8fb8149cf",
+      "f8f046ee-8af2-4b57-9119-bc03523370fc",
+      "34a85c99-2e54-4d35-935e-ded0d5c0aba3",
+      "6857681b-3cae-49a6-866f-c8c39a2a51e2",
+      "f533bc7e-e4a0-4f06-a8f7-422156eaf1fe",
+      "5b99d01f-9a7c-4481-a435-b69cc2572e4b",
+      "a33f9a1b-b532-44d4-bc14-2d3ab7764e3c",
+      "c90a1b34-d806-4ce9-846a-287cd69adf34",
+      "bb36e35e-f252-4af8-a680-7daef149d911",
+      "cdc9affb-102c-48d5-8fa5-b6a3ce73cdac",
+      "f5380aa6-af18-4bd2-920d-201e52f17af0",
+      "3ce5844b-40bf-4976-a048-ee5c56adbdc1",
+      "a834d46d-70b9-4bfd-9cf4-6bc4e7459b11",
+      "ab30e6ff-d969-4253-8316-75b1a3ff2d8e",
+      "2b272e6f-c39c-4e6c-bb66-87027c6983a7",
+      "c354c950-4fc7-48bc-a07f-96b632eae163",
+      "ec437d17-b37b-4512-aee6-55d7fc303926",
+      "3432c826-2b26-4367-9173-df13b833324b",
+      "41c81429-f490-46ac-9b82-4d8438085113",
+      "2237f014-0670-4e11-a85a-ddef694a78a1",
+      "7a345b00-bac6-4729-a44d-a5ca47e9b4aa",
+      "dfdf9441-31c9-41eb-b6ab-e7ab740ccede",
+      "000d6eb9-7a45-4ad2-9002-d5af1609e002",
+      "31599afb-d46e-4836-bcb5-d793ef942401",
+      "e1873dba-f898-40e1-9dc2-ad9e8b846c42",
+      "07253774-998a-4b0f-b9dd-910b7f09685e",
+      "21ae534c-b7c2-4ffc-8b6f-a1020b97b8eb",
+      "27d668f6-c07e-48de-85e4-eead059ac4de",
+      "ef8a095f-5e55-4503-b6ee-9d8517e9a9f2",
+      "10c79b79-82f7-47a0-8120-1c09b044d62b",
+      "d06b0057-32a6-4855-96ba-b12e779a48ff",
+      "d8ce4c37-6c23-4d0a-bbe3-38a70fa41d09",
+      "09ab5cf3-73b5-4025-a9c7-098c126873e1",
+      "5fe361ec-e89d-426d-b8ee-9ef8bbac4bb2",
+      "a1b7cc8f-630e-4b31-afb6-557839fc7870",
+      "5cf3a68e-d4d5-488a-80fc-d22891c5c308",
+      "69e1d967-c2fb-44a5-add0-235943d2d2b9",
+      "7b5a9835-2104-4c2f-b1d7-3a55f561131e",
+      "a3ceb955-f47d-40a8-83f9-3bfc27442a5e",
+      "2278fe5f-050a-4fbc-a6f3-f28d6544f92e",
+      "36892d2f-0f14-4014-95ab-ca3db2599b27",
+      "4b8785a0-a838-4562-956b-ad6e502bb65c",
+      "b7733aec-feda-469a-80fc-5f620cf57c76",
+      "32830073-6959-47c4-bdd0-4073defaae64",
+      "5df8f505-2c47-47a7-9393-01175d1507be",
+      "61144249-6dcc-4f77-ad94-99274c7a07df",
+      "7faa9bfa-191b-49b0-8941-ccd81eb47f59",
+      "2db4bba8-4546-41be-b614-3dd8bb5ce450",
+      "920ea804-291e-4550-a033-c85bc17737a5",
+      "a21bc2a9-4389-4580-bc5b-ddb8dab52777",
+      "8278550d-bc5e-4411-b860-d6d5fa004173",
+      "9de888e8-0822-4130-9c09-ff58b897bb74",
+      "a3d5d88f-dcd3-45ff-975b-42cb5fe26a6d",
+      "1ff02a81-6283-4d1e-87ca-34a9d7508543",
+      "2effa23a-9591-49b4-acad-c27035defef4",
+      "5055331c-683b-42e0-99f1-db49290c9ded",
+      "97fb223a-3859-4631-a84e-345dcc19174d",
+      "64cbc70b-f558-4b9e-b15c-c053181b8227",
+      "8f132088-6f2c-44be-950e-a11d54a010d1",
+      "abc75bd4-102c-4c73-b19c-d07a1d57d34b",
+      "39e67679-b3ed-4c4e-ad43-d5b6b0601608",
+      "ae2a6969-e74e-4ec6-8675-ea52f2efd557",
+      "f1165dda-cfe1-4e22-9077-5367bf56417d",
+      "14d55eef-da8c-47db-b141-4a5c1af6b011",
+      "6fed7d51-84c7-4bb9-859c-3f6327e17d38",
+      "852b8875-3150-4eeb-b623-d289630e04c2",
+      "186117de-fee5-4cc9-8fd7-b8bbd56d1ff1",
+      "5042a8fb-3874-4d92-80fc-7901d6e91fc9",
+      "5aec4fb8-35b2-4dbb-8d9d-d903bffd423e",
+      "16c87886-aaeb-482f-bc7b-d643a724d24c",
+      "8ebc88a6-ff08-4b50-9fd2-fe407c3e62f0"
+    ],
+    "events": [
+      {
+        "id": 8,
+        "at": "2026-10-17T01:37:24.377Z",
+        "type": "status",
+        "message": "Immutable candidate artifacts frozen.",
+        "artifact_id": null
+      },
+      {
+        "id": 9,
+        "at": "2026-10-17T01:37:24.934Z",
+        "type": "status",
+        "message": "Attempt result recorded.",
+        "artifact_id": null
+      },
+      {
+        "id": 10,
+        "at": "2026-10-17T01:37:24.934Z",
+        "type": "status",
+        "message": "Candidate recorded.",
+        "artifact_id": "art_4e44c933db4d4994b697c0c442355d9b"
+      },
+      {
+        "id": 11,
+        "at": "2026-10-17T01:37:24.936Z",
+        "type": "tool_finished",
+        "message": "Frozen identity check passed.",
+        "artifact_id": "sha256:504f3a24646ce8e3dfc4188e613a87fa7618f30e37aa9a3628b9d3eb3784e9cf"
+      },
+      {
+        "id": 12,
+        "at": "2026-10-17T01:37:24.936Z",
+        "type": "status",
+        "message": "Local Git inspection completed; the frozen candidate identity check passed. No model inference or delivery ran.",
+        "artifact_id": null
+      }
+    ],
+    "blocked_reason": null,
+    "workflow_version": 1,
+    "run_ids": [
+      "005cfd07-ca63-45ec-8705-8fab0e06cda3"
+    ],
+    "tasks": [
+      {
+        "id": "3c2c9575-7120-4be6-996d-c3f606a1fb61",
+        "state": "completed",
+        "depends_on": [],
+        "worker_id": "4ba7cea1-b3a6-498a-bcee-64a5534e1bd8",
+        "attempt_id": "005cfd07-ca63-45ec-8705-8fab0e06cda3"
+      }
+    ],
+    "candidate_id": "cand_84e64a524fb54a009dd5196b20251279",
+    "execution_profile": "local_git_inspection",
+    "delivery_state": "disabled"
+  },
+  "frozen_check_report": {
+    "browser": {
+      "registered_origin": null,
+      "version": null
+    },
+    "candidate": {
+      "id": "cand_84e64a524fb54a009dd5196b20251279",
+      "manifest_artifact_id": "art_4e44c933db4d4994b697c0c442355d9b",
+      "tree_sha256": "5b6e550a3da5f44fc8b66b9393012fad38abdd4fb6a8e997aa7cba513fb9d2ff"
+    },
+    "inference_calls": 0,
+    "op": "check.run",
+    "request_id": "883cc7b2-d2ce-499b-86d1-3586a7da1ef0",
+    "results": [
+      {
+        "evidence_artifact_id": "art_4e44c933db4d4994b697c0c442355d9b",
+        "id": "candidate.frozen_identity",
+        "message": "The read-only candidate matches its host-staged file manifest.",
+        "state": "pass"
+      }
+    ],
+    "source_revision": "f7a9ebe0585956fdc557742a46b81f5a157be3d2",
+    "v": 1
+  },
+  "browser_requests": [
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "register",
+      "args": [
+        2
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "submitInspection",
+      "args": [
+        "c0b58fb3-7cfc-4a50-9807-68cde0f648fd",
+        "Browser inspection 2026-10-17T01:37:20.261Z",
+        3
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+        ""
+      ]
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+        ""
+      ]
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+        ""
+      ]
+    },
+    {
+      "method": "run",
+      "args": [
+        "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+        4
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+        ""
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+        ""
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+        ""
+      ]
+    },
+    {
+      "method": "files",
+      "args": [
+        "art_4e44c933db4d4994b697c0c442355d9b",
+        ""
+      ]
+    },
+    {
+      "method": "files",
+      "args": [
+        "art_4e44c933db4d4994b697c0c442355d9b",
+        ""
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "3c4b2cca-7d08-49a7-8917-e7fdf3deacb7",
+        ""
+      ]
+    },
+    {
+      "method": "files",
+      "args": [
+        "art_4e44c933db4d4994b697c0c442355d9b",
+        ""
+      ]
+    },
+    {
+      "method": "text",
+      "args": [
+        "art_4e44c933db4d4994b697c0c442355d9b",
+        "f_21abc8e8e7312b94c6a1ff7a536d8040",
+        1
+      ]
+    },
+    {
+      "method": "text",
+      "args": [
+        "art_4e44c933db4d4994b697c0c442355d9b",
+        "f_21abc8e8e7312b94c6a1ff7a536d8040",
+        1
+      ]
+    },
+    {
+      "method": "diff",
+      "args": [
+        "art_bd141b74bf444921b940bba8e1da20a5",
+        "f_21abc8e8e7312b94c6a1ff7a536d8040",
+        ""
+      ]
+    },
+    {
+      "method": "artifact",
+      "args": [
+        "sha256:504f3a24646ce8e3dfc4188e613a87fa7618f30e37aa9a3628b9d3eb3784e9cf"
+      ]
+    },
+    {
+      "method": "artifact",
+      "args": [
+        "sha256:504f3a24646ce8e3dfc4188e613a87fa7618f30e37aa9a3628b9d3eb3784e9cf"
+      ]
+    },
+    {
+      "method": "runInfo",
+      "args": [
+        "005cfd07-ca63-45ec-8705-8fab0e06cda3"
+      ]
+    },
+    {
+      "method": "runEvents",
+      "args": [
+        "005cfd07-ca63-45ec-8705-8fab0e06cda3",
+        0
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    }
+  ],
+  "model_calls": 0,
+  "scope": "Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run",
+  "page_errors": []
+}

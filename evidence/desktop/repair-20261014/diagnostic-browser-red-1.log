@@ -1,0 +1,132 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0 --grep genuine local inspection|real jobs clear|recorded session ownership|keyboard-accessible viewer|provider settings and preserved work at 1440
+
+[WebServer] (node:1238) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+(node:1270) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 5:59:00 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+F(node:4882) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F(node:5029) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:00:11 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+F(node:5252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:01:38 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+F(node:5425) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:02:29 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·
+
+  1) tests/browser/jobs-live.spec.ts:6:1 › genuine local inspection job produces immutable files and a check report 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByRole('region', { name: 'Local jobs board' }).locator('.job-state')
+    Expected: "verifying"
+    Received: "failed"
+    Timeout:  20000ms
+
+    Call log:
+      - Expect "toHaveText" getByRole('region', { name: 'Local jobs board' }).locator('.job-state') with timeout 20000ms
+      - waiting for getByRole('region', { name: 'Local jobs board' }).locator('.job-state')
+        - locator resolved to <span class="job-state">queued</span>
+        - unexpected value "queued"
+        7 × locator resolved to <span class="job-state">running</span>
+          - unexpected value "running"
+        35 × locator resolved to <span class="job-state">failed</span>
+           - unexpected value "failed"
+
+
+      26 |   await page.screenshot({path:path.resolve('../evidence/desktop/job-queued.png')});
+      27 |   await board.getByRole('button',{name:'Run inspection',exact:true}).click();
+    > 28 |   await expect(board.locator('.job-state')).toHaveText('verifying',{timeout:20_000});
+         |                                             ^
+      29 |   await expect(board.locator('.job-checks')).toContainText('pass',{timeout:90_000});
+      30 |   await expect(board).toContainText('Inspection results ready.');
+      31 |   await expect(board.locator('.artifact-files>button').first()).toBeVisible();
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:28:45
+
+    Error Context: test-results/jobs-live-genuine-local-in-a168f-le-files-and-a-check-report/error-context.md
+
+  2) tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: undefined
+
+      91 |   const response=await request.post('/__sidequest/runtime/snapshot',{data:[],headers:{Origin:'http://127.0.0.1:5173'}});expect(response.ok()).toBe(true);const state=await response.json();
+      92 |   const completed=state.jobs.find((job:{execution_profile:string;checks:{state:string}[];tasks:{state:string}[]})=>job.execution_profile==='local_git_inspection'&&job.tasks.every(t=>t.state==='completed')&&job.checks.length&&job.checks.every(c=>c.state==='pass'));
+    > 93 |   expect(completed).toBeTruthy();
+         |                     ^
+      94 |   await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('button',{name:'Jobs',exact:true}).click();
+      95 |   const board=page.getByRole('region',{name:'Local jobs board'});
+      96 |   await board.getByRole('button',{name:new RegExp(completed.title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))}).click();
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:93:21
+
+    Error Context: test-results/jobs-live-real-jobs-clear--ce5fb-e-assigned-computer-results/error-context.md
+
+  3) tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: 'Agent session' })
+    Expected substring: "Checking"
+    Received string:    "Computer 19×Recorded local inspectionBrowser inspection 2026-10-14T17:59:43.988ZfailedOpen monitorOpen resultsSession detailsRecorded display ownership · original staged figureRun 4234f8ad-17f0-4a18-9379-983c7a519f86Worker 400a3c8a-cda8-4e36-bc3e-423e9d948dc9Detach sessionRefresh session"
+    Timeout: 15000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: 'Agent session' }) with timeout 15000ms
+      - waiting for getByRole('dialog', { name: 'Agent session' })
+        - locator resolved to <div role="dialog" aria-modal="true" aria-label="Agent session" class="object-modal session-modal">…</div>
+        - unexpected value "Computer 19×Recorded sessionReading task…State unavailableOpen monitorOpen resultsSession detailsRecorded display ownership · original staged figureRun 4234f8ad-17f0-4a18-9379-983c7a519f86Worker 400a3c8a-cda8-4e36-bc3e-423e9d948dc9Detach sessionRefresh session"
+        - locator resolved to <div role="dialog" aria-modal="true" aria-label="Agent session" class="object-modal session-modal">…</div>
+        - unexpected value "Computer 19×Recorded local inspectionBrowser inspection 2026-10-14T17:59:43.988ZfailedOpen monitorOpen resultsSession detailsRecorded display ownership · original staged figureRun 4234f8ad-17f0-4a18-9379-983c7a519f86Worker 400a3c8a-cda8-4e36-bc3e-423e9d948dc9Detach sessionRefresh session"
+
+
+      152 |  await session.getByRole('button',{name:'Assign session',exact:true}).click();
+      153 |  await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);await expect(session).toContainText('Recorded local inspection');
+    > 154 |  await expect(session).toContainText('Checking');await expect(session.locator('.run-activity')).toHaveCount(0);
+          |                        ^
+      155 |  await page.screenshot({path:path.resolve('../evidence/desktop/recorded-session.png')});
+      156 |  await session.getByRole('button',{name:'Open monitor',exact:true}).click();const trace=page.getByRole('region',{name:'Session execution trace'});
+      157 |  await expect(trace.locator('.monitor-events>li').first()).toBeVisible();await expect(trace).toContainText('Checking');
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:154:24
+
+    Error Context: test-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md
+
+  4) tests/browser/viewer.spec.ts:106:1 › keyboard-accessible viewer has no automated WCAG A/AA violations 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('diff-editor').locator('.monaco-editor').last()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('diff-editor').locator('.monaco-editor').last() with timeout 15000ms
+      - waiting for getByTestId('diff-editor').locator('.monaco-editor').last()
+
+
+      106 | test('keyboard-accessible viewer has no automated WCAG A/AA violations',async({page})=>{
+      107 |   await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000}); await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
+    > 108 |   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
+          |                                                                                  ^
+      109 |   await page.getByRole('button',{name:'Expand',exact:true}).click();
+      110 |   await expect(page.getByTestId('diff-editor').locator('.monaco-editor').last()).toBeVisible();
+      111 |   const code=page.getByRole('button',{name:/dev\/luna\.py/});
+        at /workspace/sidequest/desktop/tests/browser/viewer.spec.ts:108:82
+
+    Error Context: test-results/viewer-keyboard-accessible-9e29a-omated-WCAG-A-AA-violations/error-context.md
+
+  4 failed
+    tests/browser/jobs-live.spec.ts:6:1 › genuine local inspection job produces immutable files and a check report 
+    tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+    tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+    tests/browser/viewer.spec.ts:106:1 › keyboard-accessible viewer has no automated WCAG A/AA violations 
+  1 passed (4.7m)

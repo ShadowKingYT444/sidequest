@@ -1,0 +1,36 @@
+✔ protocol fixture: reload preserves File bytes, local identities and recreated image previews without storing URLs (5.968647ms)
+✔ protocol fixture: lost send reply stays locked across reload, reconciles original command ID and never sends twice (1.718197ms)
+✔ protocol fixture: drafts edited during send are retained and only submitted attachment identities clear after acceptance (1.048051ms)
+✔ protocol fixture: staging/readiness failure retains draft and ID; explicit retry after not-found reuses same send identity (0.568044ms)
+✔ protocol fixture: storage failure blocks sends before staging or message network mutation (0.541234ms)
+✔ protocol fixture: malformed stored pending or mismatched receipts cannot clear a draft (0.689736ms)
+✔ protocol fixture: retry replays the exact saved revision even after staging and later runtime revision changes (0.579487ms)
+✔ protocol fixture: a definite revision rejection retains draft and requires explicit review before a new send identity (0.671116ms)
+✖ protocol fixture: a corrupt pending record is never overwritten by edits or allowed to create another send (1.217579ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 147.850994
+
+✖ failing tests:
+
+test at desktop/tests/session-drafts.test.mjs:74:1
+✖ protocol fixture: a corrupt pending record is never overwritten by edits or allowed to create another send (1.217579ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///tmp/sidequest-desktop-transport/desktop/tests/session-drafts.test.mjs:77:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

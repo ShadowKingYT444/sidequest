@@ -1,0 +1,1417 @@
+{
+  "v": 1,
+  "mode": "local-git",
+  "project": {
+    "name": "source",
+    "branch": "(detached)",
+    "rootLabel": "source"
+  },
+  "baseRevision": "69bf06696a93c9f58eee2d088e84404d4f6563d6",
+  "candidateRevision": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+  "files": [
+    {
+      "id": "f_c9905cac6af4aabd61686f46eeb2cd88",
+      "path": ".gitignore",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 0
+    },
+    {
+      "id": "f_d65ca72b9928addeb6010bdcc5821c18",
+      "path": "AGENTS.md",
+      "status": "modified",
+      "additions": 17,
+      "deletions": 15
+    },
+    {
+      "id": "f_57ed3017d4f099465bcdde0b7ab9d650",
+      "path": "README.md",
+      "status": "modified",
+      "additions": 24,
+      "deletions": 23
+    },
+    {
+      "id": "f_8515eb6df44f213a7d7dbfab5a61563b",
+      "path": "SPEC.md",
+      "status": "modified",
+      "additions": 28,
+      "deletions": 258
+    },
+    {
+      "id": "f_a2f5759a927ffbe4756efd82550d8f83",
+      "path": "contracts/EXTENSIONS.md",
+      "status": "added",
+      "additions": 90,
+      "deletions": 0
+    },
+    {
+      "id": "f_123b402da2033461b79d67af93931ea4",
+      "path": "contracts/PROTOCOL.md",
+      "status": "modified",
+      "additions": 50,
+      "deletions": 56
+    },
+    {
+      "id": "f_7c21bb6bd9b0cd80c4f80d538f0743e7",
+      "path": "contracts/STORAGE.md",
+      "status": "added",
+      "additions": 45,
+      "deletions": 0
+    },
+    {
+      "id": "f_4673214a24d328c21307b5aa2d909cf8",
+      "path": "contracts/examples/computer.json",
+      "status": "added",
+      "additions": 29,
+      "deletions": 0
+    },
+    {
+      "id": "f_4ca3dab4a1f1b916a1f64a51207368c4",
+      "path": "demo/README.md",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "id": "f_67256d589fc957c47a520c7ed2f7f9e7",
+      "path": "demo/club-site/README.md",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "id": "f_bcf5768ec9aaa052ce961ec1996ce3c0",
+      "path": "demo/club-site/bad/index.html",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "id": "f_f9f911d560801fbdae63f18c67e44d9b",
+      "path": "demo/club-site/bad/members/signup.html",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "id": "f_fb5427c3df7744167d5ee8f4534839e0",
+      "path": "demo/club-site/known-good/index.html",
+      "status": "added",
+      "additions": 16,
+      "deletions": 0
+    },
+    {
+      "id": "f_40840046188b36aa4cb5d622762fd5eb",
+      "path": "demo/club-site/known-good/members/welcome.html",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "id": "f_8578cb81debb2fe03cc3612e5dd37bb5",
+      "path": "desktop/README.md",
+      "status": "added",
+      "additions": 123,
+      "deletions": 0
+    },
+    {
+      "id": "f_fd64a20f1650233624055623ec99e635",
+      "path": "desktop/electron/git-reader.cjs",
+      "status": "added",
+      "additions": 458,
+      "deletions": 0
+    },
+    {
+      "id": "f_e6054bae8ea832fb902f1893b4f0386d",
+      "path": "desktop/electron/main.cjs",
+      "status": "added",
+      "additions": 151,
+      "deletions": 0
+    },
+    {
+      "id": "f_1bdd4d61dab0873da79ed74b5968cd25",
+      "path": "desktop/electron/preload.cjs",
+      "status": "added",
+      "additions": 32,
+      "deletions": 0
+    },
+    {
+      "id": "f_bee4f6967e0ebfb4162ec8682d996644",
+      "path": "desktop/electron/runtime-client.cjs",
+      "status": "added",
+      "additions": 91,
+      "deletions": 0
+    },
+    {
+      "id": "f_fb972f022ebf29fc2efd377acb59835d",
+      "path": "desktop/electron/security.cjs",
+      "status": "added",
+      "additions": 59,
+      "deletions": 0
+    },
+    {
+      "id": "f_7206c46a33b7e0194b2f3687b608b7dd",
+      "path": "desktop/electron/static-server.cjs",
+      "status": "added",
+      "additions": 90,
+      "deletions": 0
+    },
+    {
+      "id": "f_35c3481a3e62d88330f165894f95efef",
+      "path": "desktop/index.html",
+      "status": "added",
+      "additions": 2,
+      "deletions": 0
+    },
+    {
+      "id": "f_8825d32af1f4bcc6b7b8a6d5b781777c",
+      "path": "desktop/package-lock.json",
+      "status": "added",
+      "additions": 2245,
+      "deletions": 0
+    },
+    {
+      "id": "f_03dacab0bbd2188f2b702c8f0e694f0d",
+      "path": "desktop/package.json",
+      "status": "added",
+      "additions": 40,
+      "deletions": 0
+    },
+    {
+      "id": "f_221bbacaf3fed3264f927ed2c26e705a",
+      "path": "desktop/scripts/electron-smoke.mjs",
+      "status": "added",
+      "additions": 42,
+      "deletions": 0
+    },
+    {
+      "id": "f_6ce579d6319540b84752493d10dd427e",
+      "path": "desktop/scripts/inspect-assets.mjs",
+      "status": "added",
+      "additions": 410,
+      "deletions": 0
+    },
+    {
+      "id": "f_66c5fab27ce5ba29215418d97ea707ab",
+      "path": "desktop/scripts/install-office.py",
+      "status": "added",
+      "additions": 777,
+      "deletions": 0
+    },
+    {
+      "id": "f_a89713e56047737b93d9b91153614a16",
+      "path": "desktop/src/App.tsx",
+      "status": "added",
+      "additions": 120,
+      "deletions": 0
+    },
+    {
+      "id": "f_8f3556bc16b43c8349f8cbffab24d639",
+      "path": "desktop/src/DiffEditor.tsx",
+      "status": "added",
+      "additions": 79,
+      "deletions": 0
+    },
+    {
+      "id": "f_b2fd9ab47cbba3142687d4cddc8cff88",
+      "path": "desktop/src/JobsBoard.tsx",
+      "status": "added",
+      "additions": 131,
+      "deletions": 0
+    },
+    {
+      "id": "f_f4f4cb3230d5f398cd1c8f7d6327fdce",
+      "path": "desktop/src/OfficeScene.tsx",
+      "status": "added",
+      "additions": 313,
+      "deletions": 0
+    },
+    {
+      "id": "f_167a1a86aa7cdfaf392f3b01ab8fa91a",
+      "path": "desktop/src/bridge.ts",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "id": "f_d42bb9799993035e1369981a30434e36",
+      "path": "desktop/src/main.tsx",
+      "status": "added",
+      "additions": 4,
+      "deletions": 0
+    },
+    {
+      "id": "f_da25be99e08c6890e2e4259171285a69",
+      "path": "desktop/src/office-bindings.ts",
+      "status": "added",
+      "additions": 179,
+      "deletions": 0
+    },
+    {
+      "id": "f_8565ad34352a1eb49303ee5b49626c50",
+      "path": "desktop/src/runtime-identity.ts",
+      "status": "added",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "id": "f_4c1bbb84ff8bf7b360403cbfc9d96885",
+      "path": "desktop/src/style.css",
+      "status": "added",
+      "additions": 5,
+      "deletions": 0
+    },
+    {
+      "id": "f_67907229c20e36ee54613fb479cdfa51",
+      "path": "desktop/src/types.ts",
+      "status": "added",
+      "additions": 30,
+      "deletions": 0
+    },
+    {
+      "id": "f_143c21d7e4194f6a5a407f034728e85c",
+      "path": "desktop/tests/assets.test.mjs",
+      "status": "added",
+      "additions": 123,
+      "deletions": 0
+    },
+    {
+      "id": "f_67735f7a4b653329c04161262e8634b7",
+      "path": "desktop/tests/bindings.test.mjs",
+      "status": "added",
+      "additions": 24,
+      "deletions": 0
+    },
+    {
+      "id": "f_290ef4609f1ddb0904a6c87d3372167c",
+      "path": "desktop/tests/browser/jobs-live.spec.ts",
+      "status": "added",
+      "additions": 79,
+      "deletions": 0
+    },
+    {
+      "id": "f_9b894ab82cf38c443055714b00b4ec7f",
+      "path": "desktop/tests/browser/viewer.spec.ts",
+      "status": "added",
+      "additions": 85,
+      "deletions": 0
+    },
+    {
+      "id": "f_18b1469fcebf1a4ddba4c7a5418f2c03",
+      "path": "desktop/tests/git.test.mjs",
+      "status": "added",
+      "additions": 227,
+      "deletions": 0
+    },
+    {
+      "id": "f_699469a444df1bd46ea25084d08bafcf",
+      "path": "desktop/tests/install-office.test.mjs",
+      "status": "added",
+      "additions": 244,
+      "deletions": 0
+    },
+    {
+      "id": "f_59cfdb07c22975c591f4f0be5c41da69",
+      "path": "desktop/tests/runtime-client.test.mjs",
+      "status": "added",
+      "additions": 59,
+      "deletions": 0
+    },
+    {
+      "id": "f_10d95df4817c28f3f4e0ae0456250544",
+      "path": "desktop/tests/runtime-identity.test.mjs",
+      "status": "added",
+      "additions": 24,
+      "deletions": 0
+    },
+    {
+      "id": "f_dadc2b8cf0d071337fda167b8ad3d7dc",
+      "path": "desktop/tests/security.test.mjs",
+      "status": "added",
+      "additions": 141,
+      "deletions": 0
+    },
+    {
+      "id": "f_69e26bb305babfa3d122d1d642f82172",
+      "path": "desktop/tsconfig.json",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "id": "f_1fac612da3c22be93ab8a3be13a01ae3",
+      "path": "dev/luna.py",
+      "status": "added",
+      "additions": 149,
+      "deletions": 0
+    },
+    {
+      "id": "f_66768ea4572fc69bf51ab4a83f121ff4",
+      "path": "dev/plan.json",
+      "status": "modified",
+      "additions": 25,
+      "deletions": 21
+    },
+    {
+      "id": "f_6c9dd85f65a7352fc85255a6b39691df",
+      "path": "dev/test_luna.py",
+      "status": "added",
+      "additions": 104,
+      "deletions": 0
+    },
+    {
+      "id": "f_4302d983c7845313b61c602a1d21c49d",
+      "path": "dev/test_specs.py",
+      "status": "added",
+      "additions": 60,
+      "deletions": 0
+    },
+    {
+      "id": "f_419cf1d6c121d767a9afec4ef4fdcb09",
+      "path": "docs/ARCHITECTURE.md",
+      "status": "added",
+      "additions": 102,
+      "deletions": 0
+    },
+    {
+      "id": "f_6cf289033e6c78ccedeb08b40b86b500",
+      "path": "docs/ART_DIRECTION.md",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 56
+    },
+    {
+      "id": "f_26481674dd8e895e651050bd0dacd61a",
+      "path": "docs/ASSET_BINDING.md",
+      "status": "added",
+      "additions": 29,
+      "deletions": 0
+    },
+    {
+      "id": "f_762d1b0bd5c3b550b27474d72bfa49a6",
+      "path": "docs/COMPUTER_UI.md",
+      "status": "added",
+      "additions": 69,
+      "deletions": 0
+    },
+    {
+      "id": "f_65cc399614dd9d43340fe949a7bbf857",
+      "path": "docs/EXECUTION.md",
+      "status": "added",
+      "additions": 77,
+      "deletions": 0
+    },
+    {
+      "id": "f_40b771fd5863316248ca500e21392e3c",
+      "path": "docs/FEATURE_MATRIX.md",
+      "status": "added",
+      "additions": 57,
+      "deletions": 0
+    },
+    {
+      "id": "f_4ed668f2f8857edb9cc1be6e0f4837a8",
+      "path": "docs/MVP_ACCEPTANCE.md",
+      "status": "added",
+      "additions": 34,
+      "deletions": 0
+    },
+    {
+      "id": "f_0d929e92d3cdd7d76c42123f85ee66f1",
+      "path": "docs/PARALLEL_PLAN.md",
+      "status": "modified",
+      "additions": 25,
+      "deletions": 35
+    },
+    {
+      "id": "f_26f83dac4b79f0c276d59c2623ab4934",
+      "path": "docs/RESEARCH.md",
+      "status": "modified",
+      "additions": 33,
+      "deletions": 20
+    },
+    {
+      "id": "f_e5e00979a969c0379b22be80c6606a9d",
+      "path": "docs/RUN_EVALS.md",
+      "status": "added",
+      "additions": 96,
+      "deletions": 0
+    },
+    {
+      "id": "f_4ce4894fd6d5fa0f3e0cd6f2667593e1",
+      "path": "docs/SETUP_VERIFICATION.md",
+      "status": "modified",
+      "additions": 12,
+      "deletions": 8
+    },
+    {
+      "id": "f_d1d1dae1cad8904e135b05f50bb8423f",
+      "path": "docs/START_HERE.md",
+      "status": "modified",
+      "additions": 26,
+      "deletions": 38
+    },
+    {
+      "id": "f_141905aaede2eba9669c3a2e8642a0b1",
+      "path": "docs/VALIDATION.md",
+      "status": "modified",
+      "additions": 11,
+      "deletions": 21
+    },
+    {
+      "id": "f_ea85346d9cd8b7564733dd7770b785f6",
+      "path": "docs/archive/SPEC-0.2.md",
+      "status": "added",
+      "additions": 273,
+      "deletions": 0
+    },
+    {
+      "id": "f_7f93c9186f00bcb039cdc53e50d022b7",
+      "path": "docs/goals/A-runtime.md",
+      "status": "modified",
+      "additions": 22,
+      "deletions": 30
+    },
+    {
+      "id": "f_e9328a285ca0a8f2533e53d38d914911",
+      "path": "docs/goals/B-tools.md",
+      "status": "modified",
+      "additions": 23,
+      "deletions": 29
+    },
+    {
+      "id": "f_5d3dfce36192ec195c730fc2d2dcb20b",
+      "path": "docs/goals/C-desktop.md",
+      "status": "added",
+      "additions": 39,
+      "deletions": 0
+    },
+    {
+      "id": "f_db5b67b0829925a6203c7d6fc4a529aa",
+      "path": "docs/goals/C-unity.md",
+      "status": "modified",
+      "additions": 22,
+      "deletions": 30
+    },
+    {
+      "id": "f_1ee3dee146372350bf01ff250b65a76e",
+      "path": "docs/goals/D-workshops.md",
+      "status": "modified",
+      "additions": 21,
+      "deletions": 31
+    },
+    {
+      "id": "f_a346fb80d8e8572489bc61ca51f99335",
+      "path": "docs/goals/I1-integration.md",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 7
+    },
+    {
+      "id": "f_366a2be4e64d3f91c5a54d805356e68e",
+      "path": "evidence/A/A1-final-review.json",
+      "status": "added",
+      "additions": 35,
+      "deletions": 0
+    },
+    {
+      "id": "f_c57881ac192ab06b501c03b8e6dfae32",
+      "path": "evidence/A/A1-review-2.json",
+      "status": "added",
+      "additions": 26,
+      "deletions": 0
+    },
+    {
+      "id": "f_e9dc27f83a7a1e5746dc04072010410d",
+      "path": "evidence/A/A1-review.json",
+      "status": "added",
+      "additions": 42,
+      "deletions": 0
+    },
+    {
+      "id": "f_8597b6814c980b6a2e0bbbb52ced9e47",
+      "path": "evidence/A/A1.json",
+      "status": "added",
+      "additions": 48,
+      "deletions": 0
+    },
+    {
+      "id": "f_d16e20c193327a3e9ddea5d3d57a7de1",
+      "path": "evidence/A/A2-repair-review.json",
+      "status": "added",
+      "additions": 45,
+      "deletions": 0
+    },
+    {
+      "id": "f_053a68951f0fbe8e4fd0cba04bd01f7d",
+      "path": "evidence/A/A2-review.json",
+      "status": "added",
+      "additions": 66,
+      "deletions": 0
+    },
+    {
+      "id": "f_55a3aac2f8c65dc01344d3b720e1dc73",
+      "path": "evidence/A/A2.json",
+      "status": "added",
+      "additions": 73,
+      "deletions": 0
+    },
+    {
+      "id": "f_3532409d2d9327dc66a68641ced88b64",
+      "path": "evidence/A/A3-repair-review.json",
+      "status": "added",
+      "additions": 71,
+      "deletions": 0
+    },
+    {
+      "id": "f_684240da88e139cab85e4546770641ee",
+      "path": "evidence/A/A3-review.json",
+      "status": "added",
+      "additions": 65,
+      "deletions": 0
+    },
+    {
+      "id": "f_9f82e152475d4d5c98714c160c39d982",
+      "path": "evidence/A/A3.json",
+      "status": "added",
+      "additions": 84,
+      "deletions": 0
+    },
+    {
+      "id": "f_de5b530cd25c75b1c82eabd0079fd08f",
+      "path": "evidence/B/B1-repair-review.json",
+      "status": "added",
+      "additions": 53,
+      "deletions": 0
+    },
+    {
+      "id": "f_34277dcf62d4b367e713945de65529e2",
+      "path": "evidence/B/B1-review.json",
+      "status": "added",
+      "additions": 49,
+      "deletions": 0
+    },
+    {
+      "id": "f_bf55d829ad3abd62955e603c415f2f29",
+      "path": "evidence/B/B1.json",
+      "status": "added",
+      "additions": 66,
+      "deletions": 0
+    },
+    {
+      "id": "f_5bbbb0073dfa9e3ac14a79c06b3b1114",
+      "path": "evidence/B/B2-readiness.json",
+      "status": "added",
+      "additions": 68,
+      "deletions": 0
+    },
+    {
+      "id": "f_831cade1ce8d624774e2527e8dec60a0",
+      "path": "evidence/B/B2-repair-review.json",
+      "status": "added",
+      "additions": 144,
+      "deletions": 0
+    },
+    {
+      "id": "f_20f4c132536064c3a8dc07a0099e2c2f",
+      "path": "evidence/B/B2-review.json",
+      "status": "added",
+      "additions": 105,
+      "deletions": 0
+    },
+    {
+      "id": "f_eefd9d8da0905118b3f6ac449b6aa384",
+      "path": "evidence/B/source-filter-repair.json",
+      "status": "added",
+      "additions": 26,
+      "deletions": 0
+    },
+    {
+      "id": "f_97d403e74b3559889b7a348c941b6fa5",
+      "path": "evidence/B/source-filter-review.json",
+      "status": "added",
+      "additions": 47,
+      "deletions": 0
+    },
+    {
+      "id": "f_8ba646c94f29032a10dc68b850a40398",
+      "path": "evidence/C/final-desktop-review.json",
+      "status": "added",
+      "additions": 149,
+      "deletions": 0
+    },
+    {
+      "id": "f_ea9e4a801abf27a6c6154baf4f035fa4",
+      "path": "evidence/C/native-smoke-repair-review.json",
+      "status": "added",
+      "additions": 72,
+      "deletions": 0
+    },
+    {
+      "id": "f_ff33d357d72101f1f3c7a870eda565cd",
+      "path": "evidence/C/runtime-bridge-repair-review.json",
+      "status": "added",
+      "additions": 107,
+      "deletions": 0
+    },
+    {
+      "id": "f_7519bdbded8dd58fafdc0e43a3afcd5f",
+      "path": "evidence/C/runtime-bridge-review.json",
+      "status": "added",
+      "additions": 122,
+      "deletions": 0
+    },
+    {
+      "id": "f_54937ecb0f73ee5dbd3829b829ecd98f",
+      "path": "evidence/D/D1-previous-20261014t015727796417z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_2084531ccc741dd1e3c81e77f49f17fb",
+      "path": "evidence/D/D1-previous-20261014t021328344314z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_3ef16e19ad642afd974ad5cf83af2f2c",
+      "path": "evidence/D/D1-previous-20261014t034618559898z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_d7b2af2129cd4b52b4fc8ae2ae0f8aca",
+      "path": "evidence/D/D1-review.json",
+      "status": "added",
+      "additions": 135,
+      "deletions": 0
+    },
+    {
+      "id": "f_031ebd75fe70a0c1d7db864b98eaabf5",
+      "path": "evidence/D/D1.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_43a173789fea3a097074b280627bbb0b",
+      "path": "evidence/D/harness-lock-adjustment.json",
+      "status": "added",
+      "additions": 47,
+      "deletions": 0
+    },
+    {
+      "id": "f_7bb82d42860705ce61052dd727118a2f",
+      "path": "evidence/D/inputs/bad-manifest-20261014t015727796417z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_a1e887df1b52814eefa6f4d609afd26e",
+      "path": "evidence/D/inputs/bad-manifest-20261014t021328344314z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_c7dc453750073e5f6e534d0bfe12eeb4",
+      "path": "evidence/D/inputs/bad-manifest-20261014t034618559898z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_ef648ab63dd64c4b326e1e74f035d174",
+      "path": "evidence/D/inputs/bad-manifest.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_f21e26ba249f453f11f5f32fd2fa2f6f",
+      "path": "evidence/D/inputs/known-good-manifest-20261014t015727796417z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_09b6f892ecdc51ff539f0675433f7964",
+      "path": "evidence/D/inputs/known-good-manifest-20261014t021328344314z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_a5bc21237245a1f3eafc0fdab9177d6a",
+      "path": "evidence/D/inputs/known-good-manifest-20261014t034618559898z.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_90720c8cddb3aa7ad425ed3b49b74208",
+      "path": "evidence/D/inputs/known-good-manifest.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_885a49da1b904b7e1b5fc205385c7b25",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t015727796417z-32a04073/after.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_4998257e1f05a969c2e129427050c07f",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t015727796417z-32a04073/before.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_02f826205df54a0749c0baf1b6e3c0e5",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t015727796417z-32a04073/check-report.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_0b9c73d08a8b4b9777ac433f43bd1c7b",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t021328344314z-32a04073/after.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_dc09af18f108bc8634e8bdda36fa61d8",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t021328344314z-32a04073/before.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_33b1d967487935968a132af8d2250d3f",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t021328344314z-32a04073/check-report.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_0a5f155c2264873ebb5cbea0fdb8d3a3",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t034618559898z-32a04073/after.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_ae19c4396112fc62b15e5eb220bef377",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t034618559898z-32a04073/before.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_fefa32e65c75f8219cad4e207bbf0f06",
+      "path": "evidence/D/outputs/check-d1-bad-20261014t034618559898z-32a04073/check-report.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_a90f3b93dfe6287acc8f21e1c7cb30d1",
+      "path": "evidence/D/outputs/check-d1-bad-32a04073/after.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_6286d9aa880d90509cfee146706390c0",
+      "path": "evidence/D/outputs/check-d1-bad-32a04073/before.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_a661d4a86675a666b1557e9d3c7ee555",
+      "path": "evidence/D/outputs/check-d1-bad-32a04073/check-report.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_1e2cf1e7750cc51688d63ca0e47f6ddc",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t015727796417z-430a53d1/after.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_fa2d5c99dda786e1da5c5f64819cdd28",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t015727796417z-430a53d1/before.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_bb681c5cf1bc39efc65aa60ebe8f2d6d",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t015727796417z-430a53d1/check-report.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_c89f91ea5d118599b0b177ea801ac9bf",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t021328344314z-430a53d1/after.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_aba6e7bb1e55cb59fb9c31a6bc9f86db",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t021328344314z-430a53d1/before.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_d684f67d52d6b4ee48c01861e67c6106",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t021328344314z-430a53d1/check-report.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_6d4adeeda88ac7a9f837017ccf45ee9d",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t034618559898z-430a53d1/after.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_b6f2a26ba3e7b1bf2789ff3722f93595",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t034618559898z-430a53d1/before.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_adb79a8cfb16031d310a3bd021f9b22c",
+      "path": "evidence/D/outputs/check-d1-known-good-20261014t034618559898z-430a53d1/check-report.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_a31bec20711b4674ecd78ac09bc18692",
+      "path": "evidence/D/outputs/check-d1-known-good-430a53d1/after.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_0cc98338afb772f94da59d0b670bc66c",
+      "path": "evidence/D/outputs/check-d1-known-good-430a53d1/before.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_9108d09360900510016e69b7b45ae784",
+      "path": "evidence/D/outputs/check-d1-known-good-430a53d1/check-report.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_b277612d7c5a3e919efb1f1bdb138204",
+      "path": "evidence/desktop/README.md",
+      "status": "added",
+      "additions": 33,
+      "deletions": 0
+    },
+    {
+      "id": "f_1a3232353ae86732b1569c525ac8499b",
+      "path": "evidence/desktop/accessibility.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_348b7d9b7840154f4d287272db53cad6",
+      "path": "evidence/desktop/asset-transfer.json",
+      "status": "added",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "id": "f_c77abc6e75081bf45822fb2068001c5e",
+      "path": "evidence/desktop/electron-smoke.json",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "id": "f_cd61775f7dc0f6b8f8b3dc06feeb6f3a",
+      "path": "evidence/desktop/expanded-diff.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_8ea71ab3229156a38d71c854d9b04042",
+      "path": "evidence/desktop/git-diff.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_60be5c0ac829348a42f00edcbbd9c6bd",
+      "path": "evidence/desktop/job-390.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_93cf8b38b6810029333d0a311ca8a18c",
+      "path": "evidence/desktop/job-960.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_5b9630a3f283fc7d367d61d0aadef881",
+      "path": "evidence/desktop/job-accessibility.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_8212e81788a09cb2bf7baac7f24096e0",
+      "path": "evidence/desktop/job-browser.json",
+      "status": "added",
+      "additions": 450,
+      "deletions": 0
+    },
+    {
+      "id": "f_be892fea07e5eaa10a67ec1f840d112c",
+      "path": "evidence/desktop/job-check-report.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_0e236c8c4b2997ae2f06041a4d45095a",
+      "path": "evidence/desktop/job-diff.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_ccdde91e937f3644375a81370d4c399f",
+      "path": "evidence/desktop/job-queued.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_83496030bba06ab304f88736f7166347",
+      "path": "evidence/desktop/job-readiness.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_2b38023b7dd003a80b2c10e6d9eff521",
+      "path": "evidence/desktop/job-responsive-accessibility.json",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "id": "f_08adf82a8abfb338c6093186789285ab",
+      "path": "evidence/desktop/job-result.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_0febfec4a86b55ae829f224ac2558ca8",
+      "path": "evidence/desktop/sanitizer-bundle.json",
+      "status": "added",
+      "additions": 8,
+      "deletions": 0
+    },
+    {
+      "id": "f_623eaa1302272e7673f5f0640c064a67",
+      "path": "evidence/desktop/security-audit-all.json",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "id": "f_8b1cae4caf2a21eaa95875850f0949e2",
+      "path": "evidence/desktop/security-audit.json",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "id": "f_522c02904c4c173b097ea8308563ba42",
+      "path": "evidence/desktop/setup-desktop.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_d9a8f466a65524ff8140612d35e06782",
+      "path": "evidence/desktop/verification.json",
+      "status": "added",
+      "additions": 279,
+      "deletions": 0
+    },
+    {
+      "id": "f_88a70dfaf5279503f93360044df52450",
+      "path": "evidence/desktop/viewer-390.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_fd249a32aa5ed71ed4ec1c5aeaaaa309",
+      "path": "evidence/desktop/viewer-960.png",
+      "status": "added",
+      "binary": true
+    },
+    {
+      "id": "f_91e1ef8215de256b94d49910bb0686c2",
+      "path": "journals/A.md",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 1
+    },
+    {
+      "id": "f_3728ce9e8707db5f4f55b17d10413980",
+      "path": "journals/B.md",
+      "status": "modified",
+      "additions": 11,
+      "deletions": 1
+    },
+    {
+      "id": "f_76e73bfacfb5483ebc85850bf8c80ca7",
+      "path": "journals/C.md",
+      "status": "modified",
+      "additions": 25,
+      "deletions": 1
+    },
+    {
+      "id": "f_da6891034bb97fcfe12f553e7c2f5110",
+      "path": "journals/D.md",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 1
+    },
+    {
+      "id": "f_93a0de24711fc7ad4eed463cc4d28034",
+      "path": "services/runtime/README.md",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "id": "f_bc39fdd229cf2a62fd54cbdb4c289fef",
+      "path": "services/runtime/__init__.py",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_73ae31929919ee8d984a44f96329a089",
+      "path": "services/runtime/adapters.py",
+      "status": "added",
+      "additions": 395,
+      "deletions": 0
+    },
+    {
+      "id": "f_df26de10939f8c8667f061deb3cc3bd6",
+      "path": "services/runtime/api.py",
+      "status": "added",
+      "additions": 1111,
+      "deletions": 0
+    },
+    {
+      "id": "f_d0e71cc632ac146d151ab7abec6e8540",
+      "path": "services/runtime/artifacts.py",
+      "status": "added",
+      "additions": 481,
+      "deletions": 0
+    },
+    {
+      "id": "f_4ba6b4d131ac6237463ffc3bc0aa0ba4",
+      "path": "services/runtime/main.py",
+      "status": "added",
+      "additions": 197,
+      "deletions": 0
+    },
+    {
+      "id": "f_37fab07cb0db1a8dcc24ac18f5dc0253",
+      "path": "services/runtime/migrations/001_initial.sql",
+      "status": "added",
+      "additions": 227,
+      "deletions": 0
+    },
+    {
+      "id": "f_db776a8b5e3f3076e33f6f91be940504",
+      "path": "services/runtime/migrations/002_attempt_worker.sql",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_36c31cec688461a9b5587f908dc002b1",
+      "path": "services/runtime/migrations/003_codex_lifecycle.sql",
+      "status": "added",
+      "additions": 4,
+      "deletions": 0
+    },
+    {
+      "id": "f_557302b954fac4410694569f5cd2001a",
+      "path": "services/runtime/models.py",
+      "status": "added",
+      "additions": 357,
+      "deletions": 0
+    },
+    {
+      "id": "f_c7819a5db40003268cfab8d96db9ef1b",
+      "path": "services/runtime/policy.py",
+      "status": "added",
+      "additions": 98,
+      "deletions": 0
+    },
+    {
+      "id": "f_020acfc73e86fa21522b86e29003c64a",
+      "path": "services/runtime/requirements.lock",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "id": "f_2561bd99e7f6dcff91511f18cf205528",
+      "path": "services/runtime/scheduler.py",
+      "status": "added",
+      "additions": 843,
+      "deletions": 0
+    },
+    {
+      "id": "f_844742fad7a8c1ab0b4210fc327f52e2",
+      "path": "services/runtime/store.py",
+      "status": "added",
+      "additions": 1775,
+      "deletions": 0
+    },
+    {
+      "id": "f_d78cb140fc6489c4b73b7f96715466b1",
+      "path": "services/runtime/tests/test_adapters.py",
+      "status": "added",
+      "additions": 186,
+      "deletions": 0
+    },
+    {
+      "id": "f_6ea12574380e7a80b08aa98dc0779757",
+      "path": "services/runtime/tests/test_api.py",
+      "status": "added",
+      "additions": 479,
+      "deletions": 0
+    },
+    {
+      "id": "f_061fd5ba3552ee25015666e03631bb8f",
+      "path": "services/runtime/tests/test_codex_lifecycle.py",
+      "status": "added",
+      "additions": 635,
+      "deletions": 0
+    },
+    {
+      "id": "f_301f7ce2cf3103c6d502671638a9f8a1",
+      "path": "services/runtime/tests/test_concurrency.py",
+      "status": "added",
+      "additions": 121,
+      "deletions": 0
+    },
+    {
+      "id": "f_e3e7bf4a9317c751cb9e611e1c523538",
+      "path": "services/runtime/tests/test_main.py",
+      "status": "added",
+      "additions": 44,
+      "deletions": 0
+    },
+    {
+      "id": "f_1353aac61db70d91a55bb96f0190d056",
+      "path": "services/runtime/tests/test_policy.py",
+      "status": "added",
+      "additions": 198,
+      "deletions": 0
+    },
+    {
+      "id": "f_3ad79454e4cfc30f8a13792e34452dfd",
+      "path": "services/runtime/tests/test_scheduler_pipeline.py",
+      "status": "added",
+      "additions": 305,
+      "deletions": 0
+    },
+    {
+      "id": "f_f360d45e5cbc44a83cd7b188346675d1",
+      "path": "services/runtime/tests/test_storage.py",
+      "status": "added",
+      "additions": 151,
+      "deletions": 0
+    },
+    {
+      "id": "f_5f2e8fa1590be2817ab664b7152c8c75",
+      "path": "services/runtime/tests/test_support.py",
+      "status": "added",
+      "additions": 91,
+      "deletions": 0
+    },
+    {
+      "id": "f_a6ddaf756046a90acd4779bee09916f9",
+      "path": "services/tools/__init__.py",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_312e6e33ae5e4a2daf9dad5b6db3ca6e",
+      "path": "services/tools/artifact_capture.py",
+      "status": "added",
+      "additions": 1224,
+      "deletions": 0
+    },
+    {
+      "id": "f_573c96b07d63f4bf427a7d632145fe92",
+      "path": "services/tools/codex_bridge.py",
+      "status": "added",
+      "additions": 1055,
+      "deletions": 0
+    },
+    {
+      "id": "f_c3d1e965df1913332f1b654bb981b100",
+      "path": "services/tools/git_ops.py",
+      "status": "added",
+      "additions": 984,
+      "deletions": 0
+    },
+    {
+      "id": "f_b91db8c8799c6d7945c595e7cfbc2e3a",
+      "path": "services/tools/main.py",
+      "status": "added",
+      "additions": 134,
+      "deletions": 0
+    },
+    {
+      "id": "f_74832c5032d997471e7ab02f535d9395",
+      "path": "services/tools/protocol.py",
+      "status": "added",
+      "additions": 320,
+      "deletions": 0
+    },
+    {
+      "id": "f_48048b666eda09ef2bbc524059152949",
+      "path": "services/tools/tests/test_codex_bridge.py",
+      "status": "added",
+      "additions": 509,
+      "deletions": 0
+    },
+    {
+      "id": "f_283ed0f26a2bed4e9ed5ed8c3d218141",
+      "path": "services/tools/tests/test_git_artifacts.py",
+      "status": "added",
+      "additions": 600,
+      "deletions": 0
+    },
+    {
+      "id": "f_fca5aba313edb343a078bd79aa6fba8e",
+      "path": "services/tools/tests/test_protocol.py",
+      "status": "added",
+      "additions": 129,
+      "deletions": 0
+    },
+    {
+      "id": "f_785c630f9c03baa63858bd446c486dea",
+      "path": "services/workshops/__init__.py",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_cf0ec069acf1be01b7e415b99926cb93",
+      "path": "services/workshops/browser_checks.py",
+      "status": "added",
+      "additions": 393,
+      "deletions": 0
+    },
+    {
+      "id": "f_26cf621d869f91a1afcbf3293d5bfe21",
+      "path": "services/workshops/checks.py",
+      "status": "added",
+      "additions": 254,
+      "deletions": 0
+    },
+    {
+      "id": "f_2035d4cc50d724c01ceb0c9fe50b66dd",
+      "path": "services/workshops/identity.py",
+      "status": "added",
+      "additions": 349,
+      "deletions": 0
+    },
+    {
+      "id": "f_cacf3c4ecc1e4ba70e012353ecfe31c7",
+      "path": "services/workshops/main.py",
+      "status": "added",
+      "additions": 100,
+      "deletions": 0
+    },
+    {
+      "id": "f_411673f0c56091467376fac1d05094be",
+      "path": "services/workshops/reports.py",
+      "status": "added",
+      "additions": 104,
+      "deletions": 0
+    },
+    {
+      "id": "f_e734b95de876239358c4719e6a714a85",
+      "path": "services/workshops/requirements.lock",
+      "status": "added",
+      "additions": 4,
+      "deletions": 0
+    },
+    {
+      "id": "f_8006a2a0272dbf7a677c10364ee20c7c",
+      "path": "services/workshops/tests/__init__.py",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_a73734c6d0677d6a30278362f4590bb3",
+      "path": "services/workshops/tests/helpers.py",
+      "status": "added",
+      "additions": 104,
+      "deletions": 0
+    },
+    {
+      "id": "f_b4c2f17cbab2c749232069b34e167026",
+      "path": "services/workshops/tests/test_identity.py",
+      "status": "added",
+      "additions": 140,
+      "deletions": 0
+    },
+    {
+      "id": "f_ca8a896c549c76bafaf5ce1710a9dd8f",
+      "path": "services/workshops/tests/test_protocol_browser.py",
+      "status": "added",
+      "additions": 200,
+      "deletions": 0
+    },
+    {
+      "id": "f_625a631278b468ccca2d80c78f591975",
+      "path": "services/workshops/trust.lock.json",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "id": "f_c2a7f66928a7816f75d3712ef31692b8",
+      "path": "services/workshops/trusted_checks.json",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "id": "f_8460e77be7d728bbec78b08c9fce0c08",
+      "path": "tests/e2e/run_d1.py",
+      "status": "added",
+      "additions": 252,
+      "deletions": 0
+    }
+  ],
+  "agent": {
+    "state": "unavailable",
+    "message": "Agent services are not connected in this desktop build."
+  }
+}

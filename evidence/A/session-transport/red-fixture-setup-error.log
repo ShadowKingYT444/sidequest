@@ -1,0 +1,107 @@
+test_attachment_binding_and_provider_send_bounds_are_checked_before_queue (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_binding_and_provider_send_bounds_are_checked_before_queue) ... ERROR
+test_attachment_staging_is_durable_idempotent_and_never_dispatches (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_staging_is_durable_idempotent_and_never_dispatches) ... ERROR
+test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal (services.runtime.tests.test_session_transport.SessionTransportTests.test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal) ... ERROR
+test_message_keeps_production_readiness_scope_and_budget_checks (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_keeps_production_readiness_scope_and_budget_checks) ... ERROR
+test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice) ... ERROR
+test_staging_rejects_auth_paths_binary_spoofing_and_bounds (services.runtime.tests.test_session_transport.SessionTransportTests.test_staging_rejects_auth_paths_binary_spoofing_and_bounds) ... ERROR
+
+======================================================================
+ERROR: test_attachment_binding_and_provider_send_bounds_are_checked_before_queue (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_binding_and_provider_send_bounds_are_checked_before_queue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 40, in asyncSetUp
+    self.store.finalize_job(self.job_id, 'accepted', 'Protocol fixture completed.')
+  File "/workspace/sidequest/services/runtime/store.py", line 1473, in finalize_job
+    raise RuntimeFault(ErrorCode.INVALID_INPUT, "final job state is invalid")
+services.runtime.policy.RuntimeFault: final job state is invalid
+
+======================================================================
+ERROR: test_attachment_staging_is_durable_idempotent_and_never_dispatches (services.runtime.tests.test_session_transport.SessionTransportTests.test_attachment_staging_is_durable_idempotent_and_never_dispatches)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 40, in asyncSetUp
+    self.store.finalize_job(self.job_id, 'accepted', 'Protocol fixture completed.')
+  File "/workspace/sidequest/services/runtime/store.py", line 1473, in finalize_job
+    raise RuntimeFault(ErrorCode.INVALID_INPUT, "final job state is invalid")
+services.runtime.policy.RuntimeFault: final job state is invalid
+
+======================================================================
+ERROR: test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal (services.runtime.tests.test_session_transport.SessionTransportTests.test_claim_links_followup_anchor_and_rebinds_station_without_changing_goal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 40, in asyncSetUp
+    self.store.finalize_job(self.job_id, 'accepted', 'Protocol fixture completed.')
+  File "/workspace/sidequest/services/runtime/store.py", line 1473, in finalize_job
+    raise RuntimeFault(ErrorCode.INVALID_INPUT, "final job state is invalid")
+services.runtime.policy.RuntimeFault: final job state is invalid
+
+======================================================================
+ERROR: test_message_keeps_production_readiness_scope_and_budget_checks (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_keeps_production_readiness_scope_and_budget_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 40, in asyncSetUp
+    self.store.finalize_job(self.job_id, 'accepted', 'Protocol fixture completed.')
+  File "/workspace/sidequest/services/runtime/store.py", line 1473, in finalize_job
+    raise RuntimeFault(ErrorCode.INVALID_INPUT, "final job state is invalid")
+services.runtime.policy.RuntimeFault: final job state is invalid
+
+======================================================================
+ERROR: test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice (services.runtime.tests.test_session_transport.SessionTransportTests.test_message_receipt_survives_lost_response_and_replay_never_enqueues_twice)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 40, in asyncSetUp
+    self.store.finalize_job(self.job_id, 'accepted', 'Protocol fixture completed.')
+  File "/workspace/sidequest/services/runtime/store.py", line 1473, in finalize_job
+    raise RuntimeFault(ErrorCode.INVALID_INPUT, "final job state is invalid")
+services.runtime.policy.RuntimeFault: final job state is invalid
+
+======================================================================
+ERROR: test_staging_rejects_auth_paths_binary_spoofing_and_bounds (services.runtime.tests.test_session_transport.SessionTransportTests.test_staging_rejects_auth_paths_binary_spoofing_and_bounds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/sidequest/services/runtime/tests/test_session_transport.py", line 40, in asyncSetUp
+    self.store.finalize_job(self.job_id, 'accepted', 'Protocol fixture completed.')
+  File "/workspace/sidequest/services/runtime/store.py", line 1473, in finalize_job
+    raise RuntimeFault(ErrorCode.INVALID_INPUT, "final job state is invalid")
+services.runtime.policy.RuntimeFault: final job state is invalid
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.126s
+
+FAILED (errors=6)

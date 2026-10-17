@@ -1,0 +1,21 @@
+{
+  "scope": "Explicit read-only fixture of completion/attention; not real successful worker dispatch",
+  "fixture": true,
+  "badges": [
+    {
+      "sceneId": "worker_parent_019",
+      "stationId": "parent_019",
+      "kind": "completed",
+      "jobId": "bcae94b4-ef76-4cf9-a6a2-133d4f1d11d1"
+    },
+    {
+      "sceneId": "worker_parent_020",
+      "stationId": "parent_020",
+      "kind": "attention",
+      "jobId": "060330c3-8240-439b-b625-6a0131c29df5"
+    }
+  ],
+  "duplicateChildBadge": false,
+  "mutations": [],
+  "axe": []
+}

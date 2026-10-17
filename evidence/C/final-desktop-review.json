@@ -1,0 +1,149 @@
+{
+  "candidate_sha": "23f26d614e69117456033ffd48d5e4d700ce05cc",
+  "reviewed_at": "2026-10-14",
+  "review_type": "fresh scoped desktop and runtime bridge review",
+  "review_tree": "/workspace/sidequest-reviews/C-final",
+  "scope_verdict": "FAIL",
+  "summary": "The requested npm tests, typecheck, production build, runtime authorization, artifact identity checks, lazy editor behavior, literal rendering, hidden polling/rendering, cached readiness boundary, and patched DOMPurify production alias passed within this review scope. One static C3 finding remains: the native Electron smoke script rejects the current narrow preload bridge because its expected global key list is stale. Office asset transfer and native OS sandbox gates remain blocked separately.",
+  "scope": [
+    "AGENTS.md",
+    "docs/goals/C-desktop.md",
+    "desktop/README.md",
+    "desktop/src/App.tsx",
+    "desktop/src/DiffEditor.tsx",
+    "desktop/src/JobsBoard.tsx",
+    "desktop/src/OfficeScene.tsx",
+    "desktop/src/runtime-identity.ts",
+    "desktop/src/bridge.ts",
+    "desktop/electron/runtime-client.cjs",
+    "desktop/electron/main.cjs",
+    "desktop/electron/preload.cjs",
+    "desktop/electron/security.cjs",
+    "desktop/vite.config.ts",
+    "desktop/scripts/electron-smoke.mjs",
+    "desktop/tests/runtime-client.test.mjs",
+    "desktop/tests/runtime-identity.test.mjs",
+    "desktop/tests/security.test.mjs",
+    "desktop/tests/browser/viewer.spec.ts",
+    "desktop/tests/browser/jobs-live.spec.ts",
+    "evidence/C/runtime-bridge-repair-review.json"
+  ],
+  "commands": [
+    {
+      "command": "cd desktop && npm test",
+      "result": "PASS",
+      "tests": 26,
+      "passed": 26,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "command": "cd desktop && npm run typecheck",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "command": "cd desktop && npm run build",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "Vite production build completed. It reported the expected large lazy editor and Three.js chunks; the diff editor bundle is 2,708,376 bytes (696.15 kB gzip)."
+    },
+    {
+      "command": "Inspect emitted production DiffEditor bundle and installed DOMPurify package",
+      "result": "PASS",
+      "bundle": "desktop/dist/assets/DiffEditor-CF-MBzEj.js",
+      "bundle_sha256": "219fb008918f7f139288b3b5ec513761d3c739de4d7c903745148ca3999fb2bc",
+      "installed_dompurify_version": "3.4.17",
+      "bundle_version_marker_counts": {
+        "3.4.17": 1,
+        "3.4.15": 0
+      }
+    }
+  ],
+  "focused_independent_probes": [
+    {
+      "name": "Narrow runtime authorization and safe dispatch",
+      "result": "PASS",
+      "evidence": "The current npm test suite's temporary loopback mock verifies missing local-inspection capability blocks submission, fixed inspection submission uses budget_usd 0 and read_repo/run_checks only, a codex_session job is rejected before job.run, and an eligible local_git_inspection job is the only run case that sends job.run. Invalid methods and arguments produce no runtime request. Source inspection confirms the runtime URL is literal loopback HTTP, the host token stays in the main-process client, and IPC validates the current main frame/origin before fixed-method dispatch."
+    },
+    {
+      "name": "Selected frozen artifact identity",
+      "result": "PASS",
+      "evidence": "The identity tests reject mutable artifacts, wrong job ownership, malformed digests, and mismatched file/text/diff page identity or bounds. JobsBoard validates artifact metadata before display; text and diff responses are checked against selected artifact, candidate, and file identities, with request generation guards for stale page responses."
+    },
+    {
+      "name": "Lazy single editor and selection/scroll continuity",
+      "result": "PASS_SOURCE_REVIEW",
+      "evidence": "App lazily imports DiffEditor and only mounts it for the selected file. Expanded mode moves the work panel out of the selected monitor; DiffEditor saves Monaco view state by diff ID, including scroll and cursor selection, and restores it after remount. Escape returns to overview and schedules focus to the selected station control. The browser spec asserts one editor and scroll/focus continuity, but this reviewer did not run browser tests."
+    },
+    {
+      "name": "Literal rendering of source, logs, and artifact text",
+      "result": "PASS_SOURCE_REVIEW",
+      "evidence": "Runtime previews, events, file text, and diff rows are emitted as React text children inside pre/li/span elements. Monaco uses string models and sets links:false. The browser spec includes hostile script and image markup and checks it does not execute; that browser probe was not run by this reviewer."
+    },
+    {
+      "name": "Hidden polling and rendering",
+      "result": "PASS_SOURCE_REVIEW",
+      "evidence": "JobsBoard polling is installed only while open and active, and its layer uses the hidden attribute when closed. App derives active state from document visibility and suspends the office when Jobs is open. OfficeScene uses frameloop=demand while active and never while inactive; no decorative animation loop is started."
+    },
+    {
+      "name": "Cached readiness and no coding dispatch",
+      "result": "PASS_SOURCE_REVIEW",
+      "evidence": "Readiness refresh calls only snapshot and capabilities reads; the UI states it reads cached host state and starts no model turn. This client exposes no coding-start method. Its only run operation re-reads the job and requires matching ID, local_git_inspection profile, queued state, zero budget, and the host capability before sending job.run."
+    },
+    {
+      "name": "Patched DOMPurify alias in the emitted editor bundle",
+      "result": "PASS",
+      "evidence": "Vite aliases Monaco's exact import specifier ./dompurify/dompurify.js to node_modules/dompurify/dist/purify.es.mjs. The installed package is 3.4.17, Monaco's vendor file identifies itself as 3.4.15, and the emitted lazy DiffEditor chunk contains the 3.4.17 marker once and no 3.4.15 marker."
+    }
+  ],
+  "assessments": {
+    "runtime_bridge_authorization": "PASS",
+    "artifact_identity": "PASS",
+    "lazy_editor_and_view_state": "PASS_SOURCE_REVIEW; browser suite not run by this reviewer",
+    "literal_rendering": "PASS_SOURCE_REVIEW; hostile-text browser test not run by this reviewer",
+    "hidden_polling_and_rendering": "PASS_SOURCE_REVIEW",
+    "cached_readiness_and_no_coding_dispatch": "PASS_SOURCE_REVIEW",
+    "dompurify_bundle_alias": "PASS",
+    "electron_smoke_script": "FAIL: stale bridge-key assertion",
+    "integrated_browser_acceptance": "Coordinator reports 7 browser tests passed against the frozen backend and genuine source; not independently run by this reviewer."
+  },
+  "findings": [
+    {
+      "id": "C-DESKTOP-001",
+      "severity": "medium",
+      "area": "native Electron smoke assertion",
+      "status": "confirmed by static cross-check; smoke script not run",
+      "evidence": [
+        "desktop/scripts/electron-smoke.mjs:31-32 reads Object.keys(window.sidequest) and requires bridgeKeys.join(',') === 'diff,snapshot'.",
+        "desktop/electron/preload.cjs:21-32 exposes window.sidequest with keys runtime, snapshot, and diff.",
+        "desktop/tests/security.test.mjs confirms the current narrow preload API keys are runtime, snapshot, and diff."
+      ],
+      "detail": "If native startup reaches the smoke assertion, the current preload returns the sorted key list diff,runtime,snapshot, so the exact comparison to diff,snapshot fails even though the runtime object is the intended fixed bridge.",
+      "impact": "A sandbox-capable host would report a false failed native boundary smoke check after startup, so C3 validation cannot pass at this candidate until the assertion matches the current preload API.",
+      "recommendation": "Include the coordinator's post-freeze correction: expect diff,runtime,snapshot and validate the exact fixed runtime method list. That correction is outside reviewed SHA 23f26d614e69117456033ffd48d5e4d700ce05cc."
+    }
+  ],
+  "blocked_gates": [
+    {
+      "gate": "actual office asset transfer and visual binding",
+      "status": "BLOCKED",
+      "evidence": "desktop/README.md says the owner's archive has not transferred to this VM because authenticated transfer URLs return HTTP 403. No real office render, material/texture match, animation, or monitor alignment was verified. Synthetic fixtures do not satisfy this gate."
+    },
+    {
+      "gate": "native Electron startup and OS sandbox validation",
+      "status": "BLOCKED",
+      "evidence": "desktop/README.md records that chrome-sandbox is not root-owned mode 4755 and unprivileged namespaces do not provide a usable alternative. Per task scope, this reviewer did not start Electron or attempt a sandbox bypass. The stale smoke assertion is an additional source-level issue after startup, not the cause of the documented host block."
+    }
+  ],
+  "review_limits": [
+    "No Vite server, browser process, Electron process, Codex process, or runtime job was started by this reviewer.",
+    "The supplied desktop/node_modules symlink was left unchanged; the production dist output was generated and is ignored by Git.",
+    "The detached candidate remained at the requested exact SHA."
+  ],
+  "tree_state": {
+    "head": "23f26d614e69117456033ffd48d5e4d700ce05cc",
+    "source_diff": "clean",
+    "remaining_status": "Only the supplied untracked desktop/node_modules symlink was present; it points to /workspace/sidequest/desktop/node_modules."
+  }
+}

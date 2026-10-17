@@ -1,0 +1,35 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --grep protocol fake: --retries=0
+
+[WebServer] (node:43428) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+(node:43460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F(node:43594) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+··
+
+  1) tests/browser/transport.spec.ts:37:1 › protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    Expected: [3, 8]
+    Received: undefined
+
+      45 |  await page.reload();await expect(input).toHaveValue('A thought worth retaining');await expect(page.getByAltText('Preview of pixel.png')).toBeVisible();
+      46 |  const restored=await page.evaluate(async()=>{const store=(window as any).fixtureStore;await store.ready;return {ids:store.state.draft.attachments.map((a:any)=>a.id),text:await store.state.draft.attachments[0].file.text(),url:store.state.draft.attachments[1].previewURL,selection:store.state.selection};});
+    > 47 |  expect(restored.ids).toEqual(before.ids);expect(restored.text).toBe('Retained bytes');expect(restored.url).not.toBe(before.url);expect(restored.selection).toEqual([3,8]);
+         |                                                                                                                                                             ^
+      48 |  await mkdir(captures,{recursive:true});await page.screenshot({path:captures+'/durable-composer.png'});
+      49 | });
+      50 |
+        at /tmp/sidequest-desktop-transport/desktop/tests/browser/transport.spec.ts:47:157
+
+    Error Context: test-results/transport-protocol-fake-re-6ecb5-cal-image-preview-on-reload/error-context.md
+
+  1 failed
+    tests/browser/transport.spec.ts:37:1 › protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload 
+  2 passed (6.9s)

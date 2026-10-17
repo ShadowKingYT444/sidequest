@@ -1,0 +1,30 @@
+[
+  {
+    "phase": "actors-ready",
+    "at": 12408
+  },
+  {
+    "phase": "trace-visible",
+    "at": 15460
+  },
+  {
+    "phase": "paste-drop-picker-errors-and-scroll",
+    "at": 18237
+  },
+  {
+    "phase": "reopen-retained",
+    "at": 24991
+  },
+  {
+    "phase": "tabs-expand-and-escape-retained",
+    "at": 36862
+  },
+  {
+    "phase": "delayed-read-and-outage-retained",
+    "at": 59510
+  },
+  {
+    "phase": "mobile-accessibility-pass",
+    "at": 61517
+  }
+]

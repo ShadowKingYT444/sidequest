@@ -1,0 +1,17 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/jobs-live.spec.ts -g recorded session ownership
+
+
+Running 1 test using 1 worker
+
+(node:191163) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events (1.6m)
+
+  1 passed (1.7m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

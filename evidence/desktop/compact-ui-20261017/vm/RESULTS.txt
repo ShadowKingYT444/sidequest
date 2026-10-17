@@ -1,0 +1,9 @@
+Independent VM compact UI verification, 2026-10-17.
+Source restored after VM reset: archive 6a6b8a3; runtime patch to 8e39bab; graphics patch SHA256 52bf1e15392724478f2380305fd1883d28967fb8405d67881d9e89778aa4e5bb; compact patch SHA256 6cc45367c975e346f3fc8ab5b34f003e91ad1bbde0f5e37a1d39989428826c71. Product patch associated with published commit 1375bf104037b05fbd6ffea84ddacc65175c15ba. Not a complete checkout of that commit.
+Setup/build PASS. Available desktop unit tests 88/88 PASS.
+Native desktop terminal browser regression: SIDEQUEST_REPO=/workspace/shared/sidequest-vm-test/demo-project SIDEQUEST_EVIDENCE_DIR=/workspace/shared/sidequest-vm-test/compact-evidence npx playwright test tests/browser/compact-ui.spec.ts tests/browser/office-failure.spec.ts --reporter=line. 5/5 PASS in 24.0 seconds. Shared config sandbox enabled; unsafe SwiftShader removed. Compact settings tests include 1440/960/390 pixel viewports, keyboard and axe checks. Graphics/bindings errors injected only for specific failure tests.
+Initial browser attempt omitted SIDEQUEST_REPO for source archive with no .git: 4/5 passed; fallback Git button correctly disabled. Repeated using real disposable Git fixture, no source changes.
+Actual native Electron local inspection PASS, immutable file viewing PASS, Details reveals original task ID/state/hash/check PASS; close/reopen retains selected sample.py PASS. Ctrl+R reload resets Jobs file selection to README.md while results persist: reported to implementation owner, regression status unknown.
+Office render still unavailable on VM, honest WebGL2 error. No provider turns, authentication or network/security changes.
+
+Native recorded local inspection trace and unsent compact qa draft survive Ctrl+R and reopening Computer 01: PASS.

@@ -1,0 +1,31 @@
+✔ preload exposes fixed read and validated local-runtime capabilities without shell or credentials (3.339085ms)
+✔ Electron security helpers trust only the app origin or configured loopback dev origin (0.35965ms)
+✔ IPC sender validation requires the current main frame and opaque file IDs (0.186463ms)
+✔ BrowserWindow and main process keep Node access disabled and deny navigation, windows, downloads, and capture (0.362077ms)
+✔ app protocol serves dist assets and root office URLs from copied public assets safely (31.620767ms)
+✔ provider discovery uses fixed executable metadata and never infers authentication (41.744952ms)
+✖ protocol fixture: preload retains sanitized definite send rejection code across Electron IPC (1.41492ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 164.071143
+
+✖ failing tests:
+
+test at desktop/tests/security.test.mjs:176:1
+✖ protocol fixture: preload retains sanitized definite send rejection code across Electron IPC (1.41492ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///tmp/sidequest-desktop-transport/desktop/tests/security.test.mjs:178:2)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'VERSION_CONFLICT', status: 409 },
+    operator: 'rejects',
+    diff: 'simple'
+  }

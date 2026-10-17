@@ -1,0 +1,24 @@
+test_candidate_directory_to_file_restores_deletions_before_writes (services.runtime.tests.test_session_transport.SessionTransportTests.test_candidate_directory_to_file_restores_deletions_before_writes) ... Executing <Task finished name='Task-1' coro=<SessionTransportTests.asyncSetUp() done, defined at /tmp/sidequest-integrated-fixes/services/runtime/tests/test_session_transport.py:30> result=None created at /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:100> took 0.189 seconds
+ERROR
+
+======================================================================
+ERROR: test_candidate_directory_to_file_restores_deletions_before_writes (services.runtime.tests.test_session_transport.SessionTransportTests.test_candidate_directory_to_file_restores_deletions_before_writes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/tmp/sidequest-integrated-fixes/services/runtime/tests/test_session_transport.py", line 331, in test_candidate_directory_to_file_restores_deletions_before_writes
+    self.assertEqual(artifacts.restore_candidate_for_followup(candidate['id'],self.run_id,workspace,['src']),'a'*64)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/sidequest-integrated-fixes/services/runtime/artifacts.py", line 524, in restore_candidate_for_followup
+    raise RuntimeFault(ErrorCode.POLICY_DENIED, 'Prior candidate directory still contains unverified files.') from None
+services.runtime.policy.RuntimeFault: Prior candidate directory still contains unverified files.
+
+----------------------------------------------------------------------
+Ran 1 test in 0.201s
+
+FAILED (errors=1)

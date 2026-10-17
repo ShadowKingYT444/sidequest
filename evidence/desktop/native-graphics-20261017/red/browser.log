@@ -1,0 +1,66 @@
+[WebServer] (node:18507) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:18520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 1 test using 1 worker
+
+(node:18552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] tests/browser/office-failure.spec.ts:9:1 › WebGL failure stays distinct from assets and leaves local tools accessible
+[WebServer] 2:34:24 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[WebServer] 2:34:24 AM [vite] (client) [console.error] THREE.WebGLRenderer: WebGL2 blocklisted
+[WebServer] 2:34:24 AM [vite] (client) [console.error] Error: WebGL2 blocklisted
+[WebServer]     at HTMLCanvasElement.getContext (<anonymous>:8:15)
+[WebServer]     at getContext (http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c:51694:18)
+[WebServer]     at new WebGLRenderer (http://127.0.0.1:5173/node_modules/.vite/deps/three.module-CwO0auyC.js?v=cff86c1c:51718:11)
+[WebServer]     at createRenderer (http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c:1345:9)
+[WebServer]     at run (http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c:9913:91)
+[WebServer]     at Object.configure (http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c:9921:9)
+[WebServer]     at http://127.0.0.1:5173/node_modules/.vite/deps/react-three-fiber.esm-BHusv7n_.js?v=cff86c1c:10427:17
+[WebServer]     at Object.react_stack_bottom_frame (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c:13931:13)
+[WebServer]     at runWithFiberInDEV (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c:697:66)
+[WebServer]     at commitHookEffectListMount (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=cff86c1c:6654:153)
+[WebServer] 
+[WebServer] The above error occurred in the <CanvasImpl> component.
+[WebServer] 
+[WebServer] React will try to recreate this component tree from scratch using the error boundary you provided, SceneBoundary.
+[WebServer] 
+
+  1) tests/browser/office-failure.spec.ts:9:1 › WebGL failure stays distinct from assets and leaves local tools accessible 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: '3D graphics unavailable' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: '3D graphics unavailable' }) with timeout 15000ms
+      - waiting for getByRole('heading', { name: '3D graphics unavailable' })
+
+
+      23 |   page.on('request',request=>{if(/__sidequest\/runtime\/(submitCoding|runCoding|enableCoding|sendSessionMessage)$/.test(request.url()))mutations.push(request.url());});
+      24 |   await page.goto('/');
+    > 25 |   await expect(page.getByRole('heading',{name:'3D graphics unavailable'})).toBeVisible();
+         |                                                                            ^
+      26 |   await expect(page.getByText('Original office assets have not been imported.')).toHaveCount(0);
+      27 |   await expect(page.locator('.app-footer')).toContainText('Office unavailable');
+      28 |   await page.getByText('Recovery help',{exact:true}).click();
+        at /workspace/sidequest/desktop/tests/browser/office-failure.spec.ts:25:76
+
+    Error Context: ../evidence/desktop/native-graphics-20261017/red/playwright-results/office-failure-WebGL-failu-3efd5-aves-local-tools-accessible/error-context.md
+
+
+  1 failed
+    tests/browser/office-failure.spec.ts:9:1 › WebGL failure stays distinct from assets and leaves local tools accessible 
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

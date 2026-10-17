@@ -1,0 +1,366 @@
+{
+  "application_commit": "8e39baba943c32da1c09944313e47286c69672ee",
+  "head_after": "8e39baba943c32da1c09944313e47286c69672ee",
+  "source_test_asset_hashes_verified": 252,
+  "changed_files": [],
+  "source_scope_status_after": "",
+  "stats": {
+    "startTime": "2026-10-17T01:55:53.894Z",
+    "duration": 771757.225,
+    "expected": 25,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "test_count": 25,
+  "all_retries_zero": true,
+  "all_results_passed": true,
+  "cpu_profiles_created": 0,
+  "page_errors": [],
+  "timing_capture_errors": [],
+  "token_files_found": [],
+  "runner_exit_code": 0,
+  "runtime_exit_code": -15,
+  "runtime_graceful_shutdown": true,
+  "screenshots": [
+    "agent-session-390.png",
+    "agent-session.png",
+    "assigned-result.png",
+    "expanded-diff.png",
+    "git-diff.png",
+    "job-390.png",
+    "job-960.png",
+    "job-check-report.png",
+    "job-diff.png",
+    "job-queued.png",
+    "job-readiness.png",
+    "job-result.png",
+    "monitor-local-draft-390.png",
+    "monitor-pov-local-draft.png",
+    "monitor-pov.png",
+    "monitor-task-setup-390.png",
+    "monitor-task-setup.png",
+    "notifications-badges-fixture.png",
+    "provider-selector-390.png",
+    "provider-selector.png",
+    "provider-settings-390.png",
+    "provider-settings-analytics-390.png",
+    "provider-settings-analytics.png",
+    "provider-settings-limits-390.png",
+    "provider-settings-limits.png",
+    "provider-settings.png",
+    "recorded-session-390.png",
+    "recorded-session.png",
+    "run-activity-actual.png",
+    "setup-desktop.png",
+    "transport/full-run/acknowledged-rejection-restored.png",
+    "transport/full-run/durable-composer.png",
+    "transport/full-run/pending-composer.png",
+    "transport/full-run/reconciled-composer-mobile.png",
+    "transport/full-run/rejected-before-start.png",
+    "viewer-390.png",
+    "viewer-960.png"
+  ],
+  "tests": [
+    {
+      "title": "genuine local inspection job produces immutable files and a check report",
+      "file": "jobs-live.spec.ts",
+      "timeout_ms": 120000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 29561,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real jobs clear stale notices, recover reads and preserve assigned computer results",
+      "file": "jobs-live.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 44989,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "recorded session ownership persists at a figure and renders real contextual events",
+      "file": "jobs-live.spec.ts",
+      "timeout_ms": 120000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 86692,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "physical monitor POV restores orbited office camera through an interrupted return",
+      "file": "monitor-ui.spec.ts",
+      "timeout_ms": 120000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 68048,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages",
+      "file": "monitor-ui.spec.ts",
+      "timeout_ms": 180000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 110949,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "explicit read-only fixture shows distinct notifications and one badge per primary figure",
+      "file": "monitor-ui.spec.ts",
+      "timeout_ms": 120000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 40537,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "static office shadows stay cached while opening the lazy editor and returning",
+      "file": "rendering.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 52202,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "local draft edits preserve demand rendering of the unchanged office",
+      "file": "rendering.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 32203,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "local figure details preserve the unchanged office frame",
+      "file": "rendering.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 21134,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload",
+      "file": "transport.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 1269,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "protocol fake: lost reply survives reload and reconciles exactly one send, keeping a subsequent draft",
+      "file": "transport.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 1268,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "protocol fake: unknown spending authority keeps send disabled while durable local draft remains usable",
+      "file": "transport.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 710,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "protocol fake: accepted command rejected before start retains file and next draft across reload until explicit review",
+      "file": "transport.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 1120,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "protocol fake: successful 202 then rejected-before-start restores sent files without overwriting a newer draft",
+      "file": "transport.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 2643,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real Git diff, lazy single editor, expanded state, Escape and keyboard",
+      "file": "viewer.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 40458,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "Escape/reopen mounts one selected Monaco editor and keeps its saved scroll",
+      "file": "viewer.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 27895,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "read API rejects outside origins and mutations",
+      "file": "viewer.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 174,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "viewer reflows at 960px with reduced motion",
+      "file": "viewer.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 27002,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "viewer reflows at 390px with reduced motion",
+      "file": "viewer.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 18710,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "keyboard-accessible viewer has no automated WCAG A/AA violations",
+      "file": "viewer.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 30296,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "hostile source stays literal and a failed read can retry",
+      "file": "viewer.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 19205,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "provider settings and preserved work at 1440px",
+      "file": "visual-office.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 37121,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "provider settings and preserved work at 390px",
+      "file": "visual-office.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 19635,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "compact provider picker and guarded monitor task setup at 1440px",
+      "file": "visual-office.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 34887,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "compact provider picker and guarded monitor task setup at 390px",
+      "file": "visual-office.spec.ts",
+      "timeout_ms": 90000,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 19503,
+          "retry": 0
+        }
+      ]
+    }
+  ]
+}

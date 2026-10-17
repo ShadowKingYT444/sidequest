@@ -1,0 +1,537 @@
+{
+  "title": "Browser inspection 2026-10-14T16:19:06.389Z",
+  "source": {
+    "base": "69bf06696a93c9f58eee2d088e84404d4f6563d6",
+    "candidate": "8a9fb11c3b01a404c4dd305b71458377082697c1"
+  },
+  "registered_project": {
+    "id": "2a79639a-8823-49cf-ba6a-da0b8108c6ed",
+    "name": "sidequest",
+    "base_revision": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+    "status": "active",
+    "policy": {
+      "allowed_actions": [
+        "read_repo",
+        "run_checks"
+      ]
+    }
+  },
+  "job": {
+    "id": "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+    "project_id": "2a79639a-8823-49cf-ba6a-da0b8108c6ed",
+    "title": "Browser inspection 2026-10-14T16:19:06.389Z",
+    "source": {
+      "kind": "typed",
+      "text": "Inspect the registered Git repository and produce immutable read-only artifacts with a frozen-identity check. No coding model, source mutation or delivery.",
+      "uri": "sidequest:local-git-inspection"
+    },
+    "state": "verifying",
+    "checks": [
+      {
+        "id": "candidate.frozen_identity",
+        "state": "pass",
+        "evidence_artifact_id": "sha256:c31147fea5592d421074c0546f7f5d0ded1f8d7076778a082bad1500ee1e5af4"
+      }
+    ],
+    "allowed_actions": [
+      "read_repo",
+      "run_checks"
+    ],
+    "budget_usd": 0,
+    "spent_usd": 0,
+    "worker_id": null,
+    "artifact_ids": [
+      "art_857a5967644b4331b56b598733e162e4",
+      "art_4211fcfddc0b42b9af8ecc00bffb7a4e",
+      "art_aebe700e4fca4e94b8803cecab582939",
+      "sha256:c31147fea5592d421074c0546f7f5d0ded1f8d7076778a082bad1500ee1e5af4",
+      "1f78f910-2810-4f86-bbe5-e51b7ed62f9b",
+      "99409393-8575-4cf4-ae5e-de85431c90a2",
+      "9b1a1fbe-900d-4ca7-9319-c1cdca556f96",
+      "5fece904-b5a1-4857-a0b8-2c7d5d11e8e0",
+      "3c345fda-a0bf-447a-8769-7536a1c066f4",
+      "511c2a05-cdf8-43d3-ae97-5d70990e10f6",
+      "d25122d3-6111-43bd-ac08-cdd5290af4d7",
+      "818f9871-43de-4243-96f3-48b084846714",
+      "a055d102-7e2a-4a98-9354-287e1b66ecc3",
+      "0a47de60-825a-4c6d-8bd0-395cbc49fab3",
+      "5a2a58d4-ffdd-47c1-9ec3-6c89caf1f47f",
+      "61cdc9f9-0822-4e01-8c17-68a1d8f0c903",
+      "2b092e0b-4c97-47cb-8c89-f62e56f60af4",
+      "59be790f-7921-4f37-b92e-157bedbcb27b",
+      "91b9d50e-aca2-4618-81cf-750784a4e3a2",
+      "c6b9b7cb-2e29-4565-a8a0-9d7941c3e2d8",
+      "81e05bfd-eea2-4431-85f8-add3ae52b93c",
+      "ee1ab356-6ddd-4a33-81f2-d19c1b436eba",
+      "cac455ef-8995-4dae-bb1a-1c8dc6c43aa2",
+      "d89cdfed-c49c-4778-ba7a-5bab8a019bbf",
+      "642e8801-f536-419a-93f4-0fa0e217e78c",
+      "7a47cbd1-bad8-4dc6-9447-4f9cc96f8d39",
+      "63c8e997-43ef-4bed-a311-f8a62afbde75",
+      "d01f6213-c2d8-4887-98dc-b5ea547763b4",
+      "aed51b7f-39e2-4716-bfb2-30ea72069d22",
+      "6a749a41-b3e6-49aa-83d9-af44a86b6256",
+      "48e5921d-036e-45fa-a356-59ffd4de3fc1",
+      "fbf2513d-8213-4242-af4f-b6526cc27181",
+      "33b031ec-fd04-463a-a91b-9f0643497e19",
+      "bf5dcb19-f454-46f7-8168-39823416121e",
+      "c1092d97-780e-452a-a8a2-f7e332963734",
+      "4492d8b0-d333-453f-acd1-faad669d4115",
+      "af96d5d3-baf0-427e-b78e-2d0a3f94e2b6",
+      "aca5ce28-c0cf-4488-aad2-c59a84c0d431",
+      "6f7a5b1c-5d04-45e5-bdfb-44e7b75df636",
+      "52f87a30-8bae-4adb-925a-bd18604e81d7",
+      "b7fe3f8b-a30a-420d-84c7-9ea577de73cb",
+      "0ea45f83-703e-48fd-9789-d3910f9e76d0",
+      "4bda635b-efd7-4c97-9f3d-fb8488c7fd56",
+      "c7f2210e-a0db-4248-a803-e0e009533b02",
+      "4bae628c-a2d5-4eb1-b71d-3b2af477fbeb",
+      "6ebb0638-df63-4312-a6ff-812d44eb921e",
+      "d1066e3b-d34a-4ef3-ac71-69bbc0747c04",
+      "49f33534-5e13-441d-96c8-ff5d38311a0c",
+      "c7f8b286-26e5-460a-abe3-fbb53e3fa772",
+      "edb18f76-c943-4d2a-b058-6605c060182d",
+      "68f4de35-34d3-47f1-8621-4be694e9a06f",
+      "53139080-8591-4020-8951-ead22fd0619e",
+      "5fce2e21-17ac-4a96-a0b4-3a495efa619c",
+      "cc9f51e5-0a59-45dc-8b4a-a96829734a1b",
+      "fe70b6fb-0d03-4eb9-9a9a-ea246b93d1c2",
+      "5ca1e8e5-d3a9-4f9d-9211-b385f8a3d383",
+      "973cdfde-91c6-432f-ae68-2e21ee3a1c2b",
+      "c60c5898-911f-4160-9db8-b8612d99c938",
+      "4174c4b6-eec8-47c4-92f2-6449fe86736e",
+      "18587ce2-683f-4552-ace6-147271b7af06",
+      "39657fc1-e9cf-4d74-9bf7-db3b9f8ec1d7",
+      "d1ae17b7-1b0f-42cb-88a5-912b860f97b9",
+      "5f44e62a-e44d-48e5-8b0c-18faa18b2c79",
+      "bcc9c931-963a-4244-87c3-dd664e668423",
+      "6d49a5e7-4d2d-483f-99a0-0a0a33c807ae",
+      "456d4f36-0e7a-4eb3-a858-efef396d5793",
+      "574513ac-7d55-42be-a971-f137b05a28e7",
+      "b8417def-ea2b-4e5d-8cef-c2c4f02277bc",
+      "688b0d0f-7900-48ec-a990-fb2dcc24943d",
+      "770d8724-ceb6-489c-85b1-8697c90364d1",
+      "faa2c9d2-bd67-4af0-94f3-1a0ae8fb3e93",
+      "1ecc4326-c81a-492d-afae-077b06aeb095",
+      "c10bd9fa-0c18-4cd3-93a5-cf831120e811",
+      "8c7e8288-2cc8-4727-9ea1-8211abe4867b",
+      "955fb342-2cd1-4ccb-bc98-f86a9b8763a8",
+      "521681ca-5c7f-4f80-9aec-2b6e578e064f",
+      "a2f09ce6-1ef4-4901-9f5c-daa56ac639bf",
+      "cb1f46d7-bfa5-409e-994c-18e6b0ab7e51",
+      "524c4eaa-7774-44d3-82c9-1ff7f68a8039",
+      "9464b3ab-a12c-41e5-91a5-12aa573de83a",
+      "30d591fc-cc41-404b-9591-f66e9307d2a4",
+      "67205efe-d4a7-414e-a8a9-7fb96e6a45e7",
+      "553dd0cf-bbb5-4ffd-8e47-2917f11e1a52",
+      "ebd1d966-b8d4-423c-9871-17c03a3de457",
+      "85f35c5e-b84a-4130-a9c8-8a582562da2a",
+      "3b41a884-abe8-46ec-8e55-c86a3845238a",
+      "c18f5394-7da0-4df7-84b0-68a63dd087f3",
+      "cc8055aa-b8d8-4d24-9626-204b210bbc6c",
+      "3de8c6c8-1dbc-46aa-ba79-8ed4bfd1aca5",
+      "40b17ff1-6886-4e4c-bd7b-afa72a77ce5b",
+      "d583c05d-c2df-4a70-b82a-9853ae61dce5",
+      "80b86ba2-1b69-49bb-8dbe-50f989ecf27e",
+      "f461b050-df89-417c-b12f-9ac41c3a2510",
+      "27f3cec2-02d6-44c9-b8ef-73cce908df14",
+      "4b0bb36e-5a28-47af-b8a5-ffd51332a519",
+      "869ddc7d-c735-47c2-9bbe-17cdb3f2e92f",
+      "c1e5d88a-833a-4d71-a65b-61f103432220",
+      "b4c0399d-71de-4a05-a18c-9c8f39172fe5",
+      "0882e4a2-39be-4e78-a78f-c7cd160f0d28",
+      "dcfff2f5-89cf-4910-b7c4-e936b7d133a3"
+    ],
+    "events": [
+      {
+        "id": 142,
+        "at": "2026-10-14T16:19:14.746Z",
+        "type": "status",
+        "message": "Immutable candidate artifacts frozen.",
+        "artifact_id": null
+      },
+      {
+        "id": 143,
+        "at": "2026-10-14T16:19:15.455Z",
+        "type": "status",
+        "message": "Attempt result recorded.",
+        "artifact_id": null
+      },
+      {
+        "id": 144,
+        "at": "2026-10-14T16:19:15.456Z",
+        "type": "status",
+        "message": "Candidate recorded.",
+        "artifact_id": "art_857a5967644b4331b56b598733e162e4"
+      },
+      {
+        "id": 145,
+        "at": "2026-10-14T16:19:15.460Z",
+        "type": "tool_finished",
+        "message": "Frozen identity check passed.",
+        "artifact_id": "sha256:c31147fea5592d421074c0546f7f5d0ded1f8d7076778a082bad1500ee1e5af4"
+      },
+      {
+        "id": 146,
+        "at": "2026-10-14T16:19:15.460Z",
+        "type": "status",
+        "message": "Local Git inspection completed; the frozen candidate identity check passed. No model inference or delivery ran.",
+        "artifact_id": null
+      }
+    ],
+    "blocked_reason": null,
+    "workflow_version": 1,
+    "run_ids": [
+      "c150bc46-6bd6-4a4a-9463-79df411892b1"
+    ],
+    "tasks": [
+      {
+        "id": "718c6eba-bb90-43d6-bf53-b32428cf0aa2",
+        "state": "completed",
+        "depends_on": [],
+        "worker_id": "316ba303-4fbd-4a1b-ba4c-7dc080e8a478",
+        "attempt_id": "c150bc46-6bd6-4a4a-9463-79df411892b1"
+      }
+    ],
+    "candidate_id": "cand_9c4583cd3759437a8a0de1f0e5f21ff9",
+    "execution_profile": "local_git_inspection",
+    "delivery_state": "disabled"
+  },
+  "frozen_check_report": {
+    "browser": {
+      "registered_origin": null,
+      "version": null
+    },
+    "candidate": {
+      "id": "cand_9c4583cd3759437a8a0de1f0e5f21ff9",
+      "manifest_artifact_id": "art_857a5967644b4331b56b598733e162e4",
+      "tree_sha256": "5b6e550a3da5f44fc8b66b9393012fad38abdd4fb6a8e997aa7cba513fb9d2ff"
+    },
+    "inference_calls": 0,
+    "op": "check.run",
+    "request_id": "59352147-5aa8-4be0-a604-acbabdc96eb2",
+    "results": [
+      {
+        "evidence_artifact_id": "art_857a5967644b4331b56b598733e162e4",
+        "id": "candidate.frozen_identity",
+        "message": "The read-only candidate matches its host-staged file manifest.",
+        "state": "pass"
+      }
+    ],
+    "source_revision": "f7a9ebe0585956fdc557742a46b81f5a157be3d2",
+    "v": 1
+  },
+  "browser_requests": [
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "c36bb4ed-8641-433d-95fe-03ea0d10377e",
+        ""
+      ]
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "c36bb4ed-8641-433d-95fe-03ea0d10377e",
+        ""
+      ]
+    },
+    {
+      "method": "submitInspection",
+      "args": [
+        "2a79639a-8823-49cf-ba6a-da0b8108c6ed",
+        "Browser inspection 2026-10-14T16:19:06.389Z",
+        2549
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+        ""
+      ]
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+        ""
+      ]
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+        ""
+      ]
+    },
+    {
+      "method": "run",
+      "args": [
+        "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+        2550
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+        ""
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+        ""
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+        ""
+      ]
+    },
+    {
+      "method": "files",
+      "args": [
+        "art_857a5967644b4331b56b598733e162e4",
+        ""
+      ]
+    },
+    {
+      "method": "files",
+      "args": [
+        "art_857a5967644b4331b56b598733e162e4",
+        ""
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "artifacts",
+      "args": [
+        "e4caf6c1-4401-4f96-84f9-d9efe8e671a7",
+        ""
+      ]
+    },
+    {
+      "method": "files",
+      "args": [
+        "art_857a5967644b4331b56b598733e162e4",
+        ""
+      ]
+    },
+    {
+      "method": "text",
+      "args": [
+        "art_857a5967644b4331b56b598733e162e4",
+        "f_1013793b2c38b4bf759dc66fcc52f11b",
+        1
+      ]
+    },
+    {
+      "method": "text",
+      "args": [
+        "art_857a5967644b4331b56b598733e162e4",
+        "f_1013793b2c38b4bf759dc66fcc52f11b",
+        1
+      ]
+    },
+    {
+      "method": "diff",
+      "args": [
+        "art_4211fcfddc0b42b9af8ecc00bffb7a4e",
+        "f_1013793b2c38b4bf759dc66fcc52f11b",
+        ""
+      ]
+    },
+    {
+      "method": "artifact",
+      "args": [
+        "sha256:c31147fea5592d421074c0546f7f5d0ded1f8d7076778a082bad1500ee1e5af4"
+      ]
+    },
+    {
+      "method": "artifact",
+      "args": [
+        "sha256:c31147fea5592d421074c0546f7f5d0ded1f8d7076778a082bad1500ee1e5af4"
+      ]
+    },
+    {
+      "method": "runInfo",
+      "args": [
+        "c150bc46-6bd6-4a4a-9463-79df411892b1"
+      ]
+    },
+    {
+      "method": "runEvents",
+      "args": [
+        "c150bc46-6bd6-4a4a-9463-79df411892b1",
+        0
+      ]
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "capabilities",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    },
+    {
+      "method": "snapshot",
+      "args": []
+    }
+  ],
+  "model_calls": 0,
+  "scope": "Real deterministic local Git inspection through UI/HTTP/B/D; no coding agent or provider run",
+  "page_errors": []
+}

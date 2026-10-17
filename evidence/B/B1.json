@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "B1",
+  "status": "ready_for_review",
+  "changed_paths": [
+    "services/tools/__init__.py",
+    "services/tools/config.py",
+    "services/tools/protocol.py",
+    "services/tools/git_ops.py",
+    "services/tools/artifact_capture.py",
+    "services/tools/main.py",
+    "services/tools/tests/test_git_artifacts.py",
+    "services/tools/tests/test_protocol.py",
+    "journals/B.md",
+    "evidence/B/B1.json"
+  ],
+  "adapter": {
+    "entrypoint": "python3 -m services.tools.main",
+    "operations": ["repo.inspect", "repo.prepare", "artifacts.freeze", "repo.deliver"],
+    "required_environment": [
+      "SIDEQUEST_ALLOWED_REPO_ROOTS",
+      "SIDEQUEST_STAGING_ROOTS",
+      "SIDEQUEST_ARTIFACT_ROOTS",
+      "SIDEQUEST_DELIVERY_ROOTS",
+      "SIDEQUEST_DELIVERY_APPROVAL_ROOT",
+      "SIDEQUEST_DELIVERY_STATE_ROOT"
+    ],
+    "freeze_outputs": ["candidate", "file_manifest", "diff", "patch", "snapshot_root"],
+    "manifest": "{v:1,candidate,files:[...]}; candidate file rows include Git mode 100644 or 100755, unchanged files and deleted entries"
+  },
+  "validation": {
+    "compile": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+    "help": "python3 -m services.tools.main --help",
+    "tests": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+    "tests_passed": 19,
+    "tests_failed": 0,
+    "fixture_only": true
+  },
+  "checks": [
+    "Independent local clone uses --no-hardlinks; source refs and files remain unchanged.",
+    "NUL-separated Git data captures add, edit, delete, rename, binary and executable-mode changes.",
+    "Tree digest uses canonical UTF-8 JSON with sorted paths and sorted object keys.",
+    "Symlink, alternate object store, traversal, out-of-scope, oversize and credential-like inputs are rejected.",
+    "Git environment redirection, filters, hooks, textconv and external diff fixtures do not execute.",
+    "Delivery requires a separately hash-checked approval file under the configured approval root; repeated IDs reconcile and uncertain state blocks."
+  ],
+  "repair_attempt": {
+    "finding": "Worker-editable .git/config could be a hard link to a file outside configured roots and was truncated during freeze.",
+    "resolution": "All regular Git metadata files are now rejected when st_nlink is not 1. Metadata is traversed with no-follow directory descriptors. Safe config is written to a new single-link inode and installed by descriptor-relative atomic replacement; the old config is never opened with O_TRUNC.",
+    "regressions": [
+      "Hard-linked .git/config causes typed POLICY_DENIED and preserves external sentinel bytes.",
+      "Hard-linked Git ref metadata is denied before Git operations.",
+      "Hard-linked progress log is denied and preserves external sentinel bytes; ordinary progress updates replace the file atomically."
+    ],
+    "other_write_audit": "Artifact, candidate snapshot, state, destination worktree and destination index writes now use checked directory descriptors, no-follow opens and atomic replacement where applicable."
+  },
+  "limits": [
+    "Credential detection is heuristic; encoded and unrecognized secret formats may not match.",
+    "The adapter is not an OS/container boundary against a malicious process running as the same user concurrently; the host must quiesce worker access during freeze and delivery and protect configured roots.",
+    "Immutable artifacts still require the host to verify and copy staged bytes by digest.",
+    "Local delivery was exercised only on disposable temporary Git fixtures; no real target was written.",
+    "No provider/model call, B2 work, GitHub operation or real repository delivery was run."
+  ],
+  "next_action": "Coordinator freeze and independent fresh B1 review before any B2 work."
+}

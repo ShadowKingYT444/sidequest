@@ -1,0 +1,24 @@
+✔ host runtime client uses fixed paths and secret authentication, and gates safe execution (59.756253ms)
+✔ runtime origin and session file reject redirects, remote hosts, links and loose permissions (9.615996ms)
+✔ runtime response bound limits untrusted artifact output (5.058983ms)
+✔ coding methods require verified capability and USD enforcement before mutations (18.550471ms)
+✔ office session commands validate station and recorded run ownership without launching work (12.756364ms)
+✖ protocol fixture: session transport keeps idempotency identity, validates opaque attachments and retains production USD guard (1.346802ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 197.39131
+
+✖ failing tests:
+
+test at desktop/tests/runtime-client.test.mjs:98:1
+✖ protocol fixture: session transport keeps idempotency identity, validates opaque attachments and retains production USD guard (1.346802ms)
+  TypeError: client.sessionMessage is not a function
+      at TestContext.<anonymous> (file:///tmp/sidequest-desktop-transport/desktop/tests/runtime-client.test.mjs:103:30)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

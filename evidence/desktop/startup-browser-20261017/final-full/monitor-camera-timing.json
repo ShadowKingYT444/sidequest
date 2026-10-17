@@ -1,0 +1,18 @@
+[
+  {
+    "phase": "actors-ready",
+    "at": 32561
+  },
+  {
+    "phase": "office-orbit-changed",
+    "at": 44977
+  },
+  {
+    "phase": "physical-monitor-trace-visible",
+    "at": 51654
+  },
+  {
+    "phase": "interrupted-return-restored",
+    "at": 67571
+  }
+]

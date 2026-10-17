@@ -1,0 +1,55 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0
+
+[WebServer] (node:61921) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 23 tests using 1 worker
+(node:61956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 8:35:58 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:36:41 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:38:01 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[WebServer] 8:38:49 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:39:20 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:39:56 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·F(node:63078) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 8:40:51 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:41:20 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:41:45 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+····[WebServer] 8:42:04 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:42:43 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+··[WebServer] 8:43:10 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:43:32 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:43:50 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:44:29 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:45:07 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:46:11 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:46:37 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 8:47:42 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·
+
+  1) tests/browser/monitor-ui.spec.ts:77:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure 
+
+    Error: expect(received).toHaveLength(expected)
+
+    Expected length: 2
+    Received length: 1
+    Received array:  [{"allowed_actions": ["read_repo", "run_checks"], "artifact_ids": ["art_13d534c556ab405ba8e0f2746aefa6cc", "art_17b5c39e7f4b4ad186d73dd4963e9034", "art_da28bdbe39b64c6cb78d02439728d071", "sha256:1ba35f964707623cd27295f53a28758a478d2a0635e63ed749004b2d435f8780", "2c2020f7-54ce-4abd-86cd-534f50570b6b", "556e685c-8920-4c6d-8723-6a300257a81c", "83d13572-2948-432b-96a0-38b9ee9a0d49", "ad4ac5db-2692-43a8-889e-0009a78132bb", "285927d8-335f-49b6-b7ea-3da7ec598a32", "2d48f4da-417b-46f9-a16d-fff8a50580ac", …], "blocked_reason": null, "budget_usd": 0, "candidate_id": "cand_d43916a138e34ed38ae5549fa86509df", "checks": [{"evidence_artifact_id": "sha256:1ba35f964707623cd27295f53a28758a478d2a0635e63ed749004b2d435f8780", "id": "candidate.frozen_identity", "state": "pass"}], "delivery_state": "disabled", "events": [{"artifact_id": null, "at": "2026-10-14T20:36:29.048Z", "id": 8, "message": "Immutable candidate artifacts frozen.", "type": "status"}, {"artifact_id": null, "at": "2026-10-14T20:36:29.375Z", "id": 9, "message": "Attempt result recorded.", "type": "status"}, {"artifact_id": "art_13d534c556ab405ba8e0f2746aefa6cc", "at": "2026-10-14T20:36:29.376Z", "id": 10, "message": "Candidate recorded.", "type": "status"}, {"artifact_id": "sha256:1ba35f964707623cd27295f53a28758a478d2a0635e63ed749004b2d435f8780", "at": "2026-10-14T20:36:29.378Z", "id": 11, "message": "Frozen identity check passed.", "type": "tool_finished"}, {"artifact_id": null, "at": "2026-10-14T20:36:29.378Z", "id": 12, "message": "Local Git inspection completed; the frozen candidate identity check passed. No model inference or delivery ran.", "type": "status"}], "execution_profile": "local_git_inspection", "id": "56706593-07c4-4b98-845e-c11b2578251e", "project_id": "bd2bb2ef-8252-4386-b699-d8dc740f6148", "run_ids": ["d3460454-49c7-4a47-9a6d-61b3158a5027"], "source": {"kind": "typed", "text": "Inspect the registered Git repository and produce immutable read-only artifacts with a frozen-identity check. No coding model, source mutation or delivery.", "uri": "sidequest:local-git-inspection"}, "spent_usd": 0, "state": "verifying", "tasks": [{"attempt_id": "d3460454-49c7-4a47-9a6d-61b3158a5027", "depends_on": [], "id": "9679fcb7-e7f7-49a4-a759-7feb8a1ce021", "state": "completed", "worker_id": "13cfe4e0-f18b-43b7-bb83-54cf43312a26"}], "title": "Browser inspection 2026-10-14T20:36:25.717Z", "worker_id": null, "workflow_version": 1}]
+
+      77 | test('explicit read-only fixture shows distinct notifications and one badge per primary figure',async({page,request})=>{
+      78 |   test.setTimeout(120_000);test.skip(process.env.SIDEQUEST_TEST_INSPECTION!=='1','Uses actual record identities in an explicitly labeled read-only fixture.');
+    > 79 |   const actual=await (await request.post('/__sidequest/runtime/snapshot',{data:[],headers:origin})).json();const jobs=actual.jobs.filter((j:{execution_profile:string;run_ids:string[]})=>j.execution_profile==='local_git_inspection'&&j.run_ids?.length).slice(0,2);expect(jobs).toHaveLength(2);
+         |                                                                                                                                                                                                                                                                                    ^
+      80 |   const owners=[];for(const [i,job] of jobs.entries()){const run=(await (await request.post('/__sidequest/runtime/runInfo',{data:[job.run_ids.at(-1)],headers:origin})).json()).run;owners.push({station_id:i===0?'parent_019':'parent_020',job_id:job.id,project_id:job.project_id,run_id:run.id,worker_id:run.worker_id,assigned_at:new Date().toISOString()});}
+      81 |   owners[1].worker_id='fixture-attention-worker';
+      82 |   const fixture={...actual,mode:'fixture',jobs:jobs.map((job:any,i:number)=>({...job,state:i===0?'completed':'failed',title:`Test fixture · ${i===0?'Completed task':'Attention task'}`,blocked_reason:i===0?null:'Test fixture failure, no execution performed',tasks:job.tasks.map((task:any)=>({...task,state:i===0?'completed':'failed',worker_id:i===0?task.worker_id:'fixture-attention-worker'})),checks:job.checks.map((check:any)=>({...check,state:i===0?'pass':'fail'}))})),office_sessions:owners};
+        at /workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:79:276
+
+    Error Context: test-results/monitor-ui-explicit-read-o-e0c44-ne-badge-per-primary-figure/error-context.md
+
+  1 failed
+    tests/browser/monitor-ui.spec.ts:77:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure 
+  22 passed (12.3m)

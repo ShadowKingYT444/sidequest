@@ -1,0 +1,277 @@
+{
+  "status": "passed",
+  "scope": "Real browser UI and local Git inspection; software GPU. No native Electron or live coding/provider proof.",
+  "browser": "151.0.7922.173",
+  "graphics": {
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "footer": "Navigate…Tasks boardComputer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 24Computer 01Computer 02Computer 03Computer 04Computer 05Computer 06Computer 07Computer 08Computer 09Computer 10Computer 11Computer 12Computer 13Computer 14Computer 15Computer 16Computer 17Computer 18Computer 19Computer 20Computer 21Computer 22Computer 23Computer 2426 staged · no sessionsLocal Git · read-only"
+  },
+  "physical_monitor_click": {
+    "x": 564.8673845075101,
+    "y": 353.2562717495168
+  },
+  "source": {
+    "base": "f5c5bf45f0875dbcb2983654ad182aa63cd57c14",
+    "candidate": "7869aab445671abcf4dfa0532c36767c9e70b90c"
+  },
+  "job": {
+    "id": "2aa47f11-cd09-4dba-a68c-82384bdf22e7",
+    "project_id": "95f89244-ed20-4f4e-8eef-9e29506129e7",
+    "title": "Proof: inspect local Git — zero model calls",
+    "source": {
+      "kind": "typed",
+      "text": "Inspect the registered Git repository and produce immutable read-only artifacts with a frozen-identity check. No coding model, source mutation or delivery.",
+      "uri": "sidequest:local-git-inspection"
+    },
+    "state": "verifying",
+    "checks": [
+      {
+        "id": "candidate.frozen_identity",
+        "state": "pass",
+        "evidence_artifact_id": "sha256:4aa34ea913967c0a8f4a72eb47d642c91eb8380242de8796c9fc858e6d94a18e"
+      }
+    ],
+    "allowed_actions": [
+      "read_repo",
+      "run_checks"
+    ],
+    "budget_usd": 0,
+    "spent_usd": 0,
+    "worker_id": null,
+    "artifact_ids": [
+      "art_abfc3d9939fd4bc2bb5526de3c9273eb",
+      "art_aad399ee85e0428cbb905c6e85d9a693",
+      "art_5b2a8e2c9376420f8a5cd39fa0bd4c43",
+      "sha256:4aa34ea913967c0a8f4a72eb47d642c91eb8380242de8796c9fc858e6d94a18e",
+      "83fc8c57-0e50-466c-9447-3d183f27a331",
+      "5e961fb7-f23c-4442-939b-ff04e9018975"
+    ],
+    "events": [
+      {
+        "id": 8,
+        "at": "2026-10-17T02:22:28.943Z",
+        "type": "status",
+        "message": "Immutable candidate artifacts frozen.",
+        "artifact_id": null
+      },
+      {
+        "id": 9,
+        "at": "2026-10-17T02:22:29.152Z",
+        "type": "status",
+        "message": "Attempt result recorded.",
+        "artifact_id": null
+      },
+      {
+        "id": 10,
+        "at": "2026-10-17T02:22:29.153Z",
+        "type": "status",
+        "message": "Candidate recorded.",
+        "artifact_id": "art_abfc3d9939fd4bc2bb5526de3c9273eb"
+      },
+      {
+        "id": 11,
+        "at": "2026-10-17T02:22:29.153Z",
+        "type": "tool_finished",
+        "message": "Frozen identity check passed.",
+        "artifact_id": "sha256:4aa34ea913967c0a8f4a72eb47d642c91eb8380242de8796c9fc858e6d94a18e"
+      },
+      {
+        "id": 12,
+        "at": "2026-10-17T02:22:29.153Z",
+        "type": "status",
+        "message": "Local Git inspection completed; the frozen candidate identity check passed. No model inference or delivery ran.",
+        "artifact_id": null
+      }
+    ],
+    "blocked_reason": null,
+    "workflow_version": 1,
+    "run_ids": [
+      "e5425702-2819-492b-ba55-a153c407f6c9"
+    ],
+    "tasks": [
+      {
+        "id": "78baf1a6-aafd-4a59-8821-4fca8c5a4303",
+        "state": "completed",
+        "depends_on": [],
+        "worker_id": "519c7b20-5759-4128-baac-0ea915fb4810",
+        "attempt_id": "e5425702-2819-492b-ba55-a153c407f6c9"
+      }
+    ],
+    "candidate_id": "cand_694c6e239269489993a7de49663753f8",
+    "execution_profile": "local_git_inspection",
+    "delivery_state": "disabled"
+  },
+  "frozen_check_report": {
+    "browser": {
+      "registered_origin": null,
+      "version": null
+    },
+    "candidate": {
+      "id": "cand_694c6e239269489993a7de49663753f8",
+      "manifest_artifact_id": "art_abfc3d9939fd4bc2bb5526de3c9273eb",
+      "tree_sha256": "ba5f6494877742d9c000c4bf12e44dc64f58895ba4251da706625497ff20d483"
+    },
+    "inference_calls": 0,
+    "op": "check.run",
+    "request_id": "7b3cf95b-c3f0-4fd7-8447-5318f09d0ae2",
+    "results": [
+      {
+        "evidence_artifact_id": "art_abfc3d9939fd4bc2bb5526de3c9273eb",
+        "id": "candidate.frozen_identity",
+        "message": "The read-only candidate matches its host-staged file manifest.",
+        "state": "pass"
+      }
+    ],
+    "source_revision": "922756849e3d4517543ba77e5e44f6b82453cc00",
+    "v": 1
+  },
+  "capabilities": {
+    "v": 1,
+    "contract_revision": "1.1",
+    "features": {
+      "computer_artifacts": true,
+      "session_messages": true,
+      "session_attachments": true,
+      "screen_watch": "unavailable",
+      "github_delivery": false,
+      "local_git_inspection": true,
+      "coding": false,
+      "codex_session": false
+    },
+    "worker_model": {
+      "id": "none",
+      "effort": "unavailable",
+      "verified": false,
+      "coding_available": false
+    },
+    "limits": {
+      "max_parallel": 2,
+      "max_tasks_per_plan": 4
+    },
+    "reasons": [
+      "Codex execution is disabled by host settings."
+    ],
+    "codex": {
+      "host_enabled": false,
+      "catalog_verified": false,
+      "state": "unverified",
+      "provider": "codex-app-server",
+      "model": {
+        "id": null,
+        "verified": false
+      },
+      "effort": {
+        "id": null,
+        "verified": false
+      },
+      "account_type": "unknown",
+      "usd_cost_enforced": false,
+      "refreshed_at": null,
+      "reason": null
+    }
+  },
+  "page_errors": [],
+  "prohibited_provider_requests": [],
+  "runtime_methods": [
+    "snapshot",
+    "snapshot",
+    "snapshot",
+    "capabilities",
+    "snapshot",
+    "snapshot",
+    "snapshot",
+    "capabilities",
+    "register",
+    "snapshot",
+    "capabilities",
+    "submitInspection",
+    "snapshot",
+    "capabilities",
+    "artifacts",
+    "artifacts",
+    "artifacts",
+    "snapshot",
+    "capabilities",
+    "run",
+    "snapshot",
+    "capabilities",
+    "artifacts",
+    "snapshot",
+    "capabilities",
+    "artifacts",
+    "files",
+    "files",
+    "text",
+    "text",
+    "snapshot",
+    "capabilities",
+    "snapshot",
+    "artifact",
+    "artifact",
+    "snapshot",
+    "capabilities",
+    "runInfo",
+    "runEvents",
+    "snapshot",
+    "capabilities",
+    "snapshot",
+    "capabilities",
+    "snapshot",
+    "capabilities"
+  ],
+  "local_draft_sent": false,
+  "network_mocks": false,
+  "duration_seconds": 57.126,
+  "steps": [
+    {
+      "name": "Original office fully loaded",
+      "elapsed_seconds": 18.729,
+      "screenshot": "01-office.png"
+    },
+    {
+      "name": "Physical monitor click; local text, file and image draft; send disabled",
+      "elapsed_seconds": 24.01,
+      "screenshot": "02-monitor-draft.png"
+    },
+    {
+      "name": "Actual committed Git diff expanded in read-only viewer",
+      "elapsed_seconds": 31.452,
+      "screenshot": "03-git-diff.png"
+    },
+    {
+      "name": "Fresh trusted repository registered; zero-budget inspection queued",
+      "elapsed_seconds": 39.514,
+      "screenshot": "04-inspection-queued.png"
+    },
+    {
+      "name": "Real local inspection passed; immutable README artifact displayed",
+      "elapsed_seconds": 42.746,
+      "screenshot": "05-inspection-result.png"
+    },
+    {
+      "name": "Frozen inspection check report: inference_calls = 0",
+      "elapsed_seconds": 44.103,
+      "screenshot": "06-check-report.png"
+    },
+    {
+      "name": "Completed recorded inspection activity; no model call",
+      "elapsed_seconds": 45.507,
+      "screenshot": "07-run-activity.png"
+    },
+    {
+      "name": "Honest coding-unavailable explanation",
+      "elapsed_seconds": 46.923,
+      "screenshot": "08-coding-unavailable.png"
+    },
+    {
+      "name": "Actual provider discovery: executable detection, authentication unknown",
+      "elapsed_seconds": 54.518,
+      "screenshot": "09-provider-settings.png"
+    },
+    {
+      "name": "Actual usage page: telemetry unavailable",
+      "elapsed_seconds": 55.861,
+      "screenshot": "10-usage-unavailable.png"
+    }
+  ]
+}

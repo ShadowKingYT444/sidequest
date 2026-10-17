@@ -1,0 +1,9 @@
+
+Running 5 tests using 1 worker
+
+[1/5] tests/browser/compact-ui.spec.ts:7:35 › compact settings preserves diagnostics and keyboard access at 1440px
+[2/5] tests/browser/compact-ui.spec.ts:7:35 › compact settings preserves diagnostics and keyboard access at 960px
+[3/5] tests/browser/compact-ui.spec.ts:7:35 › compact settings preserves diagnostics and keyboard access at 390px
+[4/5] tests/browser/office-failure.spec.ts:9:1 › WebGL failure stays distinct from assets and leaves local tools accessible
+[5/5] tests/browser/office-failure.spec.ts:47:1 › bindings failure is retryable and does not claim WebGL or missing imported assets
+  5 passed (24.0s)

@@ -1,0 +1,89 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0 --grep static office shadows|genuine local inspection|real jobs clear|recorded session ownership
+
+[WebServer] (node:5721) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+(node:5753) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:04:27 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+·[WebServer] 6:05:15 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+T(node:6538) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:06:47 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+T(node:6730) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 6:08:56 PM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+F
+
+  1) tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: 'Computer job results' }).getByRole('button', { name: 'Expand', exact: true })
+
+
+      121 |   await result.locator('.artifact-text').evaluate(node=>{node.scrollTop=180;node.dispatchEvent(new Event('scroll',{bubbles:true}));});
+      122 |   await expect.poll(()=>result.locator('.artifact-text').evaluate(node=>node.scrollTop)).toBeGreaterThan(100);
+    > 123 |   await result.getByRole('button',{name:'Expand',exact:true}).click();
+          |                                                               ^
+      124 |   await expect(page.getByRole('dialog',{name:'Computer job viewer'})).toBeVisible();
+      125 |   await expect(result.locator('.artifact-files button[aria-pressed="true"]')).toHaveAttribute('title',selectedFile!);
+      126 |   await page.getByRole('button',{name:'Settings',exact:true}).click();
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:123:63
+
+    Error Context: test-results/jobs-live-real-jobs-clear--ce5fb-e-assigned-computer-results/error-context.md
+
+  2) tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+
+    Test timeout of 120000ms exceeded.
+
+    Error: keyboard.press: Test timeout of 120000ms exceeded.
+
+      160 |  await trace.getByText('Run details',{exact:true}).click();await expect(trace).toContainText('No model call');await expect(trace).toContainText('Recorded usage:');await page.keyboard.press('Escape');
+      161 |  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});
+    > 162 |  await session.getByRole('button',{name:'Open results',exact:true}).click();const results=page.getByRole('region',{name:'Computer job results'});await expect(results).toBeVisible();await expect(results.locator('.job-summary')).toContainText(job.title);await page.keyboard.press('Escape');
+          |                                                                                                                                                                                                                                                                                 ^
+      163 |  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);
+      164 |  const saved=await read();const owner=saved.office_sessions.find((owner:{station_id:string})=>owner.station_id==='parent_019');expect(owner).toMatchObject({job_id:job.id,run_id:runId,worker_id:run.worker_id,project_id:job.project_id});
+      165 |  await writeFile(path.resolve('../evidence/desktop/repair-20261014/session-before-reload.json'),JSON.stringify({elapsedMs:Date.now()-sessionTestStarted,entries:await page.evaluate(()=>performance.getEntries().filter(e=>e.name.startsWith('sidequest:')).map(e=>e.toJSON()))},null,2));
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:162:273
+
+    Error Context: test-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md
+
+  3) tests/browser/rendering.spec.ts:3:1 › static office shadows stay cached while opening the lazy editor and returning 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('.office-canvas canvas')
+    Expected: "10"
+    Received: "12"
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('.office-canvas canvas') with timeout 15000ms
+      - waiting for locator('.office-canvas canvas')
+        34 × locator resolved to <canvas width="1440" height="820" data-agent-badges="[]" data-shadow-passes="12" data-engine="three.js r186" data-render-frame-count="12" data-camera-target="[1,-0.3,-3.8]" data-camera-position="[11.5,8.5,12]"></canvas>
+           - unexpected value "12"
+
+
+      14 |   await page.keyboard.press('Escape');
+      15 |   await expect(page.getByTestId('diff-editor')).toHaveCount(0);
+    > 16 |   await expect(canvas).toHaveAttribute('data-shadow-passes',String(shadows));
+         |                        ^
+      17 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
+      18 |   await expect(page.getByTestId('diff-editor')).toHaveCount(1);
+      19 |   await expect(canvas).toHaveAttribute('data-shadow-passes',String(shadows));
+        at /workspace/sidequest/desktop/tests/browser/rendering.spec.ts:16:24
+
+    Error Context: test-results/rendering-static-office-sh-993a5-e-lazy-editor-and-returning/error-context.md
+
+  3 failed
+    tests/browser/jobs-live.spec.ts:88:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+    tests/browser/jobs-live.spec.ts:140:1 › recorded session ownership persists at a figure and renders real contextual events 
+    tests/browser/rendering.spec.ts:3:1 › static office shadows stay cached while opening the lazy editor and returning 
+  1 passed (5.7m)

@@ -1,0 +1,414 @@
+{
+  "originalDocumentCspUnchanged": true,
+  "originalUiFilesUnchanged": true,
+  "humanVariantsLoadedAndRendered": 7,
+  "animationClipsRendered": 28,
+  "capAssetsLoadedAndRendered": 12,
+  "inheritedOfficeLoaderErrors": [
+    "WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self'\"."
+  ],
+  "actorLoadErrors": [],
+  "workers": [
+    {
+      "assetId": "SQ_HUMAN_01_INK_HOODIE",
+      "skinnedMeshJointCounts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        }
+      ]
+    },
+    {
+      "assetId": "SQ_HUMAN_02_CLAY_CARDIGAN",
+      "skinnedMeshJointCounts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        }
+      ]
+    },
+    {
+      "assetId": "SQ_HUMAN_03_SAGE_OVERSHIRT",
+      "skinnedMeshJointCounts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        }
+      ]
+    },
+    {
+      "assetId": "SQ_HUMAN_04_SLATE_BEANIE",
+      "skinnedMeshJointCounts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        }
+      ]
+    },
+    {
+      "assetId": "SQ_HUMAN_04_SLATE_BEANIE__CAP_READY",
+      "skinnedMeshJointCounts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        }
+      ]
+    },
+    {
+      "assetId": "SQ_HUMAN_05_OAT_HEADPHONES",
+      "skinnedMeshJointCounts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        }
+      ]
+    },
+    {
+      "assetId": "SQ_HUMAN_06_PLUM_WAVE",
+      "skinnedMeshJointCounts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "clips": [
+        {
+          "name": "Idle",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Point",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Typing",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        },
+        {
+          "name": "Walk",
+          "durationSeconds": 1.0416666269302368,
+          "finiteBounds": true,
+          "webglRenderCompleted": true
+        }
+      ]
+    }
+  ],
+  "caps": [
+    {
+      "assetId": "SQ_CAP_BASE_01_INK_HOODIE",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_BASE_02_CLAY_CARDIGAN",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_BASE_03_SAGE_OVERSHIRT",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_BASE_04_SLATE_BEANIE",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_BASE_05_OAT_HEADPHONES",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_BASE_06_PLUM_WAVE",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_CLAUDE_CODE",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_CODEX",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_DEEPSEEK",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_GOOGLE_GEMINI",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_HARNESS_OPENCODE",
+      "browserLoadAndRenderCompleted": true
+    },
+    {
+      "assetId": "SQ_CAP_XAI_GROK",
+      "browserLoadAndRenderCompleted": true
+    }
+  ]
+}

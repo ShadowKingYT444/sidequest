@@ -1,0 +1,24 @@
+{
+  "scope": "Actual original monitor and recorded local inspection; no model calls",
+  "station": "parent_019",
+  "runId": "6ef3081e-0cee-4c13-9d69-5709e1bc403e",
+  "office": {
+    "position": [
+      10.975,
+      8.06,
+      11.210000000000004
+    ],
+    "target": [
+      1,
+      -0.3,
+      -3.8
+    ]
+  },
+  "physicalMonitorClick": {
+    "x": 556.8312552767035,
+    "y": 347.93397459585526
+  },
+  "interruptedReturnRestored": true,
+  "mutations": [],
+  "errors": []
+}

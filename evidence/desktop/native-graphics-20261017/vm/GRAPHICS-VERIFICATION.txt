@@ -1,0 +1,17 @@
+Sidequest independent native QA — 2026-10-17
+
+Test source: archive 6a6b8a3 plus runtime transfer to functional source 8e39baba943c32da1c09944313e47286c69672ee, then sidequest-8e39bab-graphics-recovery.patch SHA256 52bf1e15392724478f2380305fd1883d28967fb8405d67881d9e89778aa4e5bb. This is not a full checkout of later published commit 6c3de26.
+
+PASS npm run build.
+PASS node --test tests/office-failure.test.mjs: 3 tests.
+PASS npm run test:browser -- tests/browser/office-failure.spec.ts: 2 tests, 4.2 seconds, native desktop terminal. This spec explicitly enables Chromium sandbox and removes unsafe SwiftShader args. Browser cases inject graphics/bindings failures.
+PASS actual native Electron reload: genuine WebGL2 failure correctly shows 3D graphics unavailable. Retry safely retries. Recovery help opens. Local Git diff loads, Settings opens, Jobs shows persisted local inspection artifacts.
+FAIL physical office render: this VM graphics stack remains unavailable; diagnosis fix does not supply renderer fallback.
+No live provider calls; no authentication changes; no network/security settings changed.
+
+Transfer caveat: archive playwright.config.ts still has unsafe SwiftShader default; supplied graphics patch does not update that file. Focused spec overrides it safely. Do not run whole archive browser suite under that default. Parent informed to reconcile final repo configuration.
+
+native-graphics-recovery.png: genuine native failure and expanded guidance.
+native-reload-recovery.png: pre-patch genuine recorded session trace and unsent local draft restored after reload. Does not prove live provider session.
+
+T3 comparison: official https://t3.codes/ links https://github.com/pingdotgg/t3code and publishes the product screenshot at https://t3.codes/_astro/app-desktop.BOCg1ktw.webp. Inspected in cloud browser. Terse chrome surrounds substantive result text, conversation and side-by-side diff. Recommendations sent separately: fold diagnostics, keep settled result/composer visible, compact changed-file row, readiness-first settings with Advanced details.

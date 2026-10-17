@@ -1,0 +1,47 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "B1-source-filter-review",
+  "candidate_sha": "332e74677d5b7f43803acec969df21cfe2fba9a1",
+  "baseline_sha": "a10f2760efca247dfe5ab81fc7f7654c1051b18e",
+  "status": "FAIL",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+      "result": "PASS",
+      "evidence": "21 tests passed, 0 failures."
+    },
+    {
+      "command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m services.tools.main --help",
+      "result": "PASS",
+      "exit_code": 0
+    }
+  ],
+  "checks": {
+    "clean_real_source_snapshot": "PASS: Cloned the exact candidate with --no-hardlinks into a disposable local repository and called B repo.inspect read-only. It returned clean=true at 332e74677d5b7f43803acec969df21cfe2fba9a1 with 195 files.",
+    "docs_and_environment_lookup": "PASS: LOW_TOKEN_EXECUTION.md token-budget text and source using os.environ.get('API_TOKEN') froze successfully.",
+    "quoted_literal_credential": "PASS: A quoted API_TOKEN literal in src/config.py was rejected with POLICY_DENIED.",
+    "unquoted_plaintext_credential": "FAIL: A synthetic plaintext assignment API_TOKEN=fixture_plaintext_secret_9a8b7c6d in ordinary src/settings.conf was accepted by artifacts.freeze. The prior regex from baseline a10f276 matched the same bytes; the candidate regex did not.",
+    "other_credential_patterns": "PASS: Structured token JSON in an ordinary service-config.json, a synthetic known-token prefix in source, and a synthetic private-key header in an ordinary text file were rejected with POLICY_DENIED."
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "path": "services/tools/git_ops.py:29-31",
+      "title": "Unquoted plaintext credential assignments pass candidate filtering",
+      "reproduction": "In a disposable fixture clone, add src/settings.conf containing API_TOKEN=fixture_plaintext_secret_9a8b7c6d and call artifacts.freeze with src in the host write scope. The candidate returned a frozen candidate successfully. The prior B1 repair regex detected the same assignment.",
+      "impact": "The quote requirement avoids matching dynamic source expressions, but it also stops detecting unquoted plaintext credentials in ordinary configuration and source files. Such bytes can enter frozen manifests, patches and artifacts despite the scanner's credential-rejection contract.",
+      "suggestion": "Preserve the environment-lookup false-positive fix while distinguishing literal assignment values from expressions; keep unquoted assignment-shaped values blocked."
+    }
+  ],
+  "limits": [
+    "All credential samples used synthetic dummy values. Fixture writes occurred only under temporary directories; the real source snapshot inspection was read-only.",
+    "No local delivery, provider/model operation, spending, authentication change, or source edit was performed.",
+    "The previous same-UID temporary-inode race remains documented in evidence/B/B1-repair-review.json; this review makes no new OS-isolation claim."
+  ]
+}

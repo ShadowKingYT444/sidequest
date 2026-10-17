@@ -1,0 +1,8 @@
+test_candidate_directory_to_file_restores_deletions_before_writes (services.runtime.tests.test_session_transport.SessionTransportTests.test_candidate_directory_to_file_restores_deletions_before_writes) ... Executing <Task finished name='Task-1' coro=<SessionTransportTests.asyncSetUp() done, defined at /tmp/sidequest-integrated-fixes/services/runtime/tests/test_session_transport.py:30> result=None created at /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:100> took 0.101 seconds
+ok
+test_readiness_expiry_before_claim_rejects_saved_intent_and_restores_parent (services.runtime.tests.test_session_transport.SessionTransportTests.test_readiness_expiry_before_claim_rejects_saved_intent_and_restores_parent) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.254s
+
+OK

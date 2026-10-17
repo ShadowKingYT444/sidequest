@@ -1,0 +1,122 @@
+{
+  "candidate_sha": "87b31120604b5b8074b83c4be5f526c8348601d9",
+  "reviewed_at": "2026-10-14",
+  "review_type": "narrow Electron/runtime bridge security review",
+  "review_tree": "/workspace/sidequest-reviews/C-runtime",
+  "scope": [
+    "desktop/electron/runtime-client.cjs",
+    "desktop/electron/main.cjs",
+    "desktop/electron/preload.cjs",
+    "desktop/vite.config.ts",
+    "desktop/src/JobsBoard.tsx",
+    "desktop/src/bridge.ts",
+    "desktop/src/types.ts",
+    "desktop/electron/security.cjs",
+    "desktop/tests/runtime-client.test.mjs",
+    "desktop/tests/security.test.mjs",
+    "contracts/PROTOCOL.md",
+    "contracts/EXTENSIONS.md",
+    "docs/COMPUTER_UI.md"
+  ],
+  "result": "findings",
+  "summary": "Renderer isolation, IPC allowlisting, path/method validation, loopback origin restrictions, origin checks, and runtime response bounds are present. The client does not bind job.run to the safe local inspection profile per job, and the UI overstates artifact immutability. The frozen candidate also has runtime response-shape mismatches that prevent the artifact view from working against the EXTENSIONS contract.",
+  "checks": {
+    "unit_tests": {
+      "command": "cd desktop && npm test",
+      "passed": 24,
+      "failed": 0,
+      "exit_code": 0
+    },
+    "focused_probes": [
+      {
+        "name": "safe-profile run binding",
+        "result": "finding reproduced",
+        "evidence": "A temporary loopback runtime returned features.local_git_inspection=true. Calling client.run('queued-agent-job', 7) sent POST /v1/commands with type job.run and payload.job_id='queued-agent-job'. The bridge checked only the global feature flag. JobsBoard exposes Run inspection for every queued job in snapshot.jobs."
+      },
+      {
+        "name": "development-server cross-origin requests",
+        "result": "blocked",
+        "evidence": "GET /__sidequest/snapshot and POST /__sidequest/runtime/stop with Host 127.0.0.1:5173 and Origin https://attacker.example returned 403 without Access-Control-Allow-Origin. A same-origin POST passed the origin gate and returned 503 because no runtime was configured in the probe process."
+      },
+      {
+        "name": "chunked runtime response bound",
+        "result": "passed",
+        "evidence": "A temporary runtime streamed a 2 MiB response without Content-Length; the client cancelled and rejected it at the 1 MiB read limit."
+      }
+    ],
+    "native_electron": "Not rerun. desktop/README.md records the host OS sandbox limitation; no sandbox bypass was attempted.",
+    "runtime_service": "No live runtime service was exercised; probes used temporary local servers. No model/provider call, delivery, or external transfer was made.",
+    "detached_tree": "No candidate source edits. The temporary node_modules symlink was removed; the review worktree was clean after checks."
+  },
+  "assessments": {
+    "renderer_isolation_and_ipc": "PASS: sandbox, context isolation, Node integration disabled, current main-frame/origin checks, and frozen narrow preload methods.",
+    "shell_filesystem_and_credentials": "PASS: no renderer shell or arbitrary filesystem method; runtime URL is literal loopback HTTP; token stays in the host client and a token file is opened with O_NOFOLLOW and checked for regular-file type, size, single link, and no group/other permissions.",
+    "method_arity_and_paths": "PASS: own-property method allowlist, per-method arities, 4 KiB dispatch input bound, opaque ID validation/encoding, cursor and page checks, and host-configured repository path only.",
+    "same_origin_csrf": "PASS for probed browser requests: development middleware checks Host, Origin and Fetch Metadata, and requires exact same-origin JSON POST for runtime methods.",
+    "response_bounds": "PASS: runtime responses are capped at 1 MiB for both declared and streamed bodies; focused chunked-response probe rejected 2 MiB.",
+    "artifact_identity": "PARTIAL: request IDs are opaque and paths are not renderer-controlled, but the UI does not verify immutable=true or cross-check returned artifact/file/candidate IDs before showing an artifact as immutable.",
+    "safe_inspection_gating": "FAIL: the global local_git_inspection capability is not bound to the selected job before job.run.",
+    "stale_selection": "PARTIAL: artifact/file requests use alive guards and text/diff use a generation counter. Periodic snapshot refreshes can overlap and an older response can overwrite newer state. Commands carry the displayed revision, so the contract's server-side VERSION_CONFLICT prevents a stale mutation from being silently retried; this is a stale-display/UX risk."
+  },
+  "findings": [
+    {
+      "id": "C-RUNTIME-001",
+      "severity": "medium",
+      "area": "zero-model safe inspection gating / unsafe dispatch",
+      "evidence": [
+        "desktop/electron/runtime-client.cjs:40-43",
+        "desktop/electron/runtime-client.cjs:72",
+        "desktop/src/JobsBoard.tsx:35",
+        "desktop/src/JobsBoard.tsx:94-96"
+      ],
+      "detail": "run(jobId, revision) checks only the global local_git_inspection capability, then submits job.run for the supplied ID. JobsBoard lists all snapshot jobs and enables Run inspection for any queued job while that capability is true. The temporary-server probe confirmed the client sends job.run for an arbitrary queued-agent-job ID.",
+      "impact": "A user can click a button presented as a zero-model inspection for a different queued job. If the service accepts that job profile, it may dispatch work outside the UI's stated inspection mode. A remains the policy authority, but C does not bind its action to the safe job it creates.",
+      "recommendation": "Fetch the selected job fresh before dispatch and require a host-derived execution_profile of local_git_inspection, queued state, and zero budget; keep the same profile and authorization checks in A. Disable the button for all other jobs."
+    },
+    {
+      "id": "C-RUNTIME-002",
+      "severity": "low",
+      "area": "immutable artifact identity display",
+      "evidence": [
+        "desktop/src/JobsBoard.tsx:100",
+        "desktop/src/types.ts:15-19"
+      ],
+      "detail": "The UI appends 'immutable' for every selected artifact without checking RuntimeArtifact.immutable, which is optional in the client type. It also does not verify that the returned file/text/diff page artifact_id and candidate_id match the selected artifact identity.",
+      "impact": "A malformed or older runtime response can be presented as frozen data without the identity checks required by EXTENSIONS. The current UI has no approval/delivery control, so this is a false-assurance/display-integrity issue rather than a direct write authorization bypass.",
+      "recommendation": "Show the immutable label only after validating immutable===true, a valid digest, and consistent artifact/candidate IDs across each page response; otherwise show identity unavailable."
+    },
+    {
+      "id": "C-RUNTIME-003",
+      "severity": "medium",
+      "area": "EXTENSIONS response compatibility",
+      "evidence": [
+        "contracts/EXTENSIONS.md read endpoint for GET /v1/jobs/{job}/artifacts",
+        "contracts/EXTENSIONS.md read endpoint for GET /v1/artifacts/{artifact}/text",
+        "desktop/src/JobsBoard.tsx:64",
+        "desktop/src/JobsBoard.tsx:103",
+        "desktop/src/types.ts:19,24"
+      ],
+      "detail": "At this SHA, JobsBoard expects artifacts[]. The contract returns items[] for the paginated jobs/artifacts endpoint. The client types/UI also expect text line.line and next_start_line, while the contract returns line.number and next_line.",
+      "impact": "The artifact list handler fails when it reads result.artifacts, and text page numbering/continuation do not match the real API response. The real artifact inspection flow cannot be established with this frozen candidate.",
+      "recommendation": "Align the UI and DTOs to EXTENSIONS and verify with the actual response shapes. Root reports shape-only edits after this SHA; those edits are outside this review and need integrated browser verification."
+    },
+    {
+      "id": "C-RUNTIME-004",
+      "severity": "low",
+      "area": "stale snapshot response handling",
+      "evidence": [
+        "desktop/src/JobsBoard.tsx:36-48",
+        "desktop/src/JobsBoard.tsx:56-60"
+      ],
+      "detail": "Refresh runs every 1.5 seconds without a one-in-flight or response-generation guard, so a slower earlier snapshot can overwrite newer displayed state.",
+      "impact": "The board can briefly show stale job state or revision and the next command may receive VERSION_CONFLICT. The client does not retry with a new revision, so the stale response does not silently authorize a mutation under the contract.",
+      "recommendation": "Sequence refresh requests or suppress responses older than the latest completed generation."
+    }
+  ],
+  "review_limits": [
+    "Findings describe exact candidate SHA 87b31120604b5b8074b83c4be5f526c8348601d9 only.",
+    "The mock-runtime probe demonstrates client dispatch, not acceptance by A; the service remains required to enforce its own job policy.",
+    "The follow-up JobsBoard/DTO response-shape changes and per-job execution_profile repair are not part of this candidate and were not reviewed here.",
+    "Actual office assets remain unavailable through the host proxy and native Electron remains blocked by the documented OS sandbox limitation; neither boundary was bypassed."
+  ]
+}

@@ -1,0 +1,8 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --retries=0 --grep genuine local inspection|real jobs clear|recorded session ownership|keyboard-accessible viewer|provider settings and preserved work at 1440
+
+
+Error: http://127.0.0.1:5173 is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.
+
+

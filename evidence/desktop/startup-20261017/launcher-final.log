@@ -1,0 +1,17 @@
+test_auth_is_process_only_and_inherited_authority_is_not_enabled (test_launcher.LauncherTests.test_auth_is_process_only_and_inherited_authority_is_not_enabled) ... ok
+test_dead_runtime_fails_before_ui_starts (test_launcher.LauncherTests.test_dead_runtime_fails_before_ui_starts) ... ok
+test_existing_repository_uses_previous_commit_and_allows_explicit_base (test_launcher.LauncherTests.test_existing_repository_uses_previous_commit_and_allows_explicit_base) ... ok
+test_native_headless_error_precedes_runtime_spawn (test_launcher.LauncherTests.test_native_headless_error_precedes_runtime_spawn) ... ok
+test_new_repository_uses_head_for_valid_empty_comparison (test_launcher.LauncherTests.test_new_repository_uses_head_for_valid_empty_comparison) ... ok
+test_private_runtime_state_cannot_live_in_git_or_shared_root (test_launcher.LauncherTests.test_private_runtime_state_cannot_live_in_git_or_shared_root) ... ok
+test_real_runtime_authenticates_without_persisting_a_token (test_launcher.LauncherTests.test_real_runtime_authenticates_without_persisting_a_token) ... ok
+test_stop_terminates_owned_process (test_launcher.LauncherTests.test_stop_terminates_owned_process) ... ok
+test_two_launchers_cannot_recover_the_same_runtime_state_at_once (test_launcher.LauncherTests.test_two_launchers_cannot_recover_the_same_runtime_state_at_once) ... ok
+test_ui_failure_stops_runtime_and_returns_failure (test_launcher.LauncherTests.test_ui_failure_stops_runtime_and_returns_failure) ... Local runtime ready. Git inspection, saved sessions and artifacts are connected. Coding is disabled; no provider turn will start.
+Open http://127.0.0.1:5173 after Vite reports ready. Press Ctrl+C to stop both services.
+ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.606s
+
+OK

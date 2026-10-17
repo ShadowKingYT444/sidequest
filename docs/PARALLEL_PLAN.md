@@ -1,3 +1,7 @@
+# Current presentation adaptation — 2026-10-14
+
+C now follows [C-desktop.md](goals/C-desktop.md). A/B/D keep their original roles and backend contracts. The initial viewer milestone was built with scoped manual Luna/max workers; it did not execute the native twelve-goal controller or establish C1–C3 completion. Current full implementation uses one writer per A/B/D role, with the coordinator owning C. Each lane stops after its current goal for a frozen candidate and fresh validation. Missing actual art/native capabilities remain explicit blockers. Do not start a second owner or native controller on the same paths.
+
 # Parallel implementation: fixed ownership
 
 All four lanes start from one prepared baseline containing these specs and the owner's asset import. Each has three sequential goals. They can implement against frozen fixtures without importing another lane's unfinished code. Integration is deliberately sequential after component completion.
@@ -6,10 +10,10 @@ All four lanes start from one prepared baseline containing these specs and the o
 |---|---|---|
 | A | services/runtime/, journals/A.md, evidence/A/ | HTTP/SQLite/scheduler; fake B/D subprocesses in tests |
 | B | services/tools/, journals/B.md, evidence/B/ | Git/Codex/capture adapters; typed input/output fixtures |
-| C | unity/, journals/C.md, evidence/C/ | Existing office and native computer; lane-owned HTTP fixture server |
+| C | desktop/, journals/C.md, evidence/C/, evidence/desktop/ | Existing GLB office and Electron computer; narrow host bridge |
 | D | services/workshops/, demo/, tests/e2e/, journals/D.md, evidence/D/ | Trusted QA, recipes and final rig; fake A/B for component tests |
 
-Everything else is read-only during managed development, including contracts, dev/, .codex/, root instructions, goal files and shared reference docs. Each service has a lane-local dependency lock and tests. Only C edits Unity settings, scenes, prefabs and metadata. Completed art is protected by the asset manifest even within C's writable directory.
+Everything else is read-only during managed development, including contracts, dev/, .codex/, root instructions, goal files and shared reference docs. Each service has a lane-local dependency lock and tests. Only C edits Electron/React presentation, office bindings and frontend packages. Completed art is protected by the asset manifest even within C's writable directory.
 
 ```mermaid
 flowchart LR
@@ -24,7 +28,7 @@ flowchart LR
   M --> I[I1 real integrated acceptance]
 ```
 
-A uses fake B/D executables, B uses disposable repositories and a fake provider for most tests, C uses the fixture protocol, and D uses frozen candidate fixtures. A real-provider smoke test is required for B2; a real Unity build is required for C3. Test doubles are labeled and cannot establish final product acceptance.
+A uses fake B/D executables, B uses disposable repositories and a fake provider for most tests, C uses the fixture protocol, and D uses frozen candidate fixtures. A real-provider smoke test is required for B2; a sandbox-preserving native Electron run is required for C3. Test doubles are labeled and cannot establish final product acceptance.
 
 No shared .env, temporary database, browser profile, runtime port or mutable journal. Tests choose ephemeral ports except the default user-facing runtime. Each worker has its own clone/worktree, generated output and context. Source inspection of another lane's committed baseline is permitted; editing its paths is not.
 

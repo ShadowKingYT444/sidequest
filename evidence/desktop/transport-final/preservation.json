@@ -1,0 +1,11 @@
+{
+  "assets": 126,
+  "assetsUnchanged": true,
+  "logs": {
+    "evidence/desktop/monitor-full-17-browser.log": "edf0d4e4c3a16209a33eac3ee8209b92f044b727473336453dc3e430869818f7",
+    "evidence/desktop/repair-20261014/full-browser.log": "2b61495519b442640b421b968d3d24cc07da624ef45abe7a374ae4396093d2a9",
+    "evidence/desktop/transport-integrated/full-browser.log": "f3374d6a234218eed2290e041c9e8fff40c40153ef413ef80eb2fbc1c7218497"
+  },
+  "remoteCheckpoint": "e4923218e57c0af3e8757bfc8530471d7277fd30",
+  "protectedFailedLogExpected": "edf0d4e4c3a16209a33eac3ee8209b92f044b727473336453dc3e430869818f7"
+}

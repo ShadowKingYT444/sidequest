@@ -1,0 +1,144 @@
+{
+  "v": 1,
+  "lane": "B",
+  "goal": "B2 Codex app-server adapter repair review",
+  "candidate_sha": "f9476f9b81e320549629b9b5b84a5e9e459a14a3",
+  "review_type": "fresh independent exact-candidate review; no source edits",
+  "overall_status": "BLOCKED",
+  "scoped_statuses": {
+    "deterministic_adapter_and_credential_filter": "PASS",
+    "native_live_luna_max": "BLOCKED",
+    "usd_spend_ceiling": "UNSUPPORTED; public execution fails closed"
+  },
+  "working_tree": {
+    "initial_status": "clean",
+    "only_intended_change": "evidence/B/B2-repair-review.json"
+  },
+  "commands": [
+    {
+      "command": "git rev-parse HEAD",
+      "result": "PASS",
+      "evidence": "f9476f9b81e320549629b9b5b84a5e9e459a14a3"
+    },
+    {
+      "command": "git status --short",
+      "result": "PASS",
+      "evidence": "No pre-review changes were present."
+    },
+    {
+      "command": "python3 -m unittest discover -s services/tools/tests -p 'test_*.py' -v",
+      "result": "PASS",
+      "evidence": "41 tests passed, 0 failures (9.370 seconds). Codex lifecycle tests use fake app-server transport; Git/artifact tests use disposable fixtures."
+    },
+    {
+      "command": "python3 -m py_compile services/tools/*.py services/tools/tests/*.py",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m services.tools.main --help",
+      "result": "PASS",
+      "exit_code": 0,
+      "evidence": "Printed usage without loading runtime configuration or starting Codex."
+    },
+    {
+      "command": "python3 - (inline dispatch, JSON-RPC, schema and contains_secret probes)",
+      "result": "PASS",
+      "evidence": "The independent probes and results are recorded below."
+    },
+    {
+      "command": "python3 - (inline subprocess probe of python3 -m services.tools.main with a valid temporary host configuration and fake executable sentinel)",
+      "result": "PASS",
+      "evidence": "The CLI returned one v1 error envelope with POLICY_DENIED and the USD-ceiling message; the fake executable sentinel was not created."
+    },
+    {
+      "command": "rg -n 'execute_agent\\(' services/tools",
+      "result": "PASS",
+      "evidence": "The function definition and call sites with _test_only_allow_unmetered=True occur only in test_codex_bridge.py; production main.dispatch does not call the helper."
+    },
+    {
+      "command": "rg -n 'tests|fixtures' services/tools/git_ops.py",
+      "result": "PASS",
+      "evidence": "No matches. The credential scanner has no repository/test-directory exception."
+    }
+  ],
+  "independent_probes": [
+    {
+      "name": "Public wire agent.execute USD gate",
+      "result": "PASS",
+      "evidence": "Sent a valid JSON-line agent.execute request through services.tools.main with host Codex enabled, consent true, and a temporary executable that would leave a launch marker. The CLI returned POLICY_DENIED: Codex execution is disabled because the app-server cannot enforce a verified USD spend ceiling. The marker was absent."
+    },
+    {
+      "name": "Internal execution helper default and test bypass boundary",
+      "result": "PASS_WITH_SCOPE_NOTE",
+      "evidence": "Direct execute_agent invocation without _test_only_allow_unmetered raised POLICY_DENIED with the same USD-ceiling message before the sentinel executable started. Repository call-site search found the explicit opt-in only in Codex tests, whose fixture configures fake app-server executables. The underscore parameter is a private Python convention, not an executable-identity check; main.dispatch exposes no call path that supplies it. Direct imported use by unsupported code is outside the public wire boundary."
+    },
+    {
+      "name": "Installed JSON-RPC schema compatibility",
+      "result": "PASS",
+      "evidence": "Read /tmp/sidequest-codex-schema/JSONRPCResponse.json, JSONRPCError.json and JSONRPCRequest.json. Their required fields are respectively [id,result], [error,id] and [id,method]; none defines or requires jsonrpc. A marker-free response with integer id 1 was accepted. An explicit jsonrpc:'1.0' marker was rejected."
+    },
+    {
+      "name": "JSON-RPC response identifier correlation",
+      "result": "PASS",
+      "evidence": "A direct AppServer.request probe accepted exact integer id 1 for request id 1; rejected boolean true during parsing; rejected float 1.0 and string '1' as invalid response ID types; and rejected integer id 2 as an unexpected ID."
+    },
+    {
+      "name": "Path-aware unquoted credential scan",
+      "result": "PASS",
+      "evidence": "contains_secret rejected API_TOKEN=fixture_plaintext_secret_value_9a8b7c6d in both src/settings.conf and tests/fixtures/settings.conf. It accepted source code token = os.environ.get('API_TOKEN') and long documentation describing a 30,000-token budget. Scanner code matches content and supported config extensions; there is no test-directory whitelist."
+    },
+    {
+      "name": "Configured time, token and cancellation limits",
+      "result": "PASS_FOR_DETERMINISTIC_SCOPE",
+      "evidence": "The 41-test suite includes test_settings_require_integer_limits_and_host_owned_catalog_choices and test_token_budget_and_time_limit_stop_and_interrupt_without_freezing. Host settings cap max seconds at 1,200 and token budget at 30,000; requested max_seconds is an integer no greater than the host setting. Fake lifecycle tests verify cancellation, timeout and reported-token-ceiling interruption without candidate freeze. The B monotonic deadline begins after repository/config preflight; the runtime adapter wrapper caps the whole agent.execute subprocess at codex_max_seconds+45 seconds. No native turn verified provider enforcement."
+    },
+    {
+      "name": "Interactive approval and workspace boundary",
+      "result": "PASS_FOR_DETERMINISTIC_SCOPE",
+      "evidence": "Fake action-request tests verify an app-server request carrying method and id is never answered, the turn is interrupted, and no artifact is emitted. Source inspection found approvalPolicy:on-request, workspace-write roots limited to the assigned clone, networkAccess:false, --strict-config, explicit empty hooks and MCP settings, and rejection of committed project .codex configuration before server start. write_paths are also checked when freezing the final candidate; they are not an individual-file OS sandbox during a turn."
+    },
+    {
+      "name": "Configuration, authentication and output filtering",
+      "result": "PASS_FOR_DETERMINISTIC_SCOPE",
+      "evidence": "Source and fake-transport tests cover explicit host model/effort, account/catalog verification, strict server configuration, a bounded environment retaining only original HOME/CODEX_HOME auth locators, no provider settings from job payload, complete-message secret scanning, ANSI removal, omission of reasoning/tool output and provider diagnostics, and null/uncertain USD usage. These tests do not prove native account or model behavior."
+    }
+  ],
+  "history_assessment": {
+    "prior_review_file": "evidence/B/B2-review.json",
+    "prior_candidate_sha": "1d23bfcd66419dd8b148690b1ff3a3459913ec46",
+    "preserved_unchanged": true,
+    "B2-RPC-001": "The earlier bool/int equality observation applied to the prior candidate and is fixed here: bool IDs are rejected by parsing, and response IDs must have exact int type and exact value. The earlier demand that jsonrpc be mandatory was incorrect for this installed protocol. Marker-free responses are accepted, while a marker explicitly set to another version is rejected.",
+    "B2-BUDGET-001": "The underlying limitation remains: max_cost_usd is not a provider-enforced ceiling, usage cost is null and uncertain, and the capability reports usd_cost_enforced:false. This candidate contains the limitation at the supported public operation by denying agent.execute before app-server startup. That fail-closed behavior does not establish a live Luna/max run or a USD spending bound."
+  },
+  "findings": [],
+  "acceptance": {
+    "B2-1_live_configured_luna_max_candidate": "BLOCKED: no native model catalog/account read or real turn is evidenced; gpt-6-luna/max remain unverified.",
+    "B2-2_deterministic_safety_cases": "PASS: all 41 tools tests pass, including corrected JSON-RPC matching, public USD-gate, output filtering and fake lifecycle controls.",
+    "public_execution_under_unknown_usd_cost": "BLOCKED_BEFORE_APP_SERVER_START: the wire operation fails closed with POLICY_DENIED.",
+    "scoped_review": "Deterministic adapter and credential-filter review only; no source changes, native retry, authentication change, real provider turn, demo turn or external write."
+  },
+  "native_readiness": {
+    "status": "BLOCKED",
+    "evidence_file": "evidence/B/B2-readiness.json",
+    "codex_version": "0.159.0-alpha.3",
+    "recorded_attempt": "stdio initialize only, with sqlite_home and log_dir under /tmp; the first initialize response was not received",
+    "sanitized_failure": "Read-only file system (os error 30)",
+    "recorded_protected_home_failures": [
+      "chmod(<CODEX_HOME>/tmp/arg0, 0700): EROFS",
+      "openat(..., uid_map, O_RDWR): EROFS",
+      "open(<CODEX_HOME>/installation_id, O_RDWR|O_CREAT): EROFS"
+    ],
+    "model_list_completed": false,
+    "account_read_completed": false,
+    "configured_model_effort_verified": false,
+    "thread_or_turn_started": false,
+    "review_action": "No retry was made; no auth/home or filesystem changes were made; no provider, model or demo turn was launched."
+  },
+  "limits": [
+    "The public B2 execution operation currently refuses all real turns because no enforceable USD ceiling is available. Fake transport tests establish adapter logic, not native compatibility or billing behavior.",
+    "The private _test_only_allow_unmetered switch is used only by tests in this repository but is not a hard fake-executable guard; the supported JSON-line dispatcher never passes it.",
+    "The runtime workspace-write setting and post-turn freeze scope check do not isolate hostile repository code at the OS/container level. The project remains for explicitly trusted repositories.",
+    "No live Luna/max evidence, provider usage measurement, candidate, delivery, or real provider session was produced."
+  ]
+}

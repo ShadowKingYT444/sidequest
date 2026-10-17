@@ -2,6 +2,10 @@
 
 This adds explicit first-release features to the wire-v1 base protocol. Read with PROTOCOL.md. All examples retain v:1. Consumers tolerate extra response fields. Servers reject unknown mutation fields/types instead of guessing. No caller-controlled filesystem read path is accepted.
 
+## Deterministic local inspection profile
+
+The MVP exposes additive `features.local_git_inspection:true` only when its host-configured deterministic Git/check pipeline is available. It must keep coding-model verification false until a real coding adapter is proven. A job additionally exposes host-derived `execution_profile:"local_git_inspection"` only when its persisted canonical profile is the fixed zero-budget, read_repo/run_checks inspection with candidate.frozen_identity and no custom plan; other jobs expose null or unavailable. This field is display/dispatch metadata, never accepted from user mutation input. The desktop re-reads the selected job and requires that profile, queued state and zero budget before sending job.run. A independently revalidates persisted policy/profile and current revision at dispatch. Reads and UI status refresh make zero model calls.
+
 ## Capability and project setup
 
 GET /v1/capabilities returns {v,contract_revision:"1.1",features:{computer_artifacts:true,screen_watch:"available"|"unavailable"|"permission_required",github_delivery:boolean},worker_model:{id,effort,verified:boolean},limits:{max_parallel,max_tasks_per_plan},reasons:[string]}.
@@ -39,13 +43,27 @@ FileEntry: {file_id,path,old_path,status,media_type,size_bytes,sha256,added_line
 
 DiffRow: {kind,old_line,new_line,text}. kind is file_header, hunk_header, context, add, remove, no_newline or binary. Non-applicable line numbers are null. Generate rows with Git; do not ask a model. Preserve escaped filenames and no-newline markers. Binary rows state that no textual diff is available. Text page limits are hard capped at 200 rows/256 KiB; clip and mark a single overlong line. Cursor contains an opaque server-validated offset tied to artifact hash and file_id. A bad or mismatched cursor returns INVALID_INPUT; a stale mutable stream cursor returns VERSION_CONFLICT.
 
+The 256 KiB ceiling includes the actual serialized JSON response after UTF-8 encoding and JSON escaping, including metadata and cursors. A clipped diff row additionally exposes `clipped:true`; display that marker so truncation cannot be mistaken for complete content. Pagination continues at the first unconsumed row. Manifest-file responses obey the same byte ceiling as well as their 100-entry limit.
+
 RunEvent: {seq,at,type,message,artifact_id,task_id}. seq is monotonically increasing per run; at is UTC ISO8601. Allowed types status, tool_started, tool_finished, output, warning and usage. message is redacted plain text, at most 4 KiB. No private reasoning or authentication payloads. Text and image details are fetched only when viewed. All returned images are bounded previews under COMPUTER_UI.md; invalid media receives INVALID_INPUT, not a browser redirect.
 
 ## Adapter additions without changing stdout
 
+### Codex session host configuration
+
+Add B operation `agent.capabilities` with payload `{}`. It performs only app-server initialization, model catalog and account reads with `refreshToken:false`, then closes. It never creates a thread or model turn. Safe data is `{state:"available"|"unavailable",provider:"codex-app-server",model:{id,verified},effort:{id,verified},account_type:"chatgpt"|"unknown",usd_cost_enforced:boolean,reason}`; omit account/email/token/config payloads. A invokes it only for explicit host-enabled setup or command `system.codex.refresh` with an empty payload/current revision, caches the sanitized result against the host configuration, and keeps ordinary snapshot/capability reads free of process/model dispatch.
+
+A USD reservation is bookkeeping, not provider-enforced spending authority. A and B must deny model turns when the requested dollar ceiling cannot be verified and enforced. The installed Codex protocol currently provides no enforceable USD ceiling: native capabilities expose `usd_cost_enforced:false`, and execution remains blocked before thread/turn creation. A ChatGPT subscription label does not prove zero-dollar usage. Time/token controls and fake lifecycle tests cannot be presented as proof of a hard monetary bound or a live model run.
+
+`agent.execute` uses the actual Codex app-server over private stdio. Host settings are `SIDEQUEST_CODEX_ENABLED`, `SIDEQUEST_CODEX_EXECUTABLE`, `SIDEQUEST_CODEX_MODEL`, `SIDEQUEST_CODEX_EFFORT`, `SIDEQUEST_CODEX_MAX_SECONDS`, `SIDEQUEST_CODEX_TOKEN_BUDGET`, `SIDEQUEST_CODEX_CONSENT` and `SIDEQUEST_CODEX_STATE_DIR`. Execution is disabled by default. A verified catalog entry/effort, explicit host consent, current project/action policy and a budget reservation are required before a model turn. An existing subscription login does not prove catalog/provider readiness or a live run. Unknown measured usage and cost remain null/uncertain; no fake fallback may report a real session as successful.
+
+A may add `context.provider_thread_id` only from its persisted host-owned attempt/session record for an explicit resume. Public commands and job text cannot supply a provider thread ID or executable/model/auth setting. Preserve the original authenticated environment unchanged only for the Codex operation; Git/check subprocesses receive no account credentials. Writable SQLite/log/session state must remain in the dedicated host runtime area, separate from protected auth files. Do not copy credentials or change accounts to make a demonstration work. App-server approval/tool requests cannot grant source delivery, new permissions, arbitrary destinations or external writes. Safe progress omits private reasoning and authentication material. Cancellation interrupts the current turn, terminates its process group and records an interrupted/uncertain attempt; a status read never resumes or launches a turn.
+
 Input may include context:{project_id,run_id,attempt_id,source_revision,write_paths,artifact_inputs:[{id,sha256,staged_path}],output_root,progress_path}. These are all assigned by A. B/D verify that staged files are contained, regular and hash-matched before reading. An artifact ID supplied only by user text cannot resolve a local file. A supplies read-only candidate roots to checks and separate writable report roots. A validates output artifacts against output_root, not arbitrary response paths.
 
 Adapters append optional progress records to progress_path as newline JSON: {v,request_id,seq,type,message,artifact_id}. At most ten records per second and 4 KiB per record, maximum 10 MiB per attempt. Partial final records are ignored until complete. A rejects mismatched request IDs and repeated/non-monotonic sequence numbers. An adapter can report activity but cannot mark checks passed or approve writes through a progress record. stdout remains exactly one final response so old protocol transport tests retain meaning.
+
+B additionally emits the internal type `session` immediately after provider thread/turn acknowledgements, with `provider_thread_id` and nullable `provider_turn_id`. Both are bounded opaque host diagnostics. A binds the record to the current request/job/attempt, rejects a changed thread identity, and persists it before publishing generic status. Raw provider IDs, account data and private reasoning do not enter public events. This record never grants permission, starts a successor or authorizes resume; missing identity after interruption remains blocked/uncertain rather than creating a replacement model turn.
 
 Add B op artifacts.freeze with {base_revision,write_paths} → {candidate,manifest_artifact_id,diff_artifact_id,patch_artifact_id}. Add B op preview.capture with {candidate_id,origin_ref} → {screenshot_artifact_id,captured_at}; origin_ref resolves only from host-registered preview settings. A does not fetch arbitrary URLs supplied by repository content. preview.capture is a convenience screenshot, not trusted QA.
 
@@ -60,3 +78,24 @@ Selected-screen watchers are armed only after OS consent, source/mask configurat
 ## Layout clarification
 
 layout.save remains a versioned workflow topology command from the explicit workflow editor. It is not the same as moving desks. Ordinary office placement lives in C's local presentation settings and has zero effect on task permissions or currently running dependencies. A validates workflow edges before activation. Older grid examples are logical coordinates, not instructions to remodel the owner's office.
+
+## Coordinator implementation clarifications — 2026-10-14
+
+The frozen file-manifest artifact is JSON `{v:1,candidate,files:[FileEntry]}`. Each entry additionally records `mode` as a Git regular-file mode string (100644 or 100755). It contains all safe current candidate files, including unchanged entries, and deleted entries with null sha256. A frozen workspace contains exactly the non-deleted entries; no symlinks, special files or extra candidate files are allowed.
+
+`candidate.tree_sha256` hashes canonical UTF-8 JSON `{v:1,files:[{path,mode,size_bytes,sha256}]}` over non-deleted entries sorted by path. Object keys are sorted, separators are compact, and Unicode is emitted directly (`ensure_ascii=false`). B freezes this identity; A rechecks before registering; D verifies exact bytes and modes before and after checks. Artifact SHA is still the hash of raw artifact bytes. For `check.run`, payload and context source_revision refer to the frozen candidate_revision; B execution requests use the registered base revision.
+
+Privileged `repo.deliver` uses context.delivery_id and context.action_id; they must match in this release. The existing payload.approval carries identity metadata only. Context additionally supplies `approval_record:{id,sha256,staged_path}` for a host-staged approved record outside the worker workspace and under a configured host-owned approval root. B verifies regular-file containment, digest, approved state, exact source/candidate/tree/patch/action/destination and matching ID against that record. An arbitrary payload approval cannot grant permission. Manifest/patch artifacts resolve only through hash-checked context.artifact_inputs. Persist intent before action and reconcile repeated or uncertain IDs; do not blindly retry an external write.
+
+These additive encodings resolve previously unspecified implementation placement. They do not grant a new action, change wire v1, weaken required checks or authorize a demonstration provider/delivery call.
+
+
+## Visual MVP additions — 2026-10-14
+
+Provider discovery is a separate fixed read-only host capability. It reports executable presence/path, scan time and home environment locators for six fixed providers. It never executes binaries or reads config/auth/session files. Account, numeric usage, reset times, token/model/cost analytics remain unknown. The tank represents fraction **used**, never remaining.
+
+Cached capabilities separate `codex.catalog_verified` and `worker_model.verified` from full execution readiness. `codex.subscription_quota` contains only nullable `ordinary_usage_allowed` and `purchased_credits_available` booleans; it is absent/unverified without a successful native account/rate-limit read. Those fields do not prove an enforceable dollar ceiling. `codex.host_enabled` is explicit. `features.coding`/`codex_session` still require every execution gate and `usd_cost_enforced=true`.
+
+Projects expose the allowlisted policy action list. Fixed `project.enable_coding` accepts only `project_id`, uses revision/idempotency and checks current execution readiness, consent and stopped state before adding `propose_patch`. No readiness or status read grants this policy. Renderer methods are fixed validated `refreshReadiness`, `enableCoding`, `submitCoding`, `runCoding`; the existing local inspection path stays separate.
+
+Computer result displays store only a station/job/project association locally. They validate assignment against known stations and resolve the actual job/project identity before displaying immutable artifacts. This is read-only display routing, not live worker ownership or model dispatch.

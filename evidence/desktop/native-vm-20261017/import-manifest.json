@@ -1,0 +1,69 @@
+{
+  "library_file_id": "libfile_bb97153d2cb48191908eeca2981c7479",
+  "file_id": "file_00000000859881f5bc55486a89481c78",
+  "archive_bytes": 271486,
+  "archive_sha256": "f5c95bb904d6ea59e7920046832a2b96e6e8387bac7d58e41de5ca2c4ff0f5e6",
+  "scope": "Original independent native artifacts imported without content edits; seven UI screenshots plus smoke window image",
+  "files": {
+    "native-smoke.log": {
+      "bytes": 124,
+      "sha256": "fcabb505e86a0f9b218eb93bd30e9aa56b59ae5bb29889c7714644f87394e616"
+    },
+    "codex-status.log": {
+      "bytes": 3226,
+      "sha256": "a06fd5a1dad13499f0ad927258273f247e8e5edcb339892323283a4b0f838d04"
+    },
+    "setup.log": {
+      "bytes": 8387,
+      "sha256": "a67530f97861dddc1924ef3f15d1531baf3e5dfcda721362011134729f518415"
+    },
+    "codex-initialize.json": {
+      "bytes": 435,
+      "sha256": "1da26cd59248529c937ede76cddd2dec0991e1584f26906c2fbb112888aaeaac"
+    },
+    "native-ui.log": {
+      "bytes": 1063,
+      "sha256": "afd69d0acb632c714738b7d659fbd7eace35e1d09dcca30b550cd8dba71f4095"
+    },
+    "RESULTS.txt": {
+      "bytes": 3360,
+      "sha256": "0a5d87289a1457b0d5c6cedddaf76c65b34dc8a01020531376785c4a5b7b4f0f"
+    },
+    "screenshots/native-office-blocked.png": {
+      "bytes": 54961,
+      "sha256": "cdef87ea111f72447494087c48585cdfad36d8ebe8acc02b8b5755fbd788be05"
+    },
+    "screenshots/native-inspection-result.png": {
+      "bytes": 105341,
+      "sha256": "e4eb9486de8561f40f790d8edd22fa2fea05c694540da59b66291d381b2e9984"
+    },
+    "screenshots/native-settings.png": {
+      "bytes": 72240,
+      "sha256": "904e8ff579e07455d1ed9182a9d1b26e95d1aec3521b74c8e1dcbd4a9025ff02"
+    },
+    "screenshots/native-git-diff.png": {
+      "bytes": 79553,
+      "sha256": "6283d35c3bc7b906205f6f2c7ccc556096351e4eee6752237d4416c58a14d313"
+    },
+    "screenshots/native-diff-reopened.png": {
+      "bytes": 81571,
+      "sha256": "61efec9ac7e753ba62bfd4db4bd15da64e4d5e97c3cb8859d14d9c8b2f5e3dd0"
+    },
+    "screenshots/native-usage.png": {
+      "bytes": 55592,
+      "sha256": "22ae19e8c66a505355561312818d2cc5c777aa7c9bf8fab704264e3c70c461ee"
+    },
+    "screenshots/native-session-outcome.png": {
+      "bytes": 54671,
+      "sha256": "b24a9fe0f33e52ee8e7f41a083c59f7dbe130c1d3e71fda4ca6fa33bbf97e826"
+    },
+    "smoke/electron-smoke.json": {
+      "bytes": 680,
+      "sha256": "9f115c73c533f31418e1ce8290dabd5209e90ce4a7dcd348dfec64d1c8995a2c"
+    },
+    "smoke/electron-window.png": {
+      "bytes": 14854,
+      "sha256": "4b9c50378fcec5aa24d1445d290b2d95feea41ca72932ed705d884c5e91a6d67"
+    }
+  }
+}

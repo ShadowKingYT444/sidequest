@@ -1,0 +1,73 @@
+{
+  "test": "explicit read-only fixture shows distinct notifications and one badge per primary figure",
+  "status": "failed",
+  "elapsedMs": 62,
+  "navigations": [],
+  "network": [],
+  "errors": [],
+  "browser": {
+    "entries": [
+      {
+        "name": "about:blank",
+        "entryType": "navigation",
+        "startTime": 0,
+        "duration": 52.5,
+        "navigationId": 1390,
+        "initiatorType": "navigation",
+        "deliveryType": "cache",
+        "nextHopProtocol": "",
+        "renderBlockingStatus": "non-blocking",
+        "contentType": "",
+        "contentEncoding": "",
+        "workerStart": 0,
+        "workerRouterEvaluationStart": 0,
+        "workerCacheLookupStart": 0,
+        "workerMatchedSourceType": "",
+        "workerFinalSourceType": "",
+        "redirectStart": 0,
+        "redirectEnd": 0,
+        "fetchStart": 0,
+        "domainLookupStart": 0,
+        "domainLookupEnd": 0,
+        "connectStart": 0,
+        "secureConnectionStart": 0,
+        "connectEnd": 0,
+        "requestStart": 0,
+        "responseStart": 0,
+        "firstInterimResponseStart": 0,
+        "finalResponseHeadersStart": 0,
+        "responseEnd": 50.59999999962747,
+        "transferSize": 0,
+        "encodedBodySize": 0,
+        "decodedBodySize": 0,
+        "responseStatus": 0,
+        "serverTiming": [],
+        "unloadEventStart": 0,
+        "unloadEventEnd": 0,
+        "domInteractive": 51.30000000074506,
+        "domContentLoadedEventStart": 51.30000000074506,
+        "domContentLoadedEventEnd": 51.30000000074506,
+        "domComplete": 52.5,
+        "loadEventStart": 52.5,
+        "loadEventEnd": 52.5,
+        "type": "navigate",
+        "redirectCount": 0,
+        "activationStart": 0,
+        "criticalCHRestart": 0,
+        "notRestoredReasons": null,
+        "confidence": {
+          "randomizedTriggerRate": 0.4994798,
+          "value": "high"
+        }
+      },
+      {
+        "name": "visible",
+        "entryType": "visibility-state",
+        "startTime": 0,
+        "duration": 0,
+        "navigationId": 1390
+      }
+    ],
+    "editors": 0
+  }
+}

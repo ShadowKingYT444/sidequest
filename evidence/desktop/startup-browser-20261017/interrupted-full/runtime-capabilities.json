@@ -1,0 +1,45 @@
+{
+  "v": 1,
+  "contract_revision": "1.1",
+  "features": {
+    "computer_artifacts": true,
+    "session_messages": true,
+    "session_attachments": true,
+    "screen_watch": "unavailable",
+    "github_delivery": false,
+    "local_git_inspection": true,
+    "coding": false,
+    "codex_session": false
+  },
+  "worker_model": {
+    "id": "none",
+    "effort": "unavailable",
+    "verified": false,
+    "coding_available": false
+  },
+  "limits": {
+    "max_parallel": 2,
+    "max_tasks_per_plan": 4
+  },
+  "reasons": [
+    "Codex execution is disabled by host settings."
+  ],
+  "codex": {
+    "host_enabled": false,
+    "catalog_verified": false,
+    "state": "unverified",
+    "provider": "codex-app-server",
+    "model": {
+      "id": null,
+      "verified": false
+    },
+    "effort": {
+      "id": null,
+      "verified": false
+    },
+    "account_type": "unknown",
+    "usd_cost_enforced": false,
+    "refreshed_at": null,
+    "reason": null
+  }
+}

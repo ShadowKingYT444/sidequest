@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "source": "6a6b8a3e6e2f14dc678f81783d368e57595e7206",
+  "elapsedMs": 22101,
+  "originalActors": "26",
+  "singleCommitGit": true,
+  "graphics": {
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "frames": "4"
+  },
+  "inspection": {
+    "state": "verifying",
+    "profile": "local_git_inspection",
+    "spentUsd": 0,
+    "checks": [
+      {
+        "id": "candidate.frozen_identity",
+        "state": "pass",
+        "evidence_artifact_id": "sha256:a659b211f7f41de81a186d2c0e65d68fd0bc19815f8b9374e8d6dccccdaccf38"
+      }
+    ]
+  },
+  "codingEnabled": false,
+  "errors": [],
+  "scope": "Fresh source archive and setup command; actual launcher, browser UI, local authenticated runtime and zero-model Git inspection. Software browser, not native Electron.",
+  "immutableReadmeTextVerified": true,
+  "readmeLastLine": "Project line 159",
+  "runtimeShutdown": true,
+  "persistentTokenFiles": 0
+}

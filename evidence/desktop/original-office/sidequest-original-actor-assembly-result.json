@@ -1,0 +1,374 @@
+{
+  "count": 26,
+  "capped": 20,
+  "independentActorSkeletons": true,
+  "rejectedUnsafeManifestCases": 6,
+  "staticOnly": true,
+  "summaries": [
+    {
+      "sceneId": "worker_parent_001",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8492000084383609,
+        1.5992294749575802,
+        0.9587123388883345
+      ]
+    },
+    {
+      "sceneId": "worker_parent_002",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8622355189767852,
+        1.5992294749575802,
+        0.9595699396842479
+      ]
+    },
+    {
+      "sceneId": "worker_parent_003",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 0,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8596957623958588,
+        1.509811870479042,
+        0.7673586944644386
+      ]
+    },
+    {
+      "sceneId": "worker_parent_004",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8491999506950378,
+        1.5992294420554238,
+        0.9587122410572873
+      ]
+    },
+    {
+      "sceneId": "worker_parent_005",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.96359996414523,
+        1.6216865782173835,
+        0.9587123387873753
+      ]
+    },
+    {
+      "sceneId": "worker_parent_006",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.862795028666161,
+        1.5992294749575802,
+        0.9697373969723371
+      ]
+    },
+    {
+      "sceneId": "worker_parent_017",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8492000084383611,
+        1.5992294749575802,
+        0.9587123388883358
+      ]
+    },
+    {
+      "sceneId": "worker_parent_008",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8622354567050934,
+        1.5992294420554238,
+        0.9595698259623866
+      ]
+    },
+    {
+      "sceneId": "worker_parent_014",
+      "clip": "Point",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8451361103701733,
+        1.8081999134598798,
+        0.9485163895415631
+      ]
+    },
+    {
+      "sceneId": "worker_parent_018",
+      "clip": "Walk",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 0,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        1.0803567980832147,
+        1.707727064882037,
+        1.0585961177627299
+      ]
+    },
+    {
+      "sceneId": "worker_parent_019",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8491999506950378,
+        1.5992294420554238,
+        0.9587122410572873
+      ]
+    },
+    {
+      "sceneId": "worker_parent_020",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 0,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8622354567050934,
+        1.473414081644599,
+        0.7418374451705305
+      ]
+    },
+    {
+      "sceneId": "worker_parent_021",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.859695824243234,
+        1.5992294749575802,
+        0.9850911765003687
+      ]
+    },
+    {
+      "sceneId": "worker_parent_022",
+      "clip": "Walk",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 0,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        1.13616145812124,
+        1.8001271404229815,
+        1.1236888756143433
+      ]
+    },
+    {
+      "sceneId": "worker_parent_023",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.9635999500751495,
+        1.6216865134388645,
+        0.9587122410572873
+      ]
+    },
+    {
+      "sceneId": "worker_parent_024",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.8627949655056,
+        1.5992294420554238,
+        0.9697372824169399
+      ]
+    },
+    {
+      "sceneId": "child_001_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.6705627183136293,
+        1.2473989447125904,
+        0.7683710894866032
+      ]
+    },
+    {
+      "sceneId": "child_002_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.7516079444644639,
+        1.2649154846127337,
+        0.7477955968251724
+      ]
+    },
+    {
+      "sceneId": "child_003_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 0,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.662375937246324,
+        1.1499865678270331,
+        0.5779642698074312
+      ]
+    },
+    {
+      "sceneId": "child_005_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.6623759438077395,
+        1.2473989447125904,
+        0.7477955965544822
+      ]
+    },
+    {
+      "sceneId": "child_005_02",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.7516079444644626,
+        1.264915484612734,
+        0.7477955968251742
+      ]
+    },
+    {
+      "sceneId": "child_006_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.662375982286115,
+        1.2473989447125904,
+        0.7477955969039218
+      ]
+    },
+    {
+      "sceneId": "child_017_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.6705627183136298,
+        1.2473989447125904,
+        0.7683710894866032
+      ]
+    },
+    {
+      "sceneId": "child_019_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.662375937246324,
+        1.2473989190489094,
+        0.7477955205957074
+      ]
+    },
+    {
+      "sceneId": "child_020_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 0,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.672980048409606,
+        1.1492629415280722,
+        0.5865638017525319
+      ]
+    },
+    {
+      "sceneId": "child_021_01",
+      "clip": "Typing",
+      "staticSeconds": 0.5,
+      "matrixMatches": true,
+      "capMeshCount": 5,
+      "sharedOriginalHead": true,
+      "finiteBounds": true,
+      "bounds": [
+        0.6725436801331375,
+        1.2473989447125904,
+        0.7484645255001983
+      ]
+    }
+  ],
+  "pageErrors": []
+}

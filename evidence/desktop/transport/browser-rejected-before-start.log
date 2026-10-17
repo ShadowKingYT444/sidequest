@@ -1,0 +1,8 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --grep protocol fake: --retries=0
+
+
+Error: http://127.0.0.1:5173 is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.
+
+

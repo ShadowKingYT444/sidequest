@@ -1,0 +1,98 @@
+{
+  "results": [
+    {
+      "operation": "create_library_file",
+      "status": "succeeded",
+      "path": "/original-actor-context-card.png",
+      "file_id": "file_000000001e588210a3c15e7090e3d6a1",
+      "library_file_id": "libfile_fafe3cd2f62c81918b5f4dc47a436e27",
+      "file_name": "original-actor-context-card.png",
+      "current_version_number": 0,
+      "restored_from_version_number": null,
+      "xattrs": [
+        {
+          "name": "user.library-file-version",
+          "value": "0"
+        }
+      ],
+      "directory_id": "libdir_3e302fa58eb88191bf985767e582791b",
+      "mime_type": "image/png",
+      "library_artifact_type": "image",
+      "file_size_bytes": 1542015,
+      "local_path": "evidence/desktop/original-office/original-actor-context-card.png",
+      "sha256": "e52b6a5e6a0c63fb5e011500252048b6a7354f514cf63d256f08d957be091d32",
+      "xattrs_applied": true
+    },
+    {
+      "operation": "create_library_file",
+      "status": "succeeded",
+      "path": "/original-workstation-context-card.png",
+      "file_id": "file_00000000be6881f59821eb7203d9b7d0",
+      "library_file_id": "libfile_1a1165a5507c81918cc788458c988c1f",
+      "file_name": "original-workstation-context-card.png",
+      "current_version_number": 0,
+      "restored_from_version_number": null,
+      "xattrs": [
+        {
+          "name": "user.library-file-version",
+          "value": "0"
+        }
+      ],
+      "directory_id": "libdir_3e302fa58eb88191bf985767e582791b",
+      "mime_type": "image/png",
+      "library_artifact_type": "image",
+      "file_size_bytes": 1306952,
+      "local_path": "evidence/desktop/original-office/original-workstation-context-card.png",
+      "sha256": "f2d0ec859da39dfda0867ed8b7a03808104e1c117bb31e227f9601007aee3ee4",
+      "xattrs_applied": true
+    },
+    {
+      "operation": "create_library_file",
+      "status": "succeeded",
+      "path": "/original-board-task-detail.png",
+      "file_id": "file_00000000f4ec81f58586de8d302a775b",
+      "library_file_id": "libfile_63a3154e5c288191998925314ed15ea9",
+      "file_name": "original-board-task-detail.png",
+      "current_version_number": 0,
+      "restored_from_version_number": null,
+      "xattrs": [
+        {
+          "name": "user.library-file-version",
+          "value": "0"
+        }
+      ],
+      "directory_id": "libdir_3e302fa58eb88191bf985767e582791b",
+      "mime_type": "image/png",
+      "library_artifact_type": "image",
+      "file_size_bytes": 1590512,
+      "local_path": "evidence/desktop/original-office/original-board-task-detail.png",
+      "sha256": "4c6161245000159b2ea85f7ab3af3246280980b4254d9a5fd1ee2126fe2fc5e7",
+      "xattrs_applied": true
+    },
+    {
+      "operation": "create_library_file",
+      "status": "succeeded",
+      "path": "/expanded-diff.png",
+      "file_id": "file_00000000d0948230a88f782930fbd28d",
+      "library_file_id": "libfile_b2b7018f91c481918808cad604c05680",
+      "file_name": "expanded-diff.png",
+      "current_version_number": 0,
+      "restored_from_version_number": null,
+      "xattrs": [
+        {
+          "name": "user.library-file-version",
+          "value": "0"
+        }
+      ],
+      "directory_id": "libdir_3e302fa58eb88191bf985767e582791b",
+      "mime_type": "image/png",
+      "library_artifact_type": "image",
+      "file_size_bytes": 204761,
+      "local_path": "evidence/desktop/expanded-diff.png",
+      "sha256": "3a1a7dfe796b5e1f86fb3a2a35ad2c01c4bfbe1a92876aaa75ab3b893a1971f7",
+      "xattrs_applied": true
+    }
+  ],
+  "warnings": [],
+  "external_connectors_accessed": false
+}

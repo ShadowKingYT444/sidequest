@@ -1,0 +1,171 @@
+import { useEffect, useRef, useState } from 'react';
+import type { ProviderDiscovery, RuntimeCapabilities } from './types';
+import './ProviderSettings.css';
+
+type ProviderId = 'codex' | 'claude' | 'cursor' | 'grok' | 'opencode' | 'antigravity';
+
+interface ProviderChoice {
+  id: ProviderId;
+  name: string;
+  mark: string;
+}
+
+export interface ProviderSettingsProps {
+  discovery: ProviderDiscovery | null;
+  capabilities: RuntimeCapabilities | null;
+  onClose: () => void;
+  onRefresh: () => void;
+  busy?: boolean;
+}
+
+const PROVIDERS: ProviderChoice[] = [
+  { id: 'codex', name: 'Codex', mark: 'Cx' },
+  { id: 'claude', name: 'Claude', mark: 'Cl' },
+  { id: 'cursor', name: 'Cursor', mark: 'Cu' },
+  { id: 'grok', name: 'Grok', mark: 'G' },
+  { id: 'opencode', name: 'OpenCode', mark: 'O' },
+  { id: 'antigravity', name: 'Antigravity', mark: 'A' },
+];
+
+function formatObservedAt(value: string | undefined) {
+  if (!value) return 'Not scanned yet';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 'Scan time unavailable' : `Scanned ${date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+}
+
+function ReadOnlyField({ label, value, mono = false }: { label: string; value: string | null; mono?: boolean }) {
+  return <label className="provider-field">
+    <span>{label}</span>
+    <input aria-readonly="true" className={mono ? 'provider-field__value is-mono' : 'provider-field__value'} readOnly value={value || 'Not reported'} title={value || undefined} />
+  </label>;
+}
+
+function ProviderMark({ provider, small = false }: { provider: ProviderChoice; small?: boolean }) {
+  return <span aria-hidden="true" className={`provider-mark provider-mark--${provider.id}${small ? ' is-small' : ''}`}>{provider.mark}</span>;
+}
+
+function UsageCard({ windowName, windowDetail }: { windowName: string; windowDetail: string }) {
+  return <article className="provider-usage-card">
+    <div className="provider-usage-card__top"><div><h3>{windowName}</h3><p>{windowDetail}</p></div><span className="provider-data-state">Unknown</span></div>
+    <div className="provider-usage-card__measure"><strong>—</strong><span>used</span></div>
+    <div className="provider-usage-card__rule" aria-hidden="true"><span /></div>
+    <div className="provider-usage-card__bottom"><span>Reset time</span><strong>Not reported</strong></div>
+    <p className="provider-usage-card__note">No numeric usage reading is available.</p>
+  </article>;
+}
+
+export default function ProviderSettings({ discovery, capabilities: _capabilities, onClose, onRefresh, busy = false }: ProviderSettingsProps) {
+  const [selectedId, setSelectedId] = useState<ProviderId>('codex');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobilePickerButton = useRef<HTMLButtonElement>(null);
+  const closeButton=useRef<HTMLButtonElement>(null);
+  useEffect(()=>{closeButton.current?.focus();},[]);
+  const selected = PROVIDERS.find((provider) => provider.id === selectedId) ?? PROVIDERS[0];
+  const detail = discovery?.providers.find((provider) => provider.id === selected.id) ?? null;
+  const scanned = discovery !== null;
+  const installed = detail?.installed === true;
+  const statusText = !scanned ? 'Awaiting scan' : installed ? 'Binary found in PATH' : 'Not detected in PATH';
+  const statusClass = !scanned ? 'is-pending' : installed ? 'is-found' : 'is-missing';
+  const homeLabel = selected.id === 'codex' ? 'CODEX_HOME' : 'Host home';
+
+  function chooseProvider(id: ProviderId) {
+    setSelectedId(id);
+    setMobileMenuOpen(false);
+    requestAnimationFrame(() => mobilePickerButton.current?.focus());
+  }
+
+  return <section className="provider-settings" aria-label="Provider settings">
+    <aside className="provider-sidebar">
+      <div className="provider-sidebar__brand"><span className="provider-sidebar__symbol" aria-hidden="true">S</span><div><strong>Sidequest</strong><span>LOCAL WORKSPACE</span></div></div>
+      <div className="provider-sidebar__section-label">SETTINGS</div>
+      <div className="provider-sidebar__nav-label">Providers <span>6</span></div>
+      <nav className="provider-list" aria-label="Providers">
+        {PROVIDERS.map((provider) => {
+          const item = discovery?.providers.find((entry) => entry.id === provider.id);
+          const itemState = !scanned ? 'pending' : item?.installed ? 'found' : 'missing';
+          return <button key={provider.id} className={`provider-list__item${selected.id === provider.id ? ' is-selected' : ''}`} onClick={() => chooseProvider(provider.id)} aria-current={selected.id === provider.id ? 'page' : undefined}>
+            <ProviderMark provider={provider} small />
+            <span className="provider-list__copy"><strong>{provider.name}</strong><small>{!scanned ? 'Not scanned' : item?.installed ? 'Installed' : 'Not detected'}</small></span>
+            <span aria-hidden="true" className={`provider-list__dot is-${itemState}`} />
+          </button>;
+        })}
+      </nav>
+      <div className="provider-sidebar__footer"><span className="provider-local-icon" aria-hidden="true">⌂</span><span><strong>Local machine</strong><small>Discovery stays on device</small></span></div>
+    </aside>
+
+    <main className="provider-main">
+      <header className="provider-topbar">
+        <div className="provider-breadcrumb"><span>Settings</span><span aria-hidden="true">/</span><strong>Providers</strong></div>
+        <div className="provider-topbar__actions">
+          <button className="provider-refresh" onClick={onRefresh} disabled={busy} aria-label={busy ? 'Refreshing provider discovery' : 'Refresh provider discovery'}><span aria-hidden="true" className={busy ? 'provider-refresh__icon is-spinning' : 'provider-refresh__icon'}>↻</span><span>{busy ? 'Scanning…' : 'Refresh scan'}</span></button>
+          <button ref={closeButton} className="provider-close" onClick={onClose} aria-label="Close provider settings"><span aria-hidden="true">×</span><kbd>Esc</kbd></button>
+        </div>
+      </header>
+
+      <div className="provider-mobile-picker">
+        <button ref={mobilePickerButton} className="provider-mobile-picker__button" aria-expanded={mobileMenuOpen} aria-controls="provider-mobile-menu" onClick={() => setMobileMenuOpen((open) => !open)}>
+          <span><ProviderMark provider={selected} small />{selected.name}</span><span aria-hidden="true">{mobileMenuOpen ? '⌃' : '⌄'}</span>
+        </button>
+        <nav id="provider-mobile-menu" className="provider-mobile-menu" aria-label="Choose provider" hidden={!mobileMenuOpen}>
+          {PROVIDERS.map((provider) => <button key={provider.id} onClick={() => chooseProvider(provider.id)} aria-current={selected.id === provider.id ? 'page' : undefined}><ProviderMark provider={provider} small /><span>{provider.name}</span><span className="provider-mobile-menu__meta">{provider.id === selected.id ? 'Selected' : ''}</span></button>)}
+        </nav>
+      </div>
+
+      <div className="provider-scroll">
+        <div className="provider-content">
+          <section className="provider-heading" aria-labelledby="provider-title">
+            <ProviderMark provider={selected} />
+            <div className="provider-heading__copy"><div className="provider-kicker">LOCAL PROVIDER</div><h1 id="provider-title">{selected.name}</h1><p>Runtime and usage overview</p></div>
+            <div className={`provider-status ${statusClass}`}><span aria-hidden="true" className="provider-status__dot" />{statusText}</div>
+          </section>
+
+          <section className="provider-section" aria-labelledby="provider-config-title">
+            <div className="provider-section__heading"><div><span className="provider-section__eyebrow">CONFIGURATION</span><h2 id="provider-config-title">Provider details</h2></div><span className="provider-scan-time">{formatObservedAt(discovery?.observedAt)}</span></div>
+            <div className="provider-config-card">
+              <div className="provider-fields provider-fields--identity">
+                <ReadOnlyField label="Display name" value={selected.name} />
+                <ReadOnlyField label="Runtime" value={detail?.runtime === 'local' ? 'Local' : scanned ? 'Unavailable' : null} />
+                <ReadOnlyField label="Environment" value={scanned ? 'Host process' : null} />
+              </div>
+              <div className="provider-config-divider" />
+              <div className="provider-fields provider-fields--paths">
+                <ReadOnlyField label="Binary path" value={detail?.binaryPath ?? null} mono />
+                <ReadOnlyField label={homeLabel} value={detail?.homePath ?? null} mono />
+              </div>
+              <div className="provider-context-grid">
+                <div><span>Shadow home</span><strong>Not reported</strong></div>
+                <div><span>Launch arguments</span><strong>Not inspected</strong></div>
+                <div><span>Environment variables</span><strong>Not inspected</strong></div>
+                <div><span>Account status</span><strong>Unknown</strong></div>
+              </div>
+              <p className="provider-readonly-note"><span aria-hidden="true">◈</span> Paths are read-only. Provider configuration and credentials are not inspected.</p>
+            </div>
+          </section>
+
+          <section className="provider-section" aria-labelledby="provider-usage-title">
+            <div className="provider-section__heading"><div><span className="provider-section__eyebrow">USAGE</span><h2 id="provider-usage-title">Usage windows</h2></div><span className="provider-data-label"><span aria-hidden="true" /> TELEMETRY UNAVAILABLE</span></div>
+            <div className="provider-usage-grid"><UsageCard windowName="Session" windowDetail="Current session window" /><UsageCard windowName="Weekly" windowDetail="Rolling 7-day window" /></div>
+          </section>
+
+          <section className="provider-analytics" aria-label="Usage analytics">
+            <article className="provider-analytics-card provider-token-card">
+              <div className="provider-analytics-card__heading"><div><span className="provider-section__eyebrow">ACTIVITY</span><h2>Processed tokens</h2></div><span className="provider-unavailable-pill">No samples</span></div>
+              <div className="provider-chart-empty" role="status"><span className="provider-chart-empty__icon" aria-hidden="true">⌁</span><strong>Trend unavailable</strong><span>The local runtime has no token history to plot.</span></div>
+              <div className="provider-table-heading"><h3>Model breakdown</h3><span>Input and output tokens</span></div>
+              <div className="provider-table-wrap"><table className="provider-table"><thead><tr><th scope="col">Model</th><th scope="col">Input</th><th scope="col">Output</th><th scope="col">Total</th></tr></thead><tbody><tr><td colSpan={4} className="provider-table__empty">No model usage data reported</td></tr></tbody></table></div>
+            </article>
+
+            <article className="provider-analytics-card provider-cost-card">
+              <div className="provider-analytics-card__heading"><div><span className="provider-section__eyebrow">COST</span><h2>Cost by model</h2></div><span className="provider-unavailable-pill">No samples</span></div>
+              <div className="provider-cost-total"><span>Total reported cost</span><strong>—</strong><small>USD amount unavailable</small></div>
+              <div className="provider-cost-divider" />
+              <div className="provider-table-heading"><h3>Model costs</h3><span>USD</span></div>
+              <div className="provider-table-wrap"><table className="provider-table"><thead><tr><th scope="col">Model</th><th scope="col">Requests</th><th scope="col">Cost</th></tr></thead><tbody><tr><td colSpan={3} className="provider-table__empty">No model cost data reported</td></tr></tbody></table></div>
+            </article>
+          </section>
+          <footer className="provider-footer"><span>Local provider discovery</span><span>{formatObservedAt(discovery?.observedAt)}</span></footer>
+        </div>
+      </div>
+    </main>
+  </section>;
+}

@@ -1,0 +1,17 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/monitor-ui.spec.ts --grep local monitor drafts --retries=0
+
+
+Running 1 test using 1 worker
+
+(node:205552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/monitor-ui.spec.ts:38:1 › local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages (2.5m)
+
+  1 passed (2.5m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

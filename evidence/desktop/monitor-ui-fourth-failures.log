@@ -1,0 +1,50 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/monitor-ui.spec.ts --retries=0
+
+
+Running 2 tests using 1 worker
+
+(node:204388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll (3.0m)
+(node:204952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/browser/monitor-ui.spec.ts:60:1 › explicit read-only fixture shows distinct notifications and one badge per primary figure (45.3s)
+
+
+  1) tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator: getByTestId('diff-editor')
+    Expected: 0
+    Error: Test timeout of 180000ms exceeded.
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('diff-editor') with timeout 15000ms
+      - waiting for getByTestId('diff-editor')
+      - Test timeout of 180000ms exceeded.
+
+
+      42 |   await expect.poll(async()=>{const actual=await pose(page);return Math.max(...office.position.map((n:number,i:number)=>Math.abs(n-actual.position[i])),...office.target.map((n:number,i:number)=>Math.abs(n-actual.target[i])));}).toBeLessThan(.01);
+      43 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await expect(input).toHaveValue('Keep this draft. Plain\n<script>literal</script>');await expect(composer.getByRole('img',{name:'Preview of clipboard.png'})).toBeVisible();await expect.poll(async()=>Number(await output.getAttribute('data-scroll-top'))).toBeGreaterThan(0);
+    > 44 |   await page.getByRole('button',{name:'Files',exact:true}).click();await expect(page.getByTestId('diff-editor')).toHaveCount(1);await page.getByRole('button',{name:'Trace',exact:true}).click();await expect(page.getByTestId('diff-editor')).toHaveCount(0);await expect(input).toHaveValue('Keep this draft. Plain\n<script>literal</script>');
+         |                                                                                                                                                                                                                                                ^
+      45 |   await page.getByRole('button',{name:'Expand',exact:true}).click();await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await expect.poll(async()=>Number(await output.getAttribute('data-scroll-top'))).toBeGreaterThan(0);
+      46 |   await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');await page.keyboard.press('Escape');await expect.poll(async()=>{const actual=await pose(page);return Math.max(...office.position.map((n:number,i:number)=>Math.abs(n-actual.position[i])));}).toBeLessThan(.01);await page.getByRole('combobox',{name:'Office navigation'}).selectOption('monitor:parent_019');
+      47 |   await composer.getByRole('button',{name:'Remove notes.txt'}).click();await expect(composer.getByRole('button',{name:'Remove notes.txt'})).toHaveCount(0);
+        at /workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:44:240
+
+    Error Context: test-results/monitor-ui-monitor-POV-ret-fa7cb-paste-drop-files-and-scroll/error-context.md
+
+  1 failed
+    tests/browser/monitor-ui.spec.ts:12:1 › monitor POV retains previous camera, real trace, draft, local paste/drop/files and scroll 
+  1 passed (3.9m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

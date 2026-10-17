@@ -1,0 +1,111 @@
+Collecting annotated-doc==0.0.5 (from -r services/runtime/requirements.lock (line 2))
+  Using cached annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting annotated-types==0.8.0 (from -r services/runtime/requirements.lock (line 3))
+  Using cached annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting anyio==4.14.2 (from -r services/runtime/requirements.lock (line 4))
+  Using cached anyio-4.14.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting certifi==2026.7.22 (from -r services/runtime/requirements.lock (line 5))
+  Using cached certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+Collecting click==8.4.2 (from -r services/runtime/requirements.lock (line 6))
+  Using cached click-8.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting fastapi==0.141.1 (from -r services/runtime/requirements.lock (line 7))
+  Using cached fastapi-0.141.1-py3-none-any.whl.metadata (27 kB)
+Collecting h11==0.16.0 (from -r services/runtime/requirements.lock (line 8))
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting httpcore==1.0.9 (from -r services/runtime/requirements.lock (line 9))
+  Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting httpx==0.28.1 (from -r services/runtime/requirements.lock (line 10))
+  Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting idna==3.18 (from -r services/runtime/requirements.lock (line 11))
+  Using cached idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting pydantic==2.13.4 (from -r services/runtime/requirements.lock (line 12))
+  Using cached pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+Collecting pydantic-core==2.46.4 (from -r services/runtime/requirements.lock (line 13))
+  Using cached pydantic_core-2.46.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting starlette==1.6.0 (from -r services/runtime/requirements.lock (line 14))
+  Using cached starlette-1.6.0-py3-none-any.whl.metadata (6.4 kB)
+Collecting typing-extensions==4.16.0 (from -r services/runtime/requirements.lock (line 15))
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting typing-inspection==0.4.3 (from -r services/runtime/requirements.lock (line 16))
+  Using cached typing_inspection-0.4.3-py3-none-any.whl.metadata (2.6 kB)
+Collecting uvicorn==0.52.1 (from -r services/runtime/requirements.lock (line 17))
+  Using cached uvicorn-0.52.1-py3-none-any.whl.metadata (6.6 kB)
+Collecting playwright==1.62.0 (from -r services/workshops/requirements.lock (line 2))
+  Using cached playwright-1.62.0-py3-none-manylinux1_x86_64.whl.metadata (3.3 kB)
+Collecting pyee==13.0.1 (from -r services/workshops/requirements.lock (line 3))
+  Using cached pyee-13.0.1-py3-none-any.whl.metadata (3.0 kB)
+Collecting greenlet==3.5.5 (from -r services/workshops/requirements.lock (line 4))
+  Using cached greenlet-3.5.5-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+Using cached annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Using cached anyio-4.14.2-py3-none-any.whl (125 kB)
+Using cached certifi-2026.7.22-py3-none-any.whl (136 kB)
+Using cached click-8.4.2-py3-none-any.whl (119 kB)
+Using cached fastapi-0.141.1-py3-none-any.whl (131 kB)
+Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+Using cached idna-3.18-py3-none-any.whl (65 kB)
+Using cached pydantic-2.13.4-py3-none-any.whl (472 kB)
+Using cached pydantic_core-2.46.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+Using cached starlette-1.6.0-py3-none-any.whl (75 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached typing_inspection-0.4.3-py3-none-any.whl (14 kB)
+Using cached uvicorn-0.52.1-py3-none-any.whl (79 kB)
+Using cached playwright-1.62.0-py3-none-manylinux1_x86_64.whl (47.7 MB)
+Using cached pyee-13.0.1-py3-none-any.whl (15 kB)
+Using cached greenlet-3.5.5-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (621 kB)
+Installing collected packages: typing-extensions, idna, h11, greenlet, click, certifi, annotated-types, annotated-doc, uvicorn, typing-inspection, pyee, pydantic-core, httpcore, anyio, starlette, pydantic, playwright, httpx, fastapi
+Successfully installed annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.14.2 certifi-2026.7.22 click-8.4.2 fastapi-0.141.1 greenlet-3.5.5 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.18 playwright-1.62.0 pydantic-2.13.4 pydantic-core-2.46.4 pyee-13.0.1 starlette-1.6.0 typing-extensions-4.16.0 typing-inspection-0.4.3 uvicorn-0.52.1
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: python -m pip install --upgrade pip
+
+added 111 packages in 7s
+
+> sidequest-desktop@0.1.0 install:electron
+> install-electron
+
+
+> sidequest-desktop@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 1315 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                0.70 kB │ gzip:   0.42 kB
+dist/assets/codicon-DF1abBS2.ttf             153.22 kB
+dist/assets/editor.worker-BmdWdrHZ.js        303.77 kB
+dist/assets/ProviderPicker-ButNFPJe.css        1.14 kB │ gzip:   0.50 kB
+dist/assets/ProviderTiles-BjbE9vGO.css         1.54 kB │ gzip:   0.63 kB
+dist/assets/RunActivity-DqBKjE3p.css           4.82 kB │ gzip:   1.48 kB
+dist/assets/MonitorSession-CuHECo0S.css        5.28 kB │ gzip:   1.43 kB
+dist/assets/StationLauncher-DxV2kLu_.css       6.82 kB │ gzip:   1.76 kB
+dist/assets/ProviderSettings-C1aMvd8C.css     13.50 kB │ gzip:   2.90 kB
+dist/assets/index-Cbx07stt.css                28.11 kB │ gzip:   6.04 kB
+dist/assets/DiffEditor-Cr_ma_16.css           99.49 kB │ gzip:  14.36 kB
+dist/assets/javascript-DiMpaS3K.js             0.68 kB │ gzip:   0.41 kB
+dist/assets/ProviderPicker-DhEIXX3L.js         2.07 kB │ gzip:   1.03 kB
+dist/assets/python-DwGSEDj3.js                 3.45 kB │ gzip:   1.43 kB
+dist/assets/markdown-Cimd5fb3.js               3.63 kB │ gzip:   1.34 kB
+dist/assets/ProviderTiles-CYmKUX-1.js          3.87 kB │ gzip:   1.70 kB
+dist/assets/typescript-C0ZYQx-q.js             4.67 kB │ gzip:   1.94 kB
+dist/assets/SessionCard-4d4UAMHu.js            4.96 kB │ gzip:   1.87 kB
+dist/assets/RunActivity-CtQBejIU.js            9.09 kB │ gzip:   3.00 kB
+dist/assets/ProviderSettings-BQRJUY7_.js      12.52 kB │ gzip:   3.43 kB
+dist/assets/StationLauncher-CPa8C3Cn.js       13.34 kB │ gzip:   4.62 kB
+dist/assets/MonitorSession-C8xTpfn_.js        17.16 kB │ gzip:   6.22 kB
+dist/assets/JobsBoard-C_x5MgWa.js             20.19 kB │ gzip:   6.54 kB
+dist/assets/index-AF-6qjCq.js                279.44 kB │ gzip:  86.86 kB
+dist/assets/OfficeScene-BUIJFtli.js        1,021.93 kB │ gzip: 274.86 kB
+dist/assets/DiffEditor-WOrKZ7cz.js         2,708.41 kB │ gzip: 696.17 kB
+
+✓ built in 2.45s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+Setup complete. Start with: python3 sidequest.py run --repo /path/to/your/project

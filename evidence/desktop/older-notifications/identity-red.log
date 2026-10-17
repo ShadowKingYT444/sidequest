@@ -1,0 +1,51 @@
+✔ office session identities reject duplicate station, run and worker ownership (1.564012ms)
+✖ office session validation bounds supplemental jobs independently from twenty recent jobs (0.75652ms)
+✖ supplemental overflow metadata is explicit boolean state and never accepts unknown coverage as verified (0.253727ms)
+✔ frozen display requires explicit immutability, digest and selected job ownership (0.321488ms)
+✔ file, text and diff pages are bound to the selected frozen artifact and file (0.358617ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 3
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 157.254375
+
+✖ failing tests:
+
+test at desktop/tests/runtime-identity.test.mjs:15:1
+✖ office session validation bounds supplemental jobs independently from twenty recent jobs (0.75652ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///tmp/sidequest-notifications/desktop/tests/runtime-identity.test.mjs:23:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at desktop/tests/runtime-identity.test.mjs:27:1
+✖ supplemental overflow metadata is explicit boolean state and never accepts unknown coverage as verified (0.253727ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///tmp/sidequest-notifications/desktop/tests/runtime-identity.test.mjs:30:70)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

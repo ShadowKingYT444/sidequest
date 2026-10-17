@@ -1,0 +1,34 @@
+Sidequest independent native desktop QA — 2026-10-17 UTC
+
+Product source: archive commit 6a6b8a3e6e2f14dc678f81783d368e57595e7206 plus supplied runtime patch to 8e39baba943c32da1c09944313e47286c69672ee. Archive tests/docs are base-version; product code patch is supplied by implementation owner. SHA-256 of both transferred artifacts matched published manifest.
+
+PASS: clean documented setup and production build, Node v24.19.0 / Python 3.12.14.
+PASS: native Electron sandbox-preserving smoke, exit 0; real local Git IPC, expected isolated bridge/runtime interface, renderer Node access undefined. No --no-sandbox or GPU override used.
+PASS: actual native Git diff displays deterministic QA fixture sample.py. Expand/Escape/reopen retains file selection and scroll.
+PASS: native Settings displays Codex executable found while authentication/reachability/usage remain unknown, rather than claiming connected.
+PASS: registered disposable local repository; submitted and ran genuine zero-model Git inspection; frozen-identity check passed; immutable result files rendered. Backend remains verifying with explicit delivery-disabled explanation.
+PASS: assigned result display to Computer 01; Files opens real result. Trace reports no attached recorded session (result display assignment is not recorded-session attachment).
+PASS: auth-free Codex app-server initialize on native desktop using existing default home, valid initialize response, clean shutdown. Zero model turns.
+BLOCKED: native office WebGL2 is blocklisted on this host. UI incorrectly says original office assets not imported despite asset files present. Office scene and physical workstation/monitor navigation not proved.
+BLOCKED: Codex CLI 0.159.2 reports Not logged in. Approved device login fails before URL/code: error sending request to https://auth.openai.com/api/accounts/deviceauth/usercode. No credentials copied, no provider turn, no pending grant.
+NOT PROVED: live model prompt/output, quota enforcement, provider attachment/follow-up/reconnect, delivery, populated notification states, or all functionality.
+
+Screenshot labels:
+native-office-blocked.png — actual native graphics failure, inaccurate asset explanation.
+native-git-diff.png — genuine committed local Git fixture in Monaco, not model output.
+native-diff-reopened.png — same selected file and scrolled state after Expand/Escape/reopen.
+native-settings.png — executable metadata, unknown auth/service.
+native-usage.png — unavailable telemetry shown honestly.
+native-inspection-result.png — actual completed local inspection, immutable files, identity PASS.
+native-session-outcome.png — no attached recorded session; sending unavailable.
+
+Commands:
+NODE_USE_ENV_PROXY=1 python3 sidequest.py setup
+SIDEQUEST_REPO=/workspace/shared/sidequest-vm-test/demo-project SIDEQUEST_BASE=HEAD~1 npm run test:electron (launched from native Xfce terminal, DISPLAY=:0)
+python3 sidequest.py run --repo /workspace/shared/sidequest-vm-test/demo-project --state-dir /workspace/shared/sidequest-vm-test/ui-state
+/opt/codex/bin/codex --version
+/opt/codex/bin/codex login status
+/opt/codex/bin/codex app-server --stdio (initialize only)
+/opt/codex/bin/codex login --device-auth (approved; network request failed)
+
+No implementation edits, security weakening, credential copying, paid turns, external delivery, merge, or deployment.
