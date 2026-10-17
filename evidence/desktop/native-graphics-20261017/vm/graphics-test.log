@@ -1,0 +1,11 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test tests/browser/office-failure.spec.ts
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 tests/browser/office-failure.spec.ts:9:1 › WebGL failure stays distinct from assets and leaves local tools accessible (3.0s)
+  ✓  2 tests/browser/office-failure.spec.ts:47:1 › bindings failure is retryable and does not claim WebGL or missing imported assets (431ms)
+
+  2 passed (4.2s)

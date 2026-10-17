@@ -1,0 +1,32 @@
+{
+  "library_file_id": "libfile_08269483b76481918220578054bb09ff",
+  "archive_sha256": "8b99d042935da024965623eccb2e8f52ff2d6611453e2b5b30832373bf9191c2",
+  "scope": "Independent VM source archive plus transfers through the six-file graphics recovery patch; exact provenance in GRAPHICS-VERIFICATION.txt. No full checkout claim.",
+  "files": [
+    {
+      "path": "GRAPHICS-VERIFICATION.txt",
+      "bytes": 2075,
+      "sha256": "4631c41bd444406c3f4480e6cbf534abb905ede6accc3ff0348a55e018b5e278"
+    },
+    {
+      "path": "captures/native-graphics-recovery.png",
+      "bytes": 76054,
+      "sha256": "3f3406e5cb1349a341cd5eb371d4aeb2a7d6b0ef78c27ec649d1f4d0ce5cf619"
+    },
+    {
+      "path": "captures/native-reload-recovery.png",
+      "bytes": 70501,
+      "sha256": "0e3a14395e451dea272598858f1dab32dbff597980fe96ea569b578a78377132"
+    },
+    {
+      "path": "graphics-build.log",
+      "bytes": 2599,
+      "sha256": "1d10df46bf8fee4c0601d8175c779626f5ccc1b86a170ab4f5a7f24cee70424a"
+    },
+    {
+      "path": "graphics-test.log",
+      "bytes": 429,
+      "sha256": "3ae12d5c95e082c9aa4b56071103b58f787013aa8d924200a19f9af1499eea32"
+    }
+  ]
+}

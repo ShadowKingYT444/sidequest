@@ -187,3 +187,12 @@ Independent VM shell/IPC passed, then persistent office rendering failed with We
 90 desktop tests and production build pass. An initial browser run reached the corrected error/retry, Git and Settings, then failed on a mistaken test Jobs selector; corrected to the actual region. New regression explicitly removes Playwright's default unsafe SwiftShader opt-in and enables Chromium sandbox; the coding container cannot launch that configuration. Final browser/native verification must run on the supported VM. Earlier reports/captures remain preserved and labeled.
 
 Native VM also verified Git/Jobs artifacts and Codex initialize, but reports Not logged in; sign-in approval is pending with the parent. Next: deliver the source patch and import hashed native artifacts.
+
+
+## Compact interface candidate — October 17, 2026
+
+Reviewed actual pinned T3 settings/usage source and the independent official screenshot comparison. Reduced repeated copy and controls across settings, task setup, results, traces and graphics recovery. Authentication remains visible; paths, model diagnostics, IDs and hashes move into Advanced/Details. Empty usage is one status; paging appears only when useful. Original assets, launch/spend gates, draft stores and renderer are unchanged.
+
+90 desktop unit tests and production build pass. Three new browser regressions cover settings at 1440/960/390px including keyboard, focus return, accessibility, overflow and absence of provider writes; updated job assertions inspect backend state and passing checks through Details. Global Playwright config now keeps Chromium sandbox and removes unsafe SwiftShader. The coding container cannot execute that configuration; transfer to independent VM next.
+
+Imported the prior graphics-recovery VM report, build/tests and two native screenshots unchanged with hashes. It proves two sandboxed recovery cases and genuine native error/retry/local-tool access. Physical office remains WebGL2-blocked; no provider turn or credential changes. Evidence: evidence/desktop/compact-ui-20261017 and native-graphics-20261017/vm. Next: native candidate screenshots/keyboard/result review, then fix any verified regression.

@@ -2,13 +2,19 @@
 
 The independent desktop VM passed native shell/isolated IPC but failed to render the office with `WebGL2 blocklisted`. The previous UI mislabeled every scene error as unimported assets. This repair attributes graphics, bindings, model-loading and unknown scene failures separately, exposes Retry office/recovery instructions, and keeps Git, Settings and Jobs available. The footer no longer says figures are loading after a fatal scene failure. Retrying clears the failed office-model cache where appropriate without replacing original art or discarding the App's draft stores.
 
-## Checks and limits
+## Independent VM verification
+
+The [unaltered independent report](vm/GRAPHICS-VERIFICATION.txt) and [hashed import manifest](vm/manifest.json) now establish **2/2 sandbox-enabled browser regressions**, three classification tests and a production build on the transferred graphics-recovery source. Browser cases deliberately inject graphics/bindings failures. Actual native Electron also showed the correct graphics diagnosis, safe retry, retained Git/Settings/Jobs and local inspection artifacts. The physical office still fails on this VM's WebGL2 stack.
+
+[Native recovery screenshot](vm/captures/native-graphics-recovery.png) shows the genuine failure. [Recorded-session/draft reload screenshot](vm/captures/native-reload-recovery.png) predates the graphics patch and establishes local recorded output/draft retention, not live provider execution. The report identifies the archive and applied transfers precisely; it is not a full checkout of a later published commit. The subsequent compact UI candidate also removes unsafe graphics defaults from the shared Playwright config; its visual checks remain separate.
+
+## Historical coding-container checks and limits
 
 - [Red regression](red/browser.log), [original failure context](red/playwright-results/office-failure-WebGL-failu-3efd5-aves-local-tools-accessible/error-context.md): injected `WebGL2 blocklisted` before implementation reproduces the false asset claim.
 - [90 desktop tests pass](unit.log), including three classification/privacy regressions. [Final TypeScript/production build passes](build-final.log).
 - [Initial browser repair run](browser-green.log): 1 passed (bindings retry), 1 failed. Graphics diagnosis, retry, Git and Settings assertions passed; the new test incorrectly looked for a Jobs dialog rather than the actual Local jobs board region. The selector is corrected. [Intermediate screenshot](green/graphics-unavailable.png) is from this injected-error run before final spacing styles; it is not native evidence.
 - [Final sandbox-preserving browser attempt](browser-sandbox.log): blocked before page startup by this container's unsupported SUID sandbox helper. The final regression explicitly removes Playwright's automatic `--enable-unsafe-swiftshader` and enables Chromium sandbox. No sandbox permission or production graphics flag was changed. Earlier browser runs used the pre-existing Playwright harness defaults; those are UI evidence, not production graphics/security acceptance.
-- No provider turn, account login, runtime mutation, imported art change, GPU-blocklist override or sandbox change was made. The final native/browser acceptance remains with the supported VM.
+- No provider turn, account login, runtime mutation, imported art change, GPU-blocklist override or sandbox change was made. The later independent VM result is recorded above.
 
 Run the final regression on a sandbox-capable host from `desktop/` (with a fresh evidence directory and the configured trusted Git repository):
 

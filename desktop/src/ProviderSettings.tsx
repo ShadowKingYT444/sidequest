@@ -6,7 +6,6 @@ import './ProviderSettings.css';
 // See desktop/THIRD_PARTY_NOTICES.md for its MIT license.
 type ProviderId = 'codex' | 'claude' | 'cursor' | 'grok' | 'opencode' | 'antigravity';
 type SettingsView = 'providers' | 'usage';
-type UsageMetric = 'cost' | 'tokens' | 'limits';
 
 interface ProviderChoice { id: ProviderId; name: string; mark: string }
 
@@ -62,47 +61,13 @@ function StatusRow({ label, value }: { label: string; value: string }) {
   return <div className="provider-settings-row"><span className="provider-row-title">{label}</span><span className="provider-row-status">{value}</span></div>;
 }
 
-function LimitsView({ selected }: { selected: ProviderChoice }) {
-  return <section className="provider-limits" aria-label={selected.name + ' usage limits'}>
-    <div className="provider-limits-heading"><ProviderMark provider={selected} /><h2>{selected.name}</h2><span>Usage unknown</span></div>
-    <div className="provider-limit-windows">
-      {['Session', 'Weekly'].map((label) => <div className="provider-limit-window" key={label}>
-        <div className="provider-limit-label"><span>{label}</span><strong>— remaining</strong></div>
-        <div className="provider-limit-track" role="img" aria-label={label + ' usage unknown'} />
-        <span className="provider-limit-reset">Reset unknown</span>
-      </div>)}
-    </div>
-    <p className="provider-empty-note">Usage and reset times have not been reported.</p>
-  </section>;
-}
-
-function UsageView({ selected, metric, period }: { selected: ProviderChoice; metric: UsageMetric; period: string }) {
-  const [breakdown, setBreakdown] = useState<'model' | 'time'>('model');
-  if (metric === 'limits') return <LimitsView selected={selected} />;
-  return <div className="provider-usage-page" aria-label={selected.name + ' usage analytics'}>
-    <section className="provider-usage-summary">
-      <div className="provider-usage-providers">
-        <div className="provider-usage-total"><span className="provider-usage-total__figure" aria-label={metric === 'cost' ? 'Total cost unknown' : 'Processed tokens unknown'}>—</span><span>{metric === 'cost' ? 'Reported cost unavailable' : 'Processed tokens unavailable'}</span><span>Sessions unknown</span></div>
-        <div className="provider-usage-provider"><div><ProviderMark provider={selected} /><span>{selected.name}</span><strong>—</strong></div><span>{metric === 'cost' ? 'Cost and token totals unknown' : 'Token and cost totals unknown'}</span></div>
-      </div>
-      <div className="provider-usage-chart"><h2>{metric === 'tokens' ? 'Daily processed tokens' : 'Daily cost'}</h2><div className="provider-chart-empty" role="status"><Icon name="chart" /><span>No usage data reported</span></div><span className="provider-usage-period-label">{period}</span></div>
-    </section>
-    <section className="provider-usage-totals" aria-labelledby="provider-totals-title">
-      <h2 id="provider-totals-title">Totals</h2>
-      <div>{['Processed tokens', 'Cached input', 'Uncached input', 'Output', 'Cache savings'].map((label) => <div className="provider-usage-metric" key={label}><span>{label}</span><strong aria-label={label + ' unknown'}>—</strong></div>)}</div>
-    </section>
-    <section className="provider-usage-breakdown" aria-labelledby="provider-breakdown-title">
-      <div className="provider-usage-section-heading"><h2 id="provider-breakdown-title">Breakdown</h2><div className="provider-segmented" role="group" aria-label="Usage breakdown"><button aria-pressed={breakdown === 'model'} onClick={() => setBreakdown('model')}>Model</button><button aria-pressed={breakdown === 'time'} onClick={() => setBreakdown('time')}>Day</button></div></div>
-      <div className="provider-table-wrap"><table className="provider-table"><thead><tr><th scope="col">{breakdown === 'model' ? 'Model' : 'Day'}</th><th scope="col">Cost</th><th scope="col">Share</th><th scope="col">Tokens</th></tr></thead><tbody><tr><td colSpan={4}>No {breakdown === 'model' ? 'model' : 'daily'} usage data reported</td></tr></tbody></table></div>
-    </section>
-  </div>;
+function UsageView({ selected }: { selected: ProviderChoice }) {
+  return <p className="provider-usage-empty" aria-label={selected.name + ' usage analytics'} role="status">No usage data reported</p>;
 }
 
 export default function ProviderSettings({ discovery, capabilities, onClose, onRefresh, busy = false }: ProviderSettingsProps) {
   const [selectedId, setSelectedId] = useState<ProviderId>('codex');
   const [view, setView] = useState<SettingsView>('providers');
-  const [metric, setMetric] = useState<UsageMetric>('cost');
-  const [period, setPeriod] = useState('Past 7 days');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const mobilePickerButton = useRef<HTMLButtonElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
@@ -147,7 +112,7 @@ export default function ProviderSettings({ discovery, capabilities, onClose, onR
     <div ref={scrollElement} className="provider-scroll">
       <div className={'provider-content provider-content--' + view}>
         {view === 'providers' ? <>
-          <div className="provider-page-heading"><h1>Providers</h1><span>Read-only</span></div>
+          <div className="provider-page-heading"><h1>Providers</h1></div>
           <div className="provider-editor-group">
             <aside className="provider-sidebar"><nav className="provider-list" aria-label="Providers">{PROVIDERS.map((provider) => {
               const item = discovery?.providers.find((entry) => entry.id === provider.id);
@@ -159,24 +124,24 @@ export default function ProviderSettings({ discovery, capabilities, onClose, onR
               {picker}
               <div className="provider-editor-content" key={selected.id}>
                 <SettingsSection title={<span className="provider-section-title"><ProviderMark provider={selected} /><span>{selected.name}</span></span>}>
-                  <ReadOnlyField label="Display name" value={selected.name} description={statusText} />
+                  <StatusRow label="Executable" value={statusText} />
                   <StatusRow label="Authentication" value="Unknown" /><StatusRow label="Service reachability" value="Unknown" />
                 </SettingsSection>
+                <details className="provider-diagnostics"><summary>Advanced</summary>
                 <SettingsSection title="Runtime">
-                  <ReadOnlyField label="Runtime" value={detail?.runtime === 'local' ? 'Local process' : null} />
                   <ReadOnlyField label="Binary path" value={detail?.binaryPath ?? null} mono />
                   <ReadOnlyField label={homeLabel} value={detail?.homePath ?? null} mono />
                 </SettingsSection>
-                <SettingsSection title="Environment"><ReadOnlyField label="Environment" value={scanned ? 'Host process' : null} /><StatusRow label="Launch arguments" value="Not inspected" /></SettingsSection>
                 <SettingsSection title="Models">{worker ? <><StatusRow label="Configured worker" value={worker.id==='none'?'Not configured':worker.id + ' · ' + worker.effort} /><StatusRow label="Model catalog" value={worker.verified ? 'Verified' : 'Not verified'} /></> : <StatusRow label="Model catalog" value="Not reported" />}</SettingsSection>
+                </details>
               </div>
             </div>
           </div>
-          <p className="provider-readonly-note">Local discovery only. Configuration is read-only.</p>
+          <p className="provider-readonly-note">Executable detection does not verify sign-in.</p>
         </> : <>
-          <div className="provider-usage-toolbar"><h1>Usage</h1><div className="provider-usage-controls"><div className="provider-segmented" role="group" aria-label="Usage metric">{(['cost', 'tokens', 'limits'] as const).map((value) => <button key={value} aria-pressed={metric === value} onClick={() => setMetric(value)}>{value === 'cost' ? 'Cost' : value === 'tokens' ? 'Tokens' : 'Limits'}</button>)}</div><select aria-label="Usage period" value={period} disabled={metric === 'limits'} onChange={(event) => setPeriod(event.target.value)}><option>Past 24 hours</option><option>Past 7 days</option><option>Past 30 days</option></select></div></div>
-          <div className="provider-usage-provider-picker"><label htmlFor="provider-usage-selection">Provider</label><select id="provider-usage-selection" value={selectedId} onChange={(event) => chooseProvider(event.target.value as ProviderId)}>{PROVIDERS.map((provider) => <option value={provider.id} key={provider.id}>{provider.name}</option>)}</select><span>Telemetry unavailable</span></div>
-          <UsageView selected={selected} metric={metric} period={period} />
+          <div className="provider-usage-toolbar"><h1>Usage</h1></div>
+          <div className="provider-usage-provider-picker"><label htmlFor="provider-usage-selection">Provider</label><select id="provider-usage-selection" value={selectedId} onChange={(event) => chooseProvider(event.target.value as ProviderId)}>{PROVIDERS.map((provider) => <option value={provider.id} key={provider.id}>{provider.name}</option>)}</select></div>
+          <UsageView selected={selected} />
         </>}
       </div>
     </div>

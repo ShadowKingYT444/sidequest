@@ -23,7 +23,10 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   await page.getByRole('button',{name:'Settings',exact:true}).click();
   const settings=page.getByRole('dialog',{name:'Provider settings dialog'});
   await expect(settings).toBeVisible();await expect(settings.getByRole('heading',{name:/Codex$/})).toBeVisible();
+  await expect(settings.getByLabel('Binary path')).toBeHidden();
+  await settings.getByText('Advanced',{exact:true}).click();
   await expect(settings.getByLabel('Binary path')).toHaveValue(/codex/);
+  await settings.getByText('Advanced',{exact:true}).click();
   await expect(settings.getByText('Authentication',{exact:true})).toBeVisible();
   await expect(settings.getByText('Service reachability',{exact:true})).toBeVisible();
 
@@ -44,19 +47,15 @@ for(const width of [1440,390]) test(`provider settings and preserved work at ${w
   await page.screenshot({path:path.join(evidence,`provider-settings${width===1440?'':'-390'}.png`)});
   await settings.getByRole('navigation',{name:'Settings view'}).getByRole('button',{name:'Usage',exact:true}).click();
   await expect(settings.getByText('No usage data reported',{exact:true})).toBeVisible();
-  await settings.getByRole('group',{name:'Usage metric'}).getByRole('button',{name:'Tokens',exact:true}).click();
-  await expect(settings.getByText('Processed tokens unavailable',{exact:true})).toBeVisible();
-  await settings.getByRole('group',{name:'Usage breakdown'}).getByRole('button',{name:'Day',exact:true}).click();
-  await expect(settings.getByText('No daily usage data reported',{exact:true})).toBeVisible();
+  await expect(settings.getByRole('group',{name:'Usage metric'})).toHaveCount(0);
+  await expect(settings.getByRole('group',{name:'Usage breakdown'})).toHaveCount(0);
+  await expect(settings.getByRole('combobox',{name:'Usage period'})).toHaveCount(0);
+  await expect(settings.getByRole('table')).toHaveCount(0);
   await page.screenshot({path:path.join(evidence,`provider-settings-analytics${width===1440?'':'-390'}.png`)});
-  await settings.getByRole('group',{name:'Usage metric'}).getByRole('button',{name:'Limits',exact:true}).click();
-  await expect(settings.getByText('— remaining',{exact:true})).toHaveCount(2);
-  await expect(settings.getByText('Reset unknown',{exact:true})).toHaveCount(2);
-  await page.screenshot({path:path.join(evidence,`provider-settings-limits${width===1440?'':'-390'}.png`)});
   const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
   await writeFile(path.join(evidence,`provider-accessibility-${width}.json`),JSON.stringify(result.violations,null,2));
   expect(result.violations.map(v=>({id:v.id,impact:v.impact}))).toEqual([]);
-  const first=settings.locator('button:visible:not(:disabled),input:visible,select:visible,[tabindex="0"]:visible').first(),last=settings.locator('button:visible:not(:disabled),input:visible,select:visible,[tabindex="0"]:visible').last();
+  const first=settings.locator('button:visible:not(:disabled),input:visible,select:visible,summary:visible,[tabindex="0"]:visible').first(),last=settings.locator('button:visible:not(:disabled),input:visible,select:visible,summary:visible,[tabindex="0"]:visible').last();
   await last.focus();await page.keyboard.press('Tab');await expect(first).toBeFocused();
   await page.keyboard.press('Escape');await expect(settings).toHaveCount(0);
   await expect(page.getByRole('dialog',{name:'Computer work viewer'})).toBeVisible();

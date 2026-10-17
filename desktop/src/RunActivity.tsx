@@ -138,14 +138,9 @@ export default function RunActivity({ job, active, selectedRunId, expectedWorker
       </div>
       {current?.error && <div className="run-activity-error" role="alert"><span>{current.error}</span>{data && <small>Last known activity · {timestamp(data.readAt)}</small>}</div>}
       {run && <>
-        <dl className="run-activity-summary">
-          <div><dt>Worker</dt><dd title={run.worker_id ?? undefined}>{run.worker_id ?? 'Unassigned'}</dd></div>
-          <div><dt>Attempt</dt><dd>{run.attempt}</dd></div>
-          <div><dt>Model</dt><dd>{localInspection ? 'No model call' : run.model ?? 'Not recorded'}</dd></div>
-          <div><dt>Effort</dt><dd>{localInspection ? '—' : run.effort ?? 'Not recorded'}</dd></div>
-        </dl>
-        <p className="run-activity-note">Recorded usage: {count(run.usage.total_tokens)} tokens · {cost(run.usage.cost_usd)}{run.usage.uncertain?' · uncertain':''}</p>
+        <p className="run-activity-note">{localInspection?'No model call':<>Recorded usage: {count(run.usage.total_tokens)} tokens · {cost(run.usage.cost_usd)}{run.usage.uncertain?' · uncertain':''}</>}</p>
         <details className="run-activity-details"><summary>Run details</summary><dl>
+          <div><dt>Worker</dt><dd>{run.worker_id ?? 'Unassigned'}</dd></div><div><dt>Attempt</dt><dd>{run.attempt}</dd></div>
           <div><dt>Run</dt><dd>{run.id}</dd></div><div><dt>Task</dt><dd>{run.task_id}</dd></div>
           <div><dt>Recorded model</dt><dd>{run.model ?? 'Not recorded'}</dd></div><div><dt>Recorded effort</dt><dd>{run.effort ?? 'Not recorded'}</dd></div>
           <div><dt>Started</dt><dd><time dateTime={run.started_at ?? undefined}>{timestamp(run.started_at)}</time></dd></div>
@@ -161,12 +156,12 @@ export default function RunActivity({ job, active, selectedRunId, expectedWorker
             <p>{event.message}</p>
           </li>)}
         </ol> : <p className="run-activity-empty">No events recorded on this page.</p>}
-        <div className="run-activity-pages">
+        {(previousPages.length>0||data!.page.has_more)&&<div className="run-activity-pages">
           <button type="button" disabled={!previousPages.length || current?.loading || !active || !visible} onClick={() => setCursor({ key: selectionKey, afterSeq: previousPages.at(-1)!, previous: previousPages.slice(0, -1) })}>Previous events</button>
           <button type="button" disabled={!data!.page.has_more || current?.loading || !active || !visible} onClick={() => setCursor({ key: selectionKey, afterSeq: data!.page.next_after_seq, previous: [...previousPages, afterSeq] })}>More events</button>
-        </div>
+        </div>}
       </>}
-      <p className="run-activity-note">{localInspection ? 'Deterministic local work. No provider inference.' : codexProfile ? 'Persisted runtime records. Provider turns are not verified in this view.' : 'Persisted runtime records. Provider execution is unverified.'}</p>
+      {!localInspection&&<p className="run-activity-note">Recorded output · live connection unverified</p>}
     </>}
   </section>;
 }

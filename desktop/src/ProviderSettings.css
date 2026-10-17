@@ -43,7 +43,7 @@
 .provider-page-heading, .provider-usage-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
 .provider-settings h1 { margin: 0; font-size: 16px; font-weight: 500; line-height: 1.4; }
 .provider-page-heading > span { color: var(--provider-muted); font-size: 12px; }
-.provider-editor-group { display: grid; grid-template-columns: 17rem minmax(0, 1fr); height: min(44rem, calc(100dvh - 15rem)); min-height: 32rem; overflow: hidden; border: 1px solid var(--provider-border); border-radius: 14px; background: var(--provider-card-muted); }
+.provider-editor-group { display: grid; grid-template-columns: 17rem minmax(0, 1fr); height: auto; min-height: 0; overflow: hidden; border: 1px solid var(--provider-border); border-radius: 14px; background: var(--provider-card-muted); }
 .provider-sidebar { min-width: 0; min-height: 0; overflow: auto; border-right: 1px solid var(--provider-border); scrollbar-width: thin; scrollbar-color: #333 transparent; }
 .provider-list { display: flex; flex-direction: column; }
 .provider-settings .provider-list__item { display: flex; align-items: flex-start; gap: 12px; min-height: 72px; width: 100%; padding: 16px; border: 0; border-bottom: 1px solid var(--provider-border); border-radius: 0; color: inherit; background: transparent; text-align: left; }
@@ -154,3 +154,6 @@
   .provider-usage-provider-picker { flex-wrap: wrap; }
   .provider-usage-provider-picker > span { flex-basis: 100%; margin-left: 0; }
 }
+
+/* Keep empty usage and technical diagnostics proportional to the available data. */
+.provider-diagnostics{margin-top:20px;font-size:12px;color:var(--provider-muted)}.provider-diagnostics summary{cursor:pointer;min-height:32px;padding:6px 0}.provider-diagnostics summary:focus-visible{outline:2px solid var(--provider-focus);outline-offset:2px}.provider-diagnostics[open]>.provider-section{margin-top:16px}.provider-usage-empty{margin:24px 0 0;font-size:13px;color:var(--provider-muted)}

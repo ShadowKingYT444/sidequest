@@ -27,8 +27,12 @@ test('genuine local inspection job produces immutable files and a check report',
   await expect(board.getByRole('button',{name:'Run inspection',exact:true})).toBeEnabled();
   await page.screenshot({path:path.join(evidence,'job-queued.png')});
   await board.getByRole('button',{name:'Run inspection',exact:true}).click();
-  await expect(board.locator('.job-state')).toHaveText('verifying',{timeout:20_000});
+  await expect(board.locator('.job-state')).toHaveText('Inspection results ready.',{timeout:90_000});
+  await board.locator('.job-metadata > summary').click();
+  await expect(board.locator('.job-metadata')).toContainText('Backend state: verifying');
   await expect(board.locator('.job-checks')).toContainText('pass',{timeout:90_000});
+  await expect(board.locator('.job-checks')).toBeVisible();
+  await board.locator('.job-metadata > summary').click();
   await expect(board).toContainText('Inspection results ready.');
   await expect(board.locator('.artifact-files>button').first()).toBeVisible();
   await expect(board.locator('.artifact-text')).not.toContainText('Loading file text…');
@@ -104,7 +108,7 @@ test('real jobs clear stale notices, recover reads and preserve assigned compute
   await expect(board.locator('.job-summary')).toContainText(queuedTitle);
   await expect(board.locator('.job-state')).toHaveText('queued');
   await board.getByRole('button',{name:new RegExp(completed.title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))}).click();
-  await expect(board).not.toContainText('Job queued. Review the job, then run it explicitly.');
+  await expect(board).not.toContainText('Job queued. Ready to run.');
   let disconnected=true;
   await page.route('**/__sidequest/runtime/snapshot',route=>disconnected?route.fulfill({status:503,json:{error:'test-only network failure'}}):route.continue());
   await board.getByRole('button',{name:'Refresh status',exact:true}).click();
