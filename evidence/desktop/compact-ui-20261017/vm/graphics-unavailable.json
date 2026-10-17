@@ -1,0 +1,7 @@
+{
+  "scope": "Browser failure injection with actual local Git reads; runtime not configured; no provider turns",
+  "webglError": "WebGL2 blocklisted",
+  "retryRecreatedContext": true,
+  "gitSettingsJobsAccessible": true,
+  "providerMutations": []
+}

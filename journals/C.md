@@ -196,3 +196,12 @@ Reviewed actual pinned T3 settings/usage source and the independent official scr
 90 desktop unit tests and production build pass. Three new browser regressions cover settings at 1440/960/390px including keyboard, focus return, accessibility, overflow and absence of provider writes; updated job assertions inspect backend state and passing checks through Details. Global Playwright config now keeps Chromium sandbox and removes unsafe SwiftShader. The coding container cannot execute that configuration; transfer to independent VM next.
 
 Imported the prior graphics-recovery VM report, build/tests and two native screenshots unchanged with hashes. It proves two sandboxed recovery cases and genuine native error/retry/local-tool access. Physical office remains WebGL2-blocked; no provider turn or credential changes. Evidence: evidence/desktop/compact-ui-20261017 and native-graphics-20261017/vm. Next: native candidate screenshots/keyboard/result review, then fix any verified regression.
+
+
+## Independent compact UI acceptance — October 17, 2026
+
+Imported 14 original VM files with archive/file hashes: responsive settings/usage captures, native Jobs and trace/draft reload captures, build, 88 available archive tests and 5/5 sandbox-enabled browser cases. Initial VM browser attempt lacked SIDEQUEST_REPO in a source archive without .git; all five pass with a disposable Git fixture and no source change. Repository desktop suite remains 90 tests; archive test counts are not represented as a full checkout.
+
+Native Details and immutable file viewing pass. Selection survives Jobs close/reopen, while full Ctrl+R reload resets the file. Existing file/scroll retention promises cover same-session close/reopen and Expand/Escape; persisted ownership/results/assignments/drafts are separate. Clarified this limit rather than adding new persistence. Original office still WebGL2-blocked on the VM; no live-provider claim.
+
+The separate legacy workshop CI failure is now observable through trusted diagnostic assertion messages. The stronger candidate passes full CI; no speculative production repair, reduced checks or browser/security flag change. Evidence in evidence/desktop/compact-ui-20261017/vm and evidence/D/ci-20261017. Next: final publication and exact-head CI verification.

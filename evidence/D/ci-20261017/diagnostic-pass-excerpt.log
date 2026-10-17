@@ -1,0 +1,10 @@
+2026-10-17T03:05:51.3737507Z Ran 10 tests in 1.319s
+2026-10-17T03:05:58.9612329Z Ran 66 tests in 7.017s
+2026-10-17T03:06:14.4929297Z Ran 59 tests in 15.289s
+2026-10-17T03:06:43.0446537Z test_candidate_authored_checks_and_destination_cannot_turn_bad_case_green (test_protocol_browser.ProtocolBrowserTests.test_candidate_authored_checks_and_destination_cannot_turn_bad_case_green) ... ok
+2026-10-17T03:06:48.7109306Z Ran 13 tests in 34.024s
+2026-10-17T03:06:52.7122842Z ℹ tests 90
+2026-10-17T03:06:52.7125831Z ℹ pass 90
+2026-10-17T03:06:52.7126713Z ℹ fail 0
+2026-10-17T03:06:52.8536154Z > tsc --noEmit && vite build
+2026-10-17T03:06:56.5757573Z [32m✓ built in 2.37s[39m

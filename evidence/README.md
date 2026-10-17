@@ -9,7 +9,8 @@ Historical full-suite functional source: `8e39baba943c32da1c09944313e47286c69672
 | [Fresh setup and native probes](desktop/startup-20261017/README.md) | Dependency/build installation, actual launcher, real Git inspection, unit/integration logs, native failures and source-transfer manifest |
 | [Separate VM native smoke](desktop/native-vm-20261017/README.md) | Sandbox-preserving shell/IPC and Git/Jobs passes, seven native UI screenshots, WebGL2 office failure and auth/transport limits |
 | [Graphics recovery](desktop/native-graphics-20261017/README.md) | Independent VM: two sandbox-enabled browser cases, actual native recovery and precise graphics limits |
-| [Compact interface](desktop/compact-ui-20261017/README.md) | T3 source review, unit/build logs; new native/browser validation pending |
+| [Compact interface](desktop/compact-ui-20261017/README.md) | T3 source review, unit/build logs, 5/5 sandboxed responsive checks and genuine native result/draft captures |
+| [Workshop CI diagnosis](D/ci-20261017/README.md) | Original blocked-result failure preserved; stronger diagnostic assertions and subsequent full CI pass |
 | [Billing capability review](desktop/billing-review-20261017/README.md) | Offline installed-protocol inspection; no provider login or model turn |
 
 ## Historical records

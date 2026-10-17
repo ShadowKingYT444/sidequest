@@ -36,5 +36,5 @@
     "../native-vm-20261017/imported/screenshots/native-inspection-result.png",
     "../native-graphics-20261017/vm/captures/native-graphics-recovery.png"
   ],
-  "validation": "90 desktop unit tests and production build pass; new three-width settings and updated result browser assertions pending sandbox-capable VM. No visual-parity or whole-product acceptance claim."
+  "validation": "90 repository desktop tests/build pass. Independent archive+patch VM: 88 available tests, five sandbox-enabled browser cases at 1440/960/390px with keyboard/axe checks, and native Jobs/Details/immutable files/trace and draft reload pass. Source scope and original captures in vm/RESULTS.txt. Physical office remains unavailable on VM; no whole-product or live-provider claim."
 }

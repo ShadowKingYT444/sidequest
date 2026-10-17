@@ -1,0 +1,78 @@
+{
+  "library_file_id": "libfile_7d4c4f917f5c81918ba9c4a7ace1e49f",
+  "file_id": "file_000000006d2c81f7af3661b1cf0b8729",
+  "archive_sha256": "bc13e4bb61a31b6284316c93c8262cb6c427e27f6d12e737e16c139e929fbbe8",
+  "scope": "Unmodified independent VM archive/patch evidence. Not a complete Git checkout; see RESULTS.txt.",
+  "files": [
+    {
+      "path": "RESULTS.txt",
+      "bytes": 1768,
+      "sha256": "e9d0fd94ba49f91938537be0fb53a15b4dfcbe772d5661e526f52bb4196ec0dc"
+    },
+    {
+      "path": "compact-build.log",
+      "bytes": 2599,
+      "sha256": "9d7b389a2d9b6d5b17303767e8ff727894f11849519dee47211ad74a13c16d39"
+    },
+    {
+      "path": "compact-providers-1440.png",
+      "bytes": 48982,
+      "sha256": "7a7381c91da2ddbf9646265a2f3225b5b440addfafbcf19db367e4ed0f3e266c"
+    },
+    {
+      "path": "compact-providers-390.png",
+      "bytes": 26434,
+      "sha256": "c38447633fa27aefb3431e6c7bc0bf73c8215e1f826548a3af3c008cffcaf62f"
+    },
+    {
+      "path": "compact-providers-960.png",
+      "bytes": 44887,
+      "sha256": "ae1b03ba674111b6ba61696bb7afbaf9535c4f54a370a00e5a5acca3c0e1ea7e"
+    },
+    {
+      "path": "compact-retest.log",
+      "bytes": 661,
+      "sha256": "f9ffafbcd4636d09918e953ee3303005e139942c82f2555be9f4b8093e064522"
+    },
+    {
+      "path": "compact-unit.log",
+      "bytes": 9736,
+      "sha256": "c68b147e9b209bb71320ffa3321c9ed76614a78b6e7174881545cd6f393e83dc"
+    },
+    {
+      "path": "compact-usage-1440.png",
+      "bytes": 25352,
+      "sha256": "903a7db498244497f6ec0481b874cdd1d94d6b12d9f0758589ed88efb5a8e55a"
+    },
+    {
+      "path": "compact-usage-390.png",
+      "bytes": 16571,
+      "sha256": "a5607be6547c18c9b1abc5c040594a7a485544b8fd7cf8116862a47f0ff94754"
+    },
+    {
+      "path": "compact-usage-960.png",
+      "bytes": 22916,
+      "sha256": "9bfee9ae240ad83b92e44c7ed93d4fffe0cff82284f2873232e824927977cecd"
+    },
+    {
+      "path": "graphics-unavailable.json",
+      "bytes": 248,
+      "sha256": "1fcc76e7b05302f6520c4ecf936a680e7e4e3c1eb8b857496056b790903e057e"
+    },
+    {
+      "path": "graphics-unavailable.png",
+      "bytes": 31953,
+      "sha256": "98f3f75a3fc0d9b6bcb76cb78966ff8977edf50b104d126c36458e02ac212bc2"
+    },
+    {
+      "path": "native-compact-jobs.png",
+      "bytes": 77372,
+      "sha256": "6be6d880932aceab7f21f6e3c7730f2422b771f3298a8ab092fcfc65b9d20f78"
+    },
+    {
+      "path": "native-compact-reload.png",
+      "bytes": 69585,
+      "sha256": "8acfa55a6db4572ab22737073d323b5775189f5e8648a2bbccd0b244d874c7d1"
+    }
+  ]
+}
