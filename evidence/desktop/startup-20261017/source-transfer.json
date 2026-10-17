@@ -9,5 +9,17 @@
   "clean_setup_command": "PIP_CACHE_DIR=/tmp/sidequest-pip-cache npm_config_cache=/tmp/sidequest-npm-cache NODE_USE_ENV_PROXY=1 electron_config_cache=/tmp/sidequest-electron python3 /tmp/sidequest-clean-install/sidequest/sidequest.py setup",
   "clean_setup_exit": 0,
   "ci": "https://github.com/ShadowKingYT444/sidequest/actions/runs/38991835174",
-  "ci_conclusion": "success"
+  "ci_conclusion": "success",
+  "runtime_patch": {
+    "file": "sidequest-6a6b8a3-to-8e39bab-runtime.patch",
+    "target_source": "8e39baba943c32da1c09944313e47286c69672ee",
+    "sha256": "a38646528e0adc051250e5ded8bb606c2563af8274b77de11454e67b3836e360",
+    "bytes": 3206,
+    "library_file_id": "libfile_0a74565db7d8819183fe19da79285a91",
+    "file_id": "file_000000006b1081f7b07944636ce21b6f",
+    "apply_check": "Passed against freshly extracted 6a6b8a3 source; git apply from source root then npm --prefix desktop run build",
+    "scope": "OfficeScene.tsx and graphics.ts only; all product source then matches 8e39bab, updated tests/evidence/docs are not part of the patch.",
+    "ci": "https://github.com/ShadowKingYT444/sidequest/actions/runs/38992876405",
+    "ci_conclusion": "success"
+  }
 }

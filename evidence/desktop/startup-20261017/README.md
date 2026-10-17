@@ -25,7 +25,7 @@ This follow-up preserves the approved office and all execution gates. Native res
 | Original office assets | All 126 tracked files unchanged |
 | Full product browser suite | In progress at this checkpoint; later evidence is separate |
 
-The startup and provider regressions were run red before implementation; their failure and green logs are retained here. Test doubles do not establish live provider acceptance. No model inference, paid turn, credential copying, source delivery, merge or deployment occurred.
+The startup and provider regressions were run red before implementation; their failure and green logs are retained here. Test doubles do not establish live provider acceptance. No model inference, paid turn, credential copying, repository-change delivery, merge or deployment occurred.
 
 ## Native host blockers reproduced
 
@@ -52,3 +52,9 @@ An additional real-runtime authentication regression brings launcher coverage to
 Two longer browser journeys exhausted their unchanged timeouts on this container's SwiftShader renderer. A CDP CPU profile attributed 89% of sampled time to native `(program)` work, with little intersection work; actor geometry was left untouched. Identified software renderers now use the existing immediate camera positioning path. Hardware/unknown renderers retain animation; all assets, lighting, materials, resolution and security settings stay intact. The exact 90-second results/recovery journey then passed in **46.8 seconds**, and the 120-second recorded-session/reload journey passed in about **one minute**. Native graphics stalls remain measurable, so smooth software-GPU performance is not claimed. [Detailed browser evidence](../startup-browser-20261017/README.md).
 
 Software-renderer classifier tests cover SwiftShader/llvmpipe/softpipe/basic-render-driver and hardware/unknown cases. Desktop coverage is now **87 tests**, and TypeScript/build pass. Final integrated browser results are recorded separately against the published source checkpoint.
+
+[Published software-graphics checkpoint CI](https://github.com/ShadowKingYT444/sidequest/actions/runs/38992876405) passed at `8e39baba943c32da1c09944313e47286c69672ee`. [Preservation check](final-preservation.json) confirms all 126 original asset files and 834 earlier evidence files are unchanged from the initial PR head.
+
+## Final integrated browser acceptance
+
+At frozen `8e39baba943c32da1c09944313e47286c69672ee`, the full suite passed **25/25**, zero failures, skips or retries, in **12.9 minutes**. It covers real local Git/runtime inspection, immutable files/checks, recorded sessions, monitor navigation, draft/file/image retention, responsive office/settings and automated accessibility. Five composer cases intentionally use fake provider protocols with real IndexedDB/File behavior. Runtime/Vite stopped cleanly. See [complete browser evidence and exact source hashes](../startup-browser-20261017/README.md). This establishes browser acceptance; the native/live blockers above remain unresolved.

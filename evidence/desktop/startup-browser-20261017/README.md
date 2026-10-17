@@ -1,39 +1,50 @@
-# Browser acceptance and performance diagnosis — 2026-10-17
+# Browser acceptance — 2026-10-17
 
-The software-renderer camera fix passes the exact previously failing results journey in **46.8 seconds** under its unchanged 90-second limit. Five related session/navigation/rendering regressions also pass with zero retries, including the previously failing 120-second session case. The five explicitly mocked composer tests separately pass in 10.3 seconds. The final complete 25-case run awaits the source checkpoint; no full-suite pass is claimed yet.
+**25/25 browser tests passed in 12.9 minutes, with zero retries, skips, flaky cases or page errors**, at frozen source `8e39baba943c32da1c09944313e47286c69672ee`. The run used fresh runtime state, a genuine trusted Git project, coding disabled, and process-only ephemeral API credentials. No token files were created. All **252 source/test/asset hashes** matched before and after the run. The runtime shut down gracefully and ports 5173/44317 were released.
 
-The earlier full attempt and follow-up CPU profile remain preserved: 2 passes, 2 timeout failures, 1 interruption and 20 unrun cases. The live UI had already completed a real deterministic Git inspection and a physical monitor/camera interaction.
+See [final verification](final-full/verification.json), [Playwright report](final-full/playwright-report.json), [terminal log](final-full/browser.log), and [exact source hashes](final-full/run-context.json).
 
-All new evidence is isolated here. Prior repository evidence remains untouched. Test assertions and timeouts were not changed. The harness now honors `SIDEQUEST_EVIDENCE_DIR`; optional `SIDEQUEST_CPU_PROFILE=1` records a Chromium CPU profile without changing product code.
+## What is real and what is mocked
 
-## Environment and commands
+The application, imported office assets, browser, Git viewer, local authenticated runtime, SQLite records, isolated inspection, trusted frozen-identity checks, and immutable artifacts are real. Both executed inspections passed with zero recorded cost; the extra deliberately unexecuted queued inspection retains unknown cost. No model/provider turn ran. Session ownership, physical monitor navigation, workboard linking, local file/image handling, expanded views, Escape/reopen, scroll retention, responsive layouts and automated WCAG checks passed.
 
-The application ran from the working Sidequest branch. `interrupted-full/run-context.json` records exact application source hashes. The trusted inspected project was an independent local clone checked out at `8a9fb11c3b01a404c4dd305b71458377082697c1`; the Git viewer compared base `69bf06696a93c9f58eee2d088e84404d4f6563d6`. The runtime used fresh private directories outside Git, port 44317, and `SIDEQUEST_CODEX_ENABLED=false`. A random token existed only in the runtime/Vite process environments; no token file was generated. Logs and JSON summaries contain no credential values.
+Five composer cases use real React/Chromium/IndexedDB/File behavior with **explicitly mocked delivery, receipt and capability responses**. Notification completion/attention statuses, selected error responses and hostile source content are explicit browser fixtures. The notification fixture uses genuine inspection record identities and does not persist fabricated statuses. Clipboard paste is a synthetic browser event, not proof of operating-system clipboard integration. [Scope details](final-full/mock-real-matrix.json).
 
-The runner started `.venv/bin/python -m services.runtime.main --allowed-root <independent-clone> --data-dir <temporary-state>/data --config-dir <temporary-state>/config --runtime-dir <temporary-state>/runtime --port 44317`. It then ran `npm run test:browser -- --retries=0 --reporter=list,json --output <evidence>/playwright-results` with `SIDEQUEST_TEST_INSPECTION=1`, `CHROMIUM_PATH=/usr/bin/chromium`, `CI=1`, and the configured source/runtime URLs. Exact argv and results are in each `run-summary.json`.
+This browser pass does **not** establish native Electron, live coding-provider execution, verified authentication/usage enforcement, or hardware GPU performance. Those have separate acceptance requirements.
 
-## Results and scope
+## Performance repair and preserved failures
 
-- `interrupted-full/job-browser.json`: real project registration, submission, run, immutable files, check report and activity through UI/HTTP/adapters; zero inference calls and zero recorded spending. The candidate remains unchanged, so its inspection diff is empty.
-- `interrupted-full/monitor-camera-browser.json`: actual original Computer19 monitor was clicked; recorded trace identity and normal/interrupted camera return were checked. No coding submissions or uploads occurred.
-- `interrupted-full/playwright-results/`: original failures at the final result reopen and late recorded-session board link; each exhausted its existing overall timeout. These are retained failures, not suppressed or retried to green.
-- `profile/`: the unchanged results test was run again solely to collect diagnostics. Of its 90.19-second CPU profile, 80.31 seconds were in native `(program)` and only 0.356 seconds in sampled JavaScript intersection stacks. This does **not** support changing actor hit geometry as the primary fix. The exact native stall cause remains unproven.
-- `gpu-details.json`: a separate blank-page probe using identical Chromium launch options confirms ANGLE/SwiftShader software WebGL. No hardware GPU performance is claimed.
-- `fixture-setup-failure/`: preserved initial setup error. A shared Git clone was correctly rejected for alternate object storage; an independent clone and new database corrected the test setup without weakening safety checks.
+An earlier unchanged full attempt hit the existing 90/120-second limits on two long journeys. CPU profiling found 80.31 of 90.19 seconds in native `(program)` and only 0.356 seconds in sampled JavaScript intersection stacks; it did not support changing actor hit geometry. A separate [renderer probe](gpu-details.json) confirmed ANGLE/SwiftShader software WebGL.
 
-This establishes neither native Electron nor live coding-provider acceptance. Composer delivery uses explicitly mocked protocol responses in its dedicated tests and cannot establish live provider dispatch. The five composer cases passed separately in 10.3 seconds with zero retries against the fresh launcher artifact at `6a6b8a3`; see [mocked-composer/browser.log](mocked-composer/browser.log). This verifies real browser persistence and UI behavior with fake receipts, not live dispatch.
+The software-renderer camera change uses the existing instant camera path while preserving the approved art, lights, shadows and framing. The exact previously failing results case then passed in **46.8 seconds** under its unchanged 90-second timeout, and five related regressions passed. In the final full run that results case passed again in **45.0 seconds**. Native software-rendering stalls still occur, so this is functional acceptance rather than a claim of smooth hardware performance.
 
-## Software camera fix verification
+All prior evidence remains intact:
 
-[The focused results report](software-camera-focus/playwright-report.json) and [five related regression results](software-camera-regressions/playwright-report.json) use unchanged assertions and timeouts, zero retries and no profiling overhead. The camera fix preserves the approved art and uses the existing instant camera path on detected software renderers. It reduces expensive frames; 3–7 second native stalls still occur on this SwiftShader host, so smooth hardware performance is not established.
+- `fixture-setup-failure/`: the runtime correctly rejected a shared Git clone's alternate object store; the setup was corrected to an independent clone.
+- `interrupted-full/`: 2 passes, 2 time-budget failures, 1 interruption and 20 unrun cases, preserved before the camera repair.
+- `profile/`: reproduced timeout and raw CPU profile before repair.
+- `software-camera-focus/` and `software-camera-regressions/`: unchanged focused checks after repair.
+- `mocked-composer/`: separate five-case pass against the fresh-launcher artifact at `6a6b8a3`.
+- `final-full/`: complete passing run at the frozen source.
 
-## Screenshots
+Assertions and timeouts were not changed. The harness now honors `SIDEQUEST_EVIDENCE_DIR` for every screenshot/diagnostic; optional `SIDEQUEST_CPU_PROFILE=1` records CPU diagnostics and was disabled for the final run.
 
-- [Real inspection results](interrupted-full/job-result.png)
-- [Actual check report](interrupted-full/job-check-report.png)
-- [Responsive results at390px](interrupted-full/job-390.png)
-- [Reopened assigned result after fix](software-camera-focus/assigned-result.png)
-- [Recorded session after fix](software-camera-regressions/recorded-session.png)
-- [Original physical monitor view](interrupted-full/monitor-pov.png)
+## Reproduction
 
-See [verification.json](verification.json), [CPU summary](profile/cpu-summary.json), and [full-attempt log](interrupted-full/browser.log).
+The trusted inspected project is an independent `git clone --no-local --no-checkout` of Sidequest, checked out at `8a9fb11c3b01a404c4dd305b71458377082697c1`; the viewer compares base `69bf06696a93c9f58eee2d088e84404d4f6563d6`. The renderer/runtime under test use the frozen current checkout. Runtime/config/work directories stay outside Git.
+
+The runner starts `.venv/bin/python -m services.runtime.main --allowed-root <independent-clone> --data-dir <temporary-state>/data --config-dir <temporary-state>/config --runtime-dir <temporary-state>/runtime --port 44317` with coding disabled. A fresh random token is shared only through the runtime/Vite process environments. It runs `npm run test:browser -- --retries=0 --reporter=list,json --output <evidence>/playwright-results` with `SIDEQUEST_TEST_INSPECTION=1`, `CHROMIUM_PATH=/usr/bin/chromium`, `CI=1`, the configured source/runtime URLs and isolated `SIDEQUEST_EVIDENCE_DIR`. Exact argv, timestamps and shutdown results are in [run-summary.json](final-full/run-summary.json).
+
+## Selected final screenshots
+
+- [Original office overview](final-full/setup-desktop.png)
+- [Real immutable inspection results](final-full/job-result.png)
+- [Frozen-identity check report](final-full/job-check-report.png)
+- [Real committed Git diff](final-full/git-diff.png)
+- [Recorded session at the physical monitor](final-full/monitor-pov.png)
+- [Local attachment composer on mobile](final-full/monitor-local-draft-390.png)
+- [Detected provider settings](final-full/provider-settings.png)
+- [Compact provider picker](final-full/provider-selector.png)
+- [Explicit notification display fixture](final-full/notifications-badges-fixture.png)
+
+The final verification lists all **37 screenshots**.

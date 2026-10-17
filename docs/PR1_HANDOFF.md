@@ -1,8 +1,12 @@
 # Current follow-up — 2026-10-17
 
-The earlier handoff below is historical. The active repair adds a single `sidequest.py setup/run/doctor` entry point, supervised runtime + office launch, process-only local API authentication, one-commit Git support, actionable Electron startup failure handling, safe provider startup diagnostics and fresh/stale readiness handling. The application suites and build now run in CI. Browser evidence can be redirected without overwriting prior captures.
+The earlier handoff below is historical. Published functional source is `8e39baba943c32da1c09944313e47286c69672ee`. The active repair adds a single `sidequest.py setup/run/doctor` entry point, supervised runtime + office launch, process-only local API authentication, one-commit Git support, actionable Electron startup failure handling, safe provider startup diagnostics and fresh/stale readiness handling. Identified software GPUs use immediate camera positioning to avoid the repeated frames that caused interaction timeouts; hardware/unknown GPUs retain animation. Original assets and rendering quality are unchanged.
 
-Start with the [quick start](../README.md) and [new verification record](../evidence/desktop/startup-20261017/README.md). **Native Electron and live coding acceptance remain blocked; PR #1 stays draft.** No sandbox, spending or permission gate was weakened. No credentials were copied or persisted, and no model turn, merge, deployment or release was performed.
+Fresh archive installation, actual launcher startup, a real zero-model Git inspection and immutable file viewing passed. Current local checks: 87 desktop, 10 launcher, 66 runtime, 59 provider, 13 workshop and 31 controller tests; TypeScript/production build passes. Application tests/build now run in CI. The full browser suite passed **25/25**, zero failures/skips/retries, in **12.9 minutes** against that exact functional source; earlier failed runs remain preserved. Attachment/send recovery uses explicitly labeled protocol fakes.
+
+Start with the [quick start](../README.md), [setup/native verification record](../evidence/desktop/startup-20261017/README.md) and [browser verification](../evidence/desktop/startup-browser-20261017/README.md). **Native Electron and live coding acceptance remain blocked; PR #1 stays draft.** In this coding container, Electron fails on its unsupported SUID sandbox helper and Codex initialization fails creating `installation_id` on a read-only mount. Production provider USD enforcement remains unavailable independently of host startup. A clean source archive and small graphics patch are available for separate native-host verification; [transfer manifest](../evidence/desktop/startup-20261017/source-transfer.json).
+
+No sandbox, spending or permission gate was weakened. No credentials were copied or persisted, and no model turn, merge, deployment or release was performed.
 
 ---
 

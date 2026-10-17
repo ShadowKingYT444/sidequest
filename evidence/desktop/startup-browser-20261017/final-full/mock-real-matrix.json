@@ -1,0 +1,29 @@
+{
+  "real": [
+    "Original imported office and figures",
+    "Chromium151.0.7922.173 with SwiftShader WebGL",
+    "Current React renderer and components",
+    "Local Git diff at recorded revisions",
+    "Authenticated loopback runtime and SQLite",
+    "Immutable local-inspection artifacts and trusted frozen-identity checks",
+    "File bytes, IndexedDB persistence, image preview, keyboard/mouse input and real page reload",
+    "Physical original monitor selection and camera restoration"
+  ],
+  "explicit_browser_fixtures": [
+    "Composer capability, attachment staging, delivery and receipt/status responses (5 cases)",
+    "Read-only completion/attention notification statuses using real record identities",
+    "Read-only503 snapshot outages and wrong-worker runInfo response",
+    "Hostile-source/read-error responses",
+    "Synthetic clipboard and drag/drop browser events"
+  ],
+  "not_established": [
+    "Native Electron execution",
+    "Live provider/model turns",
+    "Provider authentication or USD enforcement",
+    "OS clipboard integration",
+    "Hardware GPU performance"
+  ],
+  "model_calls_for_executed_inspections": 0,
+  "coding_enabled": false,
+  "source_commit": "8e39baba943c32da1c09944313e47286c69672ee"
+}

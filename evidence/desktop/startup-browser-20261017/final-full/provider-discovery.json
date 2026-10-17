@@ -1,0 +1,78 @@
+{
+  "v": 1,
+  "observedAt": "2026-10-17T02:03:50.877Z",
+  "providers": [
+    {
+      "id": "codex",
+      "name": "Codex",
+      "installed": true,
+      "binaryPath": "/opt/codex/bin/codex",
+      "discoverySource": "path",
+      "version": null,
+      "authentication": "unknown",
+      "reachability": "unknown",
+      "homePath": "/run/codex-environment/codex-home",
+      "runtime": "local"
+    },
+    {
+      "id": "claude",
+      "name": "Claude",
+      "installed": false,
+      "binaryPath": null,
+      "discoverySource": null,
+      "version": null,
+      "authentication": "unknown",
+      "reachability": "unknown",
+      "homePath": "/home/agent",
+      "runtime": "local"
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "installed": false,
+      "binaryPath": null,
+      "discoverySource": null,
+      "version": null,
+      "authentication": "unknown",
+      "reachability": "unknown",
+      "homePath": "/home/agent",
+      "runtime": "local"
+    },
+    {
+      "id": "grok",
+      "name": "Grok",
+      "installed": false,
+      "binaryPath": null,
+      "discoverySource": null,
+      "version": null,
+      "authentication": "unknown",
+      "reachability": "unknown",
+      "homePath": "/home/agent",
+      "runtime": "local"
+    },
+    {
+      "id": "opencode",
+      "name": "OpenCode",
+      "installed": false,
+      "binaryPath": null,
+      "discoverySource": null,
+      "version": null,
+      "authentication": "unknown",
+      "reachability": "unknown",
+      "homePath": "/home/agent",
+      "runtime": "local"
+    },
+    {
+      "id": "antigravity",
+      "name": "Antigravity",
+      "installed": false,
+      "binaryPath": null,
+      "discoverySource": null,
+      "version": null,
+      "authentication": "unknown",
+      "reachability": "unknown",
+      "homePath": "/home/agent",
+      "runtime": "local"
+    }
+  ]
+}

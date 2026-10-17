@@ -1,0 +1,18 @@
+{
+  "sourceId": "f_3d4e19d38e10864197f5d6589063bd50",
+  "trace": [
+    {
+      "phase": "added",
+      "at": 23877.399999999907,
+      "testId": "diff-editor",
+      "fileId": "f_3d4e19d38e10864197f5d6589063bd50",
+      "scrollTop": "479",
+      "connected": true,
+      "children": 1
+    }
+  ],
+  "reopenMounts": 1,
+  "readsBeforeRefresh": 1,
+  "readsAfterRefresh": 2,
+  "refreshRereadVerified": true
+}

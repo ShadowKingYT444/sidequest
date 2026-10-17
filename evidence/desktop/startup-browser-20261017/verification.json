@@ -22,19 +22,23 @@
     "javascript_intersection_stacks_seconds": 0.356
   },
   "scope_passed": [
-    "Real local Git inspection through UI, authenticated runtime, Git adapter and trusted frozen-identity check",
-    "Immutable files, empty inspection diff, activity and check report, zero inference calls",
-    "Desktop/mobile job accessibility checks",
-    "Physical original Computer19 monitor selection and camera return including interruption"
+    "Full25 browser cases at frozen8e39baba943c32da1c09944313e47286c69672ee, zero retries and no skips",
+    "Real local Git inspection, immutable files/check report/activity, zero inference calls for executed inspections",
+    "Physical original monitor selection, recorded ownership, camera return and session reload",
+    "Local file/image input, draft retention through simulated read failures, immutable artifact selection and scroll restoration",
+    "Real Git diff, one lazy editor, Escape/reopen, expanded mode, origin restrictions and literal hostile text handling",
+    "Desktop/mobile provider settings, honest unavailable telemetry, guarded task setup, automated WCAG checks",
+    "Five explicitly protocol-fake composer cases with real Chromium IndexedDB/File/reload behavior"
   ],
   "unverified": [
-    "Complete25-test suite on this host",
-    "Live coding/provider dispatch",
-    "Native Electron (separate root investigation)"
+    "Live coding/provider dispatch and live authentication or usage enforcement",
+    "Native Electron (separate parent investigation)",
+    "Hardware GPU performance and operating-system clipboard integration"
   ],
   "limitations": [
-    "Two long interaction journeys exceeded unchanged90s/120s limits amid multi-second browser native stalls; failed assertions preserved",
-    "CPU sampling does not establish the exact native GPU/compositor function responsible"
+    "SwiftShader native stalls remain; software-camera fallback reduces expensive frames but does not establish smooth hardware performance",
+    "Notification completion/attention and selected error responses are explicit read-only browser fixtures; composer receipt/delivery responses are mocked",
+    "Initial fixture-setup failure, interrupted full attempt and CPU-profile timeout are preserved as historical diagnostic evidence; final full run passes without assertion or timeout changes"
   ],
   "evidence": [
     "interrupted-full/browser.log",
@@ -45,13 +49,17 @@
     "gpu-details.json",
     "mocked-composer/playwright-report.json",
     "software-camera-focus/playwright-report.json",
-    "software-camera-regressions/playwright-report.json"
+    "software-camera-regressions/playwright-report.json",
+    "final-full/verification.json",
+    "final-full/playwright-report.json",
+    "final-full/browser.log",
+    "final-full/run-context.json"
   ],
   "mocked_composer": {
     "passed": 5,
     "failed": 0,
     "retries": 0,
-    "duration_seconds": 10.3,
+    "duration_seconds": 10.262122,
     "served_application_commit": "6a6b8a3",
     "scope": "Real React/IndexedDB/File browser behavior with explicitly mocked authenticated runtime receipt protocol; no live dispatch"
   },
@@ -66,13 +74,38 @@
     "passed": 5,
     "failed": 0,
     "retries": 0,
-    "duration_seconds": 192,
+    "duration_seconds": 189.155642,
     "tests": [
       "recorded session ownership and reload",
       "physical monitor and camera return",
       "static shadows",
       "draft demand-rendering",
       "figure-details demand-rendering"
+    ]
+  },
+  "final_full": {
+    "status": "passed",
+    "application_commit": "8e39baba943c32da1c09944313e47286c69672ee",
+    "tests": 25,
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "retries": 0,
+    "duration_seconds": 771.757225,
+    "fresh_runtime_state": true,
+    "profile_enabled": false,
+    "source_test_and_asset_hashes_verified": 252,
+    "changed_source_files": [],
+    "page_errors": [],
+    "timing_capture_errors": [],
+    "screenshots": 37,
+    "token_files_found": [],
+    "runner_exit_code": 0,
+    "runtime_graceful_shutdown": true,
+    "ports_released": [
+      5173,
+      44317
     ]
   }
 }
