@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Original office fully loaded",
+    "elapsed_seconds": 18.729,
+    "screenshot": "01-office.png"
+  },
+  {
+    "name": "Physical monitor click; local text, file and image draft; send disabled",
+    "elapsed_seconds": 24.01,
+    "screenshot": "02-monitor-draft.png"
+  },
+  {
+    "name": "Actual committed Git diff expanded in read-only viewer",
+    "elapsed_seconds": 31.452,
+    "screenshot": "03-git-diff.png"
+  },
+  {
+    "name": "Fresh trusted repository registered; zero-budget inspection queued",
+    "elapsed_seconds": 39.514,
+    "screenshot": "04-inspection-queued.png"
+  },
+  {
+    "name": "Real local inspection passed; immutable README artifact displayed",
+    "elapsed_seconds": 42.746,
+    "screenshot": "05-inspection-result.png"
+  },
+  {
+    "name": "Frozen inspection check report: inference_calls = 0",
+    "elapsed_seconds": 44.103,
+    "screenshot": "06-check-report.png"
+  },
+  {
+    "name": "Completed recorded inspection activity; no model call",
+    "elapsed_seconds": 45.507,
+    "screenshot": "07-run-activity.png"
+  },
+  {
+    "name": "Honest coding-unavailable explanation",
+    "elapsed_seconds": 46.923,
+    "screenshot": "08-coding-unavailable.png"
+  },
+  {
+    "name": "Actual provider discovery: executable detection, authentication unknown",
+    "elapsed_seconds": 54.518,
+    "screenshot": "09-provider-settings.png"
+  },
+  {
+    "name": "Actual usage page: telemetry unavailable",
+    "elapsed_seconds": 55.861,
+    "screenshot": "10-usage-unavailable.png"
+  }
+]

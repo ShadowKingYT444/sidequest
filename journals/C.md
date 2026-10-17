@@ -164,3 +164,12 @@ Frozen functional source `8e39baba943c32da1c09944313e47286c69672ee` passed the f
 All 126 original asset files and 834 earlier evidence files remain unchanged. Original failures, software-GPU profiling and the targeted before/after results remain archived. Final docs/evidence only follow the tested code. Root evidence: `evidence/desktop/startup-20261017/`; full browser evidence: `evidence/desktop/startup-browser-20261017/final-full/`.
 
 Native/live acceptance remains blocked here: Electron's unsupported sandbox/display, Codex's read-only installation_id creation, and unavailable production USD enforcement. A source archive and graphics-only update patch were delivered for independent native testing. No model/paid turn, credentials, sandbox weakening, merge or deployment. Next: verify the supported desktop host; retain draft PR status until native/live acceptance can be established within existing authority.
+
+
+## Concise presentation and explicit visual acceptance — October 17, 2026
+
+Replaced the long root README with one functionality paragraph, prerequisites and install/run steps (194 words); preserved the fuller guide under docs/GETTING_STARTED.md. Added documentation/evidence indexes and a capability checklist mapping every advertised core feature to tests and pictures or an exact blocker. Removed only seven redundant Playwright .last-run.json resume pointers; full reports, failed contexts/profiles, original art and all user work remain recoverable and preserved. Added an ignore rule for these disposable pointers.
+
+Reviewed the subscription/USD gate using actual source and an offline generated Codex 0.159.0-alpha.3 schema. The USD-only abstraction blocks subscription accounts too, but no supported included-only credit restriction or enforceable 10% reserve was established. Documented the minimum coherent capability/accounting change and its regression matrix; did not authorize a turn or invent zero-cost authority. Five focused existing gate tests pass.
+
+Product source is unchanged from bdf2fdd/8e39bab; the full 25-test acceptance remains applicable. A separate actual-launcher browser walkthrough provides video and pictures without mocked readiness or provider turns. Native desktop acceptance is owned by the separate tester and remains pending here. Next: publish completed proof and check final CI; no merge or deployment.

@@ -1,5 +1,7 @@
 # Current follow-up — 2026-10-17
 
+The [concise README](../README.md), [capability checklist with visual proof](ACCEPTANCE.md), [documentation index](README.md) and [billing capability review](BILLING_CAPABILITIES.md) are the current entry points. The presentation/proof follow-up changes no product source or execution authority.
+
 The earlier handoff below is historical. Published functional source is `8e39baba943c32da1c09944313e47286c69672ee`. The active repair adds a single `sidequest.py setup/run/doctor` entry point, supervised runtime + office launch, process-only local API authentication, one-commit Git support, actionable Electron startup failure handling, safe provider startup diagnostics and fresh/stale readiness handling. Identified software GPUs use immediate camera positioning to avoid the repeated frames that caused interaction timeouts; hardware/unknown GPUs retain animation. Original assets and rendering quality are unchanged.
 
 Fresh archive installation, actual launcher startup, a real zero-model Git inspection and immutable file viewing passed. Current local checks: 87 desktop, 10 launcher, 66 runtime, 59 provider, 13 workshop and 31 controller tests; TypeScript/production build passes. Application tests/build now run in CI. The full browser suite passed **25/25**, zero failures/skips/retries, in **12.9 minutes** against that exact functional source; earlier failed runs remain preserved. Attachment/send recovery uses explicitly labeled protocol fakes.

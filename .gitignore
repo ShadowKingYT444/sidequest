@@ -35,3 +35,6 @@ desktop/public/office/
 *.tar.xz.part*
 core
 core.*
+
+# Disposable Playwright resume pointers; reports and failure context stay tracked
+.last-run.json
