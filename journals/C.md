@@ -173,3 +173,17 @@ Replaced the long root README with one functionality paragraph, prerequisites an
 Reviewed the subscription/USD gate using actual source and an offline generated Codex 0.159.0-alpha.3 schema. The USD-only abstraction blocks subscription accounts too, but no supported included-only credit restriction or enforceable 10% reserve was established. Documented the minimum coherent capability/accounting change and its regression matrix; did not authorize a turn or invent zero-cost authority. Five focused existing gate tests pass.
 
 Product source is unchanged from bdf2fdd/8e39bab; the full 25-test acceptance remains applicable. A separate actual-launcher browser walkthrough provides video and pictures without mocked readiness or provider turns. Native desktop acceptance is owned by the separate tester and remains pending here. Next: publish completed proof and check final CI; no merge or deployment.
+
+
+## Independent native result — October 17, 2026
+
+The parent relayed a separate cloud-desktop VM native smoke pass at functional source 8e39bab (source archive and patch manifests matched). Setup/build and Electron smoke exited 0 with sandbox intact; actual Git IPC and renderer isolation/bridge methods passed. Updated current README, acceptance matrix and handoff to distinguish this success from the coding-container sandbox/display failure. Raw JSON/window PNG exist on the other host; transfer and full native UI capture remain pending. Added attributed report and credential-free Library transfer procedure. No product source or provider authority changed; live coding remains unverified. Next: import and hash-check the independent artifacts when their Library IDs arrive.
+
+
+## WebGL failure diagnosis repair — October 17, 2026
+
+Independent VM shell/IPC passed, then persistent office rendering failed with WebGL2 blocklisted. The app incorrectly blamed unimported assets. Added a browser regression first and preserved its old-UI failure. Separated graphics, bindings, model-load and unknown scene diagnoses; added Retry office/cache reset, actionable recovery guidance and an honest footer while keeping Git/Settings/Jobs available. No original asset, renderer security or provider authority changes.
+
+90 desktop tests and production build pass. An initial browser run reached the corrected error/retry, Git and Settings, then failed on a mistaken test Jobs selector; corrected to the actual region. New regression explicitly removes Playwright's default unsafe SwiftShader opt-in and enables Chromium sandbox; the coding container cannot launch that configuration. Final browser/native verification must run on the supported VM. Earlier reports/captures remain preserved and labeled.
+
+Native VM also verified Git/Jobs artifacts and Codex initialize, but reports Not logged in; sign-in approval is pending with the parent. Next: deliver the source patch and import hashed native artifacts.

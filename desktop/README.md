@@ -1,3 +1,7 @@
+# Current native status — 17 October 2026
+
+The separate desktop VM passes Electron shell/isolated IPC, local Git viewing and zero-model Jobs/artifact flows, but its office render fails with WebGL2 blocklisted. The graphics failure now has its own diagnosis and Retry/recovery controls; it is no longer labeled as missing imported assets. Codex initialize passes there but login is missing. See [current acceptance](../docs/ACCEPTANCE.md) and [native report](../evidence/desktop/native-vm-20261017/README.md); older native failures below are specific to their recorded hosts.
+
 # Start the office and runtime together
 
 From the repository root, run `python3 sidequest.py setup`, then `python3 sidequest.py run --repo /absolute/path/to/project`. Add `--browser` to both commands for a headless host. `python3 sidequest.py doctor` checks prerequisites. See the [quick start](../README.md) for state storage, limitations and all steps. This launcher connects the local runtime automatically using an ephemeral process-only API token and closes its owned services together. Coding remains disabled.

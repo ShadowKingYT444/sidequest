@@ -1,0 +1,50 @@
+{
+  "status": "shell_ipc_passed_office_graphics_blocked_reported",
+  "source": "Parent delegation relaying independent cloud-desktop tester result on 2026-10-17",
+  "functional_source": "8e39baba943c32da1c09944313e47286c69672ee",
+  "source_transfer": "Archive 6a6b8a3 plus exported graphics patch; manifests matched on test host",
+  "setup_build_exit_code": 0,
+  "electron_smoke_exit_code": 0,
+  "sandbox_intact": true,
+  "git_ipc_kind": "local-git",
+  "renderer_node_access": false,
+  "expected_isolated_bridge_runtime_methods": "verified by independent tester",
+  "raw_artifacts_imported": true,
+  "raw_artifact_paths_on_other_host": [
+    "/workspace/shared/sidequest-vm-test/source/sidequest/evidence/desktop/electron-smoke.json",
+    "/workspace/shared/sidequest-vm-test/source/sidequest/evidence/desktop/electron-window.png"
+  ],
+  "paths_available_in_implementation_environment": false,
+  "not_yet_established": [
+    "Native office rendering",
+    "Native OS clipboard/file chooser",
+    "Authenticated provider coding/follow-up/delivery",
+    "Populated native notifications",
+    "Recorded-session attachment (result display assignment alone leaves Trace empty)"
+  ],
+  "implementation_environment_status": "Healthy; prior source/evidence pushed as 0e2658c; CI passed; native failure here remains host-specific",
+  "native_office_rendering": {
+    "status": "failed",
+    "reason": "WebGL2 blocklisted",
+    "old_ui_misdiagnosis": "Original office assets have not been imported"
+  },
+  "native_ui_passed": [
+    "Real Monaco Git diff",
+    "Expand/Escape/reopen",
+    "Provider executable detection",
+    "Disposable repository zero-model inspection",
+    "Immutable file result"
+  ],
+  "codex": {
+    "version": "0.159.2",
+    "login_status": "Not logged in",
+    "initialize": "passed",
+    "exit_code": 0,
+    "state_home": "/home/agent/.codex",
+    "state_overrides": false,
+    "model_turns": 0,
+    "device_sign_in": "User approved; request failed before URL/code; no saved authentication",
+    "transport_diagnosis": "Desktop direct curl could not connect auth.openai.com:443; desktop proxy variables unset. Separate selected shell reaches endpoint through its managed proxy. No egress/proxy/security changes made."
+  },
+  "raw_artifact_manifest": "import-manifest.json"
+}

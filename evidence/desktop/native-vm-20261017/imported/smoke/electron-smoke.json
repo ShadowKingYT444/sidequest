@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "startedAt": "2026-10-17T02:31:11.307Z",
+  "bridgeKeys": [
+    "diff",
+    "providers",
+    "runtime",
+    "snapshot"
+  ],
+  "runtimeKeys": [
+    "artifact",
+    "artifacts",
+    "assignSession",
+    "capabilities",
+    "clearSession",
+    "commandStatus",
+    "diff",
+    "enableCoding",
+    "files",
+    "job",
+    "refreshReadiness",
+    "register",
+    "run",
+    "runCoding",
+    "runEvents",
+    "runInfo",
+    "sessionMessage",
+    "snapshot",
+    "stageAttachment",
+    "stop",
+    "submitCoding",
+    "submitInspection",
+    "text"
+  ],
+  "nodeAccess": false,
+  "mode": "local-git",
+  "args": [
+    ".",
+    "--remote-debugging-port=9223"
+  ]
+}

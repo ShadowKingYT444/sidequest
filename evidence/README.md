@@ -7,6 +7,7 @@ Current functional source: `8e39baba943c32da1c09944313e47286c69672ee`; published
 | [Actual-launcher walkthrough](desktop/proof-20261017/README.md) | Real browser video, uncut original and ten screenshots; no mocks or provider turns |
 | [Browser acceptance](desktop/startup-browser-20261017/README.md) | Full 25/25 suite, zero retries; exact source hashes, 37 screenshots and explicit mock boundaries |
 | [Fresh setup and native probes](desktop/startup-20261017/README.md) | Dependency/build installation, actual launcher, real Git inspection, unit/integration logs, native failures and source-transfer manifest |
+| [Separate VM native smoke](desktop/native-vm-20261017/README.md) | Sandbox-preserving shell/IPC and Git/Jobs passes, seven native UI screenshots, WebGL2 office failure and auth/transport limits |
 | [Billing capability review](desktop/billing-review-20261017/README.md) | Offline installed-protocol inspection; no provider login or model turn |
 
 ## Historical records

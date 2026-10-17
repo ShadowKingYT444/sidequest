@@ -1,0 +1,14 @@
+{
+  "command": "codex app-server --stdio",
+  "requested_methods": [
+    "initialize"
+  ],
+  "model_turns": 0,
+  "lines": [
+    {
+      "stream": "stdout",
+      "text": "{\"id\":1,\"result\":{\"userAgent\":\"sidequest-native-qa/0.159.2 (Debian 13.0.0; x86_64) VTE/8001 (sidequest-native-qa; 0.1.0)\",\"codexHome\":\"/home/agent/.codex\",\"platformFamily\":\"unix\",\"platformOs\":\"linux\"}}"
+    }
+  ],
+  "exit_after_termination": 0
+}

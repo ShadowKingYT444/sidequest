@@ -1,6 +1,6 @@
 # Sidequest
 
-Sidequest is a local visual office for inspecting coding work: click computers to view recorded sessions, draft text with files/images, browse Git diffs and immutable artifacts, or use the workboard to run zero-model Git inspections. Settings detect installed CLIs and show their verified connection state. **Live coding is still blocked by unverified spending/subscription controls; native desktop acceptance is pending.** See the [feature-by-feature proof](docs/ACCEPTANCE.md).
+Sidequest is a local visual office for inspecting coding work: click computers to view recorded sessions, draft text with files/images, browse Git diffs and immutable artifacts, or use the workboard to run zero-model Git inspections. Settings detect installed CLIs and show their verified connection state. **Native shell/IPC passes; office rendering needs working WebGL2. Live coding awaits sign-in and verified spending controls.** See the [feature-by-feature proof](docs/ACCEPTANCE.md).
 
 ## Dependencies
 

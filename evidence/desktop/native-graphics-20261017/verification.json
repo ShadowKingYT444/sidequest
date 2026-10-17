@@ -1,0 +1,31 @@
+{
+  "baseline": "0e2658cd0eba1c1e276cc790084636f194b3b2b1",
+  "desktop_unit_tests": {
+    "passed": 90,
+    "failed": 0
+  },
+  "typecheck_and_build": "passed",
+  "red_browser_regression": "failed on missing expected graphics heading; old asset message preserved",
+  "initial_browser_repair_run": {
+    "passed": 1,
+    "failed": 1,
+    "failure": "new test used dialog Jobs instead of actual region Local jobs board; corrected",
+    "before_failure_passed": [
+      "graphics diagnosis",
+      "retry recreates context",
+      "Git read viewer",
+      "Settings"
+    ]
+  },
+  "final_browser_regression": "blocked at sandbox startup before assertions",
+  "final_test_launch": {
+    "chromiumSandbox": true,
+    "ignoreDefaultArgs": [
+      "--enable-unsafe-swiftshader"
+    ],
+    "args": []
+  },
+  "production_security_or_graphics_flag_changes": false,
+  "native_vm_scope": "shell IPC and local Git/jobs passed; office WebGL2 blocklisted; raw transfer pending",
+  "provider_turns": 0
+}

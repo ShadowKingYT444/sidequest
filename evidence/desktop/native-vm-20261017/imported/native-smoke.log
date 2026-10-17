@@ -1,0 +1,5 @@
+
+> sidequest-desktop@0.1.0 test:electron
+> node scripts/electron-smoke.mjs
+
+Native Electron window and real Git IPC passed.

@@ -74,6 +74,8 @@ function configureOfficeAssetLoader(loader: GLTFLoader) {
   loader.manager.setURLModifier((resourceUrl) => validateOfficeResourceUrl(resourceUrl, window.location.href));
 }
 
+export function clearOfficeModelCache() { useGLTF.clear('/office/office.glb'); }
+
 interface ErrorBoundaryProps {
   children: ReactNode;
   onError?: (error: Error) => void;
