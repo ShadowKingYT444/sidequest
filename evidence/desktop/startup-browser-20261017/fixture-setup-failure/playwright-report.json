@@ -1,0 +1,796 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/sidequest/desktop/node_modules/.bin/playwright",
+      "test",
+      "--retries=0",
+      "--reporter=list,json",
+      "--output",
+      "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results"
+    ],
+    "configFile": "/workspace/sidequest/desktop/playwright.config.ts",
+    "rootDir": "/workspace/sidequest/desktop/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/sidequest/desktop/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/workspace/sidequest/desktop/tests/browser",
+        "snapshotDir": "/workspace/sidequest/desktop/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://127.0.0.1:5173",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "jobs-live.spec.ts",
+      "file": "jobs-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "genuine local inspection job produces immutable files and a check report",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 52836,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Local jobs board' }).locator('.job-state')\nExpected: \u001b[32m\"verifying\"\u001b[39m\nReceived: \u001b[31m\"blocked\"\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('region', { name: 'Local jobs board' }).locator('.job-state') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Local jobs board' }).locator('.job-state')\u001b[22m\n\u001b[2m    - locator resolved to <span class=\"job-state\">queued</span>\u001b[22m\n\u001b[2m    - unexpected value \"queued\"\u001b[22m\n\u001b[2m    5 × locator resolved to <span class=\"job-state\">running</span>\u001b[22m\n\u001b[2m      - unexpected value \"running\"\u001b[22m\n\u001b[2m    37 × locator resolved to <span class=\"job-state\">blocked</span>\u001b[22m\n\u001b[2m       - unexpected value \"blocked\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Local jobs board' }).locator('.job-state')\nExpected: \u001b[32m\"verifying\"\u001b[39m\nReceived: \u001b[31m\"blocked\"\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('region', { name: 'Local jobs board' }).locator('.job-state') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Local jobs board' }).locator('.job-state')\u001b[22m\n\u001b[2m    - locator resolved to <span class=\"job-state\">queued</span>\u001b[22m\n\u001b[2m    - unexpected value \"queued\"\u001b[22m\n\u001b[2m    5 × locator resolved to <span class=\"job-state\">running</span>\u001b[22m\n\u001b[2m      - unexpected value \"running\"\u001b[22m\n\u001b[2m    37 × locator resolved to <span class=\"job-state\">blocked</span>\u001b[22m\n\u001b[2m       - unexpected value \"blocked\"\u001b[22m\n\n    at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:30:45",
+                    "location": {
+                      "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                      "column": 45,
+                      "line": 30
+                    },
+                    "snippet": "  28 |   await page.screenshot({path:path.join(evidence,'job-queued.png')});\n  29 |   await board.getByRole('button',{name:'Run inspection',exact:true}).click();\n> 30 |   await expect(board.locator('.job-state')).toHaveText('verifying',{timeout:20_000});\n     |                                             ^\n  31 |   await expect(board.locator('.job-checks')).toContainText('pass',{timeout:90_000});\n  32 |   await expect(board).toContainText('Inspection results ready.');\n  33 |   await expect(board.locator('.artifact-files>button').first()).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                        "column": 45,
+                        "line": 30
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Local jobs board' }).locator('.job-state')\nExpected: \u001b[32m\"verifying\"\u001b[39m\nReceived: \u001b[31m\"blocked\"\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('region', { name: 'Local jobs board' }).locator('.job-state') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Local jobs board' }).locator('.job-state')\u001b[22m\n\u001b[2m    - locator resolved to <span class=\"job-state\">queued</span>\u001b[22m\n\u001b[2m    - unexpected value \"queued\"\u001b[22m\n\u001b[2m    5 × locator resolved to <span class=\"job-state\">running</span>\u001b[22m\n\u001b[2m      - unexpected value \"running\"\u001b[22m\n\u001b[2m    37 × locator resolved to <span class=\"job-state\">blocked</span>\u001b[22m\n\u001b[2m       - unexpected value \"blocked\"\u001b[22m\n\n\n  28 |   await page.screenshot({path:path.join(evidence,'job-queued.png')});\n  29 |   await board.getByRole('button',{name:'Run inspection',exact:true}).click();\n> 30 |   await expect(board.locator('.job-state')).toHaveText('verifying',{timeout:20_000});\n     |                                             ^\n  31 |   await expect(board.locator('.job-checks')).toContainText('pass',{timeout:90_000});\n  32 |   await expect(board).toContainText('Inspection results ready.');\n  33 |   await expect(board.locator('.artifact-files>button').first()).toBeVisible();\n    at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:30:45"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T01:34:45.642Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results/jobs-live-genuine-local-in-a168f-le-files-and-a-check-report/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                    "column": 45,
+                    "line": 30
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7020818dfbebdca560a9-551ce608100998762252",
+          "file": "jobs-live.spec.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "title": "real jobs clear stale notices, recover reads and preserve assigned computer results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 532,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m\n    at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:95:21",
+                    "location": {
+                      "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                      "column": 21,
+                      "line": 95
+                    },
+                    "snippet": "  93 |   const response=await request.post('/__sidequest/runtime/snapshot',{data:[],headers:{Origin:'http://127.0.0.1:5173'}});expect(response.ok()).toBe(true);const state=await response.json();\n  94 |   const completed=state.jobs.find((job:{execution_profile:string;checks:{state:string}[];tasks:{state:string}[]})=>job.execution_profile==='local_git_inspection'&&job.tasks.every(t=>t.state==='completed')&&job.checks.length&&job.checks.every(c=>c.state==='pass'));\n> 95 |   expect(completed).toBeTruthy();\n     |                     ^\n  96 |   await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('button',{name:'Jobs',exact:true}).click();\n  97 |   const board=page.getByRole('region',{name:'Local jobs board'});\n  98 |   await board.getByRole('button',{name:new RegExp(completed.title.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&'))}).click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                        "column": 21,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m\n\n  93 |   const response=await request.post('/__sidequest/runtime/snapshot',{data:[],headers:{Origin:'http://127.0.0.1:5173'}});expect(response.ok()).toBe(true);const state=await response.json();\n  94 |   const completed=state.jobs.find((job:{execution_profile:string;checks:{state:string}[];tasks:{state:string}[]})=>job.execution_profile==='local_git_inspection'&&job.tasks.every(t=>t.state==='completed')&&job.checks.length&&job.checks.every(c=>c.state==='pass'));\n> 95 |   expect(completed).toBeTruthy();\n     |                     ^\n  96 |   await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});await page.getByRole('button',{name:'Jobs',exact:true}).click();\n  97 |   const board=page.getByRole('region',{name:'Local jobs board'});\n  98 |   await board.getByRole('button',{name:new RegExp(completed.title.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&'))}).click();\n    at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:95:21"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T01:35:41.702Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results/jobs-live-real-jobs-clear--ce5fb-e-assigned-computer-results/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                    "column": 21,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7020818dfbebdca560a9-ea7e67067dc653860601",
+          "file": "jobs-live.spec.ts",
+          "line": 90,
+          "column": 1
+        },
+        {
+          "title": "recorded session ownership persists at a figure and renders real contextual events",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "interrupted",
+                  "duration": 33640,
+                  "error": {
+                    "message": "Error: locator.click: Test ended.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Agent session' }).getByText('Attach recorded session', { exact: true })\u001b[22m\n",
+                    "stack": "Error: locator.click: Test ended.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Agent session' }).getByText('Attach recorded session', { exact: true })\u001b[22m\n\n    at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:153:126",
+                    "location": {
+                      "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                      "column": 126,
+                      "line": 153
+                    },
+                    "snippet": "  151 |  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});\n  152 |  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');\n> 153 |  let session=page.getByRole('dialog',{name:'Agent session'});await session.getByText('Attach recorded session',{exact:true}).click();\n      |                                                                                                                              ^\n  154 |  await session.getByRole('combobox',{name:'Recorded task',exact:true}).selectOption(job.id);await session.getByRole('combobox',{name:'Recorded run',exact:true}).selectOption(runId);\n  155 |  await session.getByRole('button',{name:'Assign session',exact:true}).click();\n  156 |  await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);await expect(session).toContainText('Recorded local inspection');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                        "column": 126,
+                        "line": 153
+                      },
+                      "message": "Error: locator.click: Test ended.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Agent session' }).getByText('Attach recorded session', { exact: true })\u001b[22m\n\n\n  151 |  await page.goto('/');await expect(page.locator('.app-footer')).toHaveAttribute('data-actor-status','ready',{timeout:60000});\n  152 |  await page.getByRole('combobox',{name:'Office navigation'}).selectOption('actor:parent_019');\n> 153 |  let session=page.getByRole('dialog',{name:'Agent session'});await session.getByText('Attach recorded session',{exact:true}).click();\n      |                                                                                                                              ^\n  154 |  await session.getByRole('combobox',{name:'Recorded task',exact:true}).selectOption(job.id);await session.getByRole('combobox',{name:'Recorded run',exact:true}).selectOption(runId);\n  155 |  await session.getByRole('button',{name:'Assign session',exact:true}).click();\n  156 |  await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);await expect(session).toContainText('Recorded local inspection');\n    at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:153:126"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T01:35:44.146Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                    "column": 126,
+                    "line": 153
+                  }
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "7020818dfbebdca560a9-9610893a45299c06d14a",
+          "file": "jobs-live.spec.ts",
+          "line": 142,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "monitor-ui.spec.ts",
+      "file": "monitor-ui.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "physical monitor POV restores orbited office camera through an interrupted return",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "0ea07ef4759f79c3bca4-8c4005f0e06f3219e306",
+          "file": "monitor-ui.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "0ea07ef4759f79c3bca4-f63ae3e800adb201815c",
+          "file": "monitor-ui.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "explicit read-only fixture shows distinct notifications and one badge per primary figure",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "0ea07ef4759f79c3bca4-578bb05faf859af8574c",
+          "file": "monitor-ui.spec.ts",
+          "line": 78,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "rendering.spec.ts",
+      "file": "rendering.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "static office shadows stay cached while opening the lazy editor and returning",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "f672df31acb714c8c296-f129192b010f61dfcba7",
+          "file": "rendering.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "local draft edits preserve demand rendering of the unchanged office",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "f672df31acb714c8c296-34546626668d98989a79",
+          "file": "rendering.spec.ts",
+          "line": 23,
+          "column": 1
+        },
+        {
+          "title": "local figure details preserve the unchanged office frame",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "f672df31acb714c8c296-ebf7e054c81e93a354ac",
+          "file": "rendering.spec.ts",
+          "line": 45,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "transport.spec.ts",
+      "file": "transport.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-de67c66082d1bdf11431",
+          "file": "transport.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "protocol fake: lost reply survives reload and reconciles exactly one send, keeping a subsequent draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-0a1deda80d3534f20e05",
+          "file": "transport.spec.ts",
+          "line": 55,
+          "column": 1
+        },
+        {
+          "title": "protocol fake: unknown spending authority keeps send disabled while durable local draft remains usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-99305c59d717752faf0e",
+          "file": "transport.spec.ts",
+          "line": 68,
+          "column": 1
+        },
+        {
+          "title": "protocol fake: accepted command rejected before start retains file and next draft across reload until explicit review",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-a92a734c25f05cfdb99a",
+          "file": "transport.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "protocol fake: successful 202 then rejected-before-start restores sent files without overwriting a newer draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-6066da3a63602a4903d6",
+          "file": "transport.spec.ts",
+          "line": 82,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "viewer.spec.ts",
+      "file": "viewer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Git diff, lazy single editor, expanded state, Escape and keyboard",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-b421a2e4b99b4a664dca",
+          "file": "viewer.spec.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "Escape/reopen mounts one selected Monaco editor and keeps its saved scroll",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-c28073460f0916a6d45c",
+          "file": "viewer.spec.ts",
+          "line": 59,
+          "column": 1
+        },
+        {
+          "title": "read API rejects outside origins and mutations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-0edd7704943182b20601",
+          "file": "viewer.spec.ts",
+          "line": 90,
+          "column": 1
+        },
+        {
+          "title": "viewer reflows at 960px with reduced motion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-be82f6cfacee5e6796e1",
+          "file": "viewer.spec.ts",
+          "line": 95,
+          "column": 32
+        },
+        {
+          "title": "viewer reflows at 390px with reduced motion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-2ab80380dc05d2b7dc20",
+          "file": "viewer.spec.ts",
+          "line": 95,
+          "column": 32
+        },
+        {
+          "title": "keyboard-accessible viewer has no automated WCAG A/AA violations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-4fb2c202d37846ba2c14",
+          "file": "viewer.spec.ts",
+          "line": 107,
+          "column": 1
+        },
+        {
+          "title": "hostile source stays literal and a failed read can retry",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-273fa71bd10b86457a3c",
+          "file": "viewer.spec.ts",
+          "line": 119,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "visual-office.spec.ts",
+      "file": "visual-office.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "provider settings and preserved work at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "992fd0f8802cdb751895-7d7ce7c5dfdf5ee197fa",
+          "file": "visual-office.spec.ts",
+          "line": 7,
+          "column": 32
+        },
+        {
+          "title": "provider settings and preserved work at 390px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "992fd0f8802cdb751895-da04bd9b530806f37694",
+          "file": "visual-office.spec.ts",
+          "line": 7,
+          "column": 32
+        },
+        {
+          "title": "compact provider picker and guarded monitor task setup at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "992fd0f8802cdb751895-1b7bcece0eb1804d688e",
+          "file": "visual-office.spec.ts",
+          "line": 68,
+          "column": 32
+        },
+        {
+          "title": "compact provider picker and guarded monitor task setup at 390px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "992fd0f8802cdb751895-f250b23b5745e38c47b0",
+          "file": "visual-office.spec.ts",
+          "line": 68,
+          "column": 32
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T01:34:43.241Z",
+    "duration": 95963.43299999999,
+    "expected": 0,
+    "skipped": 23,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

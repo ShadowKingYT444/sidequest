@@ -17,6 +17,7 @@ import type { GLTFLoader, OrbitControls as OrbitControlsImpl } from "three-stdli
 import { validateOfficeResourceUrl } from "./office-bindings";
 import type { OfficeBindings, OfficeStationBinding, Vector3 } from "./office-bindings";
 import type {OfficeNotification} from './notifications';
+import {isSoftwareRenderer} from './graphics';
 
 export interface OfficeSceneProps {
   bindings: OfficeBindings;
@@ -250,6 +251,8 @@ export function CameraRig({
   controlsRef,
 }: CameraRigProps) {
   const { camera, invalidate, size, gl } = useThree();
+  const softwareRendering = useMemo(() => isSoftwareRenderer(gl.getContext()), [gl]);
+  const instantMotion = reducedMotion || softwareRendering;
   const transition = useRef<CameraTransition | null>(null);
   const previousStation=useRef<string|null>(null),initialized=useRef(false);
   const returningToOffice=useRef(false);
@@ -263,6 +266,7 @@ export function CameraRig({
 
   useEffect(() => {
     if (!active) return;
+    gl.domElement.dataset.cameraMotion = softwareRendering ? 'instant-software' : reducedMotion ? 'instant-reduced-motion' : 'animated';
     const controls = controlsRef.current;
     if(selectedStation&&!previousStation.current&&initialized.current&&!returningToOffice.current){officePose.current={position:camera.position.clone(),target:controls?.target.clone()??asThreeVector(bindings.overview.target)};}
     if(!selectedStation&&!previousStation.current&&initialized.current)return;
@@ -271,7 +275,7 @@ export function CameraRig({
     const toTarget=(pose??officePose.current).target.clone();
     previousStation.current=selectedStation?.id??null;initialized.current=true;
 
-    if (reducedMotion) {
+    if (instantMotion) {
       camera.position.copy(toPosition);
       camera.lookAt(toTarget);
       if (controls) {
@@ -293,7 +297,7 @@ export function CameraRig({
       elapsed: 0,
     };
     invalidate();
-  }, [active, camera, controlsRef, invalidate, pose, reducedMotion, selectedStation, bindings.overview.target]);
+  }, [active, camera, controlsRef, invalidate, pose, instantMotion, reducedMotion, softwareRendering, gl, selectedStation, bindings.overview.target]);
 
   useFrame((_, delta) => {
     const current = transition.current;

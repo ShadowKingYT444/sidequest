@@ -1,0 +1,36 @@
+{
+  "mocked_composer": {
+    "real": [
+      "Chromium",
+      "React components",
+      "IndexedDB storage",
+      "File bytes",
+      "selection restoration",
+      "image previews",
+      "reload and mobile layout"
+    ],
+    "mocked": [
+      "provider capabilities and spending authority",
+      "attachment staging response",
+      "message acceptance receipt",
+      "receipt status and rejected-before-start response"
+    ],
+    "live_provider_calls": 0
+  },
+  "live_inspection": {
+    "real": [
+      "Git source",
+      "HTTP local runtime",
+      "SQLite records",
+      "isolated inspection",
+      "frozen candidate identity check",
+      "artifact file reads",
+      "persisted session ownership"
+    ],
+    "injected_faults": [
+      "read-only503 snapshot outage",
+      "read-only wrong-worker runInfo response"
+    ],
+    "model_calls": 0
+  }
+}

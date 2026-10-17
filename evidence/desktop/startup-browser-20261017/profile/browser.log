@@ -1,0 +1,44 @@
+
+> sidequest-desktop@0.1.0 test:browser
+> playwright test --grep real jobs clear stale notices --retries=0 --reporter=list,json --output /workspace/sidequest/evidence/desktop/startup-browser-20261017/profile/playwright-results
+
+[WebServer] (node:11158) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:11190) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 1:43:39 AM [vite] (client) [console.warn] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  ✘  1 tests/browser/jobs-live.spec.ts:90:1 › real jobs clear stale notices, recover reads and preserve assigned computer results (1.6m)
+
+
+  1) tests/browser/jobs-live.spec.ts:90:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator: getByRole('region', { name: 'Computer job results' }).locator('.artifact-files button[aria-pressed="true"]')
+    Expected: "README.md"
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveAttribute" getByRole('region', { name: 'Computer job results' }).locator('.artifact-files button[aria-pressed="true"]') with timeout 15000ms
+      - waiting for getByRole('region', { name: 'Computer job results' }).locator('.artifact-files button[aria-pressed="true"]')
+      - Test timeout of 90000ms exceeded.
+
+
+      134 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');
+      135 |   await expect(result).toBeVisible();
+    > 136 |   await expect(result.locator('.artifact-files button[aria-pressed="true"]')).toHaveAttribute('title',selectedFile!);
+          |                                                                               ^
+      137 |   await expect.poll(()=>result.locator('.artifact-text').evaluate(node=>node.scrollTop)).toBeGreaterThan(100);
+      138 |   await page.screenshot({path:path.join(evidence,'assigned-result.png')});
+      139 |   await writeFile(path.join(evidence,'result-display-browser.json'),JSON.stringify({job_id:completed.id,queued_test_title:queuedTitle,queued_test_executed:false,selected_file:selectedFile,temporary_network_failure:true,recovered:true,scope:'Actual local inspection artifacts; display assignment only; zero coding/model launches'},null,2));
+        at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:136:79
+
+    Error Context: ../evidence/desktop/startup-browser-20261017/profile/playwright-results/jobs-live-real-jobs-clear--ce5fb-e-assigned-computer-results/error-context.md
+
+  1 failed
+    tests/browser/jobs-live.spec.ts:90:1 › real jobs clear stale notices, recover reads and preserve assigned computer results 

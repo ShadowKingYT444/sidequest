@@ -1,0 +1,1 @@
+Interrupted after reproducible severe browser stalls: 2 passed, 2 failed existing time budgets, 1 interrupted, 20 did not run. Original assertions/timeouts remain unchanged. This run established real local inspection and physical monitor selection, but is not a full suite pass. A focused CPU-profile run follows in ../profile/.

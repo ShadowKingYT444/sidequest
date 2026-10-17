@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-10-17T01:47:57.466114+00:00",
+  "command": [
+    "npm",
+    "run",
+    "test:browser",
+    "--",
+    "tests/browser/transport.spec.ts",
+    "--retries=0",
+    "--reporter=list,json",
+    "--output",
+    "/workspace/sidequest/evidence/desktop/startup-browser-20261017/mocked-composer/playwright-results"
+  ],
+  "served_application_commit": "6a6b8a3e6e2f14dc678f81783d368e57595e7206",
+  "scope": "Explicitly mocked protocol transport; real Chromium React IndexedDB File and local preview behavior; no live runtime/provider dispatch",
+  "retries": 0,
+  "exit_code": 0,
+  "finished_at": "2026-10-17T01:48:08.799632+00:00"
+}

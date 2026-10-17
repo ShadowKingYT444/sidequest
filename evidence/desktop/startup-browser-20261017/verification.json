@@ -1,0 +1,78 @@
+{
+  "browser": "Chromium151.0.7922.173 with SwiftShader software WebGL",
+  "application_head_at_start": "71265e1a347ecc7eefe95dda7f142f5d81625b5b",
+  "source_checkout": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+  "source_base": "69bf06696a93c9f58eee2d088e84404d4f6563d6",
+  "real_runtime": true,
+  "coding_enabled": false,
+  "token_storage": "ephemeral process environment only; no token files",
+  "interrupted_full": {
+    "passed": 2,
+    "failed": 2,
+    "interrupted": 1,
+    "did_not_run": 20,
+    "retries": 0
+  },
+  "focused_profile": {
+    "passed": 0,
+    "failed": 1,
+    "retries": 0,
+    "elapsed_seconds": 90.19,
+    "native_program_seconds": 80.31,
+    "javascript_intersection_stacks_seconds": 0.356
+  },
+  "scope_passed": [
+    "Real local Git inspection through UI, authenticated runtime, Git adapter and trusted frozen-identity check",
+    "Immutable files, empty inspection diff, activity and check report, zero inference calls",
+    "Desktop/mobile job accessibility checks",
+    "Physical original Computer19 monitor selection and camera return including interruption"
+  ],
+  "unverified": [
+    "Complete25-test suite on this host",
+    "Live coding/provider dispatch",
+    "Native Electron (separate root investigation)"
+  ],
+  "limitations": [
+    "Two long interaction journeys exceeded unchanged90s/120s limits amid multi-second browser native stalls; failed assertions preserved",
+    "CPU sampling does not establish the exact native GPU/compositor function responsible"
+  ],
+  "evidence": [
+    "interrupted-full/browser.log",
+    "interrupted-full/playwright-report.json",
+    "interrupted-full/job-browser.json",
+    "interrupted-full/monitor-camera-browser.json",
+    "profile/cpu-summary.json",
+    "gpu-details.json",
+    "mocked-composer/playwright-report.json",
+    "software-camera-focus/playwright-report.json",
+    "software-camera-regressions/playwright-report.json"
+  ],
+  "mocked_composer": {
+    "passed": 5,
+    "failed": 0,
+    "retries": 0,
+    "duration_seconds": 10.3,
+    "served_application_commit": "6a6b8a3",
+    "scope": "Real React/IndexedDB/File browser behavior with explicitly mocked authenticated runtime receipt protocol; no live dispatch"
+  },
+  "software_camera_focus": {
+    "passed": 1,
+    "failed": 0,
+    "retries": 0,
+    "test_seconds": 46.8,
+    "same_original_timeout_seconds": 90
+  },
+  "software_camera_regressions": {
+    "passed": 5,
+    "failed": 0,
+    "retries": 0,
+    "duration_seconds": 192,
+    "tests": [
+      "recorded session ownership and reload",
+      "physical monitor and camera return",
+      "static shadows",
+      "draft demand-rendering",
+      "figure-details demand-rendering"
+    ]
+  }
+}

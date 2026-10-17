@@ -1,0 +1,12 @@
+{
+  "state_directory": "/tmp/sidequest-browser-final-20261017-0vasc4dq",
+  "source_directory": "/tmp/sidequest-browser-independent-20261017-xj8b31or/source",
+  "source_head": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+  "source_base": "69bf06696a93c9f58eee2d088e84404d4f6563d6",
+  "application_head": "PENDING_SOURCE_CHECKPOINT",
+  "initial_source_hashes": {},
+  "coding_enabled": false,
+  "credential_storage": "process environment only; never written to a token file",
+  "source_clone": "independent git clone --no-local --no-checkout, then historical checkout; no alternates",
+  "scope": "Current working checkout including software-renderer camera fallback; exact hashes below"
+}

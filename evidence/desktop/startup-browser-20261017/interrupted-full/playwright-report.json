@@ -1,0 +1,808 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/sidequest/desktop/node_modules/.bin/playwright",
+      "test",
+      "--retries=0",
+      "--reporter=list,json",
+      "--output",
+      "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results"
+    ],
+    "configFile": "/workspace/sidequest/desktop/playwright.config.ts",
+    "rootDir": "/workspace/sidequest/desktop/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/sidequest/desktop/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/workspace/sidequest/desktop/tests/browser",
+        "snapshotDir": "/workspace/sidequest/desktop/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://127.0.0.1:5173",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "jobs-live.spec.ts",
+      "file": "jobs-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "genuine local inspection job produces immutable files and a check report",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 50881,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T01:36:47.265Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7020818dfbebdca560a9-551ce608100998762252",
+          "file": "jobs-live.spec.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "title": "real jobs clear stale notices, recover reads and preserve assigned computer results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 96128,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                        "column": 24,
+                        "line": 135
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Computer job results' })\nExpected: visible\nError: Test timeout of 90000ms exceeded.\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: 'Computer job results' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Computer job results' })\u001b[22m\n\u001b[2m  - Test timeout of 90000ms exceeded.\u001b[22m\n\n\n  133 |   await page.keyboard.press('Escape');await expect(result).toHaveCount(0);\n  134 |   await page.getByRole('combobox',{name:'Office navigation'}).selectOption('parent_019');\n> 135 |   await expect(result).toBeVisible();\n      |                        ^\n  136 |   await expect(result.locator('.artifact-files button[aria-pressed=\"true\"]')).toHaveAttribute('title',selectedFile!);\n  137 |   await expect.poll(()=>result.locator('.artifact-text').evaluate(node=>node.scrollTop)).toBeGreaterThan(100);\n  138 |   await page.screenshot({path:path.join(evidence,'assigned-result.png')});\n    at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:135:24"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T01:37:39.011Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results/jobs-live-real-jobs-clear--ce5fb-e-assigned-computer-results/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7020818dfbebdca560a9-ea7e67067dc653860601",
+          "file": "jobs-live.spec.ts",
+          "line": 90,
+          "column": 1
+        },
+        {
+          "title": "recorded session ownership persists at a figure and renders real contextual events",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 124013,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts",
+                        "column": 246,
+                        "line": 173
+                      },
+                      "message": "Error: locator.selectOption: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Tasks board detail' }).getByRole('combobox', { name: 'Task', exact: true })\u001b[22m\n\n\n  171 |  await page.screenshot({path:path.join(evidence,'recorded-session-390.png')});\n  172 |  await page.route('**/__sidequest/runtime/runInfo',route=>route.fulfill({json:{v:1,run:{...run,worker_id:'fixture-wrong-worker'}}}));await trace.getByRole('button',{name:'Refresh trace',exact:true}).click();await expect(trace).toContainText('Recorded session worker identity changed.');await page.unroute('**/__sidequest/runtime/runInfo');\n> 173 |  await page.keyboard.press('Escape');await page.getByRole('combobox',{name:'Office navigation'}).selectOption('board');const detail=page.getByRole('region',{name:'Tasks board detail'});await detail.getByRole('combobox',{name:'Task',exact:true}).selectOption(job.id);await expect(detail).toContainText('Recorded worker at Computer 19');await detail.getByRole('button',{name:'Open session',exact:true}).click();\n      |                                                                                                                                                                                                                                                      ^\n  174 |  session=page.getByRole('dialog',{name:'Agent session'});await expect(session.locator('.session-records')).toHaveAttribute('data-session-run',runId);\n  175 |  await session.getByText('Session details',{exact:true}).click();await session.getByRole('button',{name:'Detach session',exact:true}).click();await expect(session).toContainText('No live session attached');expect((await read()).office_sessions.some((row:{station_id:string})=>row.station_id==='parent_019')).toBe(false);expect(coding).toEqual([]);\n  176 |  await writeFile(path.join(evidence,'session-browser.json'),JSON.stringify({scope:'Actual local inspection; persistent display ownership, not coding dispatch or live Codex conversation',owner,reload_restored:true,board_links_same_session:true,open_results_same_job:true,wrong_worker_rejected:true,fixtures:['Read-only runInfo response with explicitly fixture-wrong-worker; no persisted state changed'],explicit_detach:true,coding_requests:coding,axe_violations:axe.violations.map(v=>v.id)},null,2));\n    at /workspace/sidequest/desktop/tests/browser/jobs-live.spec.ts:173:246"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T01:39:16.161Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results/jobs-live-recorded-session-308f7-ders-real-contextual-events/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7020818dfbebdca560a9-9610893a45299c06d14a",
+          "file": "jobs-live.spec.ts",
+          "line": 142,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "monitor-ui.spec.ts",
+      "file": "monitor-ui.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "physical monitor POV restores orbited office camera through an interrupted return",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 73308,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T01:41:22.682Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ea07ef4759f79c3bca4-8c4005f0e06f3219e306",
+          "file": "monitor-ui.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "local monitor drafts, attachments and scroll survive Escape, expansion, delayed reads and outages",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "interrupted",
+                  "duration": 38058,
+                  "error": {
+                    "message": "Error: locator.evaluate: Test ended.\nCall log:\n\u001b[2m  - waiting for locator('.office-canvas canvas')\u001b[22m\n\u001b[2m    - locator resolved to visible <canvas width=\"1440\" height=\"820\" data-agent-badges=\"[]\" data-shadow-passes=\"5\" data-engine=\"three.js r186\" data-render-frame-count=\"5\" data-camera-target=\"[1,-0.3,-3.8]\" data-office-controls-enabled=\"true\" data-camera-position=\"[11.5,8.5,12]\"></canvas>\u001b[22m\n",
+                    "stack": "Error: locator.evaluate: Test ended.\nCall log:\n\u001b[2m  - waiting for locator('.office-canvas canvas')\u001b[22m\n\u001b[2m    - locator resolved to visible <canvas width=\"1440\" height=\"820\" data-agent-badges=\"[]\" data-shadow-passes=\"5\" data-engine=\"three.js r186\" data-render-frame-count=\"5\" data-camera-target=\"[1,-0.3,-3.8]\" data-office-controls-enabled=\"true\" data-camera-position=\"[11.5,8.5,12]\"></canvas>\u001b[22m\n\n    at pose (/workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:10:68)\n    at /workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:49:223",
+                    "location": {
+                      "file": "/workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts",
+                      "column": 68,
+                      "line": 10
+                    },
+                    "snippet": "   8 | const origin={Origin:'http://127.0.0.1:5173'};\n   9 | const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aTioAAAAASUVORK5CYII=','base64');\n> 10 | const pose=async(page:Page)=>page.locator('.office-canvas canvas').evaluate(node=>({position:JSON.parse((node as HTMLElement).dataset.cameraPosition!),target:JSON.parse((node as HTMLElement).dataset.cameraTarget!)}));\n     |                                                                    ^\n  11 | async function paste(page:Page,text:string,image=false){await page.getByRole('textbox',{name:'Message this session'}).evaluate((node,payload)=>{const transfer=new DataTransfer();transfer.setData('text/plain',payload.text);transfer.setData('text/html','<img src=x onerror=\"window.__badPaste=true\">');if(payload.image)transfer.items.add(new File([Uint8Array.from(payload.bytes)],'clipboard.png',{type:'image/png',lastModified:1}));node.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));},{text,image,bytes:Array.from(png)});}\n  12 |\n  13 | test('physical monitor POV restores orbited office camera through an interrupted return',async({page,request})=>{"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts",
+                        "column": 68,
+                        "line": 10
+                      },
+                      "message": "Error: locator.evaluate: Test ended.\nCall log:\n\u001b[2m  - waiting for locator('.office-canvas canvas')\u001b[22m\n\u001b[2m    - locator resolved to visible <canvas width=\"1440\" height=\"820\" data-agent-badges=\"[]\" data-shadow-passes=\"5\" data-engine=\"three.js r186\" data-render-frame-count=\"5\" data-camera-target=\"[1,-0.3,-3.8]\" data-office-controls-enabled=\"true\" data-camera-position=\"[11.5,8.5,12]\"></canvas>\u001b[22m\n\n\n   8 | const origin={Origin:'http://127.0.0.1:5173'};\n   9 | const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aTioAAAAASUVORK5CYII=','base64');\n> 10 | const pose=async(page:Page)=>page.locator('.office-canvas canvas').evaluate(node=>({position:JSON.parse((node as HTMLElement).dataset.cameraPosition!),target:JSON.parse((node as HTMLElement).dataset.cameraTarget!)}));\n     |                                                                    ^\n  11 | async function paste(page:Page,text:string,image=false){await page.getByRole('textbox',{name:'Message this session'}).evaluate((node,payload)=>{const transfer=new DataTransfer();transfer.setData('text/plain',payload.text);transfer.setData('text/html','<img src=x onerror=\"window.__badPaste=true\">');if(payload.image)transfer.items.add(new File([Uint8Array.from(payload.bytes)],'clipboard.png',{type:'image/png',lastModified:1}));node.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));},{text,image,bytes:Array.from(png)});}\n  12 |\n  13 | test('physical monitor POV restores orbited office camera through an interrupted return',async({page,request})=>{\n    at pose (/workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:10:68)\n    at /workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts:49:223"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T01:42:36.890Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/sidequest/evidence/desktop/startup-browser-20261017/playwright-results/monitor-ui-local-monitor-d-d49c4-n-delayed-reads-and-outages/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/sidequest/desktop/tests/browser/monitor-ui.spec.ts",
+                    "column": 68,
+                    "line": 10
+                  }
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "0ea07ef4759f79c3bca4-f63ae3e800adb201815c",
+          "file": "monitor-ui.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "explicit read-only fixture shows distinct notifications and one badge per primary figure",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "0ea07ef4759f79c3bca4-578bb05faf859af8574c",
+          "file": "monitor-ui.spec.ts",
+          "line": 78,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "rendering.spec.ts",
+      "file": "rendering.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "static office shadows stay cached while opening the lazy editor and returning",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "f672df31acb714c8c296-f129192b010f61dfcba7",
+          "file": "rendering.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "local draft edits preserve demand rendering of the unchanged office",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "f672df31acb714c8c296-34546626668d98989a79",
+          "file": "rendering.spec.ts",
+          "line": 23,
+          "column": 1
+        },
+        {
+          "title": "local figure details preserve the unchanged office frame",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "f672df31acb714c8c296-ebf7e054c81e93a354ac",
+          "file": "rendering.spec.ts",
+          "line": 45,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "transport.spec.ts",
+      "file": "transport.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "protocol fake: real IndexedDB restores draft, File bytes, UUID, selection and a local image preview on reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-de67c66082d1bdf11431",
+          "file": "transport.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "protocol fake: lost reply survives reload and reconciles exactly one send, keeping a subsequent draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-0a1deda80d3534f20e05",
+          "file": "transport.spec.ts",
+          "line": 55,
+          "column": 1
+        },
+        {
+          "title": "protocol fake: unknown spending authority keeps send disabled while durable local draft remains usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-99305c59d717752faf0e",
+          "file": "transport.spec.ts",
+          "line": 68,
+          "column": 1
+        },
+        {
+          "title": "protocol fake: accepted command rejected before start retains file and next draft across reload until explicit review",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-a92a734c25f05cfdb99a",
+          "file": "transport.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "protocol fake: successful 202 then rejected-before-start restores sent files without overwriting a newer draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7f29b49d46ac09564ca8-6066da3a63602a4903d6",
+          "file": "transport.spec.ts",
+          "line": 82,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "viewer.spec.ts",
+      "file": "viewer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Git diff, lazy single editor, expanded state, Escape and keyboard",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-b421a2e4b99b4a664dca",
+          "file": "viewer.spec.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "Escape/reopen mounts one selected Monaco editor and keeps its saved scroll",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-c28073460f0916a6d45c",
+          "file": "viewer.spec.ts",
+          "line": 59,
+          "column": 1
+        },
+        {
+          "title": "read API rejects outside origins and mutations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-0edd7704943182b20601",
+          "file": "viewer.spec.ts",
+          "line": 90,
+          "column": 1
+        },
+        {
+          "title": "viewer reflows at 960px with reduced motion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-be82f6cfacee5e6796e1",
+          "file": "viewer.spec.ts",
+          "line": 95,
+          "column": 32
+        },
+        {
+          "title": "viewer reflows at 390px with reduced motion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-2ab80380dc05d2b7dc20",
+          "file": "viewer.spec.ts",
+          "line": 95,
+          "column": 32
+        },
+        {
+          "title": "keyboard-accessible viewer has no automated WCAG A/AA violations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-4fb2c202d37846ba2c14",
+          "file": "viewer.spec.ts",
+          "line": 107,
+          "column": 1
+        },
+        {
+          "title": "hostile source stays literal and a failed read can retry",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "21fabc857d2aace6b217-273fa71bd10b86457a3c",
+          "file": "viewer.spec.ts",
+          "line": 119,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "visual-office.spec.ts",
+      "file": "visual-office.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "provider settings and preserved work at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "992fd0f8802cdb751895-7d7ce7c5dfdf5ee197fa",
+          "file": "visual-office.spec.ts",
+          "line": 7,
+          "column": 32
+        },
+        {
+          "title": "provider settings and preserved work at 390px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "992fd0f8802cdb751895-da04bd9b530806f37694",
+          "file": "visual-office.spec.ts",
+          "line": 7,
+          "column": 32
+        },
+        {
+          "title": "compact provider picker and guarded monitor task setup at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "992fd0f8802cdb751895-1b7bcece0eb1804d688e",
+          "file": "visual-office.spec.ts",
+          "line": 68,
+          "column": 32
+        },
+        {
+          "title": "compact provider picker and guarded monitor task setup at 390px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "992fd0f8802cdb751895-f250b23b5745e38c47b0",
+          "file": "visual-office.spec.ts",
+          "line": 68,
+          "column": 32
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T01:36:45.260Z",
+    "duration": 390294.06,
+    "expected": 2,
+    "skipped": 21,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

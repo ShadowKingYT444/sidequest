@@ -4,6 +4,7 @@ from contextlib import contextmanager
 import os
 from pathlib import Path
 import signal
+import socket
 import subprocess
 import sys
 import tempfile
@@ -78,6 +79,31 @@ class LauncherTests(unittest.TestCase):
         child.wait()
         with self.assertRaisesRegex(sidequest.SetupError, "stopped during startup"):
             sidequest.wait_for_runtime(child, 1, "ephemeral-test-value", timeout=1)
+
+    def test_real_runtime_authenticates_without_persisting_a_token(self):
+        state = self.root / "real-runtime"
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            port = listener.getsockname()[1]
+        token = "launcher-test-ephemeral-value-" + "t" * 32
+        env = sidequest.runtime_environment(state, self.repo, "HEAD", port, token)
+        child = subprocess.Popen([str(sidequest.PYTHON), "-m", "services.runtime.main",
+                                  "--allowed-root", str(self.repo), "--port", str(port)],
+                                 cwd=sidequest.ROOT, env=env, start_new_session=True,
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            sidequest.wait_for_runtime(child, port, token)
+            self.assertTrue((state / "data").is_dir())
+            self.assertFalse(list(state.rglob("*.token")))
+            connection = sidequest.http.client.HTTPConnection("127.0.0.1", port, timeout=2)
+            try:
+                connection.request("GET", "/v1/snapshot")
+                self.assertEqual(connection.getresponse().status, 403)
+            finally:
+                connection.close()
+        finally:
+            sidequest.stop(child)
+        self.assertIsNotNone(child.poll())
 
     def test_stop_terminates_owned_process(self):
         child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"], start_new_session=True)

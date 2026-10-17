@@ -1,0 +1,13 @@
+{
+  "commit": "6a6b8a3e6e2f14dc678f81783d368e57595e7206",
+  "file": "sidequest-6a6b8a3-source.tar.gz",
+  "sha256": "51e7845a65bceeb71817693246e4de0cd4112cd00649a5de91ad56e02c829465",
+  "bytes": 125120969,
+  "library_file_id": "libfile_689d12f7c2608191867397a625f2a8e1",
+  "file_id": "file_00000000913881f79f930400e1a8ee08",
+  "source_scope": "Tracked source, original assets, dependency locks, docs and tests. Excludes Git metadata, prior evidence, node_modules, .venv, builds, .env, private runtime state and credentials.",
+  "clean_setup_command": "PIP_CACHE_DIR=/tmp/sidequest-pip-cache npm_config_cache=/tmp/sidequest-npm-cache NODE_USE_ENV_PROXY=1 electron_config_cache=/tmp/sidequest-electron python3 /tmp/sidequest-clean-install/sidequest/sidequest.py setup",
+  "clean_setup_exit": 0,
+  "ci": "https://github.com/ShadowKingYT444/sidequest/actions/runs/38991835174",
+  "ci_conclusion": "success"
+}

@@ -1,0 +1,132 @@
+{
+  "v": 1,
+  "revision": 9,
+  "mode": "local-git",
+  "projects": [
+    {
+      "id": "f158b7a0-b660-4f89-83fa-49abc3ef67eb",
+      "name": "source",
+      "base_revision": "8a9fb11c3b01a404c4dd305b71458377082697c1",
+      "status": "active",
+      "policy": {
+        "allowed_actions": [
+          "read_repo",
+          "run_checks"
+        ]
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "id": "b70c608a-5b0e-4d38-bcf5-8d395294d2d0",
+      "project_id": "f158b7a0-b660-4f89-83fa-49abc3ef67eb",
+      "title": "Browser inspection 2026-10-17T01:35:19.851Z",
+      "source": {
+        "kind": "typed",
+        "text": "Inspect the registered Git repository and produce immutable read-only artifacts with a frozen-identity check. No coding model, source mutation or delivery.",
+        "uri": "sidequest:local-git-inspection"
+      },
+      "state": "blocked",
+      "checks": [
+        {
+          "id": "candidate.frozen_identity",
+          "state": "blocked",
+          "evidence_artifact_id": null
+        }
+      ],
+      "allowed_actions": [
+        "read_repo",
+        "run_checks"
+      ],
+      "budget_usd": 0,
+      "spent_usd": 0,
+      "worker_id": null,
+      "artifact_ids": [],
+      "events": [
+        {
+          "id": 2,
+          "at": "2026-10-17T01:35:20.263Z",
+          "type": "status",
+          "message": "Read-only inspection queued.",
+          "artifact_id": null
+        },
+        {
+          "id": 3,
+          "at": "2026-10-17T01:35:20.272Z",
+          "type": "status",
+          "message": "Task dispatch reserved.",
+          "artifact_id": null
+        },
+        {
+          "id": 4,
+          "at": "2026-10-17T01:35:20.272Z",
+          "type": "status",
+          "message": "Starting local Git inspection.",
+          "artifact_id": null
+        },
+        {
+          "id": 5,
+          "at": "2026-10-17T01:35:20.375Z",
+          "type": "status",
+          "message": "Attempt result recorded.",
+          "artifact_id": null
+        },
+        {
+          "id": 6,
+          "at": "2026-10-17T01:35:20.375Z",
+          "type": "status",
+          "message": "Local inspection could not complete safely.",
+          "artifact_id": null
+        }
+      ],
+      "blocked_reason": "Git alternate object stores are not allowed.",
+      "workflow_version": 1,
+      "run_ids": [
+        "a57189ad-d79a-484a-a324-8c335a962b83"
+      ],
+      "tasks": [
+        {
+          "id": "c0c2ce27-566d-431c-9949-0625d62e6854",
+          "state": "failed",
+          "depends_on": [],
+          "worker_id": "2bd40435-bc01-4c18-8aea-41b6bf6338f7",
+          "attempt_id": "a57189ad-d79a-484a-a324-8c335a962b83"
+        }
+      ],
+      "candidate_id": null,
+      "execution_profile": "local_git_inspection",
+      "delivery_state": "disabled"
+    }
+  ],
+  "office_jobs": [],
+  "office_jobs_truncated": false,
+  "workers": [
+    {
+      "id": "2bd40435-bc01-4c18-8aea-41b6bf6338f7",
+      "role": "verifier",
+      "state": "idle",
+      "job_id": null
+    },
+    {
+      "id": "5b75757b-36c9-4f7f-bcc0-773470188f25",
+      "role": "verifier",
+      "state": "idle",
+      "job_id": null
+    }
+  ],
+  "office_sessions": [],
+  "workshops": [],
+  "approvals": [],
+  "layout": {
+    "version": 0,
+    "nodes": [],
+    "edges": []
+  },
+  "budget": {
+    "limit_usd": 0,
+    "reserved_usd": 0,
+    "spent_usd": 0,
+    "uncertain": false
+  },
+  "stopped": false
+}

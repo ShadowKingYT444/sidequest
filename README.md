@@ -24,7 +24,7 @@ python3 sidequest.py setup --browser
 python3 sidequest.py run --browser --repo /absolute/path/to/your/project
 ```
 
-Open **http://127.0.0.1:5173** after Vite reports ready. Press **Ctrl+C** to stop. Browser mode exercises the office and runtime but does not establish native Electron acceptance.
+Open **http://127.0.0.1:5173** after Vite reports ready. Press **Ctrl+C** to stop. Browser mode exercises the office and runtime but does not establish native Electron acceptance. On identified software GPUs, camera focus moves directly to the selected computer to reduce stalls; hardware GPUs retain the animated transition.
 
 ```sh
 python3 sidequest.py doctor          # dependencies and desktop display
