@@ -27,6 +27,15 @@ FIXTURES = ROOT / "demo/club-site"
 
 
 class ProtocolBrowserTests(unittest.TestCase):
+    @staticmethod
+    def _journey_diagnostic(response: dict, artifacts: dict[str, bytes]) -> str:
+        # These records contain only the trusted harness's bounded fields, never
+        # candidate HTML, subprocess stderr, credentials or raw browser errors.
+        return json.dumps({
+            "results": response["data"]["results"],
+            "browser": json.loads(artifacts["browser.log.json"]),
+        }, sort_keys=True)
+
     def _run_fixture(self, fixture: Path, name: str, *, add_candidate_shadows: bool = False) -> tuple[dict, dict[str, bytes]]:
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
@@ -82,13 +91,15 @@ class ProtocolBrowserTests(unittest.TestCase):
             return response, artifact_bytes
 
     def test_seeded_bad_fails_and_frozen_control_passes_real_popup_journey(self) -> None:
-        bad, _bad_artifacts = self._run_fixture(FIXTURES / "bad", "bad")
+        bad, bad_artifacts = self._run_fixture(FIXTURES / "bad", "bad")
         good, good_artifacts = self._run_fixture(FIXTURES / "known-good", "good")
+        bad_diagnostic = self._journey_diagnostic(bad, bad_artifacts)
+        good_diagnostic = self._journey_diagnostic(good, good_artifacts)
         self.assertFalse(bad["data"]["passed"])
         self.assertEqual(bad["data"]["results"][0]["state"], "pass")
-        self.assertEqual(bad["data"]["results"][1]["state"], "fail")
-        self.assertEqual(bad["data"]["results"][1]["code"], "SIGNUP_DESTINATION_MISMATCH")
-        self.assertTrue(good["data"]["passed"])
+        self.assertEqual(bad["data"]["results"][1]["state"], "fail", bad_diagnostic)
+        self.assertEqual(bad["data"]["results"][1]["code"], "SIGNUP_DESTINATION_MISMATCH", bad_diagnostic)
+        self.assertTrue(good["data"]["passed"], good_diagnostic)
         self.assertEqual(good["data"]["results"][0]["state"], "pass")
         self.assertEqual(good["data"]["results"][1]["state"], "pass")
         good_log = next(a for a in good["artifacts"] if a["relative_path"].endswith("browser.log.json"))
@@ -104,9 +115,11 @@ class ProtocolBrowserTests(unittest.TestCase):
         self.assertGreater(good_log_value["blocked_requests"], 0)
 
     def test_candidate_authored_checks_and_destination_cannot_turn_bad_case_green(self) -> None:
-        response, _artifacts = self._run_fixture(FIXTURES / "bad", "shadow", add_candidate_shadows=True)
+        response, artifacts = self._run_fixture(FIXTURES / "bad", "shadow", add_candidate_shadows=True)
+        diagnostic = self._journey_diagnostic(response, artifacts)
         self.assertFalse(response["data"]["passed"])
-        self.assertEqual(response["data"]["results"][1]["state"], "fail")
+        self.assertEqual(response["data"]["results"][1]["state"], "fail", diagnostic)
+        self.assertEqual(response["data"]["results"][1]["code"], "SIGNUP_DESTINATION_MISMATCH", diagnostic)
         artifact = next(a for a in response["artifacts"] if a["relative_path"].endswith("check-report.json"))
         self.assertRegex(artifact["sha256"], r"^[0-9a-f]{64}$")
         self.assertNotIn("PRIVATE_CANDIDATE_TEXT", json.dumps(response))
